@@ -1,4 +1,7 @@
-const API_BASE = import.meta.env.PUBLIC_API_BASE || 'https://ws-ffci-copy.ddev.site';
+import { loadSiteConfig } from './config';
+
+const config = loadSiteConfig();
+const API_BASE = import.meta.env.PUBLIC_API_BASE || config.apiBaseUrl || 'https://ws-ffci-copy.ddev.site';
 
 export interface MenuItem {
   label: string;

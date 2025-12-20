@@ -1,0 +1,12 @@
+{
+  "siteId": "c4i",
+  "apiBaseUrl": "https://ws-ffci-copy.ddev.site",
+  "appName": "C4I Mobile",
+  "appSlug": "c4i-mobile",
+  "primaryColor": "#1d4ed8",
+  "secondaryColor": "#22d3ee",
+  "textColor": "#0f172a",
+  "backgroundColor": "#ffffff",
+  "headerStyle": "light",
+  "logo": "/favicon.svg"
+}

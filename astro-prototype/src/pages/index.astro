@@ -1,6 +1,7 @@
 ---
 import MobileLayout from '../layouts/MobileLayout.astro';
 import { getSiteData } from '../lib/api';
+import { getThemeVariables, loadSiteConfig } from '../lib/config';
 
 let siteData;
 try {
@@ -19,14 +20,20 @@ try {
 }
 
 const { menu, site_data } = siteData;
+const siteConfig = loadSiteConfig();
+const themeVars = getThemeVariables(siteConfig);
+const displayLogo = site_data.logo || siteConfig.logo;
+const displayName = site_data.app_name || siteConfig.appName;
 ---
 
 <MobileLayout
   title={site_data.title}
-  logo={site_data.logo}
-  appName={site_data.app_name}
+  logo={displayLogo}
+  appName={displayName}
   menu={menu}
   currentPath="/"
+  themeVars={themeVars}
+  headerStyle={siteConfig.headerStyle}
 >
   <div class="px-4 py-6">
     <h1 class="text-2xl font-bold mb-6">{site_data.title}</h1>

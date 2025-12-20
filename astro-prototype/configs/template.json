@@ -1,0 +1,12 @@
+{
+  "siteId": "template",
+  "apiBaseUrl": "https://ws-ffci-copy.ddev.site",
+  "appName": "Mobile Template",
+  "appSlug": "mobile-template",
+  "primaryColor": "#2563eb",
+  "secondaryColor": "#0ea5e9",
+  "textColor": "#0f172a",
+  "backgroundColor": "#ffffff",
+  "headerStyle": "light",
+  "logo": "/favicon.svg"
+}

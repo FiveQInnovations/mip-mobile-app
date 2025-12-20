@@ -5,6 +5,7 @@ import CollectionGrid from '../../components/CollectionGrid.astro';
 import VideoPlayer from '../../components/VideoPlayer.astro';
 import AudioPlayer from '../../components/AudioPlayer.astro';
 import { getSiteData, getPage } from '../../lib/api';
+import { getThemeVariables, loadSiteConfig } from '../../lib/config';
 
 const { uuid } = Astro.params;
 
@@ -38,14 +39,20 @@ try {
 }
 
 const { menu, site_data } = siteData;
+const siteConfig = loadSiteConfig();
+const themeVars = getThemeVariables(siteConfig);
+const displayLogo = site_data.logo || siteConfig.logo;
+const displayName = site_data.app_name || siteConfig.appName;
 ---
 
 <MobileLayout
   title={pageData?.title || 'Page'}
-  logo={site_data.logo}
-  appName={site_data.app_name}
+  logo={displayLogo}
+  appName={displayName}
   menu={menu}
   currentPath={Astro.url.pathname}
+  themeVars={themeVars}
+  headerStyle={siteConfig.headerStyle}
 >
   {error ? (
     <div class="px-4 py-12 text-center">

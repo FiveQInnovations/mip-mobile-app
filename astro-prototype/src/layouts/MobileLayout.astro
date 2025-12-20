@@ -15,9 +15,23 @@ interface Props {
     };
   }>;
   currentPath?: string;
+  themeVars?: Record<string, string>;
+  headerStyle?: 'light' | 'dark';
 }
 
-const { title, logo, appName, menu = [], currentPath = '' } = Astro.props;
+const {
+  title,
+  logo,
+  appName,
+  menu = [],
+  currentPath = '',
+  themeVars = {},
+  headerStyle = 'light',
+} = Astro.props;
+
+const themeStyle = Object.entries(themeVars)
+  .map(([key, value]) => `${key}: ${value}`)
+  .join('; ');
 ---
 
 <html lang="en">
@@ -28,9 +42,13 @@ const { title, logo, appName, menu = [], currentPath = '' } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title} - {appName || 'Mobile App'}</title>
   </head>
-  <body class="bg-white min-h-screen flex flex-col">
+  <body class="min-h-screen flex flex-col" style={themeStyle}>
     <!-- Header -->
-    <header class="bg-blue-600 text-white px-4 py-3 shadow-md">
+    <header
+      class="px-4 py-3 shadow-md"
+      style="background-color: var(--color-primary, #2563eb); color: var(--color-header-text, #ffffff);"
+      data-theme={headerStyle}
+    >
       <div class="flex items-center gap-3 max-w-md mx-auto">
         {logo && (
           <img src={logo} alt={appName || 'Logo'} class="h-8 w-auto" />
@@ -60,5 +78,7 @@ const { title, logo, appName, menu = [], currentPath = '' } = Astro.props;
   
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--color-background, #ffffff);
+  color: var(--color-text, #0f172a);
   }
 </style>
