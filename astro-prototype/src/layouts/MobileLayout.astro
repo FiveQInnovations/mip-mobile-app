@@ -66,6 +66,26 @@ const themeStyle = Object.entries(themeVars)
     {menu.length > 0 && (
       <Navigation menu={menu} currentPath={currentPath} />
     )}
+
+    <script type="module" is:inline>
+      import {
+        ApiError,
+        clearApiCache,
+        expireCacheEntryForTesting,
+        getMenu,
+        getPage,
+        getSiteData,
+      } from '/src/lib/api.ts';
+
+      window.__mipApi = {
+        getSiteData,
+        getMenu,
+        getPage,
+        clearApiCache,
+        expireCacheEntryForTesting,
+        ApiError,
+      };
+    </script>
   </body>
 </html>
 

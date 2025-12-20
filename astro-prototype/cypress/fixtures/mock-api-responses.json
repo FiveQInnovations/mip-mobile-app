@@ -7,12 +7,20 @@
         "type": "content",
         "url": "/page/home-uuid"
       }
+    },
+    {
+      "label": "About",
+      "page": {
+        "uuid": "about-uuid",
+        "type": "content",
+        "url": "/page/about-uuid"
+      }
     }
   ],
   "site_data": {
-    "title": "Mock Site",
-    "app_name": "Mock App",
-    "logo": "/logo.png",
+    "title": "Template Site",
+    "app_name": "",
+    "logo": "",
     "social": [],
     "homepage_type": "navigation"
   }

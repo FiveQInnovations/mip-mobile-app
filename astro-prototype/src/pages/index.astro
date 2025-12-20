@@ -23,7 +23,7 @@ const { menu, site_data } = siteData;
 const siteConfig = loadSiteConfig();
 const themeVars = getThemeVariables(siteConfig);
 const displayLogo = site_data.logo || siteConfig.logo;
-const displayName = site_data.app_name || siteConfig.appName;
+const displayName = siteConfig.appName || site_data.app_name;
 ---
 
 <MobileLayout
@@ -39,13 +39,19 @@ const displayName = site_data.app_name || siteConfig.appName;
     <h1 class="text-2xl font-bold mb-6">{site_data.title}</h1>
     
     <!-- Navigation Homepage -->
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-2 gap-4" data-testid="menu-grid">
       {menu.map((item) => (
         <a
           href={`/page/${item.page.uuid}`}
-          class="block bg-blue-50 border-2 border-blue-200 rounded-lg p-6 text-center hover:bg-blue-100 transition-colors"
+          class="block rounded-lg p-6 text-center transition-colors border"
+          data-testid="menu-item"
+          style="
+            background-color: color-mix(in srgb, var(--color-primary, #2563eb) 10%, var(--color-background, #ffffff));
+            border-color: var(--color-primary, #2563eb);
+            color: var(--color-text, #0f172a);
+          "
         >
-          <h2 class="text-lg font-semibold text-blue-900">
+          <h2 class="text-lg font-semibold">
             {item.label}
           </h2>
         </a>

@@ -42,7 +42,7 @@ const { menu, site_data } = siteData;
 const siteConfig = loadSiteConfig();
 const themeVars = getThemeVariables(siteConfig);
 const displayLogo = site_data.logo || siteConfig.logo;
-const displayName = site_data.app_name || siteConfig.appName;
+const displayName = siteConfig.appName || site_data.app_name;
 ---
 
 <MobileLayout
