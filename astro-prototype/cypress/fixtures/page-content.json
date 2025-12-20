@@ -1,0 +1,9 @@
+{
+  "page_type": "content",
+  "type": "content",
+  "title": "About Page",
+  "cover": null,
+  "page_content": "<p>This is the about page content.</p><p>It contains multiple paragraphs.</p>",
+  "children": [],
+  "has_form": false
+}

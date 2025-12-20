@@ -1,0 +1,9 @@
+{
+  "page_type": "content",
+  "type": "content",
+  "title": "Welcome Home",
+  "cover": "https://via.placeholder.com/800x450",
+  "page_content": "<h2>Welcome to our app</h2><p>This is the homepage content.</p>",
+  "children": [],
+  "has_form": false
+}

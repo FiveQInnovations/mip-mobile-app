@@ -1,0 +1,25 @@
+{
+  "page_type": "collection",
+  "type": "collection",
+  "title": "Featured Collection",
+  "cover": "https://via.placeholder.com/800x450",
+  "children": [
+    {
+      "uuid": "item-1-uuid",
+      "type": "collection-item",
+      "url": "/page/item-1-uuid",
+      "title": "Featured Item 1",
+      "cover": "https://via.placeholder.com/400x225",
+      "date": "2024-01-01"
+    },
+    {
+      "uuid": "item-2-uuid",
+      "type": "collection-item",
+      "url": "/page/item-2-uuid",
+      "title": "Featured Item 2",
+      "cover": "https://via.placeholder.com/400x225",
+      "date": "2024-01-02"
+    }
+  ],
+  "has_form": false
+}

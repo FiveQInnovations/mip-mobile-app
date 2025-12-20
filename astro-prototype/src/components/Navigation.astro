@@ -18,7 +18,7 @@ function isActive(uuid: string): boolean {
 }
 ---
 
-<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg" data-testid="bottom-nav">
   <div class="max-w-md mx-auto">
     <div class="flex justify-around items-center">
       {menu.map((item) => {
@@ -27,6 +27,7 @@ function isActive(uuid: string): boolean {
           <a
             href={`/page/${item.page.uuid}`}
             class="flex flex-col items-center justify-center py-2 px-4 min-w-0 flex-1"
+            data-active={active}
             style={`color: ${
               active
                 ? 'var(--color-primary, #2563eb)'

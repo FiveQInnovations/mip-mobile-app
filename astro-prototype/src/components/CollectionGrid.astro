@@ -9,7 +9,7 @@ interface Props {
 const { children, covers = {} } = Astro.props;
 ---
 
-<div class="px-4 py-6">
+<div class="px-4 py-6" data-testid="collection-grid">
   <div class="grid grid-cols-2 gap-4">
     {children.map((child) => {
       const cover = child.cover ?? covers[child.uuid] ?? null;
@@ -17,6 +17,7 @@ const { children, covers = {} } = Astro.props;
         <a
           href={`/page/${child.uuid}`}
           class="block bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+          data-testid="collection-item"
         >
           {cover && (
             <img
@@ -26,7 +27,7 @@ const { children, covers = {} } = Astro.props;
             />
           )}
           <div class="p-3">
-            <h3 class="text-sm font-medium text-gray-900 line-clamp-2">
+            <h3 class="text-sm font-medium text-gray-900 line-clamp-2" data-testid="item-title">
               {child.title || child.type}
             </h3>
           </div>

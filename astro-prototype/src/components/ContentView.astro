@@ -6,7 +6,7 @@ interface Props {
 const { html } = Astro.props;
 ---
 
-<div class="prose prose-sm max-w-none px-4 py-6">
+<div class="prose prose-sm max-w-none px-4 py-6" data-testid="content-view">
   <div set:html={html} />
 </div>
 

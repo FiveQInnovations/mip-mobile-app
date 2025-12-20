@@ -51,7 +51,9 @@ const themeStyle = Object.entries(themeVars)
     >
       <div class="flex items-center gap-3 max-w-md mx-auto">
         {logo && (
-          <img src={logo} alt={appName || 'Logo'} class="h-8 w-auto" />
+          <a href="/" data-testid="home-link" class="flex items-center">
+            <img src={logo} alt={appName || 'Logo'} class="h-8 w-auto" />
+          </a>
         )}
         <h1 class="text-lg font-semibold">{appName || title}</h1>
       </div>

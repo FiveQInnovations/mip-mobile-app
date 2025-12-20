@@ -1,0 +1,65 @@
+---
+import MobileLayout from '../layouts/MobileLayout.astro';
+import { getSiteData } from '../lib/api';
+import { getThemeVariables, loadSiteConfig } from '../lib/config';
+
+let siteData;
+try {
+  siteData = await getSiteData();
+} catch (error) {
+  console.error('Failed to fetch site data:', error);
+  siteData = {
+    menu: [],
+    site_data: {
+      title: 'Error',
+      app_name: 'Mobile App',
+      logo: null,
+      social: []
+    }
+  };
+}
+
+const { menu, site_data } = siteData;
+const siteConfig = loadSiteConfig();
+const themeVars = getThemeVariables(siteConfig);
+const displayLogo = site_data.logo || siteConfig.logo;
+const displayName = siteConfig.appName || site_data.app_name;
+
+// Get error message from query params or use default
+const errorMessage = Astro.url.searchParams.get('message') || 'Something went wrong';
+---
+
+<MobileLayout
+  title="Error"
+  logo={displayLogo}
+  appName={displayName}
+  menu={menu}
+  currentPath="/error"
+  themeVars={themeVars}
+  headerStyle={siteConfig.headerStyle}
+>
+  <div class="px-4 py-12 text-center">
+    <div class="max-w-md mx-auto">
+      <h1 class="text-2xl font-bold mb-4">Error</h1>
+      <p class="text-gray-600 mb-8">{errorMessage}</p>
+      
+      <div class="flex flex-col gap-4 items-center">
+        <button
+          onclick="window.location.reload()"
+          class="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          data-testid="retry-button"
+        >
+          Retry
+        </button>
+        
+        <a
+          href="/"
+          class="text-blue-600 underline"
+          data-testid="home-link"
+        >
+          Return to Home
+        </a>
+      </div>
+    </div>
+  </div>
+</MobileLayout>

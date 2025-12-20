@@ -1,0 +1,28 @@
+{
+  "menu": [
+    {
+      "label": "Home",
+      "page": {
+        "uuid": "home-uuid",
+        "type": "content",
+        "url": "/page/home-uuid"
+      }
+    },
+    {
+      "label": "About",
+      "page": {
+        "uuid": "about-uuid",
+        "type": "content",
+        "url": "/page/about-uuid"
+      }
+    }
+  ],
+  "site_data": {
+    "title": "Template Site",
+    "app_name": "Test App",
+    "logo": "/favicon.svg",
+    "social": [],
+    "homepage_type": "content",
+    "homepage_content": "homepage-content-uuid"
+  }
+}

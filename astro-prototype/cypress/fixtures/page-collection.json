@@ -1,0 +1,29 @@
+{
+  "page_type": "collection",
+  "type": "collection",
+  "title": "Video Collection",
+  "cover": null,
+  "children": [
+    {
+      "uuid": "video-1-uuid",
+      "type": "collection-item",
+      "url": "/page/video-1-uuid",
+      "title": "Video 1",
+      "cover": "https://via.placeholder.com/400x225",
+      "episode": 1,
+      "series": "Test Series",
+      "date": "2024-01-01"
+    },
+    {
+      "uuid": "video-2-uuid",
+      "type": "collection-item",
+      "url": "/page/video-2-uuid",
+      "title": "Video 2",
+      "cover": "https://via.placeholder.com/400x225",
+      "episode": 2,
+      "series": "Test Series",
+      "date": "2024-01-02"
+    }
+  ],
+  "has_form": false
+}

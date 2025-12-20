@@ -1,9 +1,15 @@
 ---
 import MobileLayout from '../layouts/MobileLayout.astro';
-import { getSiteData } from '../lib/api';
+import ContentView from '../components/ContentView.astro';
+import CollectionGrid from '../components/CollectionGrid.astro';
+import { getSiteData, getPage } from '../lib/api';
 import { getThemeVariables, loadSiteConfig } from '../lib/config';
+import type { HomepageType } from '../lib/api';
 
 let siteData;
+let homepagePageData = null;
+let homepageError: string | null = null;
+
 try {
   siteData = await getSiteData();
 } catch (error) {
@@ -24,6 +30,26 @@ const siteConfig = loadSiteConfig();
 const themeVars = getThemeVariables(siteConfig);
 const displayLogo = site_data.logo || siteConfig.logo;
 const displayName = siteConfig.appName || site_data.app_name;
+
+// Determine homepage type (default to 'navigation' if not specified)
+const homepageType: HomepageType = site_data.homepage_type || 'navigation';
+
+// Fetch content or collection page if needed
+if (homepageType === 'content' && site_data.homepage_content) {
+  try {
+    homepagePageData = await getPage(site_data.homepage_content);
+  } catch (error) {
+    homepageError = error instanceof Error ? error.message : 'Failed to load homepage content';
+    console.error('Failed to fetch homepage content:', error);
+  }
+} else if (homepageType === 'collection' && site_data.homepage_collection) {
+  try {
+    homepagePageData = await getPage(site_data.homepage_collection);
+  } catch (error) {
+    homepageError = error instanceof Error ? error.message : 'Failed to load homepage collection';
+    console.error('Failed to fetch homepage collection:', error);
+  }
+}
 ---
 
 <MobileLayout
@@ -35,33 +61,105 @@ const displayName = siteConfig.appName || site_data.app_name;
   themeVars={themeVars}
   headerStyle={siteConfig.headerStyle}
 >
-  <div class="px-4 py-6">
-    <h1 class="text-2xl font-bold mb-6">{site_data.title}</h1>
-    
-    <!-- Navigation Homepage -->
-    <div class="grid grid-cols-2 gap-4" data-testid="menu-grid">
-      {menu.map((item) => (
-        <a
-          href={`/page/${item.page.uuid}`}
-          class="block rounded-lg p-6 text-center transition-colors border"
-          data-testid="menu-item"
-          style="
-            background-color: color-mix(in srgb, var(--color-primary, #2563eb) 10%, var(--color-background, #ffffff));
-            border-color: var(--color-primary, #2563eb);
-            color: var(--color-text, #0f172a);
-          "
-        >
-          <h2 class="text-lg font-semibold">
-            {item.label}
-          </h2>
-        </a>
-      ))}
-    </div>
-    
-    {menu.length === 0 && (
-      <div class="text-center py-12">
-        <p class="text-gray-600">No menu items available</p>
+  {homepageType === 'navigation' && (
+    <div class="px-4 py-6">
+      <h1 class="text-2xl font-bold mb-6">{site_data.title}</h1>
+      
+      <!-- Navigation Homepage -->
+      <div class="grid grid-cols-2 gap-4" data-testid="menu-grid">
+        {menu.map((item) => (
+          <a
+            href={`/page/${item.page.uuid}`}
+            class="block rounded-lg p-6 text-center transition-colors border hover:shadow-md"
+            data-testid="menu-item"
+            style="
+              background-color: color-mix(in srgb, var(--color-primary, #2563eb) 10%, var(--color-background, #ffffff));
+              border-color: var(--color-primary, #2563eb);
+              color: var(--color-text, #0f172a);
+            "
+          >
+            <h2 class="text-lg font-semibold">
+              {item.label}
+            </h2>
+          </a>
+        ))}
       </div>
-    )}
-  </div>
+      
+      {menu.length === 0 && (
+        <div class="text-center py-12">
+          <p class="text-gray-600">No menu items available</p>
+        </div>
+      )}
+    </div>
+  )}
+
+  {homepageType === 'content' && (
+    <>
+      {homepageError ? (
+        <div class="px-4 py-12 text-center">
+          <h2 class="text-xl font-bold mb-2">Error Loading Content</h2>
+          <p class="text-gray-600 mb-4">{homepageError}</p>
+          <a href="/" class="text-blue-600 underline">Return to Home</a>
+        </div>
+      ) : homepagePageData ? (
+        <>
+          {homepagePageData.cover && (
+            <img
+              src={homepagePageData.cover}
+              alt={homepagePageData.title}
+              class="w-full aspect-video object-cover"
+              data-testid="cover-image"
+            />
+          )}
+          <h1 class="text-2xl font-bold px-4 pt-6 pb-2">{homepagePageData.title}</h1>
+          {homepagePageData.page_content && (
+            <div data-testid="content-view">
+              <ContentView html={homepagePageData.page_content} />
+            </div>
+          )}
+        </>
+      ) : (
+        <div class="px-4 py-12 text-center">
+          <p class="text-gray-600">No content available</p>
+        </div>
+      )}
+    </>
+  )}
+
+  {homepageType === 'collection' && (
+    <>
+      {homepageError ? (
+        <div class="px-4 py-12 text-center">
+          <h2 class="text-xl font-bold mb-2">Error Loading Collection</h2>
+          <p class="text-gray-600 mb-4">{homepageError}</p>
+          <a href="/" class="text-blue-600 underline">Return to Home</a>
+        </div>
+      ) : homepagePageData ? (
+        <>
+          {homepagePageData.cover && (
+            <img
+              src={homepagePageData.cover}
+              alt={homepagePageData.title}
+              class="w-full aspect-video object-cover"
+              data-testid="cover-image"
+            />
+          )}
+          <h1 class="text-2xl font-bold px-4 pt-6 pb-2">{homepagePageData.title}</h1>
+          {homepagePageData.children && homepagePageData.children.length > 0 ? (
+            <div data-testid="collection-grid">
+              <CollectionGrid children={homepagePageData.children} />
+            </div>
+          ) : (
+            <div class="px-4 py-12 text-center">
+              <p class="text-gray-600">No items in this collection</p>
+            </div>
+          )}
+        </>
+      ) : (
+        <div class="px-4 py-12 text-center">
+          <p class="text-gray-600">No collection available</p>
+        </div>
+      )}
+    </>
+  )}
 </MobileLayout>

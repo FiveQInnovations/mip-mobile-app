@@ -1,0 +1,41 @@
+---
+interface Props {
+  logo?: string;
+  appName?: string;
+}
+
+const { logo, appName = 'Loading...' } = Astro.props;
+---
+
+<div class="fixed inset-0 flex flex-col items-center justify-center bg-white z-50" data-testid="splash-screen">
+  {logo && (
+    <img 
+      src={logo} 
+      alt={appName} 
+      class="h-16 w-auto mb-6"
+      data-testid="splash-logo"
+    />
+  )}
+  
+  <div class="flex flex-col items-center gap-3">
+    <div 
+      class="w-8 h-8 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin"
+      data-testid="loading-spinner"
+    ></div>
+    {appName && (
+      <p class="text-gray-600 text-sm">{appName}</p>
+    )}
+  </div>
+</div>
+
+<style>
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+</style>
