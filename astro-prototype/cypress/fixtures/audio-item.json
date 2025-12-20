@@ -1,0 +1,15 @@
+{
+  "page_type": "collection-item",
+  "type": "audio",
+  "title": "Sample Audio Episode",
+  "cover": "https://example.com/audio-artwork.jpg",
+  "data": {
+    "audio": {
+      "url": "https://example.com/audio.mp3",
+      "duration": 3600,
+      "artwork": "https://example.com/audio-artwork.jpg",
+      "title": "Sample Audio Episode"
+    },
+    "page_content": "<p>This is an audio page with full metadata.</p>"
+  }
+}

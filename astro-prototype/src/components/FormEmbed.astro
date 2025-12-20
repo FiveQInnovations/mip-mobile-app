@@ -1,0 +1,98 @@
+---
+import { loadSiteConfig } from '../lib/config';
+
+interface Props {
+  pageUrl?: string;
+  pageTitle?: string;
+  embedMode?: 'iframe' | 'button';
+}
+
+const { pageUrl, pageTitle = 'Complete Form', embedMode = 'iframe' } = Astro.props;
+const config = loadSiteConfig();
+const apiBaseUrl = config.apiBaseUrl || 'https://ws-ffci-copy.ddev.site';
+
+// Construct full URL if relative
+const fullUrl = pageUrl 
+  ? (pageUrl.startsWith('http') ? pageUrl : `${apiBaseUrl}${pageUrl}`)
+  : null;
+---
+
+{embedMode === 'iframe' && fullUrl ? (
+  <div class="form-embed" data-testid="form-embed">
+    <iframe
+      src={fullUrl}
+      class="form-iframe"
+      title={pageTitle}
+      loading="lazy"
+      sandbox="allow-same-origin allow-forms allow-scripts allow-popups"
+    />
+  </div>
+) : (
+  <div class="form-button-container" data-testid="form-embed">
+    <a
+      href={fullUrl || '#'}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="form-button"
+    >
+      <span>{pageTitle}</span>
+      <span class="external-indicator">↗</span>
+    </a>
+    <p class="form-note">Complete this form on our website</p>
+  </div>
+)}
+
+<style>
+  .form-embed {
+    width: 100%;
+    margin: 1.5em 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .form-iframe {
+    width: 100%;
+    min-height: 600px;
+    border: none;
+    display: block;
+  }
+  
+  .form-button-container {
+    padding: 1.5em;
+    text-align: center;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    margin: 1.5em 0;
+  }
+  
+  .form-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.75em 1.5em;
+    background-color: var(--color-primary, #2563eb);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    min-height: 44px;
+    transition: background-color 0.2s;
+  }
+  
+  .form-button:hover,
+  .form-button:focus {
+    background-color: var(--color-secondary, #0ea5e9);
+  }
+  
+  .form-button .external-indicator {
+    font-size: 0.9em;
+    opacity: 0.9;
+  }
+  
+  .form-note {
+    margin-top: 0.75em;
+    font-size: 0.875em;
+    color: #6b7280;
+  }
+</style>

@@ -1,0 +1,9 @@
+{
+  "page_type": "content",
+  "type": "content",
+  "title": "Page with Cover Image",
+  "cover": "https://example.com/cover.jpg",
+  "page_content": "<p>This page has a cover image.</p>",
+  "children": [],
+  "has_form": false
+}

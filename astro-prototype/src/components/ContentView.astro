@@ -1,61 +1,298 @@
 ---
+import { loadSiteConfig } from '../lib/config';
+import type { MenuItem } from '../lib/api';
+
 interface Props {
   html: string;
 }
 
 const { html } = Astro.props;
+const config = loadSiteConfig();
+const apiBaseUrl = config.apiBaseUrl || 'https://ws-ffci-copy.ddev.site';
+
+// Parse HTML and process links
+function processLinks(htmlContent: string, baseUrl: string): string {
+  // Use a simple regex to find and replace links
+  // This handles both relative and absolute URLs
+  const linkRegex = /<a\s+([^>]*href=["']([^"']+)["'][^>]*)>/gi;
+  
+  return htmlContent.replace(linkRegex, (match, attrs, href) => {
+    try {
+      const url = new URL(href, baseUrl);
+      const currentDomain = new URL(baseUrl).hostname;
+      const isInternal = url.hostname === currentDomain || href.startsWith('/');
+      
+      if (isInternal) {
+        // Mark as internal link with data attribute
+        // Client-side JS will handle navigation
+        return `<a ${attrs} data-internal-link="true" data-original-href="${href}">`;
+      } else {
+        // External link - add target="_blank" and rel="noopener noreferrer"
+        const hasTarget = attrs.includes('target=');
+        const hasRel = attrs.includes('rel=');
+        let newAttrs = attrs;
+        
+        if (!hasTarget) {
+          newAttrs += ' target="_blank"';
+        }
+        if (!hasRel) {
+          newAttrs += ' rel="noopener noreferrer"';
+        }
+        newAttrs += ' data-external-link="true"';
+        
+        return `<a ${newAttrs}>`;
+      }
+    } catch {
+      // If URL parsing fails, treat as internal relative link
+      if (href.startsWith('/') || href.startsWith('./') || href.startsWith('../')) {
+        return `<a ${attrs} data-internal-link="true" data-original-href="${href}">`;
+      }
+      // Otherwise, treat as external
+      const hasTarget = attrs.includes('target=');
+      const hasRel = attrs.includes('rel=');
+      let newAttrs = attrs;
+      if (!hasTarget) {
+        newAttrs += ' target="_blank"';
+      }
+      if (!hasRel) {
+        newAttrs += ' rel="noopener noreferrer"';
+      }
+      newAttrs += ' data-external-link="true"';
+      return `<a ${newAttrs}>`;
+    }
+  });
+}
+
+const processedHtml = processLinks(html, apiBaseUrl);
 ---
 
-<div class="prose prose-sm max-w-none px-4 py-6" data-testid="content-view">
-  <div set:html={html} />
+<div class="content-view prose prose-sm max-w-none px-4 py-6" data-testid="content-view">
+  <div set:html={processedHtml} />
 </div>
 
+<script>
+  // Build URL-to-UUID mapping from menu data
+  let urlToUuidMap: Map<string, string> | null = null;
+  
+  function buildUrlMap() {
+    if (urlToUuidMap) return urlToUuidMap;
+    
+    urlToUuidMap = new Map();
+    
+    // Try to get menu data from window (set by layout or API)
+    if (window.__mipApi) {
+      window.__mipApi.getMenu().then((menu: MenuItem[]) => {
+        menu.forEach((item: MenuItem) => {
+          if (item.page?.url && item.page?.uuid) {
+            // Normalize URL - remove domain, keep path
+            const url = new URL(item.page.url, window.location.origin);
+            const path = url.pathname;
+            urlToUuidMap!.set(path, item.page.uuid);
+            // Also map full URL
+            urlToUuidMap!.set(item.page.url, item.page.uuid);
+          }
+        });
+      }).catch(() => {
+        // Silently fail if menu can't be loaded
+      });
+    }
+    
+    return urlToUuidMap;
+  }
+  
+  // Handle internal link clicks
+  document.addEventListener('click', (e) => {
+    const link = (e.target as HTMLElement).closest('a[data-internal-link="true"]') as HTMLAnchorElement;
+    if (!link) return;
+    
+    e.preventDefault();
+    const originalHref = link.getAttribute('data-original-href') || link.getAttribute('href') || '';
+    
+    if (!originalHref) return;
+    
+    const map = buildUrlMap();
+    
+    // Try to find UUID in map
+    let uuid: string | undefined;
+    
+    // Try exact match first
+    uuid = map.get(originalHref);
+    
+    // Try normalized path
+    if (!uuid) {
+      try {
+        const url = new URL(originalHref, window.location.origin);
+        uuid = map.get(url.pathname);
+      } catch {
+        // If URL parsing fails, try as-is
+        uuid = map.get(originalHref);
+      }
+    }
+    
+    // Try relative path match
+    if (!uuid && originalHref.startsWith('/')) {
+      uuid = map.get(originalHref);
+    }
+    
+    if (uuid) {
+      // Navigate to page using UUID
+      window.location.href = `/page/${uuid}`;
+      return;
+    }
+    
+    // Fallback: Try to extract UUID from URL pattern
+    // Some URLs might have UUIDs embedded
+    const uuidPattern = /[a-zA-Z0-9]{16}/;
+    const uuidMatch = originalHref.match(uuidPattern);
+    
+    if (uuidMatch) {
+      window.location.href = `/page/${uuidMatch[0]}`;
+      return;
+    }
+    
+    // Last resort: navigate to original URL (might be a slug that needs API resolution)
+    // For now, we'll navigate and let the server handle it
+    if (originalHref.startsWith('/') || originalHref.startsWith('./') || originalHref.startsWith('../')) {
+      window.location.href = originalHref;
+    } else {
+      // External or malformed - navigate anyway
+      window.location.href = originalHref;
+    }
+  });
+  
+  // Build map on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', buildUrlMap);
+  } else {
+    buildUrlMap();
+  }
+</script>
+
 <style>
-  .prose {
-    color: #374151;
+  .content-view {
+    color: var(--color-text, #374151);
     line-height: 1.75;
   }
   
-  .prose :global(p) {
+  .content-view :global(p) {
     margin-top: 1em;
     margin-bottom: 1em;
+    font-size: 1rem;
   }
   
-  .prose :global(h1),
-  .prose :global(h2),
-  .prose :global(h3) {
+  .content-view :global(h1),
+  .content-view :global(h2),
+  .content-view :global(h3),
+  .content-view :global(h4),
+  .content-view :global(h5),
+  .content-view :global(h6) {
     font-weight: 700;
     margin-top: 1.5em;
     margin-bottom: 0.5em;
+    color: var(--color-text, #0f172a);
   }
   
-  .prose :global(h1) {
+  .content-view :global(h1) {
+    font-size: 1.75em;
+  }
+  
+  .content-view :global(h2) {
     font-size: 1.5em;
   }
   
-  .prose :global(h2) {
+  .content-view :global(h3) {
     font-size: 1.25em;
   }
   
-  .prose :global(img) {
+  .content-view :global(img) {
     max-width: 100%;
     height: auto;
     border-radius: 8px;
     margin: 1em 0;
+    display: block;
   }
   
-  .prose :global(a) {
-    color: #2563eb;
+  .content-view :global(a) {
+    color: var(--color-primary, #2563eb);
     text-decoration: underline;
+    word-break: break-word;
   }
   
-  .prose :global(ul),
-  .prose :global(ol) {
+  .content-view :global(a[data-external-link="true"]) {
+    position: relative;
+    padding-right: 1.2em;
+  }
+  
+  .content-view :global(a[data-external-link="true"]::after) {
+    content: '↗';
+    position: absolute;
+    right: 0;
+    font-size: 0.85em;
+    opacity: 0.7;
+  }
+  
+  .content-view :global(ul),
+  .content-view :global(ol) {
     padding-left: 1.5em;
     margin: 1em 0;
   }
   
-  .prose :global(li) {
+  .content-view :global(li) {
     margin: 0.5em 0;
+  }
+  
+  .content-view :global(blockquote) {
+    border-left: 4px solid var(--color-primary, #2563eb);
+    padding-left: 1em;
+    margin: 1em 0;
+    font-style: italic;
+    color: #6b7280;
+  }
+  
+  .content-view :global(code) {
+    background-color: #f3f4f6;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: monospace;
+  }
+  
+  .content-view :global(pre) {
+    background-color: #f3f4f6;
+    padding: 1em;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1em 0;
+  }
+  
+  .content-view :global(pre code) {
+    background-color: transparent;
+    padding: 0;
+  }
+  
+  .content-view :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+  }
+  
+  .content-view :global(th),
+  .content-view :global(td) {
+    border: 1px solid #e5e7eb;
+    padding: 0.5em;
+    text-align: left;
+  }
+  
+  .content-view :global(th) {
+    background-color: #f9fafb;
+    font-weight: 600;
+  }
+  
+  /* Touch-friendly targets */
+  .content-view :global(a),
+  .content-view :global(button) {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
 </style>

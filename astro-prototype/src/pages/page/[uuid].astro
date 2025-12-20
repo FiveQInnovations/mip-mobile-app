@@ -4,6 +4,7 @@ import ContentView from '../../components/ContentView.astro';
 import CollectionGrid from '../../components/CollectionGrid.astro';
 import VideoPlayer from '../../components/VideoPlayer.astro';
 import AudioPlayer from '../../components/AudioPlayer.astro';
+import FormEmbed from '../../components/FormEmbed.astro';
 import { getSiteData, getPage } from '../../lib/api';
 import { getThemeVariables, loadSiteConfig } from '../../lib/config';
 
@@ -75,6 +76,15 @@ const displayName = siteConfig.appName || site_data.app_name;
       {pageData.page_content && (
         <ContentView html={pageData.page_content} />
       )}
+      {pageData.has_form && (
+        <div class="px-4">
+          <FormEmbed 
+            pageUrl={`/page/${uuid}`}
+            pageTitle={`Complete ${pageData.title}`}
+            embedMode="iframe"
+          />
+        </div>
+      )}
       {pageData.children && pageData.children.length > 0 && (
         <div class="px-4 py-6">
           <h2 class="text-xl font-bold mb-4">Related Pages</h2>
@@ -121,7 +131,7 @@ const displayName = siteConfig.appName || site_data.app_name;
       <h1 class="text-2xl font-bold px-4 pt-6 pb-2">{pageData.title}</h1>
       
       {pageData.type === 'video' && pageData.data?.video && (
-        <VideoPlayer video={pageData.data.video} />
+        <VideoPlayer video={pageData.data.video} poster={pageData.cover} />
       )}
       
       {pageData.type === 'audio' && pageData.data?.audio && (
@@ -130,6 +140,15 @@ const displayName = siteConfig.appName || site_data.app_name;
       
       {pageData.data?.page_content && (
         <ContentView html={pageData.data.page_content} />
+      )}
+      {pageData.has_form && (
+        <div class="px-4">
+          <FormEmbed 
+            pageUrl={`/page/${uuid}`}
+            pageTitle={`Complete ${pageData.title}`}
+            embedMode="iframe"
+          />
+        </div>
       )}
     </>
   ) : (

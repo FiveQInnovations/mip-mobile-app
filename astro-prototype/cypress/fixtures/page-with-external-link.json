@@ -1,0 +1,9 @@
+{
+  "page_type": "content",
+  "type": "content",
+  "title": "Page with External Link",
+  "cover": null,
+  "page_content": "<p>This page has an <a href=\"https://example.com\">external link</a> to another website.</p><p>And another <a href=\"https://google.com\">external link</a>.</p>",
+  "children": [],
+  "has_form": false
+}

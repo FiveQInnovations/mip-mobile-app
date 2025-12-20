@@ -1,0 +1,14 @@
+{
+  "page_type": "collection-item",
+  "type": "video",
+  "title": "Sample Direct Video",
+  "cover": "https://example.com/poster.jpg",
+  "data": {
+    "video": {
+      "source": "url",
+      "url": "https://example.com/video.mp4",
+      "title": "Sample Direct Video"
+    },
+    "page_content": "<p>This is a direct video URL page.</p>"
+  }
+}

@@ -1,40 +1,84 @@
 ---
+import type { VideoData } from '../lib/api';
+import 'lite-youtube-embed/src/lite-yt-embed.css';
+
 interface Props {
-  video: {
-    source: string;
-    url?: string;
-  };
+  video: VideoData;
   title?: string;
+  poster?: string | null;
 }
 
-const { video, title } = Astro.props;
+const { video, title, poster } = Astro.props;
+
+// Extract YouTube ID from URL if needed
+function getYouTubeId(video: VideoData): string | null {
+  if (video.source === 'youtube' && video.id) {
+    return video.id;
+  }
+  if (video.url) {
+    const ytMatch = video.url.match(
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/
+    );
+    if (ytMatch) return ytMatch[1];
+  }
+  return null;
+}
+
+// Extract Vimeo ID from URL if needed
+function getVimeoId(video: VideoData): string | null {
+  if (video.source === 'vimeo' && video.id) {
+    return video.id;
+  }
+  if (video.url) {
+    const vimeoMatch = video.url.match(/vimeo\.com\/(\d+)/);
+    if (vimeoMatch) return vimeoMatch[1];
+  }
+  return null;
+}
+
+const youtubeId = getYouTubeId(video);
+const vimeoId = getVimeoId(video);
 ---
 
-<div class="px-4 py-6">
+<div class="px-4 py-6" data-testid="video-player">
   {title && (
     <h2 class="text-xl font-bold mb-4">{title}</h2>
   )}
   
   <div class="bg-black rounded-lg overflow-hidden">
-    {video.source === 'url' && video.url ? (
+    {youtubeId ? (
+      <!-- YouTube embed using lite-youtube-embed -->
+      <lite-youtube
+        videoid={youtubeId}
+        class="w-full aspect-video"
+        style={`background-image: url('https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg');`}
+      ></lite-youtube>
+    ) : vimeoId ? (
+      <!-- Vimeo embed -->
+      <div class="aspect-video flex items-center justify-center bg-gray-900">
+        <iframe
+          src={`https://player.vimeo.com/video/${vimeoId}?title=0&byline=0&portrait=0`}
+          class="w-full h-full"
+          frameborder="0"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen
+          data-testid="vimeo-iframe"
+        ></iframe>
+      </div>
+    ) : video.source === 'url' && video.url ? (
+      <!-- Direct video URL with HTML5 player -->
       <video
         controls
         class="w-full aspect-video"
         preload="metadata"
+        poster={poster || undefined}
+        data-testid="video-element"
       >
         <source src={video.url} type="video/mp4" />
+        <source src={video.url} type="video/webm" />
+        <source src={video.url} type="video/ogg" />
         Your browser does not support the video tag.
       </video>
-    ) : video.url ? (
-      <div class="aspect-video flex items-center justify-center bg-gray-900">
-        <iframe
-          src={video.url}
-          class="w-full h-full"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        />
-      </div>
     ) : (
       <div class="aspect-video flex items-center justify-center text-white">
         <p>Video source not available</p>
@@ -42,3 +86,10 @@ const { video, title } = Astro.props;
     )}
   </div>
 </div>
+
+<!-- Load lite-youtube-embed JS -->
+<script>
+  if (typeof window !== 'undefined' && !customElements.get('lite-youtube')) {
+    import('lite-youtube-embed/src/lite-yt-embed.js');
+  }
+</script>

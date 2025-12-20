@@ -1,0 +1,9 @@
+{
+  "page_type": "content",
+  "type": "content",
+  "title": "Page with Internal Link",
+  "cover": null,
+  "page_content": "<p>This page has an <a href=\"/about\">internal link</a> to another page.</p><p>And another <a href=\"https://ws-ffci-copy.ddev.site/chapters\">same-domain link</a>.</p>",
+  "children": [],
+  "has_form": false
+}
