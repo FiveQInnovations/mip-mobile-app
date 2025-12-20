@@ -4,6 +4,7 @@ React Native mobile app for FFCI (Firefighters for Christ International) built w
 
 ## Cursor Rule
 - Commit as you work, but only in the correct project: `astro-prototype/` for the Astro PWA, `plugins/` for the Kirby plugin, `sites/` for the Kirby site. Check the folder path before staging so changes land in the right repo.
+- Always verify changes by running the relevant Cypress specs, and run the full Cypress suite (`npx cypress run`) and ensure it passes before marking a task complete.
 
 ## Project Overview
 
