@@ -1,0 +1,64 @@
+---
+import '../styles/global.css';
+import Navigation from '../components/Navigation.astro';
+
+interface Props {
+  title: string;
+  logo?: string;
+  appName?: string;
+  menu?: Array<{
+    label: string;
+    page: {
+      uuid: string;
+      type: string;
+      url: string;
+    };
+  }>;
+  currentPath?: string;
+}
+
+const { title, logo, appName, menu = [], currentPath = '' } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} - {appName || 'Mobile App'}</title>
+  </head>
+  <body class="bg-white min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white px-4 py-3 shadow-md">
+      <div class="flex items-center gap-3 max-w-md mx-auto">
+        {logo && (
+          <img src={logo} alt={appName || 'Logo'} class="h-8 w-auto" />
+        )}
+        <h1 class="text-lg font-semibold">{appName || title}</h1>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto pb-20 max-w-md mx-auto w-full">
+      <slot />
+    </main>
+
+    <!-- Bottom Navigation -->
+    {menu.length > 0 && (
+      <Navigation menu={menu} currentPath={currentPath} />
+    )}
+  </body>
+</html>
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  }
+</style>

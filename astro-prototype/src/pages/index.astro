@@ -1,0 +1,54 @@
+---
+import MobileLayout from '../layouts/MobileLayout.astro';
+import { getSiteData } from '../lib/api';
+
+let siteData;
+try {
+  siteData = await getSiteData();
+} catch (error) {
+  console.error('Failed to fetch site data:', error);
+  siteData = {
+    menu: [],
+    site_data: {
+      title: 'Error',
+      app_name: 'Mobile App',
+      logo: null,
+      social: []
+    }
+  };
+}
+
+const { menu, site_data } = siteData;
+---
+
+<MobileLayout
+  title={site_data.title}
+  logo={site_data.logo}
+  appName={site_data.app_name}
+  menu={menu}
+  currentPath="/"
+>
+  <div class="px-4 py-6">
+    <h1 class="text-2xl font-bold mb-6">{site_data.title}</h1>
+    
+    <!-- Navigation Homepage -->
+    <div class="grid grid-cols-2 gap-4">
+      {menu.map((item) => (
+        <a
+          href={`/page/${item.page.uuid}`}
+          class="block bg-blue-50 border-2 border-blue-200 rounded-lg p-6 text-center hover:bg-blue-100 transition-colors"
+        >
+          <h2 class="text-lg font-semibold text-blue-900">
+            {item.label}
+          </h2>
+        </a>
+      ))}
+    </div>
+    
+    {menu.length === 0 && (
+      <div class="text-center py-12">
+        <p class="text-gray-600">No menu items available</p>
+      </div>
+    )}
+  </div>
+</MobileLayout>

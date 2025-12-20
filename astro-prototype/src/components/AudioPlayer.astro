@@ -1,0 +1,25 @@
+---
+interface Props {
+  audio: any;
+  title?: string;
+}
+
+const { audio, title } = Astro.props;
+---
+
+<div class="px-4 py-6">
+  {title && (
+    <h2 class="text-xl font-bold mb-4">{title}</h2>
+  )}
+  
+  <div class="bg-white rounded-lg shadow-md p-4">
+    {audio?.url ? (
+      <audio controls class="w-full">
+        <source src={audio.url} type="audio/mpeg" />
+        Your browser does not support the audio tag.
+      </audio>
+    ) : (
+      <p class="text-gray-600">Audio source not available</p>
+    )}
+  </div>
+</div>

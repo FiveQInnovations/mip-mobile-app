@@ -1,0 +1,44 @@
+---
+interface Props {
+  video: {
+    source: string;
+    url?: string;
+  };
+  title?: string;
+}
+
+const { video, title } = Astro.props;
+---
+
+<div class="px-4 py-6">
+  {title && (
+    <h2 class="text-xl font-bold mb-4">{title}</h2>
+  )}
+  
+  <div class="bg-black rounded-lg overflow-hidden">
+    {video.source === 'url' && video.url ? (
+      <video
+        controls
+        class="w-full aspect-video"
+        preload="metadata"
+      >
+        <source src={video.url} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    ) : video.url ? (
+      <div class="aspect-video flex items-center justify-center bg-gray-900">
+        <iframe
+          src={video.url}
+          class="w-full h-full"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        />
+      </div>
+    ) : (
+      <div class="aspect-video flex items-center justify-center text-white">
+        <p>Video source not available</p>
+      </div>
+    )}
+  </div>
+</div>
