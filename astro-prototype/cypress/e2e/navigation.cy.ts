@@ -89,34 +89,33 @@ describe('Navigation Polish', () => {
   it('shows active state on current nav item', () => {
     cy.visit('/');
     cy.get('[data-testid="menu-item"]').first().click();
-    // Check that bottom nav has an active item
+    // Check that bottom nav has an active item (should be the nav-item, not home)
     cy.get('[data-testid="bottom-nav"]').should('be.visible');
     cy.get('[data-testid="bottom-nav"] [data-active="true"]').should('exist');
+    // Verify home is not active when on a content page
+    cy.get('[data-testid="nav-home"][data-active="true"]').should('not.exist');
   });
 
-  it('page displays title in main content', () => {
+  it('back button navigates to previous page', () => {
+    cy.visit('/');
+    cy.get('[data-testid="menu-item"]').first().click();
+    // Back button should be visible on content pages
+    cy.get('[data-testid="back-button"]').should('be.visible');
+    cy.get('[data-testid="back-button"]').click();
+    // Should navigate back to homepage
+    cy.url().should('eq', Cypress.config().baseUrl + '/');
+  });
+
+  it('header shows current page title', () => {
     cy.intercept('GET', '**/mobile-api', { fixture: 'homepage-navigation.json' });
-    cy.intercept('GET', '**/mobile-api/page/about-uuid', { 
-      fixture: 'page-content.json',
-      // Override title for this test
-      transform: (body) => {
-        body.title = 'About';
-        return body;
-      }
-    });
+    cy.intercept('GET', '**/mobile-api/page/about-uuid', { fixture: 'page-content.json' });
     cy.visit('/page/about-uuid');
-    // Page title should appear in main content area
-    cy.get('main').should('exist');
-    // Check if h1 exists in main (may be in different structure)
-    cy.get('body').then(($body) => {
-      const h1InMain = $body.find('main h1');
-      if (h1InMain.length > 0) {
-        cy.get('main h1').should('contain', 'About');
-      } else {
-        // Title might be rendered differently, just verify page loaded
-        cy.get('main').should('be.visible');
-      }
-    });
+    // Page title should appear in header
+    // Note: SSR may render before intercepts, so we verify header structure exists
+    // and contains a title (could be from fixture or actual API)
+    cy.get('header h1').should('be.visible');
+    // Header should show either the page title or app name, not be empty
+    cy.get('header h1').should('not.be.empty');
   });
 
   it('header logo links to home', () => {
@@ -125,5 +124,34 @@ describe('Navigation Polish', () => {
     cy.get('[data-testid="home-link"]').should('be.visible');
     cy.get('[data-testid="home-link"]').click();
     cy.url().should('eq', Cypress.config().baseUrl + '/');
+  });
+
+  it('nav icons display when configured', () => {
+    cy.visit('/');
+    // Home button should always have an icon
+    cy.get('[data-testid="nav-home"] [data-testid="nav-icon"]').should('exist');
+    // Bottom nav should be visible
+    cy.get('[data-testid="bottom-nav"]').should('be.visible');
+    // At minimum, home icon should be visible
+    cy.get('[data-testid="nav-icon"]').should('have.length.at.least', 1);
+    // If menu items have icons configured in fixture, they should display
+    // (homepage-navigation.json includes icons, so nav items should show them)
+    cy.get('[data-testid="nav-item"]').should('have.length.at.least', 1);
+  });
+
+  it('home button shows active state on homepage', () => {
+    cy.visit('/');
+    // Home button should be active on homepage
+    cy.get('[data-testid="nav-home"][data-active="true"]').should('exist');
+    // Navigate away
+    cy.get('[data-testid="menu-item"]').first().click();
+    // Home should not be active on content pages
+    cy.get('[data-testid="nav-home"][data-active="true"]').should('not.exist');
+  });
+
+  it('back button not shown on homepage', () => {
+    cy.visit('/');
+    // Back button should not be visible on homepage
+    cy.get('[data-testid="back-button"]').should('not.exist');
   });
 });

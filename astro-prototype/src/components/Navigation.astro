@@ -1,45 +1,182 @@
 ---
+import type { MenuItem } from '../lib/api';
+
 interface Props {
-  menu: Array<{
-    label: string;
-    page: {
-      uuid: string;
-      type: string;
-      url: string;
-    };
-  }>;
+  menu: MenuItem[];
   currentPath?: string;
+  isHomePage?: boolean;
 }
 
-const { menu, currentPath = '' } = Astro.props;
+const { menu, currentPath = '', isHomePage = false } = Astro.props;
 
 function isActive(uuid: string): boolean {
+  if (isHomePage) return false;
   return currentPath.includes(uuid);
+}
+
+function isHomeActive(): boolean {
+  return isHomePage;
+}
+
+// Home button always present, then max 4 menu items visible (total 5), rest go to "More" menu
+const MAX_MENU_ITEMS = 4;
+const visibleItems = menu.slice(0, MAX_MENU_ITEMS);
+const overflowItems = menu.slice(MAX_MENU_ITEMS);
+
+function renderIcon(label: string, icon?: string): string {
+  if (!icon) {
+    // Default icon based on first letter or common patterns
+    const firstChar = label.charAt(0).toUpperCase();
+    return `<span class="text-lg">${firstChar}</span>`;
+  }
+  
+  // If icon is a URL or path, render as image
+  if (icon.startsWith('http') || icon.startsWith('/') || icon.startsWith('./')) {
+    return `<img src="${icon}" alt="${label}" class="w-5 h-5 object-contain" />`;
+  }
+  
+  // If icon looks like SVG, render inline
+  if (icon.trim().startsWith('<svg')) {
+    return icon;
+  }
+  
+  // Otherwise treat as emoji or symbol
+  return `<span class="text-lg">${icon}</span>`;
 }
 ---
 
-<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg" data-testid="bottom-nav">
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg safe-area-bottom" data-testid="bottom-nav">
   <div class="max-w-md mx-auto">
     <div class="flex justify-around items-center">
-      {menu.map((item) => {
+      {/* Home button - always present */}
+      <a
+        href="/"
+        class="flex flex-col items-center justify-center py-2 px-4 min-w-0 flex-1"
+        data-active={isHomeActive()}
+        data-testid="nav-home"
+        style={`color: ${
+          isHomeActive()
+            ? 'var(--color-primary, #2563eb)'
+            : 'var(--color-text, #4b5563)'
+        };`}
+      >
+        <span class="text-lg mb-1" set:html={renderIcon('Home', '🏠')} data-testid="nav-icon"></span>
+        <span class="text-xs font-medium truncate w-full text-center">Home</span>
+      </a>
+
+      {/* Visible menu items */}
+      {visibleItems.map((item) => {
         const active = isActive(item.page.uuid);
         return (
           <a
             href={`/page/${item.page.uuid}`}
             class="flex flex-col items-center justify-center py-2 px-4 min-w-0 flex-1"
             data-active={active}
+            data-testid="nav-item"
             style={`color: ${
               active
                 ? 'var(--color-primary, #2563eb)'
                 : 'var(--color-text, #4b5563)'
             };`}
           >
+            {item.icon && (
+              <span class="text-lg mb-1" set:html={renderIcon(item.label, item.icon)} data-testid="nav-icon"></span>
+            )}
             <span class="text-xs font-medium truncate w-full text-center">
               {item.label}
             </span>
           </a>
         );
       })}
+
+      {/* More menu if overflow */}
+      {overflowItems.length > 0 && (
+        <div class="flex flex-col items-center justify-center py-2 px-4 min-w-0 flex-1 relative" data-testid="nav-more">
+          <button
+            class="flex flex-col items-center justify-center w-full"
+            type="button"
+            id="more-menu-button"
+            aria-label="More menu"
+            style="color: var(--color-text, #4b5563);"
+          >
+            <span class="text-lg mb-1">⋯</span>
+            <span class="text-xs font-medium">More</span>
+          </button>
+          
+          {/* Dropdown menu - hidden by default, shown on click */}
+          <div
+            class="hidden absolute bottom-full left-0 right-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+            id="more-menu-dropdown"
+          >
+            {overflowItems.map((item) => {
+              const active = isActive(item.page.uuid);
+              return (
+                <a
+                  href={`/page/${item.page.uuid}`}
+                  class="flex items-center gap-2 px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                  data-active={active}
+                  style={`color: ${
+                    active
+                      ? 'var(--color-primary, #2563eb)'
+                      : 'var(--color-text, #4b5563)'
+                  };`}
+                >
+                  {item.icon && (
+                    <span class="text-base" set:html={renderIcon(item.label, item.icon)}></span>
+                  )}
+                  <span class="text-sm font-medium">{item.label}</span>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   </div>
 </nav>
+
+<script>
+  // Handle more menu toggle
+  const moreButton = document.getElementById('more-menu-button');
+  const moreDropdown = document.getElementById('more-menu-dropdown');
+  
+  if (moreButton && moreDropdown) {
+    moreButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isHidden = moreDropdown.classList.contains('hidden');
+      
+      // Close all other dropdowns
+      document.querySelectorAll('#more-menu-dropdown').forEach((dropdown) => {
+        if (dropdown !== moreDropdown) {
+          dropdown.classList.add('hidden');
+        }
+      });
+      
+      // Toggle this dropdown
+      moreDropdown.classList.toggle('hidden', !isHidden);
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', () => {
+      moreDropdown.classList.add('hidden');
+    });
+    
+    // Prevent dropdown from closing when clicking inside it
+    moreDropdown.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  }
+</script>
+
+<style>
+  /* Active state styling */
+  nav a[data-active="true"],
+  nav button[data-active="true"] {
+    font-weight: 600;
+  }
+  
+  /* Safe area for notched devices */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+</style>

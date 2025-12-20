@@ -2,6 +2,7 @@
   "menu": [
     {
       "label": "Home",
+      "icon": "🏠",
       "page": {
         "uuid": "home-uuid",
         "type": "content",
@@ -10,6 +11,7 @@
     },
     {
       "label": "About",
+      "icon": "ℹ️",
       "page": {
         "uuid": "about-uuid",
         "type": "content",
@@ -17,11 +19,39 @@
       }
     },
     {
+      "label": "Chapters",
+      "icon": "📚",
+      "page": {
+        "uuid": "chapters-uuid",
+        "type": "collection",
+        "url": "/page/chapters-uuid"
+      }
+    },
+    {
+      "label": "Videos",
+      "icon": "🎥",
+      "page": {
+        "uuid": "videos-uuid",
+        "type": "collection",
+        "url": "/page/videos-uuid"
+      }
+    },
+    {
       "label": "Contact",
+      "icon": "✉️",
       "page": {
         "uuid": "contact-uuid",
         "type": "content",
         "url": "/page/contact-uuid"
+      }
+    },
+    {
+      "label": "More Items",
+      "icon": "➕",
+      "page": {
+        "uuid": "more-uuid",
+        "type": "content",
+        "url": "/page/more-uuid"
       }
     }
   ],

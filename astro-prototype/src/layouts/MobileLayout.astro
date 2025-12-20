@@ -1,22 +1,17 @@
 ---
 import '../styles/global.css';
 import Navigation from '../components/Navigation.astro';
+import type { MenuItem } from '../lib/api';
 
 interface Props {
   title: string;
   logo?: string;
   appName?: string;
-  menu?: Array<{
-    label: string;
-    page: {
-      uuid: string;
-      type: string;
-      url: string;
-    };
-  }>;
+  menu?: MenuItem[];
   currentPath?: string;
   themeVars?: Record<string, string>;
   headerStyle?: 'light' | 'dark';
+  showBackButton?: boolean;
 }
 
 const {
@@ -27,11 +22,18 @@ const {
   currentPath = '',
   themeVars = {},
   headerStyle = 'light',
+  showBackButton = false,
 } = Astro.props;
 
 const themeStyle = Object.entries(themeVars)
   .map(([key, value]) => `${key}: ${value}`)
   .join('; ');
+
+// Determine if we're on homepage
+const isHomePage = currentPath === '/' || currentPath === '';
+
+// Show back button if explicitly requested or if we're on a content page (not homepage)
+const shouldShowBack = showBackButton || (!isHomePage && currentPath.startsWith('/page/'));
 ---
 
 <html lang="en">
@@ -45,17 +47,45 @@ const themeStyle = Object.entries(themeVars)
   <body class="min-h-screen flex flex-col" style={themeStyle}>
     <!-- Header -->
     <header
-      class="px-4 py-3 shadow-md"
+      class="px-4 py-3 shadow-md safe-area-top"
       style="background-color: var(--color-primary, #2563eb); color: var(--color-header-text, #ffffff);"
       data-theme={headerStyle}
     >
       <div class="flex items-center gap-3 max-w-md mx-auto">
+        {/* Back button - shown on content pages */}
+        {shouldShowBack && (
+          <button
+            type="button"
+            onclick="window.history.back()"
+            data-testid="back-button"
+            class="flex items-center justify-center p-1 -ml-1"
+            aria-label="Go back"
+            style="color: var(--color-header-text, #ffffff);"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+        )}
+        
+        {/* Logo - links to home */}
         {logo && (
-          <a href="/" data-testid="home-link" class="flex items-center">
+          <a href="/" data-testid="home-link" class="flex items-center flex-shrink-0">
             <img src={logo} alt={appName || 'Logo'} class="h-8 w-auto" />
           </a>
         )}
-        <h1 class="text-lg font-semibold">{appName || title}</h1>
+        
+        {/* Page title or app name */}
+        <h1 class="text-lg font-semibold truncate flex-1">
+          {isHomePage ? (appName || title) : title}
+        </h1>
       </div>
     </header>
 
@@ -66,7 +96,7 @@ const themeStyle = Object.entries(themeVars)
 
     <!-- Bottom Navigation -->
     {menu.length > 0 && (
-      <Navigation menu={menu} currentPath={currentPath} />
+      <Navigation menu={menu} currentPath={currentPath} isHomePage={isHomePage} />
     )}
 
     <script type="module" is:inline>
@@ -100,7 +130,21 @@ const themeStyle = Object.entries(themeVars)
   
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background-color: var(--color-background, #ffffff);
-  color: var(--color-text, #0f172a);
+    background-color: var(--color-background, #ffffff);
+    color: var(--color-text, #0f172a);
+  }
+  
+  /* Safe area for notched devices */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top, 0);
+  }
+  
+  /* Back button hover state */
+  button[data-testid="back-button"]:hover {
+    opacity: 0.8;
+  }
+  
+  button[data-testid="back-button"]:active {
+    opacity: 0.6;
   }
 </style>
