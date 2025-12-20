@@ -37,6 +37,7 @@ export interface SiteMeta {
 export interface SiteData {
   menu: MenuItem[];
   site_data: SiteMeta;
+  url_mappings?: Record<string, string>;
 }
 
 export interface CollectionChild {

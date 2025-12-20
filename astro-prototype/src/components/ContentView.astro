@@ -17,6 +17,13 @@ function processLinks(htmlContent: string, baseUrl: string): string {
   const linkRegex = /<a\s+([^>]*href=["']([^"']+)["'][^>]*)>/gi;
   
   return htmlContent.replace(linkRegex, (match, attrs, href) => {
+    // Skip processing if link is already in /page/{uuid} format (transformed by server)
+    // These links should navigate normally without any interception
+    if (href.startsWith('/page/') && /^\/page\/[a-zA-Z0-9]+/.test(href)) {
+      // Already transformed by server - return unchanged to allow normal navigation
+      return match;
+    }
+    
     try {
       const url = new URL(href, baseUrl);
       const currentDomain = new URL(baseUrl).hostname;
@@ -71,7 +78,7 @@ const processedHtml = processLinks(html, apiBaseUrl);
 </div>
 
 <script>
-  // Build URL-to-UUID mapping from menu data
+  // Build URL-to-UUID mapping from menu data and url_mappings
   let urlToUuidMap: Map<string, string> | null = null;
   
   function buildUrlMap() {
@@ -79,21 +86,53 @@ const processedHtml = processLinks(html, apiBaseUrl);
     
     urlToUuidMap = new Map();
     
-    // Try to get menu data from window (set by layout or API)
+    // Try to get site data from window (set by layout or API)
     if (window.__mipApi) {
-      window.__mipApi.getMenu().then((menu: MenuItem[]) => {
-        menu.forEach((item: MenuItem) => {
-          if (item.page?.url && item.page?.uuid) {
-            // Normalize URL - remove domain, keep path
-            const url = new URL(item.page.url, window.location.origin);
-            const path = url.pathname;
-            urlToUuidMap!.set(path, item.page.uuid);
-            // Also map full URL
-            urlToUuidMap!.set(item.page.url, item.page.uuid);
-          }
-        });
+      window.__mipApi.getSiteData().then((siteData: any) => {
+        // Use url_mappings if available (Option 5)
+        if (siteData.url_mappings) {
+          Object.entries(siteData.url_mappings).forEach(([url, uuid]) => {
+            urlToUuidMap!.set(url, uuid as string);
+            // Also normalize and map path component
+            try {
+              const parsed = new URL(url, window.location.origin);
+              urlToUuidMap!.set(parsed.pathname, uuid as string);
+            } catch {
+              // If URL parsing fails, just use as-is
+            }
+          });
+        }
+        
+        // Also include menu items as before (for backward compatibility)
+        if (siteData.menu) {
+          siteData.menu.forEach((item: MenuItem) => {
+            if (item.page?.url && item.page?.uuid) {
+              // Normalize URL - remove domain, keep path
+              const url = new URL(item.page.url, window.location.origin);
+              const path = url.pathname;
+              urlToUuidMap!.set(path, item.page.uuid);
+              // Also map full URL
+              urlToUuidMap!.set(item.page.url, item.page.uuid);
+            }
+          });
+        }
       }).catch(() => {
-        // Silently fail if menu can't be loaded
+        // Silently fail if site data can't be loaded
+        // Fallback to menu-only approach
+        if (window.__mipApi) {
+          window.__mipApi.getMenu().then((menu: MenuItem[]) => {
+            menu.forEach((item: MenuItem) => {
+              if (item.page?.url && item.page?.uuid) {
+                const url = new URL(item.page.url, window.location.origin);
+                const path = url.pathname;
+                urlToUuidMap!.set(path, item.page.uuid);
+                urlToUuidMap!.set(item.page.url, item.page.uuid);
+              }
+            });
+          }).catch(() => {
+            // Silently fail if menu can't be loaded
+          });
+        }
       });
     }
     
@@ -124,8 +163,17 @@ const processedHtml = processLinks(html, apiBaseUrl);
     const link = (e.target as HTMLElement).closest('a[data-internal-link="true"]') as HTMLAnchorElement;
     if (!link) return;
     
+    const href = link.getAttribute('href') || '';
+    
+    // If link is already in /page/{uuid} format (transformed by server), let it navigate normally
+    if (href.startsWith('/page/') && /^\/page\/[a-zA-Z0-9]+/.test(href)) {
+      // Already transformed - allow normal navigation
+      return;
+    }
+    
+    // Otherwise, handle client-side resolution
     e.preventDefault();
-    const originalHref = link.getAttribute('data-original-href') || link.getAttribute('href') || '';
+    const originalHref = link.getAttribute('data-original-href') || href;
     
     if (!originalHref) return;
     
