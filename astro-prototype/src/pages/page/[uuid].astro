@@ -44,6 +44,55 @@ const siteConfig = loadSiteConfig();
 const themeVars = getThemeVariables(siteConfig);
 const displayLogo = site_data.logo || siteConfig.logo;
 const displayName = siteConfig.appName || site_data.app_name;
+
+// Fetch titles for children pages if they don't have titles
+let childrenWithTitles = pageData?.children || [];
+if (pageData?.children && pageData.children.length > 0) {
+  try {
+    const childrenPromises = pageData.children.map(async (child) => {
+      if (child.title) {
+        return child;
+      }
+      // Fetch the page to get its title
+      try {
+        const childPage = await getPage(child.uuid);
+        return {
+          ...child,
+          title: childPage.title || child.type
+        };
+      } catch {
+        // If fetch fails, derive title from URL
+        const urlPath = child.url ? new URL(child.url).pathname : '';
+        const lastSegment = urlPath.split('/').filter(Boolean).pop() || '';
+        const derivedTitle = lastSegment
+          .split('-')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ') || child.type;
+        return {
+          ...child,
+          title: derivedTitle
+        };
+      }
+    });
+    childrenWithTitles = await Promise.all(childrenPromises);
+  } catch (err) {
+    console.error('Error fetching children titles:', err);
+    // Fallback: derive titles from URLs
+    childrenWithTitles = pageData.children.map((child) => {
+      if (child.title) return child;
+      const urlPath = child.url ? new URL(child.url).pathname : '';
+      const lastSegment = urlPath.split('/').filter(Boolean).pop() || '';
+      const derivedTitle = lastSegment
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ') || child.type;
+      return {
+        ...child,
+        title: derivedTitle
+      };
+    });
+  }
+}
 ---
 
 <MobileLayout
@@ -85,11 +134,11 @@ const displayName = siteConfig.appName || site_data.app_name;
           />
         </div>
       )}
-      {pageData.children && pageData.children.length > 0 && (
+      {childrenWithTitles && childrenWithTitles.length > 0 && (
         <div class="px-4 py-6">
           <h2 class="text-xl font-bold mb-4">Related Pages</h2>
           <div class="space-y-2">
-            {pageData.children.map((child) => (
+            {childrenWithTitles.map((child) => (
               <a
                 href={`/page/${child.uuid}`}
                 class="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100"
