@@ -35,15 +35,15 @@ const displayLogo = site_data.logo || siteConfig.logo;
 const displayName = siteConfig.appName || site_data.app_name;
 
 // Determine homepage type (default to 'navigation' if not specified)
-// For FFCI, default to 'action-hub' if homepage_type is 'navigation' or not set
+// For FFCI, always use 'action-hub' regardless of CMS setting
 let homepageType: HomepageType = site_data.homepage_type || 'navigation';
 // Check if this is FFCI site by config siteId or API base URL or app name
 const isFFCI = siteConfig.siteId === 'ffci' || 
                siteConfig.apiBaseUrl.includes('ffci') ||
                site_data.app_name?.toLowerCase().includes('ffci') ||
                site_data.title?.toLowerCase().includes('firefighters for christ');
-// Force action-hub for FFCI unless explicitly set to something else
-if (isFFCI && homepageType !== 'content' && homepageType !== 'collection') {
+// Force action-hub for FFCI (overrides CMS setting)
+if (isFFCI) {
   homepageType = 'action-hub';
 }
 
