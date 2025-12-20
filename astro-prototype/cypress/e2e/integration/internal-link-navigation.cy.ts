@@ -31,17 +31,6 @@ describe('Internal Link Navigation - Integration Test', () => {
     // Step 3: Find an internal link in the page content
     cy.get('main', { timeout: 10000 }).should('be.visible');
     
-    // Debug: Log all links found
-    cy.get('main').within(() => {
-      cy.get('a').then(($links) => {
-        cy.log(`Total links found: ${$links.length}`);
-        $links.each((index, link) => {
-          const href = link.getAttribute('href') || '';
-          cy.log(`Link ${index}: href="${href}", data-internal="${link.hasAttribute('data-internal-link')}"`);
-        });
-      });
-    });
-    
     // Find links - try both transformed and original format
     cy.get('main').within(() => {
       // First try to find transformed links
@@ -58,17 +47,6 @@ describe('Internal Link Navigation - Integration Test', () => {
           
           // Step 4: Click the internal link
           cy.wrap(firstLink).click();
-          
-          // Step 5: Verify we stayed in the app (URL should be /page/{uuid} format)
-          cy.url({ timeout: 10000 }).should('include', '/page/');
-          cy.url().should('not.include', 'ddev.site');
-          
-          // Step 6: Verify new page content loaded
-          cy.get('main', { timeout: 10000 }).should('be.visible');
-          cy.get('main').should('not.contain', 'Error Loading Page');
-          
-          // Verify we're on a different page (URL changed)
-          cy.url().should('not.include', 'xhZj4ejQ65bRhrJg');
         } else {
           // Fallback: try to find any internal link marked with data-internal-link
           const internalLinks = Array.from($links).filter((link) => {
@@ -81,15 +59,22 @@ describe('Internal Link Navigation - Integration Test', () => {
             const href = firstLink.getAttribute('href') || '';
             cy.log(`Found ${internalLinks.length} internal link(s) (not transformed). Clicking: ${href}`);
             cy.wrap(firstLink).click();
-            
-            // Should navigate to /page/{uuid} format
-            cy.url({ timeout: 10000 }).should('include', '/page/');
-            cy.url().should('not.include', 'ddev.site');
           } else {
             throw new Error('No internal links found on About page');
           }
         }
       });
     });
+    
+    // Step 5: Verify we stayed in the app (URL should be /page/{uuid} format)
+    cy.url({ timeout: 10000 }).should('include', '/page/');
+    cy.url().should('not.include', 'ddev.site');
+    
+    // Step 6: Verify new page content loaded
+    cy.get('main', { timeout: 10000 }).should('be.visible');
+    cy.get('main').should('not.contain', 'Error Loading Page');
+    
+    // Verify we're on a different page (URL changed)
+    cy.url().should('not.include', 'xhZj4ejQ65bRhrJg');
   });
 });
