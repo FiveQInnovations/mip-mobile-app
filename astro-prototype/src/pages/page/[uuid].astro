@@ -84,7 +84,7 @@ const displayName = site_data.app_name || siteConfig.appName;
                 href={`/page/${child.uuid}`}
                 class="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100"
               >
-                <span class="font-medium">{child.type}</span>
+                <span class="font-medium">{child.title || child.type}</span>
               </a>
             ))}
           </div>

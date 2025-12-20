@@ -1,10 +1,8 @@
 ---
+import type { CollectionChild } from '../lib/api';
+
 interface Props {
-  children: Array<{
-    uuid: string;
-    type: string;
-    url: string;
-  }>;
+  children: CollectionChild[];
   covers?: Record<string, string | null>;
 }
 
@@ -14,7 +12,7 @@ const { children, covers = {} } = Astro.props;
 <div class="px-4 py-6">
   <div class="grid grid-cols-2 gap-4">
     {children.map((child) => {
-      const cover = covers[child.uuid] || null;
+      const cover = child.cover ?? covers[child.uuid] ?? null;
       return (
         <a
           href={`/page/${child.uuid}`}
@@ -23,13 +21,13 @@ const { children, covers = {} } = Astro.props;
           {cover && (
             <img
               src={cover}
-              alt={child.type}
+              alt={child.title || child.type}
               class="w-full aspect-video object-cover"
             />
           )}
           <div class="p-3">
             <h3 class="text-sm font-medium text-gray-900 line-clamp-2">
-              {child.type}
+              {child.title || child.type}
             </h3>
           </div>
         </a>
