@@ -16,62 +16,52 @@ describe('Audio Playback', () => {
   });
 
   it('audio player has playback controls', () => {
-    cy.fixture('audio-item.json').then((pageData) => {
-      cy.intercept('GET', '**/mobile-api/page/audio-item-uuid', pageData).as('pageData');
-      cy.visit('/page/audio-item-uuid');
-      cy.wait(['@siteData', '@pageData'], { timeout: 10000 });
-      
-      cy.get('[data-testid="audio-element"]', { timeout: 10000 }).should('be.visible');
-      cy.get('[data-testid="audio-element"]').should('have.attr', 'controls');
-    });
+    cy.intercept('GET', '**/mobile-api/page/audio-item-uuid', { fixture: 'audio-item.json' }).as('pageData');
+    cy.visit('/page/audio-item-uuid');
+    cy.wait(['@siteData', '@pageData'], { timeout: 10000 });
+    
+    cy.get('[data-testid="audio-element"]', { timeout: 10000 }).should('be.visible');
+    cy.get('[data-testid="audio-element"]').should('have.attr', 'controls');
   });
 
   it('displays audio metadata (title, artwork)', () => {
-    cy.fixture('audio-item.json').then((pageData) => {
-      cy.intercept('GET', '**/mobile-api/page/audio-item-uuid', pageData).as('pageData');
-      cy.visit('/page/audio-item-uuid');
-      cy.wait(['@siteData', '@pageData'], { timeout: 10000 });
-      
-      cy.get('[data-testid="audio-player"]', { timeout: 10000 }).within(() => {
-        cy.get('[data-testid="audio-title"]').should('be.visible');
-        cy.get('[data-testid="audio-title"]').should('contain', 'Sample Audio Episode');
-        cy.get('[data-testid="audio-artwork"]').should('be.visible');
-        cy.get('[data-testid="audio-artwork"]').should('have.attr', 'src', 'https://example.com/audio-artwork.jpg');
-      });
+    cy.intercept('GET', '**/mobile-api/page/audio-item-uuid', { fixture: 'audio-item.json' }).as('pageData');
+    cy.visit('/page/audio-item-uuid');
+    cy.wait(['@siteData', '@pageData'], { timeout: 10000 });
+    
+    cy.get('[data-testid="audio-player"]', { timeout: 10000 }).within(() => {
+      cy.get('[data-testid="audio-title"]').should('be.visible');
+      cy.get('[data-testid="audio-title"]').should('contain', 'Sample Audio Episode');
+      cy.get('[data-testid="audio-artwork"]').should('be.visible');
+      cy.get('[data-testid="audio-artwork"]').should('have.attr', 'src', 'https://example.com/audio-artwork.jpg');
     });
   });
 
   it('displays audio duration when available', () => {
-    cy.fixture('audio-item.json').then((pageData) => {
-      cy.intercept('GET', '**/mobile-api/page/audio-item-uuid', pageData).as('pageData');
-      cy.visit('/page/audio-item-uuid');
-      cy.wait(['@siteData', '@pageData'], { timeout: 10000 });
-      
-      cy.get('[data-testid="audio-duration"]', { timeout: 10000 }).should('be.visible');
-      cy.get('[data-testid="audio-duration"]').should('contain', '60:00');
-    });
+    cy.intercept('GET', '**/mobile-api/page/audio-item-uuid', { fixture: 'audio-item.json' }).as('pageData');
+    cy.visit('/page/audio-item-uuid');
+    cy.wait(['@siteData', '@pageData'], { timeout: 10000 });
+    
+    cy.get('[data-testid="audio-duration"]', { timeout: 10000 }).should('be.visible');
+    cy.get('[data-testid="audio-duration"]').should('contain', '60:00');
   });
 
   it('displays content below audio player', () => {
-    cy.fixture('audio-item.json').then((pageData) => {
-      cy.intercept('GET', '**/mobile-api/page/audio-item-uuid', pageData).as('pageData');
-      cy.visit('/page/audio-item-uuid');
-      cy.wait(['@siteData', '@pageData'], { timeout: 10000 });
-      
-      cy.get('[data-testid="audio-player"]', { timeout: 10000 }).should('be.visible');
-      cy.contains('This is an audio page with full metadata.').should('be.visible');
-    });
+    cy.intercept('GET', '**/mobile-api/page/audio-item-uuid', { fixture: 'audio-item.json' }).as('pageData');
+    cy.visit('/page/audio-item-uuid');
+    cy.wait(['@siteData', '@pageData'], { timeout: 10000 });
+    
+    cy.get('[data-testid="audio-player"]', { timeout: 10000 }).should('be.visible');
+    cy.contains('This is an audio page with full metadata.').should('be.visible');
   });
 
   it('displays page title above audio player', () => {
-    cy.fixture('audio-item.json').then((pageData) => {
-      cy.intercept('GET', '**/mobile-api/page/audio-item-uuid', pageData).as('pageData');
-      cy.visit('/page/audio-item-uuid');
-      cy.wait(['@siteData', '@pageData'], { timeout: 10000 });
-      
-      cy.get('h1', { timeout: 10000 }).should('contain', 'Sample Audio Episode');
-      cy.get('[data-testid="audio-player"]').should('be.visible');
-    });
+    cy.intercept('GET', '**/mobile-api/page/audio-item-uuid', { fixture: 'audio-item.json' }).as('pageData');
+    cy.visit('/page/audio-item-uuid');
+    cy.wait(['@siteData', '@pageData'], { timeout: 10000 });
+    
+    cy.get('h1', { timeout: 10000 }).should('contain', 'Sample Audio Episode');
+    cy.get('[data-testid="audio-player"]').should('be.visible');
   });
 
   it('handles audio without artwork gracefully', () => {
