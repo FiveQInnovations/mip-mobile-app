@@ -151,7 +151,8 @@ if (pageData?.children && pageData.children.length > 0) {
             {childrenWithTitles.map((child) => (
               <a
                 href={`/page/${child.uuid}`}
-                class="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100"
+                class="block bg-gray-50 rounded-lg hover:bg-gray-100"
+                style="min-height: 44px; padding: 12px; display: flex; align-items: center;"
               >
                 <span class="font-medium">{child.title || child.type}</span>
               </a>

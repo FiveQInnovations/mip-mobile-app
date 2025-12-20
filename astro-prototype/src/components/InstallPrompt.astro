@@ -3,8 +3,8 @@
 // Shows "Add to Home Screen" prompt when browser supports it
 ---
 
-<div id="install-prompt" class="hidden fixed bottom-20 left-0 right-0 z-50 px-4 pb-4" data-testid="install-prompt">
-  <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg border border-gray-200 p-4">
+<div id="install-prompt" class="hidden fixed left-0 right-0 z-50 px-4" data-testid="install-prompt" style="bottom: calc(80px + env(safe-area-inset-bottom, 0)); max-width: min(100%, 428px); margin-left: auto; margin-right: auto;">
+  <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-4">
     <div class="flex items-start gap-3">
       <div class="flex-shrink-0">
         <svg
@@ -30,15 +30,17 @@
         <div class="flex gap-2">
           <button
             id="install-button"
-            class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            class="px-4 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
             data-testid="install-button"
+            style="min-height: 44px; padding-top: 12px; padding-bottom: 12px;"
           >
             Install
           </button>
           <button
             id="dismiss-install"
-            class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+            class="px-4 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
             data-testid="dismiss-install-button"
+            style="min-height: 44px; padding-top: 12px; padding-bottom: 12px;"
           >
             Not Now
           </button>
@@ -49,6 +51,7 @@
         class="flex-shrink-0 text-gray-400 hover:text-gray-600"
         aria-label="Close"
         data-testid="close-install-button"
+        style="min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

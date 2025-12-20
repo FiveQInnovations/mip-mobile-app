@@ -18,15 +18,17 @@ const { children, covers = {} } = Astro.props;
           href={`/page/${child.uuid}`}
           class="block bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
           data-testid="collection-item"
+          style="min-height: 44px;"
         >
           {cover && (
             <img
               src={cover}
               alt={child.title || child.type}
               class="w-full aspect-video object-cover"
+              loading="lazy"
             />
           )}
-          <div class="p-3">
+          <div class="p-3" style="min-height: 60px; display: flex; align-items: center;">
             <h3 class="text-sm font-medium text-gray-900 line-clamp-2" data-testid="item-title">
               {child.title || child.type}
             </h3>

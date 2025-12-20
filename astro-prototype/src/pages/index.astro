@@ -70,12 +70,17 @@ if (homepageType === 'content' && site_data.homepage_content) {
         {menu.map((item) => (
           <a
             href={`/page/${item.page.uuid}`}
-            class="block rounded-lg p-6 text-center transition-colors border hover:shadow-md"
+            class="block rounded-lg text-center transition-colors border hover:shadow-md"
             data-testid="menu-item"
             style="
               background-color: color-mix(in srgb, var(--color-primary, #2563eb) 10%, var(--color-background, #ffffff));
               border-color: var(--color-primary, #2563eb);
               color: var(--color-text, #0f172a);
+              min-height: 88px;
+              padding: 24px 16px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
             "
           >
             <h2 class="text-lg font-semibold">

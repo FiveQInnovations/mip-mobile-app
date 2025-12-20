@@ -57,16 +57,16 @@ const shouldShowBack = showBackButton || (!isHomePage && currentPath.startsWith(
       style="background-color: var(--color-primary, #2563eb); color: var(--color-header-text, #ffffff);"
       data-theme={headerStyle}
     >
-      <div class="flex items-center gap-3 max-w-md mx-auto">
+      <div class="flex items-center gap-3 w-full px-4" style="max-width: min(100%, 428px); margin-left: auto; margin-right: auto;">
         {/* Back button - shown on content pages */}
         {shouldShowBack && (
           <button
             type="button"
             onclick="window.history.back()"
             data-testid="back-button"
-            class="flex items-center justify-center p-1 -ml-1"
+            class="flex items-center justify-center -ml-1"
             aria-label="Go back"
-            style="color: var(--color-header-text, #ffffff);"
+            style="color: var(--color-header-text, #ffffff); min-width: 44px; min-height: 44px; padding: 8px;"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +83,7 @@ const shouldShowBack = showBackButton || (!isHomePage && currentPath.startsWith(
         
         {/* Logo - links to home */}
         {logo && (
-          <a href="/" data-testid="home-link" class="flex items-center flex-shrink-0">
+          <a href="/" data-testid="home-link" class="flex items-center flex-shrink-0" style="min-height: 44px; padding: 4px 0;">
             <img src={logo} alt={appName || 'Logo'} class="h-8 w-auto" />
           </a>
         )}
@@ -96,7 +96,7 @@ const shouldShowBack = showBackButton || (!isHomePage && currentPath.startsWith(
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1 overflow-y-auto pb-20 max-w-md mx-auto w-full">
+    <main class="flex-1 overflow-y-auto pb-20 w-full" style="max-width: min(100%, 428px); margin-left: auto; margin-right: auto;">
       <slot />
     </main>
 
@@ -184,7 +184,13 @@ const shouldShowBack = showBackButton || (!isHomePage && currentPath.startsWith(
   
   /* Safe area for notched devices */
   .safe-area-top {
-    padding-top: env(safe-area-inset-top, 0);
+    padding-top: max(env(safe-area-inset-top, 0), 0);
+  }
+  
+  /* Ensure header respects safe area */
+  header {
+    padding-left: max(env(safe-area-inset-left, 0), 16px);
+    padding-right: max(env(safe-area-inset-right, 0), 16px);
   }
   
   /* Back button hover state */
@@ -194,5 +200,11 @@ const shouldShowBack = showBackButton || (!isHomePage && currentPath.startsWith(
   
   button[data-testid="back-button"]:active {
     opacity: 0.6;
+  }
+  
+  /* Ensure main content respects safe areas */
+  main {
+    padding-left: max(env(safe-area-inset-left, 0), 0);
+    padding-right: max(env(safe-area-inset-right, 0), 0);
   }
 </style>

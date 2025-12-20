@@ -46,12 +46,12 @@ function renderIcon(label: string, icon?: string): string {
 ---
 
 <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg safe-area-bottom" data-testid="bottom-nav">
-  <div class="max-w-md mx-auto">
+  <div class="w-full" style="max-width: min(100%, 428px); margin-left: auto; margin-right: auto;">
     <div class="flex justify-around items-center">
       {/* Home button - always present */}
       <a
         href="/"
-        class="flex flex-col items-center justify-center py-2 px-4 min-w-0 flex-1"
+        class="flex flex-col items-center justify-center min-w-0 flex-1 nav-touch-target"
         data-active={isHomeActive()}
         data-testid="nav-home"
         style={`color: ${
@@ -70,7 +70,7 @@ function renderIcon(label: string, icon?: string): string {
         return (
           <a
             href={`/page/${item.page.uuid}`}
-            class="flex flex-col items-center justify-center py-2 px-4 min-w-0 flex-1"
+            class="flex flex-col items-center justify-center min-w-0 flex-1 nav-touch-target"
             data-active={active}
             data-testid="nav-item"
             style={`color: ${
@@ -91,9 +91,9 @@ function renderIcon(label: string, icon?: string): string {
 
       {/* More menu if overflow */}
       {overflowItems.length > 0 && (
-        <div class="flex flex-col items-center justify-center py-2 px-4 min-w-0 flex-1 relative" data-testid="nav-more">
+        <div class="flex flex-col items-center justify-center min-w-0 flex-1 relative nav-touch-target" data-testid="nav-more">
           <button
-            class="flex flex-col items-center justify-center w-full"
+            class="flex flex-col items-center justify-center w-full nav-touch-target"
             type="button"
             id="more-menu-button"
             aria-label="More menu"
@@ -113,13 +113,13 @@ function renderIcon(label: string, icon?: string): string {
               return (
                 <a
                   href={`/page/${item.page.uuid}`}
-                  class="flex items-center gap-2 px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                  class="flex items-center gap-2 px-4 hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
                   data-active={active}
                   style={`color: ${
                     active
                       ? 'var(--color-primary, #2563eb)'
                       : 'var(--color-text, #4b5563)'
-                  };`}
+                  }; min-height: 44px; padding-top: 12px; padding-bottom: 12px;`}
                 >
                   {item.icon && (
                     <span class="text-base" set:html={renderIcon(item.label, item.icon)}></span>
@@ -177,6 +177,26 @@ function renderIcon(label: string, icon?: string): string {
   
   /* Safe area for notched devices */
   .safe-area-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 0);
+    padding-bottom: max(env(safe-area-inset-bottom, 0), 0);
+  }
+  
+  /* Ensure navigation respects safe areas */
+  nav {
+    padding-left: max(env(safe-area-inset-left, 0), 0);
+    padding-right: max(env(safe-area-inset-right, 0), 0);
+  }
+  
+  /* Touch-friendly targets - minimum 44px height */
+  nav a.nav-touch-target,
+  nav button.nav-touch-target,
+  nav div.nav-touch-target {
+    min-height: 44px !important;
+    padding: 8px 12px !important;
+  }
+  
+  /* Ensure nav items without icons still meet touch target */
+  nav a[data-testid="nav-item"],
+  nav a[data-testid="nav-home"] {
+    min-height: 44px !important;
   }
 </style>
