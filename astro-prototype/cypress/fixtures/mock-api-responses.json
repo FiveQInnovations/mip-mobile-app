@@ -1,0 +1,19 @@
+{
+  "menu": [
+    {
+      "label": "Home",
+      "page": {
+        "uuid": "home-uuid",
+        "type": "content",
+        "url": "/page/home-uuid"
+      }
+    }
+  ],
+  "site_data": {
+    "title": "Mock Site",
+    "app_name": "Mock App",
+    "logo": "/logo.png",
+    "social": [],
+    "homepage_type": "navigation"
+  }
+}

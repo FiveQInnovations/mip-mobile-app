@@ -6,12 +6,19 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "cypress run",
+    "test:open": "cypress open",
+    "test:headed": "cypress run --headed"
   },
   "dependencies": {
     "@astrojs/node": "^9.5.1",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.16.6",
     "tailwindcss": "^4.1.18"
+  },
+  "devDependencies": {
+    "@testing-library/cypress": "^10.1.0",
+    "cypress": "^15.8.1"
   }
 }
