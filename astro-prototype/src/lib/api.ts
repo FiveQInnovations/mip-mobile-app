@@ -219,10 +219,24 @@ function normalizeVideo(video?: Partial<VideoData>): VideoData | undefined {
 }
 
 function normalizePageData(raw: PageData): PageData {
-  const normalizedChildren = raw.children?.map((child) => ({
-    ...child,
-    cover: child.cover ?? null,
-  }));
+  // Handle children as either array or object
+  let normalizedChildren: CollectionChild[] | undefined;
+  
+  if (raw.children) {
+    if (Array.isArray(raw.children)) {
+      // Already an array, normalize it
+      normalizedChildren = raw.children.map((child) => ({
+        ...child,
+        cover: child.cover ?? null,
+      }));
+    } else if (typeof raw.children === 'object') {
+      // Convert object to array of values
+      normalizedChildren = Object.values(raw.children).map((child) => ({
+        ...child,
+        cover: child.cover ?? null,
+      }));
+    }
+  }
 
   return {
     ...raw,
