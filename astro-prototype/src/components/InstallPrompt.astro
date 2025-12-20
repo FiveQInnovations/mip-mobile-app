@@ -1,0 +1,175 @@
+---
+// Install Prompt Component for PWA
+// Shows "Add to Home Screen" prompt when browser supports it
+---
+
+<div id="install-prompt" class="hidden fixed bottom-20 left-0 right-0 z-50 px-4 pb-4" data-testid="install-prompt">
+  <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg border border-gray-200 p-4">
+    <div class="flex items-start gap-3">
+      <div class="flex-shrink-0">
+        <svg
+          class="w-8 h-8 text-blue-600"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+          />
+        </svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <h3 class="text-sm font-semibold text-gray-900 mb-1">Install App</h3>
+        <p class="text-xs text-gray-600 mb-3">
+          Add this app to your home screen for quick access and a better experience.
+        </p>
+        <div class="flex gap-2">
+          <button
+            id="install-button"
+            class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            data-testid="install-button"
+          >
+            Install
+          </button>
+          <button
+            id="dismiss-install"
+            class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+            data-testid="dismiss-install-button"
+          >
+            Not Now
+          </button>
+        </div>
+      </div>
+      <button
+        id="close-install"
+        class="flex-shrink-0 text-gray-400 hover:text-gray-600"
+        aria-label="Close"
+        data-testid="close-install-button"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Install prompt logic
+  (function () {
+    const installPrompt = document.getElementById('install-prompt');
+    const installButton = document.getElementById('install-button');
+    const dismissButton = document.getElementById('dismiss-install');
+    const closeButton = document.getElementById('close-install');
+
+    if (!installPrompt || !installButton) return;
+
+    let deferredPrompt: BeforeInstallPromptEvent | null = null;
+    const DISMISSED_KEY = 'pwa-install-dismissed';
+    const DISMISSED_TIMESTAMP_KEY = 'pwa-install-dismissed-timestamp';
+    const DISMISS_COOLDOWN = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+    interface BeforeInstallPromptEvent extends Event {
+      prompt: () => Promise<void>;
+      userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+    }
+
+    // Check if already dismissed recently
+    function wasDismissedRecently(): boolean {
+      const dismissed = localStorage.getItem(DISMISSED_KEY);
+      const timestamp = localStorage.getItem(DISMISSED_TIMESTAMP_KEY);
+      if (!dismissed || !timestamp) return false;
+
+      const dismissedTime = parseInt(timestamp, 10);
+      const now = Date.now();
+      return now - dismissedTime < DISMISS_COOLDOWN;
+    }
+
+    // Show install prompt
+    function showInstallPrompt() {
+      if (wasDismissedRecently()) return;
+      installPrompt?.classList.remove('hidden');
+    }
+
+    // Hide install prompt
+    function hideInstallPrompt() {
+      installPrompt?.classList.add('hidden');
+    }
+
+    // Handle install button click
+    installButton?.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+
+      if (outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+      } else {
+        console.log('User dismissed the install prompt');
+      }
+
+      deferredPrompt = null;
+      hideInstallPrompt();
+    });
+
+    // Handle dismiss button
+    dismissButton?.addEventListener('click', () => {
+      localStorage.setItem(DISMISSED_KEY, 'true');
+      localStorage.setItem(DISMISSED_TIMESTAMP_KEY, Date.now().toString());
+      hideInstallPrompt();
+    });
+
+    // Handle close button
+    closeButton?.addEventListener('click', () => {
+      localStorage.setItem(DISMISSED_KEY, 'true');
+      localStorage.setItem(DISMISSED_TIMESTAMP_KEY, Date.now().toString());
+      hideInstallPrompt();
+    });
+
+    // Listen for beforeinstallprompt event
+    window.addEventListener('beforeinstallprompt', (e: Event) => {
+      e.preventDefault();
+      deferredPrompt = e as BeforeInstallPromptEvent;
+      
+      // Show prompt after a short delay
+      setTimeout(() => {
+        if (!wasDismissedRecently()) {
+          showInstallPrompt();
+        }
+      }, 3000);
+    });
+
+    // Hide prompt if app is already installed
+    window.addEventListener('appinstalled', () => {
+      hideInstallPrompt();
+      deferredPrompt = null;
+    });
+
+    // Check if running as standalone (already installed)
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      hideInstallPrompt();
+    }
+  })();
+</script>
+
+<style>
+  #install-prompt {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+</style>
