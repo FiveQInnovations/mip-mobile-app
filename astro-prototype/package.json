@@ -9,7 +9,9 @@
     "astro": "astro",
     "test": "cypress run",
     "test:open": "cypress open",
-    "test:headed": "cypress run --headed"
+    "test:headed": "cypress run --headed",
+    "test:integration": "cypress run --spec 'cypress/e2e/integration/**/*.cy.ts'",
+    "test:unit": "cypress run --spec 'cypress/e2e/**/*.cy.ts' --exclude 'cypress/e2e/integration/**/*.cy.ts'"
   },
   "dependencies": {
     "@astrojs/node": "^9.5.1",

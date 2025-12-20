@@ -24,22 +24,23 @@ Created test fixtures in `cypress/fixtures/`:
 - `cypress/e2e/video-playback.cy.ts` - 8 tests for video playback
 - `cypress/e2e/audio-playback.cy.ts` - 8 tests for audio playback
 
-## Current Issue
+## Current Issue - RESOLVED
 
-The tests are currently failing because the intercepts are not matching the API requests properly. The tests use the correct pattern (`**/mobile-api/page/*`) but there may be timing issues or the intercepts need to be set up differently.
+The tests were failing because Cypress intercepts cannot intercept server-side requests to external domains. Astro SSR requests happen on the Node.js server (not in the browser), so Cypress cannot intercept them when they go to external URLs like `https://ws-ffci-copy.ddev.site`.
 
-### Symptoms
-- Tests timeout waiting for API intercepts (`@siteData`, `@pageData`)
-- Elements with `data-testid` attributes are not found
-- Tests fail with "Expected to find element" errors
+### Solution Applied
 
-### Root Cause Analysis Needed
+1. **Removed `cy.wait()` calls**: Since SSR requests can't be intercepted, we removed the `cy.wait()` calls that were timing out.
 
-1. **Intercept Timing**: The intercepts are set up using `{ fixture: '...' }` pattern (which matches working tests like `content-page.cy.ts`), but may need to be established before `cy.visit()` completes.
+2. **Direct element verification**: Tests now verify that the page renders correctly by checking for elements with appropriate timeouts, rather than waiting for network intercepts.
 
-2. **SSR vs Client-Side**: Astro pages are server-side rendered, so the API calls happen during SSR. The intercepts may need to catch requests that happen before the page fully loads.
+3. **Intercepts still set up**: Intercepts are still configured before `cy.visit()` in case they can catch any client-side requests, but we don't wait for them.
 
-3. **Web Component Loading**: The `lite-youtube-embed` web component loads asynchronously, which may affect test timing.
+### Note on SSR Testing
+
+- Cypress intercepts work for browser requests but not for server-side requests to external domains
+- The tests verify rendered output rather than network requests
+- Intercepts are set up as a best-effort attempt to mock API responses
 
 ## What Needs to Be Done
 
@@ -133,3 +134,22 @@ Once fixed, all tests should:
 - The test fixtures match the expected API response structure
 - The issue is primarily with test setup/timing, not component functionality
 - Consider checking Cypress screenshots in `cypress/screenshots/` to see what's actually rendered during failures
+
+## Integration Tests Solution
+
+**✅ Solution Implemented**: Created integration tests that use the real API instead of mocked responses.
+
+Integration tests are located in `cypress/e2e/integration/` and can be run with:
+```bash
+npm run test:integration
+```
+
+These tests:
+- Use the real API from `ws-ffci-copy.ddev.site`
+- Don't require intercepts (no SSR interception issues)
+- Verify actual API responses and component rendering
+- Pass successfully with real data
+
+See [integration-tests.md](./integration-tests.md) for full documentation.
+
+**Status**: Integration tests are passing ✅
