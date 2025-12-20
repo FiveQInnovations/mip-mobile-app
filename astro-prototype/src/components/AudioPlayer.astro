@@ -61,6 +61,28 @@ function formatDuration(seconds?: number): string {
             Your browser does not support the audio tag.
           </audio>
         </div>
+        
+        <script>
+          import { trackAudioPlay } from '../lib/analytics';
+          
+          const audioUrl = `{audio.url || ''}`;
+          const audioTitle = `{audio.title || title || ''}`;
+          
+          // Get content ID from URL if available
+          const pathParts = window.location.pathname.split('/');
+          const contentId = pathParts[pathParts.length - 1] || undefined;
+          
+          const audioElement = document.querySelector('audio[data-testid="audio-element"]') as HTMLAudioElement;
+          if (audioElement) {
+            audioElement.addEventListener('play', () => {
+              trackAudioPlay({
+                audioId: audioUrl || undefined,
+                audioTitle: audioTitle || undefined,
+                contentId: contentId,
+              });
+            });
+          }
+        </script>
       </div>
     ) : (
       <div class="p-4">

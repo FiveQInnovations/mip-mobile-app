@@ -117,6 +117,10 @@ const shouldShowBack = showBackButton || (!isHomePage && currentPath.startsWith(
         getPage,
         getSiteData,
       } from '/src/lib/api.ts';
+      import {
+        trackAppOpen,
+        trackScreenView,
+      } from '/src/lib/analytics.ts';
 
       window.__mipApi = {
         getSiteData,
@@ -126,6 +130,14 @@ const shouldShowBack = showBackButton || (!isHomePage && currentPath.startsWith(
         expireCacheEntryForTesting,
         ApiError,
       };
+
+      // Track app open on initial load
+      trackAppOpen({appName: `{appName || 'Mobile App'}`});
+
+      // Track screen view for current page
+      const currentPath = `{currentPath || '/'}`;
+      const screenName = currentPath === '/' ? 'Home' : currentPath.split('/').pop() || 'Page';
+      trackScreenView(screenName, currentPath);
 
       // Register Service Worker
       if ('serviceWorker' in navigator) {

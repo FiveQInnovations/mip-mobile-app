@@ -7,6 +7,7 @@ import AudioPlayer from '../../components/AudioPlayer.astro';
 import FormEmbed from '../../components/FormEmbed.astro';
 import { getSiteData, getPage } from '../../lib/api';
 import { getThemeVariables, loadSiteConfig } from '../../lib/config';
+import { trackContentView } from '../../lib/analytics';
 
 const { uuid } = Astro.params;
 
@@ -44,6 +45,15 @@ const siteConfig = loadSiteConfig();
 const themeVars = getThemeVariables(siteConfig);
 const displayLogo = site_data.logo || siteConfig.logo;
 const displayName = siteConfig.appName || site_data.app_name;
+
+// Track content view for analytics
+if (pageData && uuid) {
+  trackContentView(
+    uuid,
+    pageData.page_type || pageData.type || 'unknown',
+    pageData.title
+  );
+}
 
 // Fetch titles for children pages if they don't have titles
 let childrenWithTitles = pageData?.children || [];

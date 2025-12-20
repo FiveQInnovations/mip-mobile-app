@@ -100,6 +100,25 @@ const processedHtml = processLinks(html, apiBaseUrl);
     return urlToUuidMap;
   }
   
+  // Handle external link clicks for analytics
+  document.addEventListener('click', (e) => {
+    const externalLink = (e.target as HTMLElement).closest('a[data-external-link="true"]') as HTMLAnchorElement;
+    if (externalLink) {
+      import('../lib/analytics').then(({ trackExternalLink }) => {
+        const pathParts = window.location.pathname.split('/');
+        const contentId = pathParts[pathParts.length - 1] || undefined;
+        const linkUrl = externalLink.getAttribute('href') || '';
+        const linkText = externalLink.textContent?.trim() || undefined;
+        
+        trackExternalLink({
+          linkUrl,
+          linkText,
+          contentId,
+        });
+      });
+    }
+  });
+  
   // Handle internal link clicks
   document.addEventListener('click', (e) => {
     const link = (e.target as HTMLElement).closest('a[data-internal-link="true"]') as HTMLAnchorElement;

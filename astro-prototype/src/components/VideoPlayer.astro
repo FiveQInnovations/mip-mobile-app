@@ -89,7 +89,88 @@ const vimeoId = getVimeoId(video);
 
 <!-- Load lite-youtube-embed JS -->
 <script>
+  import { trackVideoPlay, trackVideoComplete } from '../lib/analytics';
+
   if (typeof window !== 'undefined' && !customElements.get('lite-youtube')) {
     import('lite-youtube-embed/src/lite-yt-embed.js');
+  }
+
+  // Track video play events
+  const videoData = {source: `{video.source}`, url: `{video.url || ''}`, id: `{video.id || ''}`, title: `{video.title || ''}`};
+  const youtubeId = `{youtubeId || ''}`;
+  const vimeoId = `{vimeoId || ''}`;
+  
+  // Get content ID from URL if available
+  const pathParts = window.location.pathname.split('/');
+  const contentId = pathParts[pathParts.length - 1] || undefined;
+
+  // Track video play for different video types
+  function setupVideoTracking() {
+    // YouTube tracking
+    if (youtubeId) {
+      const liteYoutube = document.querySelector('lite-youtube');
+      if (liteYoutube) {
+        liteYoutube.addEventListener('click', () => {
+          trackVideoPlay({
+            videoId: youtubeId,
+            videoSource: 'youtube',
+            videoTitle: videoData.title || undefined,
+            contentId: contentId,
+          });
+        });
+      }
+      
+      // Track completion via YouTube iframe API (if available)
+      // Note: lite-youtube-embed doesn't expose completion events easily
+      // This would require additional setup with YouTube iframe API
+    }
+    
+    // Vimeo tracking
+    if (vimeoId) {
+      const vimeoIframe = document.querySelector('iframe[src*="vimeo"]') as HTMLIFrameElement;
+      if (vimeoIframe) {
+        // Vimeo player events require iframe postMessage API
+        // For now, track play on iframe load
+        vimeoIframe.addEventListener('load', () => {
+          trackVideoPlay({
+            videoId: vimeoId,
+            videoSource: 'vimeo',
+            videoTitle: videoData.title || undefined,
+            contentId: contentId,
+          });
+        });
+      }
+    }
+    
+    // Direct video URL tracking
+    if (videoData.url && videoData.source === 'url') {
+      const videoElement = document.querySelector('video[data-testid="video-element"]') as HTMLVideoElement;
+      if (videoElement) {
+        videoElement.addEventListener('play', () => {
+          trackVideoPlay({
+            videoId: videoData.url,
+            videoSource: 'url',
+            videoTitle: videoData.title || undefined,
+            contentId: contentId,
+          });
+        });
+        
+        videoElement.addEventListener('ended', () => {
+          trackVideoComplete({
+            videoId: videoData.url,
+            videoSource: 'url',
+            videoTitle: videoData.title || undefined,
+            contentId: contentId,
+          });
+        });
+      }
+    }
+  }
+
+  // Setup tracking when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupVideoTracking);
+  } else {
+    setupVideoTracking();
   }
 </script>
