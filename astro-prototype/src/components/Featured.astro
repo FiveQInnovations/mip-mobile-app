@@ -1,0 +1,71 @@
+---
+import type { MenuItem } from '../lib/api';
+
+interface Props {
+  menu: MenuItem[];
+}
+
+const { menu } = Astro.props;
+
+// Find featured items - prioritize Resources, then Chapters, then Events
+function findMenuItemByLabel(menu: MenuItem[], labels: string[]): MenuItem | null {
+  for (const label of labels) {
+    const found = menu.find((item) => 
+      item.label.toLowerCase().includes(label.toLowerCase()) ||
+      label.toLowerCase().includes(item.label.toLowerCase())
+    );
+    if (found) return found;
+  }
+  return null;
+}
+
+// Try to find a featured item (prefer Resources, then Chapters, then Events)
+const featuredResource = findMenuItemByLabel(menu, ['Resource', 'Resources']);
+const featuredChapter = findMenuItemByLabel(menu, ['Chapter', 'Chapters']);
+const featuredEvent = findMenuItemByLabel(menu, ['Event', 'Events']);
+
+const featuredItem = featuredResource || featuredChapter || featuredEvent;
+
+// If no featured item found, create a placeholder
+const featured = featuredItem ? {
+  label: featuredItem.label,
+  href: `/page/${featuredItem.page.uuid}`,
+  description: featuredItem.label === 'Resources' 
+    ? 'Browse our collection of helpful resources'
+    : featuredItem.label.includes('Chapter')
+    ? 'Connect with a local chapter'
+    : 'Join us for upcoming events',
+  icon: featuredItem.label === 'Resources' ? '⭐' : featuredItem.label.includes('Chapter') ? '📍' : '📅',
+} : {
+  label: 'Welcome',
+  href: '#',
+  description: 'Explore what FFCI has to offer',
+  icon: '🌟',
+};
+---
+
+<div class="px-4 py-4" data-testid="featured">
+  <h2 class="text-lg font-bold mb-3">Featured</h2>
+  <a
+    href={featured.href}
+    class="block bg-white rounded-lg border-2 transition-all hover:shadow-md active:scale-[0.98]"
+    style="border-color: var(--color-primary, #D9232A); min-height: 100px;"
+    data-testid="featured-item"
+  >
+    <div class="p-4 flex items-start gap-3">
+      <span class="text-3xl flex-shrink-0" role="img" aria-label={featured.label}>
+        {featured.icon}
+      </span>
+      <div class="flex-1 min-w-0">
+        <h3 class="text-base font-semibold text-gray-900 mb-1">{featured.label}</h3>
+        <p class="text-sm text-gray-600 leading-relaxed mb-2">{featured.description}</p>
+        <span 
+          class="inline-block text-xs font-medium px-3 py-1 rounded-full"
+          style="background-color: color-mix(in srgb, var(--color-primary, #D9232A) 10%, white); color: var(--color-primary, #D9232A);"
+        >
+          Learn More →
+        </span>
+      </div>
+    </div>
+  </a>
+</div>

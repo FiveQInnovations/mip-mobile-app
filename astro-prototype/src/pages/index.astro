@@ -2,6 +2,9 @@
 import MobileLayout from '../layouts/MobileLayout.astro';
 import ContentView from '../components/ContentView.astro';
 import CollectionGrid from '../components/CollectionGrid.astro';
+import QuickTasks from '../components/QuickTasks.astro';
+import GetConnected from '../components/GetConnected.astro';
+import Featured from '../components/Featured.astro';
 import { getSiteData, getPage } from '../lib/api';
 import { getThemeVariables, loadSiteConfig } from '../lib/config';
 import type { HomepageType } from '../lib/api';
@@ -32,7 +35,17 @@ const displayLogo = site_data.logo || siteConfig.logo;
 const displayName = siteConfig.appName || site_data.app_name;
 
 // Determine homepage type (default to 'navigation' if not specified)
-const homepageType: HomepageType = site_data.homepage_type || 'navigation';
+// For FFCI, default to 'action-hub' if homepage_type is 'navigation' or not set
+let homepageType: HomepageType = site_data.homepage_type || 'navigation';
+// Check if this is FFCI site by config siteId or API base URL or app name
+const isFFCI = siteConfig.siteId === 'ffci' || 
+               siteConfig.apiBaseUrl.includes('ffci') ||
+               site_data.app_name?.toLowerCase().includes('ffci') ||
+               site_data.title?.toLowerCase().includes('firefighters for christ');
+// Force action-hub for FFCI unless explicitly set to something else
+if (isFFCI && homepageType !== 'content' && homepageType !== 'collection') {
+  homepageType = 'action-hub';
+}
 
 // Fetch content or collection page if needed
 if (homepageType === 'content' && site_data.homepage_content) {
@@ -61,6 +74,22 @@ if (homepageType === 'content' && site_data.homepage_content) {
   themeVars={themeVars}
   headerStyle={siteConfig.headerStyle}
 >
+  {homepageType === 'action-hub' && (
+    <div class="pb-6">
+      <!-- Action Hub Homepage: Quick Tasks, Get Connected, Featured -->
+      <QuickTasks 
+        menu={menu} 
+        donateUrl={
+          site_data.social && Array.isArray(site_data.social)
+            ? site_data.social.find(s => s.platform === 'donate' || s.label?.toLowerCase().includes('donate'))?.url
+            : undefined
+        } 
+      />
+      <GetConnected menu={menu} />
+      <Featured menu={menu} />
+    </div>
+  )}
+
   {homepageType === 'navigation' && (
     <div class="px-4 py-6">
       <h1 class="text-2xl font-bold mb-6">{site_data.title}</h1>

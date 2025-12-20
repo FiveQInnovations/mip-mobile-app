@@ -1,0 +1,88 @@
+---
+import type { MenuItem } from '../lib/api';
+
+interface Props {
+  menu: MenuItem[];
+  donateUrl?: string;
+}
+
+const { menu, donateUrl } = Astro.props;
+
+// Map menu items to Quick Tasks by label matching
+function findMenuItemByLabel(menu: MenuItem[], labels: string[]): MenuItem | null {
+  for (const label of labels) {
+    const found = menu.find((item) => 
+      item.label.toLowerCase().includes(label.toLowerCase()) ||
+      label.toLowerCase().includes(item.label.toLowerCase())
+    );
+    if (found) return found;
+  }
+  return null;
+}
+
+const prayerRequest = findMenuItemByLabel(menu, ['Prayer Request', 'Prayer']);
+const chaplainRequest = findMenuItemByLabel(menu, ['Chaplain Request', 'Chaplain']);
+const resources = findMenuItemByLabel(menu, ['Resources', 'Resource']);
+
+const quickTasks = [
+  {
+    id: 'prayer',
+    label: 'Prayer Request',
+    helperText: 'Submit a prayer request',
+    icon: '🙏',
+    href: prayerRequest ? `/page/${prayerRequest.page.uuid}` : '#',
+    menuItem: prayerRequest,
+  },
+  {
+    id: 'chaplain',
+    label: 'Chaplain Request',
+    helperText: 'Request chaplain support',
+    icon: '✝️',
+    href: chaplainRequest ? `/page/${chaplainRequest.page.uuid}` : '#',
+    menuItem: chaplainRequest,
+  },
+  {
+    id: 'resources',
+    label: 'Resources',
+    helperText: 'Browse PDFs and links',
+    icon: '📚',
+    href: resources ? `/page/${resources.page.uuid}` : '#',
+    menuItem: resources,
+  },
+  {
+    id: 'donate',
+    label: 'Donate',
+    helperText: 'Opens in browser',
+    icon: '💝',
+    href: donateUrl || '#',
+    isExternal: true,
+  },
+];
+---
+
+<div class="px-4 py-6" data-testid="quick-tasks">
+  <h2 class="text-xl font-bold mb-4">Quick Tasks</h2>
+  <div class="grid grid-cols-2 gap-4">
+    {quickTasks.map((task) => (
+      <a
+        href={task.href}
+        target={task.isExternal ? '_blank' : undefined}
+        rel={task.isExternal ? 'noopener noreferrer' : undefined}
+        class="block bg-white rounded-lg border border-gray-200 p-4 transition-all hover:shadow-md active:scale-[0.98]"
+        data-testid={`quick-task-${task.id}`}
+        style="min-height: 120px; display: flex; flex-direction: column; justify-content: space-between;"
+      >
+        <div class="flex flex-col items-start gap-2">
+          <span class="text-3xl mb-1" role="img" aria-label={task.label}>
+            {task.icon}
+          </span>
+          <h3 class="text-base font-semibold text-gray-900">{task.label}</h3>
+          <p class="text-xs text-gray-600 leading-relaxed">{task.helperText}</p>
+        </div>
+        {task.isExternal && (
+          <span class="text-xs text-gray-500 mt-2">Opens in browser</span>
+        )}
+      </a>
+    ))}
+  </div>
+</div>

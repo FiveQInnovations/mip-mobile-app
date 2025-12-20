@@ -4,7 +4,7 @@ const config = loadSiteConfig();
 const API_BASE =
   import.meta.env.PUBLIC_API_BASE || config.apiBaseUrl || 'https://ws-ffci-copy.ddev.site';
 
-export type HomepageType = 'navigation' | 'content' | 'collection';
+export type HomepageType = 'navigation' | 'content' | 'collection' | 'action-hub';
 
 export interface SocialLink {
   url: string;

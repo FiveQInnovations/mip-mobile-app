@@ -1,0 +1,75 @@
+---
+import type { MenuItem } from '../lib/api';
+
+interface Props {
+  menu: MenuItem[];
+}
+
+const { menu } = Astro.props;
+
+// Find menu items by label matching
+function findMenuItemByLabel(menu: MenuItem[], labels: string[]): MenuItem | null {
+  for (const label of labels) {
+    const found = menu.find((item) => 
+      item.label.toLowerCase().includes(label.toLowerCase()) ||
+      label.toLowerCase().includes(item.label.toLowerCase())
+    );
+    if (found) return found;
+  }
+  return null;
+}
+
+const chapters = findMenuItemByLabel(menu, ['Chapter', 'Chapters', 'Find a Chapter']);
+const events = findMenuItemByLabel(menu, ['Event', 'Events', 'Upcoming Events']);
+
+const connectedItems = [
+  {
+    id: 'chapters',
+    label: 'Find a Chapter',
+    helperText: 'Search chapters directory',
+    icon: '📍',
+    href: chapters ? `/page/${chapters.page.uuid}` : '#',
+    menuItem: chapters,
+  },
+  {
+    id: 'events',
+    label: 'Upcoming Events',
+    helperText: 'View next 1–3 events',
+    icon: '📅',
+    href: events ? `/page/${events.page.uuid}` : '#',
+    menuItem: events,
+  },
+];
+---
+
+<div class="px-4 py-4" data-testid="get-connected">
+  <h2 class="text-lg font-bold mb-3">Get Connected</h2>
+  <div class="space-y-3">
+    {connectedItems.map((item) => (
+      <a
+        href={item.href}
+        class="block bg-white rounded-lg border border-gray-200 p-4 transition-all hover:shadow-md active:scale-[0.98]"
+        data-testid={`connected-item-${item.id}`}
+        style="min-height: 64px; display: flex; align-items: center; gap: 3;"
+      >
+        <span class="text-2xl flex-shrink-0" role="img" aria-label={item.label}>
+          {item.icon}
+        </span>
+        <div class="flex-1 min-w-0 ml-3">
+          <h3 class="text-base font-semibold text-gray-900">{item.label}</h3>
+          <p class="text-xs text-gray-600 mt-0.5">{item.helperText}</p>
+        </div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 text-gray-400 flex-shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    ))}
+  </div>
+</div>
