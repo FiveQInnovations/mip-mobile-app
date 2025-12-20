@@ -102,19 +102,46 @@
 
     // Handle install button click
     installButton?.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-
-      if (outcome === 'accepted') {
-        console.log('User accepted the install prompt');
-      } else {
-        console.log('User dismissed the install prompt');
+      if (!deferredPrompt) {
+        // Fallback: try to use browser's native install
+        console.warn('No deferred prompt available. Try using Chrome\'s install icon in the address bar.');
+        // Show helpful message
+        const message = document.createElement('div');
+        message.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+        message.textContent = 'Look for the install icon (➕) in Chrome\'s address bar, or check chrome://apps';
+        document.body.appendChild(message);
+        setTimeout(() => message.remove(), 5000);
+        return;
       }
 
-      deferredPrompt = null;
-      hideInstallPrompt();
+      try {
+        // Show the native browser install prompt
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+
+        if (outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+          // Show success message
+          const message = document.createElement('div');
+          message.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+          message.innerHTML = '✓ App installed! Find it in Chrome\'s apps (chrome://apps) or your Start Menu/Applications';
+          document.body.appendChild(message);
+          setTimeout(() => message.remove(), 7000);
+        } else {
+          console.log('User dismissed the install prompt');
+        }
+
+        deferredPrompt = null;
+        hideInstallPrompt();
+      } catch (error) {
+        console.error('Error during installation:', error);
+        // Show error message
+        const message = document.createElement('div');
+        message.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+        message.textContent = 'Installation failed. Try using Chrome\'s install icon in the address bar.';
+        document.body.appendChild(message);
+        setTimeout(() => message.remove(), 5000);
+      }
     });
 
     // Handle dismiss button
@@ -145,9 +172,20 @@
     });
 
     // Hide prompt if app is already installed
-    window.addEventListener('appinstalled', () => {
+    window.addEventListener('appinstalled', (event) => {
+      console.log('App installed successfully!', event);
       hideInstallPrompt();
       deferredPrompt = null;
+      
+      // Show success message
+      const message = document.createElement('div');
+      message.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 max-w-md text-center';
+      message.innerHTML = `
+        <div class="font-semibold mb-1">✓ App Installed Successfully!</div>
+        <div class="text-sm">Find it in: <code class="bg-black/20 px-1 rounded">chrome://apps</code> or your Start Menu/Applications folder</div>
+      `;
+      document.body.appendChild(message);
+      setTimeout(() => message.remove(), 8000);
     });
 
     // Check if running as standalone (already installed)
