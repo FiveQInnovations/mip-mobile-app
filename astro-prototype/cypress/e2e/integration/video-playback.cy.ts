@@ -25,33 +25,39 @@ describe('Video Playback - Integration Tests', () => {
     });
   });
 
-  it('displays page content from real API', () => {
+  it('can navigate to pages from API', () => {
     // Use a real page UUID from the API
     // This is the "About" page UUID from the menu
     const realPageUuid = 'xhZj4ejQ65bRhrJg';
     
     cy.visitPage(realPageUuid);
     
-    // Verify page loads and displays content
+    // Verify page loads and displays basic structure
     cy.get('h1', { timeout: 10000 }).should('be.visible');
-    // The page title might be in the h1 or elsewhere, just verify it's visible
     cy.get('main', { timeout: 10000 }).should('be.visible');
+    
+    // TODO: Verify that page content actually matches API response
+    // TODO: Verify that page title matches API response title
+    // TODO: Verify that page content structure matches API data structure
   });
 
-  it('handles pages with video content if available', () => {
-    // This test will pass if a video page exists, skip if not
-    // We'll need to find a page with video content from the real API
+  it('can navigate to menu pages', () => {
+    // Verify we can navigate to pages from the menu
     cy.request('GET', 'https://ws-ffci-copy.ddev.site/mobile-api').then((response) => {
       const menu = response.body.menu;
       
-      // Try to find a page with video content
-      // For now, just verify we can navigate to pages
       if (menu && menu.length > 0) {
         const firstPageUuid = menu[0].page.uuid;
         cy.visitPage(firstPageUuid);
         cy.get('h1', { timeout: 10000 }).should('be.visible');
       }
     });
+    
+    // TODO: Test that pages with video content render video players
+    // TODO: Test YouTube video embeds when real YouTube content exists
+    // TODO: Test Vimeo video embeds when real Vimeo content exists
+    // TODO: Test direct video URLs when real direct video content exists
+    // TODO: Verify video player attributes match API response (poster, source, etc.)
   });
 
   it('verifies video player component renders when video data exists', () => {
@@ -71,6 +77,13 @@ describe('Video Playback - Integration Tests', () => {
           if (pageData.page_type === 'collection-item' && pageData.type === 'video' && pageData.data?.video) {
             cy.visitPage(testPageUuid);
             cy.get('[data-testid="video-player"]', { timeout: 10000 }).should('be.visible');
+            
+            // TODO: Verify video player type matches API response (YouTube/Vimeo/direct URL)
+            // TODO: Verify YouTube video ID matches API response when source is YouTube
+            // TODO: Verify Vimeo video ID matches API response when source is Vimeo
+            // TODO: Verify direct video URL matches API response when source is URL
+            // TODO: Verify poster image displays when present in API response
+            // TODO: Verify cover image displays when present in API response
           } else {
             // Skip test if no video content
             cy.log('No video content found on this page, skipping video player test');

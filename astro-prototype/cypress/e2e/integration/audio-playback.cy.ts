@@ -25,16 +25,19 @@ describe('Audio Playback - Integration Tests', () => {
     });
   });
 
-  it('displays page content from real API', () => {
+  it('can navigate to pages from API', () => {
     // Use a real page UUID from the API
     const realPageUuid = 'xhZj4ejQ65bRhrJg';
     
     cy.visitPage(realPageUuid);
     
-    // Verify page loads and displays content
+    // Verify page loads and displays basic structure
     cy.get('h1', { timeout: 10000 }).should('be.visible');
-    // The page title might be in the h1 or elsewhere, just verify it's visible
     cy.get('main', { timeout: 10000 }).should('be.visible');
+    
+    // TODO: Verify that page content actually matches API response
+    // TODO: Verify that page title matches API response title
+    // TODO: Verify that page content structure matches API data structure
   });
 
   it('verifies audio player component renders when audio data exists', () => {
@@ -91,6 +94,13 @@ describe('Audio Playback - Integration Tests', () => {
             if (pageData.data.audio.duration) {
               cy.get('[data-testid="audio-duration"]', { timeout: 10000 }).should('be.visible');
             }
+            
+            // TODO: Verify audio URL matches API response
+            // TODO: Verify artwork image src matches API response artwork URL
+            // TODO: Verify duration format matches expected format (MM:SS)
+            // TODO: Test audio player handles missing artwork gracefully
+            // TODO: Test audio player handles missing duration gracefully
+            // TODO: Verify content below audio player displays when present in API
           } else {
             cy.log('No audio content found on this page, skipping metadata test');
           }
