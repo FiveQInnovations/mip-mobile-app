@@ -83,7 +83,7 @@ const shouldShowBack = showBackButton || (!isHomePage && currentPath.startsWith(
         
         {/* Logo - links to home */}
         {logo && (
-          <a href="/" data-testid="home-link" class="flex items-center flex-shrink-0" style="min-height: 44px; padding: 4px 0;">
+          <a href="/" data-testid="home-link" class="flex items-center flex-shrink-0" style="min-height: 44px; min-width: 44px; padding: 4px 0;">
             <img src={logo} alt={appName || 'Logo'} class="h-8 w-auto" />
           </a>
         )}

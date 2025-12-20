@@ -19,8 +19,8 @@
   ],
   "site_data": {
     "title": "Template Site",
-    "app_name": "",
-    "logo": "",
+    "app_name": "Mobile Template",
+    "logo": "/favicon.svg",
     "social": [],
     "homepage_type": "navigation"
   }
