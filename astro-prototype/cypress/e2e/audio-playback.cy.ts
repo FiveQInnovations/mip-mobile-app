@@ -1,18 +1,14 @@
 describe('Audio Playback', () => {
   beforeEach(() => {
     // Mock site data for all tests
-    cy.fixture('mock-api-responses.json').then((siteData) => {
-      cy.intercept('GET', '**/mobile-api', siteData).as('siteData');
-    });
+    cy.intercept('GET', '**/mobile-api', { fixture: 'mock-api-responses.json' }).as('siteData');
   });
 
   it('displays audio player for audio items', () => {
-    cy.fixture('audio-item.json').then((pageData) => {
-      cy.intercept('GET', '**/mobile-api/page/audio-item-uuid', pageData).as('pageData');
-      cy.visit('/page/audio-item-uuid');
-      cy.wait(['@siteData', '@pageData'], { timeout: 10000 });
-      cy.get('[data-testid="audio-player"]', { timeout: 10000 }).should('be.visible');
-    });
+    cy.intercept('GET', '**/mobile-api/page/audio-item-uuid', { fixture: 'audio-item.json' }).as('pageData');
+    cy.visit('/page/audio-item-uuid');
+    cy.wait(['@siteData', '@pageData'], { timeout: 10000 });
+    cy.get('[data-testid="audio-player"]', { timeout: 10000 }).should('be.visible');
   });
 
   it('audio player has playback controls', () => {
