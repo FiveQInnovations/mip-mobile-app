@@ -85,10 +85,10 @@ export function HomeScreen() {
       </View>
 
       {/* Homepage Type Info */}
-      {site_data.homepage_type && (
+      {config.homepageType && (
         <View style={styles.infoSection}>
           <Text style={styles.infoLabel}>Homepage Type:</Text>
-          <Text style={styles.infoValue}>{site_data.homepage_type}</Text>
+          <Text style={styles.infoValue}>{config.homepageType}</Text>
         </View>
       )}
     </ScrollView>
