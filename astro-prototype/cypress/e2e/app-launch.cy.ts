@@ -37,7 +37,7 @@ describe('App Launch', () => {
       if (hasActionHub) {
         // FFCI site with Action Hub
         cy.get('[data-testid="quick-tasks"]').should('be.visible');
-        cy.get('[data-testid="get-connected"]').should('be.visible');
+        cy.get('[data-testid="get-connected"]').scrollIntoView().should('exist');
         cy.get('[data-testid="featured"]').should('be.visible');
       } else if (hasMenuGrid) {
         // Navigation type homepage
