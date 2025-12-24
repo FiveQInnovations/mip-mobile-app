@@ -5,11 +5,9 @@ interface Props {
   menu: MenuItem[];
   currentPath?: string;
   isHomePage?: boolean;
-  donateUrl?: string;
-  isFFCI?: boolean;
 }
 
-const { menu, currentPath = '', isHomePage = false, donateUrl, isFFCI = false } = Astro.props;
+const { menu, currentPath = '', isHomePage = false } = Astro.props;
 
 function isActive(uuid: string): boolean {
   if (isHomePage) return false;
@@ -20,31 +18,10 @@ function isHomeActive(): boolean {
   return isHomePage;
 }
 
-// For FFCI: Home (fixed) + all CMS menu items in order (up to 4 items = 5 total)
-// For others: Home (fixed) + menu items (up to 4) + Give (if donateUrl), rest in More
-let visibleItems: MenuItem[];
-let overflowItems: MenuItem[];
-let showGive = false;
-let giveHref = '';
-let giveIsExternal = false;
-
-if (isFFCI) {
-  // Show all CMS menu items in order (CMS determines order, including Give)
-  // Home (1) + up to 4 CMS items = 5 total
-  const MAX_MENU_ITEMS = 4;
-  visibleItems = menu.slice(0, MAX_MENU_ITEMS);
-  overflowItems = menu.slice(MAX_MENU_ITEMS);
-} else {
-  // Standard behavior: Home + menu items + Give (if donateUrl)
-  showGive = !!donateUrl;
-  if (donateUrl) {
-    giveHref = donateUrl;
-    giveIsExternal = true;
-  }
-  const MAX_MENU_ITEMS = donateUrl ? 3 : 4;
-  visibleItems = menu.slice(0, MAX_MENU_ITEMS);
-  overflowItems = menu.slice(MAX_MENU_ITEMS);
-}
+// CMS-ordered navigation: Home (fixed) + all CMS menu items in order (up to 4 items = 5 total)
+const MAX_MENU_ITEMS = 4;
+const visibleItems = menu.slice(0, MAX_MENU_ITEMS);
+const overflowItems = menu.slice(MAX_MENU_ITEMS);
 
 // Default icon mapping for common navigation items
 function getDefaultIcon(label: string): string | null {
