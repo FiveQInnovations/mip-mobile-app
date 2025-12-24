@@ -5,9 +5,11 @@ interface Props {
   menu: MenuItem[];
   currentPath?: string;
   isHomePage?: boolean;
+  donateUrl?: string;
+  isFFCI?: boolean;
 }
 
-const { menu, currentPath = '', isHomePage = false } = Astro.props;
+const { menu, currentPath = '', isHomePage = false, donateUrl, isFFCI = false } = Astro.props;
 
 function isActive(uuid: string): boolean {
   if (isHomePage) return false;
@@ -18,30 +20,121 @@ function isHomeActive(): boolean {
   return isHomePage;
 }
 
-// Home button always present, then max 4 menu items visible (total 5), rest go to "More" menu
-const MAX_MENU_ITEMS = 4;
-const visibleItems = menu.slice(0, MAX_MENU_ITEMS);
-const overflowItems = menu.slice(MAX_MENU_ITEMS);
+// For FFCI: Home (fixed), CMS items, Give (from CMS, last in array)
+// For others: Home (fixed), menu items (up to 4), Give (if donateUrl), rest in More
+let visibleItems: MenuItem[];
+let overflowItems: MenuItem[];
+let giveMenuItem: MenuItem | null = null;
+let showGive = false;
+let giveHref = '';
+let giveIsExternal = false;
+
+if (isFFCI) {
+  // Get Give menu item - it should be last in the array from CMS
+  giveMenuItem = menu.length > 0 && menu[menu.length - 1].label.toLowerCase().includes('give')
+    ? menu[menu.length - 1]
+    : menu.find(item => item.label.toLowerCase().includes('give')) || null;
+  
+  // For FFCI, show Give button if Give menu item exists or if donateUrl provided
+  if (giveMenuItem) {
+    showGive = true;
+    giveHref = `/page/${giveMenuItem.page.uuid}`;
+    giveIsExternal = false;
+  } else if (donateUrl) {
+    showGive = true;
+    giveHref = donateUrl;
+    giveIsExternal = true;
+  } else {
+    showGive = false;
+  }
+  
+  // Calculate available slots: Home (1) + Give (0-1) = 1-2 fixed items
+  // So we can show 3-4 CMS items (total 5)
+  const fixedSlots = 1 + (showGive ? 1 : 0);
+  const maxCmsItems = 5 - fixedSlots;
+  
+  // Get CMS items excluding Give (Give will be shown separately as last button)
+  // Include all other items including Connect
+  const cmsItems = menu.filter(item => item !== giveMenuItem);
+  visibleItems = cmsItems.slice(0, maxCmsItems);
+  overflowItems = cmsItems.slice(maxCmsItems);
+} else {
+  // Standard behavior: Home + menu items + Give (if donateUrl)
+  showGive = !!donateUrl;
+  if (donateUrl) {
+    giveHref = donateUrl;
+    giveIsExternal = true;
+  }
+  const MAX_MENU_ITEMS = donateUrl ? 3 : 4;
+  visibleItems = menu.slice(0, MAX_MENU_ITEMS);
+  overflowItems = menu.slice(MAX_MENU_ITEMS);
+}
+
+// Default icon mapping for common navigation items
+function getDefaultIcon(label: string): string | null {
+  const labelLower = label.toLowerCase();
+  
+  // Common patterns
+  if (labelLower.includes('about') || labelLower.includes('info')) {
+    return 'ℹ️';
+  } else if (labelLower.includes('contact') || labelLower.includes('connect')) {
+    return '📞';
+  } else if (labelLower.includes('event') || labelLower.includes('calendar')) {
+    return '📅';
+  } else if (labelLower.includes('resource') || labelLower.includes('library')) {
+    return '📚';
+  } else if (labelLower.includes('chapter') || labelLower.includes('location') || labelLower.includes('find')) {
+    return '📍';
+  } else if (labelLower.includes('prayer') || labelLower.includes('pray')) {
+    return '🙏';
+  } else if (labelLower.includes('chaplain')) {
+    return '✝️';
+  } else if (labelLower.includes('donate') || labelLower.includes('give')) {
+    return '❤️';
+  } else if (labelLower.includes('involve') || labelLower.includes('volunteer') || labelLower.includes('join')) {
+    return '🤝';
+  } else if (labelLower.includes('news') || labelLower.includes('update')) {
+    return '📰';
+  } else if (labelLower.includes('video') || labelLower.includes('media')) {
+    return '🎥';
+  } else if (labelLower.includes('audio') || labelLower.includes('podcast')) {
+    return '🎧';
+  } else if (labelLower.includes('bible') || labelLower.includes('scripture')) {
+    return '📖';
+  } else if (labelLower.includes('home')) {
+    return '🏠';
+  }
+  
+  // Fallback to first letter if no match
+  return null;
+}
 
 function renderIcon(label: string, icon?: string): string {
-  if (!icon) {
-    // Default icon based on first letter or common patterns
-    const firstChar = label.charAt(0).toUpperCase();
-    return `<span class="text-lg">${firstChar}</span>`;
+  // Use provided icon if available
+  if (icon) {
+    // If icon is a URL or path, render as image
+    if (icon.startsWith('http') || icon.startsWith('/') || icon.startsWith('./')) {
+      return `<img src="${icon}" alt="${label}" class="w-5 h-5 object-contain" />`;
+    }
+    
+    // If icon looks like SVG, render inline
+    if (icon.trim().startsWith('<svg')) {
+      return icon;
+    }
+    
+    // Otherwise treat as emoji or symbol
+    return `<span class="text-lg">${icon}</span>`;
   }
   
-  // If icon is a URL or path, render as image
-  if (icon.startsWith('http') || icon.startsWith('/') || icon.startsWith('./')) {
-    return `<img src="${icon}" alt="${label}" class="w-5 h-5 object-contain" />`;
+  // Try to get default icon
+  const defaultIcon = getDefaultIcon(label);
+  if (defaultIcon) {
+    return `<span class="text-lg">${defaultIcon}</span>`;
   }
   
-  // If icon looks like SVG, render inline
-  if (icon.trim().startsWith('<svg')) {
-    return icon;
-  }
-  
-  // Otherwise treat as emoji or symbol
-  return `<span class="text-lg">${icon}</span>`;
+  // Final fallback to first letter
+  const firstChar = label.charAt(0).toUpperCase();
+  return `<span class="text-lg">${firstChar}</span>`;
 }
 ---
 
@@ -79,15 +172,33 @@ function renderIcon(label: string, icon?: string): string {
                 : 'var(--color-text, #4b5563)'
             };`}
           >
-            {item.icon && (
-              <span class="text-lg mb-1" set:html={renderIcon(item.label, item.icon)} data-testid="nav-icon"></span>
-            )}
+            <span class="text-lg mb-1" set:html={renderIcon(item.label, item.icon)} data-testid="nav-icon"></span>
             <span class="text-xs font-medium truncate w-full text-center">
               {item.label}
             </span>
           </a>
         );
       })}
+
+      {/* Give button - from CMS (last in array) or donateUrl */}
+      {showGive && (
+        <a
+          href={giveHref}
+          target={giveIsExternal ? "_blank" : undefined}
+          rel={giveIsExternal ? "noopener noreferrer" : undefined}
+          class="flex flex-col items-center justify-center min-w-0 flex-1 nav-touch-target"
+          data-testid="nav-give"
+          data-active={!giveIsExternal && giveMenuItem ? isActive(giveMenuItem.page.uuid) : false}
+          style={`color: ${
+            !giveIsExternal && giveMenuItem && isActive(giveMenuItem.page.uuid)
+              ? 'var(--color-primary, #2563eb)'
+              : 'var(--color-text, #4b5563)'
+          };`}
+        >
+          <span class="text-lg mb-1" set:html={renderIcon(giveMenuItem?.label || 'Give', giveMenuItem?.icon || '❤️')} data-testid="nav-icon"></span>
+          <span class="text-xs font-medium truncate w-full text-center">{giveMenuItem?.label || 'Give'}</span>
+        </a>
+      )}
 
       {/* More menu if overflow */}
       {overflowItems.length > 0 && (
@@ -121,9 +232,7 @@ function renderIcon(label: string, icon?: string): string {
                       : 'var(--color-text, #4b5563)'
                   }; min-height: 44px; padding-top: 12px; padding-bottom: 12px;`}
                 >
-                  {item.icon && (
-                    <span class="text-base" set:html={renderIcon(item.label, item.icon)}></span>
-                  )}
+                  <span class="text-base" set:html={renderIcon(item.label, item.icon)}></span>
                   <span class="text-sm font-medium">{item.label}</span>
                 </a>
               );
