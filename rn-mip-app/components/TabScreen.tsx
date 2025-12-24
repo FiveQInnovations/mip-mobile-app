@@ -4,11 +4,11 @@ import { getPage, PageData } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
 
-interface PageScreenProps {
+interface TabScreenProps {
   uuid: string;
 }
 
-export function PageScreen({ uuid }: PageScreenProps) {
+export function TabScreen({ uuid }: TabScreenProps) {
   const [pageData, setPageData] = React.useState<PageData | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -77,7 +77,12 @@ export function PageScreen({ uuid }: PageScreenProps) {
         <HTMLContentRenderer html={pageData.page_content} />
       )}
 
-      {/* Collection Type */}
+      {/* Collection Item Type - Render HTML */}
+      {pageType === 'collection-item' && pageData.data?.page_content && (
+        <HTMLContentRenderer html={pageData.data.page_content} />
+      )}
+
+      {/* Collection Type - Show children */}
       {pageType === 'collection' && (
         <View style={styles.contentSection}>
           {pageData.children && pageData.children.length > 0 ? (
@@ -95,11 +100,6 @@ export function PageScreen({ uuid }: PageScreenProps) {
             <Text style={styles.emptyText}>No items in this collection</Text>
           )}
         </View>
-      )}
-
-      {/* Collection Item Type - Render HTML */}
-      {pageType === 'collection-item' && pageData.data?.page_content && (
-        <HTMLContentRenderer html={pageData.data.page_content} />
       )}
     </ScrollView>
   );
@@ -150,11 +150,6 @@ const styles = StyleSheet.create({
   contentSection: {
     paddingHorizontal: 16,
     paddingTop: 16,
-  },
-  contentText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#333',
   },
   sectionTitle: {
     fontSize: 20,

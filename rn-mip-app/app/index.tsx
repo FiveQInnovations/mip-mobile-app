@@ -1,7 +1,7 @@
 import React from 'react';
-import { HomeScreen } from '../components/HomeScreen';
+import { TabNavigator } from '../components/TabNavigator';
 
 export default function Index() {
-  return <HomeScreen />;
+  return <TabNavigator />;
 }
 
