@@ -13,6 +13,8 @@ interface Props {
   themeVars?: Record<string, string>;
   headerStyle?: 'light' | 'dark';
   showBackButton?: boolean;
+  donateUrl?: string;
+  isFFCI?: boolean;
 }
 
 const {
@@ -24,6 +26,8 @@ const {
   themeVars = {},
   headerStyle = 'light',
   showBackButton = false,
+  donateUrl,
+  isFFCI = false,
 } = Astro.props;
 
 const themeStyle = Object.entries(themeVars)
@@ -60,13 +64,12 @@ const shouldShowBack = showBackButton || (!isHomePage && currentPath.startsWith(
       <div class="flex items-center gap-3 w-full px-4" style="max-width: min(100%, 428px); margin-left: auto; margin-right: auto;">
         {/* Back button - shown on content pages */}
         {shouldShowBack && (
-          <button
-            type="button"
-            onclick="window.history.back()"
+          <a
+            href="/"
             data-testid="back-button"
             class="flex items-center justify-center -ml-1"
-            aria-label="Go back"
-            style="color: var(--color-header-text, #ffffff); min-width: 44px; min-height: 44px; padding: 8px;"
+            aria-label="Go back to home"
+            style="color: var(--color-header-text, #ffffff); min-width: 44px; min-height: 44px; padding: 8px; text-decoration: none;"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -78,7 +81,7 @@ const shouldShowBack = showBackButton || (!isHomePage && currentPath.startsWith(
             >
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-          </button>
+          </a>
         )}
         
         {/* Logo - links to home */}
@@ -102,7 +105,7 @@ const shouldShowBack = showBackButton || (!isHomePage && currentPath.startsWith(
 
     <!-- Bottom Navigation -->
     {menu.length > 0 && (
-      <Navigation menu={menu} currentPath={currentPath} isHomePage={isHomePage} />
+      <Navigation menu={menu} currentPath={currentPath} isHomePage={isHomePage} donateUrl={donateUrl} isFFCI={isFFCI} />
     )}
 
     <!-- Install Prompt -->

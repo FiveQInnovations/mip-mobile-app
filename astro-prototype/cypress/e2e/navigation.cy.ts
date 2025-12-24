@@ -170,7 +170,7 @@ describe('Navigation Polish', () => {
     cy.get('[data-testid="nav-home"][data-active="true"]').should('not.exist');
   });
 
-  it('back button navigates to previous page', () => {
+  it('back button navigates to homepage', () => {
     cy.visit('/');
     
     // Navigate to a page
@@ -317,6 +317,34 @@ describe('ActionHub Homepage Navigation', () => {
     
     // Click Home button
     cy.get('[data-testid="nav-home"]').click();
+    
+    // Should return to ActionHub homepage
+    cy.url().should('eq', Cypress.config().baseUrl + '/');
+    
+    // Verify ActionHub content is visible
+    cy.get('[data-testid="quick-tasks"]', { timeout: 10000 }).should('exist');
+    cy.get('[data-testid="quick-tasks"]').scrollIntoView().should('be.visible');
+    cy.get('[data-testid="get-connected"]').should('exist');
+    cy.get('[data-testid="featured"]').should('exist');
+  });
+
+  it('back button returns to ActionHub homepage from content page', () => {
+    cy.visit('/');
+    
+    // Verify we're on ActionHub homepage
+    cy.get('[data-testid="quick-tasks"]', { timeout: 10000 }).should('exist');
+    cy.get('[data-testid="quick-tasks"]').scrollIntoView().should('be.visible');
+    
+    // Navigate to a content page
+    cy.get('[data-testid="bottom-nav"] a').not('[data-testid="nav-home"]').first().click();
+    cy.url().should('include', '/page/');
+    
+    // Verify we're on a content page (not homepage)
+    cy.get('[data-testid="quick-tasks"]').should('not.exist');
+    
+    // Back button should be visible on content pages
+    cy.get('[data-testid="back-button"]').should('be.visible');
+    cy.get('[data-testid="back-button"]').click();
     
     // Should return to ActionHub homepage
     cy.url().should('eq', Cypress.config().baseUrl + '/');
