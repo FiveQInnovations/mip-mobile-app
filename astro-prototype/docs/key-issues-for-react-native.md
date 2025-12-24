@@ -156,18 +156,17 @@ These issues have been investigated and resolved in the Astro prototype:
 
 ---
 
-### 8. Offline Handling and Network Errors
+### 8. Network Error Handling
 
 **Problem**: Mobile apps need graceful handling of network failures.
 
 **What to Verify**:
 - [ ] App shows meaningful error when API is unreachable
 - [ ] Retry button works correctly
-- [ ] Cached data (if available) is shown when network fails
 - [ ] Loading states don't hang indefinitely
 - [ ] Network status is detectable (online/offline)
 
-**Spec Reference**: Section "7. Error/Offline Screen" and "API Response Handling"
+**Spec Reference**: Section "7. Error Screen" and "API Response Handling"
 
 ---
 
@@ -310,7 +309,7 @@ These issues have been investigated and resolved in the Astro prototype:
 | 6 | Audio playback | Medium | Key content type for C4I |
 | 7 | Firebase Analytics | Medium | Required per spec |
 | 8 | Image caching | Medium | User experience |
-| 9 | Offline handling | Low | v1 has limited offline scope |
+| 9 | Network error handling | Low | Basic error handling required |
 | 10 | Pull-to-refresh | Low | Standard pattern |
 | 11 | Theming | Low | Config-driven |
 | 12 | Token security | Low | Security consideration |

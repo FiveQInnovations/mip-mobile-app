@@ -2,7 +2,7 @@
 
 Scoring key:
 - **5 = excellent**, **3 = solid**, **1 = weak**
-- “Other important factors” includes: **Apple review risk**, **implementation complexity**, **performance/offline**, **content scalability**, **analytics/retention leverage**, **accessibility**
+- "Other important factors" includes: **Apple review risk**, **implementation complexity**, **performance**, **content scalability**, **analytics/retention leverage**, **accessibility**
 
 ---
 
@@ -11,7 +11,7 @@ Scoring key:
 | Concept | Reusability (multi-site) | App-like feel | Real user value | Apple-risk reduction | Complexity | Notes |
 |---|---:|---:|---:|---:|---:|---|
 | 1) **“Today” dashboard** | 5 | 5 | 4 | 5 | 4 | Strong “native app hub”; needs user state/persistence to shine |
-| 2) **Offline-first Library + downloads** | 5 | 5 | 5 | 5 | 4 | Highest practical value; requires download mgmt + UX polish |
+| 2) **Library + downloads** | 5 | 5 | 5 | 5 | 4 | Highest practical value; requires download mgmt + UX polish |
 | 3) **Explore w/ filters + saved searches** | 5 | 4 | 4 | 4 | 3 | Highly reusable; best if content is large and taxonomy is consistent |
 | 4) **Guided journeys (multi-step flows)** | 3 | 5 | 4 | 5 | 5 | Great retention; harder to generalize across sites without “journey authoring” |
 | 5) **Media-first home (queue + player)** | 4 | 5 | 5 (for media sites) | 4 | 4 | Excellent when audio/video is core; less universal for text-first orgs |
@@ -30,11 +30,11 @@ Scoring key:
   - **Works without login**: Yes (device-local “history/saved”).
   - **Scales with content**: Great; the home becomes a personalized lens.
 
-## 2) Offline-first Library + smart downloads
-- **Reusability**: **Excellent**. Offline and “saved” patterns apply universally.
-- **App-like feel**: **Very high**. Offline mode, downloads, storage controls are strongly “native”.
-- **Real value**: **Highest** (when users are mobile, traveling, spotty signal, or want quick access).
-- **Apple-risk reduction**: **Very high**. Offline, storage management, background tasks, “download on Wi‑Fi only” are strong differentiators.
+## 2) Library + smart downloads
+- **Reusability**: **Excellent**. Downloads and "saved" patterns apply universally.
+- **App-like feel**: **Very high**. Downloads, storage controls are strongly "native".
+- **Real value**: **Highest** (when users are mobile, traveling, or want quick access).
+- **Apple-risk reduction**: **Very high**. Storage management, background tasks, "download on Wi‑Fi only" are strong differentiators.
 - **Other factors**
   - **Complexity**: Moderate-high. Needs clear UX for download states, failures, and storage limits.
   - **Performance**: Excellent perceived speed once cached.
@@ -72,17 +72,18 @@ Scoring key:
 
 ## Recommendation (best “overall” for reuse + Apple safety)
 
-**Best overall: (2) Offline-first Library + smart downloads**, with a light layer of **(1) Today dashboard** on top.
+**Best overall: (2) Library + smart downloads**, with a light layer of **(1) Today dashboard** on top.
 
-- **Why**: Offline/downloads are universally valuable on mobile, highly reusable across future sites, and strongly demonstrate “native value” that helps reduce Apple rejection risk.
+- **Why**: Downloads are universally valuable on mobile, highly reusable across future sites, and strongly demonstrate "native value" that helps reduce Apple rejection risk.
 - **Practical pairing**: Home = “Today” (Continue/Saved/Downloaded/New), second tab = “Library” (downloads + saved collections), third tab = “Explore”.
 
 ---
 
 ## Key Apple-friendly principles (applies to any option)
 - **Persistent user state** (saved, continue, downloads, preferences) even without login
-- **Offline capability** and/or device integration (storage, media controls)
+- **Device integration** (storage, media controls)
 - **Navigation that feels native** (tabbed structure, consistent header behavior)
 - **Fast perceived performance** (skeleton loading, caching, instant back)
 - **Meaningful features not present on the website** (or at least not trivially replicated)
+
 
