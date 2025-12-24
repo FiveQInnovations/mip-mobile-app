@@ -20,10 +20,24 @@ describe('Chapters Navigation - Integration Test', () => {
     // Step 1: Verify we're on the Home page
     cy.url().should('eq', Cypress.config().baseUrl + '/');
     
-    // Step 2: Find and click the 'Chapters' menu item
-    cy.contains('[data-testid="menu-item"]', 'Chapter')
-      .should('be.visible')
-      .click();
+    // Step 2: Navigate to Chapters page
+    // FFCI sites use Action Hub, so navigate via bottom nav or Get Connected
+    cy.get('body').then(($body) => {
+      const hasActionHub = $body.find('[data-testid="quick-tasks"]').length > 0;
+      
+      if (hasActionHub) {
+        // Use bottom navigation for Action Hub sites
+        cy.get('[data-testid="bottom-nav"]').should('be.visible');
+        cy.contains('[data-testid="bottom-nav"] a', 'Chapters')
+          .should('be.visible')
+          .click();
+      } else {
+        // Fallback to menu-item for navigation type
+        cy.contains('[data-testid="menu-item"]', 'Chapter')
+          .should('be.visible')
+          .click();
+      }
+    });
     
     // Step 3: Verify URL changed to Chapters page
     cy.url().should('include', '/page/pik8ysClOFGyllBY');

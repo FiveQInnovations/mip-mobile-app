@@ -20,10 +20,24 @@ describe('About Navigation - Integration Test', () => {
     // Step 1: Verify we're on the Home page
     cy.url().should('eq', Cypress.config().baseUrl + '/');
     
-    // Step 2: Find and click the 'About' menu item
-    cy.contains('[data-testid="menu-item"]', 'About')
-      .should('be.visible')
-      .click();
+    // Step 2: Navigate to About page
+    // FFCI sites use Action Hub, so navigate via bottom nav or Quick Tasks
+    cy.get('body').then(($body) => {
+      const hasActionHub = $body.find('[data-testid="quick-tasks"]').length > 0;
+      
+      if (hasActionHub) {
+        // Use bottom navigation for Action Hub sites
+        cy.get('[data-testid="bottom-nav"]').should('be.visible');
+        cy.contains('[data-testid="bottom-nav"] a', 'About')
+          .should('be.visible')
+          .click();
+      } else {
+        // Fallback to menu-item for navigation type
+        cy.contains('[data-testid="menu-item"]', 'About')
+          .should('be.visible')
+          .click();
+      }
+    });
     
     // Step 3: Verify URL changed to About page
     cy.url().should('include', '/page/xhZj4ejQ65bRhrJg');

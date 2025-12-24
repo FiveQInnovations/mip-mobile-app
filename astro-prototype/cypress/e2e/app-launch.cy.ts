@@ -29,7 +29,23 @@ describe('App Launch', () => {
   });
 
   it('shows home screen with menu items', () => {
-    cy.get('[data-testid="menu-grid"]').should('be.visible');
-    cy.get('[data-testid="menu-item"]').should('have.length.at.least', 1);
+    // Check if Action Hub is rendered (for FFCI sites) or navigation type (for other sites)
+    cy.get('body').then(($body) => {
+      const hasActionHub = $body.find('[data-testid="quick-tasks"]').length > 0;
+      const hasMenuGrid = $body.find('[data-testid="menu-grid"]').length > 0;
+      
+      if (hasActionHub) {
+        // FFCI site with Action Hub
+        cy.get('[data-testid="quick-tasks"]').should('be.visible');
+        cy.get('[data-testid="get-connected"]').should('be.visible');
+        cy.get('[data-testid="featured"]').should('be.visible');
+      } else if (hasMenuGrid) {
+        // Navigation type homepage
+        cy.get('[data-testid="menu-grid"]').should('be.visible');
+        cy.get('[data-testid="menu-item"]').should('have.length.at.least', 1);
+      } else {
+        throw new Error('Homepage should render either Action Hub or menu grid');
+      }
+    });
   });
 });
