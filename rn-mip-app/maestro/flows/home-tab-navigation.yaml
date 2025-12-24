@@ -1,0 +1,36 @@
+appId: com.fiveq.ffci
+---
+- launchApp
+- waitForAnimationToEnd
+
+# Handle optional developer prompts
+- tapOn:
+    text: "Open"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+- tapOn:
+    text: "Continue"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# Assert Home tab is visible as the first tab
+- assertVisible:
+    text: "Home"
+    optional: false
+
+# Tap on Home tab
+- tapOn:
+    text: "Home"
+- waitForAnimationToEnd
+
+# Verify homepage content is displayed (app name or menu section)
+- assertVisible:
+    text: "Menu"
+    optional: false
+
+- takeScreenshot: home-tab-selected
+

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'rea
 import { getSiteData, SiteData, MenuItem } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { TabScreen } from './TabScreen';
+import { HomeScreen } from './HomeScreen';
 
 export function TabNavigator() {
   const [siteData, setSiteData] = React.useState<SiteData | null>(null);
@@ -21,10 +22,8 @@ export function TabNavigator() {
       const data = await getSiteData();
       setSiteData(data);
       setError(null);
-      // Set first tab as selected by default
-      if (data.menu.length > 0) {
-        setSelectedTabUuid(data.menu[0].page.uuid);
-      }
+      // Set Home tab as selected by default
+      setSelectedTabUuid('__home__');
     } catch (err: any) {
       setError(err.message || 'Failed to load data');
       console.error('Error loading site data:', err);
@@ -61,19 +60,32 @@ export function TabNavigator() {
     );
   }
 
+  // Create Home tab item
+  const homeTab: MenuItem = {
+    label: 'Home',
+    icon: '🏠',
+    page: { uuid: '__home__', type: 'home', url: '/' }
+  };
+
+  // Prepend Home tab to menu items
   const menuItems = siteData.menu;
-  const selectedTab = menuItems.find(item => item.page.uuid === selectedTabUuid) || menuItems[0];
+  const allTabs = [homeTab, ...menuItems];
+  const selectedTab = allTabs.find(item => item.page.uuid === selectedTabUuid) || allTabs[0];
 
   return (
     <View style={styles.container}>
       {/* Content Area */}
       <View style={styles.contentArea}>
-        {selectedTabUuid && <TabScreen uuid={selectedTabUuid} />}
+        {selectedTabUuid === '__home__' ? (
+          <HomeScreen />
+        ) : (
+          selectedTabUuid && <TabScreen uuid={selectedTabUuid} />
+        )}
       </View>
 
       {/* Bottom Tab Bar */}
       <View style={styles.tabBar}>
-        {menuItems.map((item: MenuItem, index: number) => {
+        {allTabs.map((item: MenuItem, index: number) => {
           const isSelected = selectedTabUuid === item.page.uuid;
           return (
             <TouchableOpacity
