@@ -1,0 +1,35 @@
+appId: com.fiveq.ffci
+---
+- launchApp
+- waitForAnimationToEnd
+
+# Handle optional developer prompts
+- tapOn:
+    text: "Open"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+
+- tapOn:
+    text: "Continue"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+
+# Wait for homepage to load (may show loading state first)
+# The app will show "Loading..." first, then the homepage
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# Verify homepage elements are visible
+# The app name should be visible (could be "FFCI" or "FFCI Mobile")
+- assertVisible:
+    text: ".*FFCI.*"
+    optional: false
+
+# Verify menu section is present
+- assertVisible: "Menu"
+
+# Take screenshot for verification
+- takeScreenshot: homepage-loaded
+

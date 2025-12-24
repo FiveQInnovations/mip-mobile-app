@@ -1,0 +1,14 @@
+{
+  "siteId": "ffci",
+  "apiBaseUrl": "https://ws-ffci-copy.ddev.site",
+  "appName": "FFCI Mobile",
+  "appSlug": "ffci-mobile",
+  "primaryColor": "#D9232A",
+  "secondaryColor": "#024D91",
+  "textColor": "#0f172a",
+  "backgroundColor": "#f8fafc",
+  "headerStyle": "dark",
+  "logo": "/favicon.svg",
+  "homepageType": "action-hub"
+}
+
