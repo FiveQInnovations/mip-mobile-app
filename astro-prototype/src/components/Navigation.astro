@@ -31,26 +31,21 @@ let giveIsExternal = false;
 
 if (isFFCI) {
   // Get Give menu item - it should be last in the array from CMS
+  // Assume Give is always present in the CMS menu
   giveMenuItem = menu.length > 0 && menu[menu.length - 1].label.toLowerCase().includes('give')
     ? menu[menu.length - 1]
     : menu.find(item => item.label.toLowerCase().includes('give')) || null;
   
-  // For FFCI, show Give button if Give menu item exists or if donateUrl provided
+  // Always show Give button from CMS
   if (giveMenuItem) {
     showGive = true;
     giveHref = `/page/${giveMenuItem.page.uuid}`;
     giveIsExternal = false;
-  } else if (donateUrl) {
-    showGive = true;
-    giveHref = donateUrl;
-    giveIsExternal = true;
-  } else {
-    showGive = false;
   }
   
-  // Calculate available slots: Home (1) + Give (0-1) = 1-2 fixed items
-  // So we can show 3-4 CMS items (total 5)
-  const fixedSlots = 1 + (showGive ? 1 : 0);
+  // Calculate available slots: Home (1) + Give (1) = 2 fixed items
+  // So we can show 3 CMS items (total 5)
+  const fixedSlots = 2; // Home + Give
   const maxCmsItems = 5 - fixedSlots;
   
   // Get CMS items excluding Give (Give will be shown separately as last button)
@@ -180,23 +175,21 @@ function renderIcon(label: string, icon?: string): string {
         );
       })}
 
-      {/* Give button - from CMS (last in array) or donateUrl */}
-      {showGive && (
+      {/* Give button - from CMS (last in array), always present */}
+      {showGive && giveMenuItem && (
         <a
           href={giveHref}
-          target={giveIsExternal ? "_blank" : undefined}
-          rel={giveIsExternal ? "noopener noreferrer" : undefined}
           class="flex flex-col items-center justify-center min-w-0 flex-1 nav-touch-target"
           data-testid="nav-give"
-          data-active={!giveIsExternal && giveMenuItem ? isActive(giveMenuItem.page.uuid) : false}
+          data-active={isActive(giveMenuItem.page.uuid)}
           style={`color: ${
-            !giveIsExternal && giveMenuItem && isActive(giveMenuItem.page.uuid)
+            isActive(giveMenuItem.page.uuid)
               ? 'var(--color-primary, #2563eb)'
               : 'var(--color-text, #4b5563)'
           };`}
         >
-          <span class="text-lg mb-1" set:html={renderIcon(giveMenuItem?.label || 'Give', giveMenuItem?.icon || '❤️')} data-testid="nav-icon"></span>
-          <span class="text-xs font-medium truncate w-full text-center">{giveMenuItem?.label || 'Give'}</span>
+          <span class="text-lg mb-1" set:html={renderIcon(giveMenuItem.label, giveMenuItem.icon)} data-testid="nav-icon"></span>
+          <span class="text-xs font-medium truncate w-full text-center">{giveMenuItem.label}</span>
         </a>
       )}
 
