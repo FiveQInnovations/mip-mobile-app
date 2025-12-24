@@ -5,6 +5,7 @@
  * instead of breaking out to the external Kirby site.
  * 
  * Uses the REAL API from ws-ffci-copy.ddev.site
+ * Tests navigation from Resources page which has Related Pages with internal links.
  * 
  * Prerequisites:
  * - DDEV site ws-ffci-copy must be running
@@ -18,8 +19,8 @@ describe('Internal Link Navigation - Integration Test', () => {
     cy.visit('/');
   });
 
-  it('should navigate to About page and click internal link without leaving app', () => {
-    // Step 1: Navigate to About page
+  it('should navigate to Resources page and click internal link without leaving app', () => {
+    // Step 1: Navigate to Resources page
     // FFCI sites use Action Hub, so navigate via bottom nav
     cy.get('body').then(($body) => {
       const hasActionHub = $body.find('[data-testid="quick-tasks"]').length > 0;
@@ -27,22 +28,23 @@ describe('Internal Link Navigation - Integration Test', () => {
       if (hasActionHub) {
         // Use bottom navigation for Action Hub sites
         cy.get('[data-testid="bottom-nav"]').should('be.visible');
-        cy.contains('[data-testid="bottom-nav"] a', 'About')
+        cy.contains('[data-testid="bottom-nav"] a', 'Resources')
           .should('be.visible')
           .click();
       } else {
         // Fallback to menu-item for navigation type
-        cy.contains('[data-testid="menu-item"]', 'About')
+        cy.contains('[data-testid="menu-item"]', 'Resources')
           .should('be.visible')
           .click();
       }
     });
     
-    // Step 2: Verify we're on the About page
-    cy.url().should('include', '/page/xhZj4ejQ65bRhrJg');
+    // Step 2: Verify we're on the Resources page
+    cy.url().should('include', '/page/uezb3178BtP3oGuU');
     cy.get('main', { timeout: 10000 }).should('be.visible');
     
     // Step 3: Find an internal link in the page content
+    // Resources page has "Related Pages" section with internal links
     cy.get('main', { timeout: 10000 }).should('be.visible');
     
     // Find links - try both transformed and original format
@@ -74,7 +76,7 @@ describe('Internal Link Navigation - Integration Test', () => {
             cy.log(`Found ${internalLinks.length} internal link(s) (not transformed). Clicking: ${href}`);
             cy.wrap(firstLink).click();
           } else {
-            throw new Error('No internal links found on About page');
+            throw new Error('No internal links found on Resources page');
           }
         }
       });
@@ -88,7 +90,7 @@ describe('Internal Link Navigation - Integration Test', () => {
     cy.get('main', { timeout: 10000 }).should('be.visible');
     cy.get('main').should('not.contain', 'Error Loading Page');
     
-    // Verify we're on a different page (URL changed)
-    cy.url().should('not.include', 'xhZj4ejQ65bRhrJg');
+    // Verify we're on a different page (URL changed from Resources page)
+    cy.url().should('not.include', 'uezb3178BtP3oGuU');
   });
 });
