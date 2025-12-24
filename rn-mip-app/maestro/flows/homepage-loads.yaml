@@ -1,38 +1,12 @@
 appId: com.fiveq.ffci
 ---
-- launchApp
-- waitForAnimationToEnd
-
-# Handle optional developer prompts
-- tapOn:
-    text: "Open"
-    optional: true
-    waitUntilVisible: false
-- waitForAnimationToEnd
-
-- tapOn:
-    text: "Continue"
-    optional: true
-    waitUntilVisible: false
-- waitForAnimationToEnd
-
-# Wait for homepage to load (may show loading state first)
-# The app will show "Loading..." first, then the homepage
-- waitForAnimationToEnd
-- waitForAnimationToEnd
+# Run shared setup (launch app, dismiss prompts, wait for homepage)
+- runFlow: _setup.yaml
 
 # Verify homepage elements are visible
-# The app should show tab navigation with tabs like Resources, Chapters, etc.
-# Check for at least one tab label (Resources, Chapters, Connect, Give, etc.)
 - assertVisible:
     text: ".*(Resources|Chapters|Connect|Give|Home|About).*"
     optional: false
 
-# Verify tab bar is visible at bottom
-- assertVisible:
-    id: ".*tab.*"
-    optional: true
-
 # Take screenshot for verification
 - takeScreenshot: homepage-loaded
-

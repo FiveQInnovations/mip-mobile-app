@@ -1,36 +1,21 @@
 appId: com.fiveq.ffci
 ---
-- launchApp
-- waitForAnimationToEnd
+# Run shared setup (launch app, dismiss prompts, wait for homepage)
+- runFlow: _setup.yaml
 
-# Handle optional developer prompts
-- tapOn:
-    text: "Open"
-    optional: true
-    waitUntilVisible: false
-- waitForAnimationToEnd
-- tapOn:
-    text: "Continue"
-    optional: true
-    waitUntilVisible: false
-- waitForAnimationToEnd
-- waitForAnimationToEnd
-- waitForAnimationToEnd
-
-# Assert Home tab is visible as the first tab
+# Wait for tabs to be visible
 - assertVisible:
-    text: "Home"
+    text: ".*(Resources|Chapters|Connect|Give|Home|About).*"
     optional: false
 
-# Tap on Home tab
+# Tap on Home tab (using accessibility label)
 - tapOn:
-    text: "Home"
+    text: "Home tab"
 - waitForAnimationToEnd
 
-# Verify homepage content is displayed (app name or menu section)
+# Verify homepage content is displayed
 - assertVisible:
     text: "Menu"
     optional: false
 
 - takeScreenshot: home-tab-selected
-
