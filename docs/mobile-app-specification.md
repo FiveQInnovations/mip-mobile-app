@@ -530,6 +530,26 @@ The following are explicitly NOT included:
 - Primarily page builder content
 - English-only for v1 (no multi-language support)
 
+#### Existing SubSplash App (Google Play)
+**Listing**: [Firefighters For Christ on Google Play](https://play.google.com/store/apps/details?id=com.subsplashconsulting.s_F52C3B)
+
+**Details**:
+- **Package ID**: `com.subsplashconsulting.s_F52C3B`
+- **Developer**: Subsplash Inc
+- **Rating**: 5.0 stars (9 reviews)
+- **Downloads**: 500+
+- **Last Updated**: May 30, 2024
+- **Category**: Lifestyle
+
+**Current Features**:
+- Watch or listen to past messages
+- Push notifications
+- Contacts for local Chapter leaders
+- Bible reader (included in app)
+- Ministry videos of mission trips
+
+**Note**: This app expires January 15, 2025. The new MIP-based app will replace this SubSplash app.
+
 #### Timeline & Phased Delivery
 - **Urgent deadline**: Client needs app by late Feb/early Mar 2025 for an event
 - **SubSplash expiration**: Current SubSplash app expires Jan 15, 2025
