@@ -43,6 +43,7 @@ const isFFCI = siteConfig.siteId === 'ffci' ||
                site_data.app_name?.toLowerCase().includes('ffci') ||
                site_data.title?.toLowerCase().includes('firefighters for christ');
 // Force action-hub for FFCI (overrides CMS setting)
+// See docs/decisions/action-hub-homepage.md for rationale
 if (isFFCI) {
   homepageType = 'action-hub';
 }
