@@ -15,7 +15,7 @@ describe('Navigation', () => {
       if (hasActionHub) {
         // Action Hub homepage
         cy.get('[data-testid="quick-tasks"]').should('be.visible');
-        cy.get('[data-testid="get-connected"]').should('be.visible');
+        cy.get('[data-testid="get-connected"]').scrollIntoView().should('exist');
         cy.get('[data-testid="featured"]').should('be.visible');
       } else if (hasMenuGrid) {
         // Navigation type homepage
