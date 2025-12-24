@@ -59,7 +59,22 @@
 - Site accessible at: `https://ws-ffci-copy.ddev.site`
 - API endpoint working: `/mobile-api`
 
-## Current Problem
+## ✅ RESOLVED: Network Issue Fixed!
+
+### Solution: HTTP Proxy for iOS Simulator
+
+The iOS simulator cannot reach `localhost` or `127.0.0.1` because it treats them as referring to itself, not the host machine. We solved this by:
+
+1. **Created HTTP Proxy** (`scripts/ddev-proxy.js`): Forwards requests from Mac's IP (192.168.0.106:8888) to DDEV on localhost:55038
+2. **Updated Config**: Changed `apiBaseUrl` to `http://192.168.0.106:8888`
+3. **Added Exception Domain**: Added Mac's IP to Info.plist exception domains
+4. **Restarted Metro**: Cleared cache and restarted Metro bundler to pick up config changes
+
+**Result**: App now successfully loads homepage with menu items! ✅
+
+---
+
+## Previous Problem (RESOLVED)
 
 ### Issue: Network Request Failing in iOS Simulator
 
@@ -77,27 +92,53 @@
    ```json
    "NSAppTransportSecurity": {
      "NSAllowsArbitraryLoads": true,
-     "NSAllowsLocalNetworking": true
+     "NSAllowsLocalNetworking": true,
+     "NSExceptionDomains": {
+       "localhost": {
+         "NSExceptionAllowsInsecureHTTPLoads": true,
+         "NSIncludesSubdomains": true
+       },
+       "127.0.0.1": {
+         "NSExceptionAllowsInsecureHTTPLoads": true,
+         "NSIncludesSubdomains": true
+       }
+     }
    }
    ```
-4. ✅ Ran `expo prebuild --clean` to regenerate native code
-5. ✅ Rebuilt iOS app with new SSL settings
-6. ✅ Verified `Info.plist` contains correct SSL settings
-7. ✅ Restarted app multiple times
+4. ✅ Changed API URL from `https://ws-ffci-copy.ddev.site` to `http://localhost:55038`
+5. ✅ Ran `expo prebuild --clean` to regenerate native code with exception domains
+6. ✅ Rebuilt iOS app with updated network settings
+7. ✅ Verified `Info.plist` contains exception domains for localhost and 127.0.0.1
+8. ✅ Added console logging to API client to debug requests
+9. ✅ Created helper script to detect DDEV port automatically (`scripts/get-ddev-port.js`)
+10. ✅ Restarted app multiple times
+
+**Solution Applied:**
+- ✅ Created HTTP proxy script (`scripts/ddev-proxy.js`) to forward Mac IP → localhost
+- ✅ Updated config to use `http://192.168.0.106:8888` (proxy port)
+- ✅ Added Mac IP (192.168.0.106) to Info.plist exception domains
+- ✅ Restarted Metro bundler with `--clear` flag
+- ✅ App now successfully loads homepage with menu items!
 
 **Current State:**
-- SSL settings are correctly applied in `ios/FFCIMobile/Info.plist`
-- `NSAllowsArbitraryLoads` is set to `true`
-- `NSAllowsLocalNetworking` is set to `true`
-- App still cannot connect to `https://ws-ffci-copy.ddev.site`
+- ✅ App loads successfully in iOS simulator
+- ✅ Network requests work via HTTP proxy
+- ✅ Homepage displays: "Firefighters for Christ International", "FFCI", menu items
+- ✅ Proxy logs show successful requests: `[PROXY] GET /mobile-api from 192.168.0.106`
 
 ## Technical Details
 
 ### API Configuration
-- **URL:** `https://ws-ffci-copy.ddev.site`
+- **URL:** `http://192.168.0.106:8888` (HTTP proxy forwarding to DDEV)
+- **Proxy:** `scripts/ddev-proxy.js` forwards Mac IP:8888 → localhost:55038
+- **DDEV Port:** 55038 (HTTP port mapped by DDEV)
 - **Endpoint:** `/mobile-api`
 - **Bearer Token:** `b92f8b5f3982b4778714ec76726e7b66d3f9c6574750d1617b5669322538c713`
 - **Config File:** `lib/config.ts`
+- **Note:** 
+  - Start proxy with: `node scripts/ddev-proxy.js 55038`
+  - Mac IP may change - update config.ts if needed
+  - Check DDEV port with: `ddev describe` or `node scripts/get-ddev-port.js`
 
 ### API Client
 - **File:** `lib/api.ts`
@@ -193,8 +234,11 @@ mise exec -- bash -c "export LANG=en_US.UTF-8 && npx expo run:ios --device CE4EC
 # Start DDEV
 cd ~/mip-mobile-app/sites/ws-ffci-copy && ddev start
 
+# Start DDEV proxy (required for iOS simulator)
+cd rn-mip-app && node scripts/ddev-proxy.js 55038 &
+
 # Start Metro bundler
-cd rn-mip-app && npm start
+cd rn-mip-app && mise exec -- bash -c "export LANG=en_US.UTF-8 && npx expo start --ios --clear"
 
 # Rebuild iOS app
 cd rn-mip-app && mise exec -- bash -c "export LANG=en_US.UTF-8 && npx expo run:ios --device CE4ECBCC-F738-4276-B1FE-563C5CCE7DF3"
@@ -202,8 +246,11 @@ cd rn-mip-app && mise exec -- bash -c "export LANG=en_US.UTF-8 && npx expo run:i
 # Run Maestro test
 cd rn-mip-app && npm run test:maestro:ios
 
-# Test API from host
-curl -H "Authorization: Bearer b92f8b5f3982b4778714ec76726e7b66d3f9c6574750d1617b5669322538c713" https://ws-ffci-copy.ddev.site/mobile-api
+# Test API from host (via proxy)
+curl -H "Authorization: Bearer b92f8b5f3982b4778714ec76726e7b66d3f9c6574750d1617b5669322538c713" http://192.168.0.106:8888/mobile-api
+
+# Test API directly (DDEV)
+curl -H "Authorization: Bearer b92f8b5f3982b4778714ec76726e7b66d3f9c6574750d1617b5669322538c713" http://localhost:55038/mobile-api
 ```
 
 ## Environment

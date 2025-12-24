@@ -17,7 +17,11 @@ export interface SiteConfig {
 // Later, this will load from configs/{siteId}.json
 export const siteConfig: SiteConfig = {
   siteId: 'ffci',
-  apiBaseUrl: 'https://ws-ffci-copy.ddev.site',
+  // Use Mac's IP address for iOS simulator (simulator can't reach localhost)
+  // Port 8888 is the proxy that forwards to DDEV on localhost:55038
+  // Start proxy with: node scripts/ddev-proxy.js 55038
+  // Mac IP: 192.168.0.106 (update if your IP changes)
+  apiBaseUrl: 'http://192.168.0.106:8888',
   apiToken: 'b92f8b5f3982b4778714ec76726e7b66d3f9c6574750d1617b5669322538c713', // Development bearer token
   appName: 'FFCI',
   appSlug: 'ffci-app',

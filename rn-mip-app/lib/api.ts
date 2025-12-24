@@ -59,29 +59,37 @@ export class ApiError extends Error {
 }
 
 async function fetchJson<T>(url: string, label: string): Promise<T> {
-  const response = await fetch(url, {
-    headers: {
-      'Authorization': `Bearer ${config.apiToken}`,
-      'Content-Type': 'application/json',
-    },
-  });
+  console.log('[API] Making request to:', url);
+  console.log('[API] Config apiBaseUrl:', config.apiBaseUrl);
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${config.apiToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log('[API] Response status:', response.status, 'for', label);
 
-  if (!response.ok) {
-    throw new ApiError(
-      `Failed to fetch ${label} (${response.status})`,
-      response.status,
-      url
-    );
+    if (!response.ok) {
+      throw new ApiError(
+        `Failed to fetch ${label} (${response.status})`,
+        response.status,
+        url
+      );
+    }
+
+    return response.json() as Promise<T>;
+  } catch (error: any) {
+    console.error('[API] Fetch error:', error.message, error);
+    console.error('[API] Error details:', JSON.stringify(error, null, 2));
+    throw error;
   }
-
-  return response.json() as Promise<T>;
 }
 
 export async function getSiteData(): Promise<SiteData> {
-  return fetchJson<SiteData>(
-    `${config.apiBaseUrl}/mobile-api`,
-    'site data'
-  );
+  const url = `${config.apiBaseUrl}/mobile-api`;
+  console.log('[API] Fetching site data from:', url);
+  return fetchJson<SiteData>(url, 'site data');
 }
 
 export async function getPage(uuid: string): Promise<PageData> {
