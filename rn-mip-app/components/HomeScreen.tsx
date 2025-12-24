@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import { getSiteData, SiteData } from '../lib/api';
 import { getConfig } from '../lib/config';
 
@@ -8,6 +9,7 @@ export function HomeScreen() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const config = getConfig();
+  const router = useRouter();
 
   React.useEffect(() => {
     loadData();
@@ -75,12 +77,16 @@ export function HomeScreen() {
 
       {/* Menu Items */}
       <View style={styles.menuSection}>
-        <Text accessibilityLabel="Menu section" style={styles.sectionTitle}>Menu</Text>
+        <Text testID="menu-section-title" style={styles.sectionTitle}>Menu</Text>
         {menu.map((item, index) => (
-          <View key={index} style={styles.menuItem}>
+          <TouchableOpacity
+            key={index}
+            style={styles.menuItem}
+            onPress={() => router.push(`/page/${item.page.uuid}`)}
+            testID={`menu-item-${item.label.toLowerCase()}`}
+          >
             <Text style={styles.menuLabel}>{item.label}</Text>
-            <Text style={styles.menuUuid}>{item.page.uuid}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
 
@@ -162,17 +168,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     borderRadius: 8,
     marginBottom: 10,
+    minHeight: 44,
+    justifyContent: 'center',
   },
   menuLabel: {
     fontSize: 18,
     fontWeight: '500',
     color: '#333',
-    marginBottom: 5,
-  },
-  menuUuid: {
-    fontSize: 12,
-    color: '#666',
-    fontFamily: 'monospace',
   },
   infoSection: {
     padding: 15,
