@@ -35,8 +35,8 @@ const donateUrl = site_data.social && Array.isArray(site_data.social)
   ? site_data.social.find(s => s.platform === 'donate' || s.label?.toLowerCase().includes('donate'))?.url
   : undefined;
 
-// Homepage type is always 'action-hub' (tested behavior)
-const homepageType: HomepageType = 'action-hub';
+// Homepage type from config, defaults to 'action-hub' (tested behavior)
+const homepageType: HomepageType = siteConfig.homepageType || 'action-hub';
 ---
 
 <MobileLayout
