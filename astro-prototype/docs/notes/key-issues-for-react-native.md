@@ -339,4 +339,4 @@ For each high-priority issue:
 
 - [Mobile App Specification](../../docs/mobile-app-specification.md) - Full requirements
 - [Internal Link Resolution](./internal-link-resolution.md) - How internal links are transformed
-- [Integration Tests](./integration-tests.md) - How features are tested with real API
+- [Integration Tests](../integration-tests.md) - How features are tested with real API

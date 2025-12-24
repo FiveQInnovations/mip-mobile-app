@@ -216,6 +216,214 @@ Both options can coexist — Option 3 handles most cases at the API level, while
 
 ---
 
+## Implementation Status
+
+### ✅ Option 3: Transform Links at API Level — IMPLEMENTED
+
+**Status**: Fully implemented and active
+
+**Location**: `plugins/wsp-mobile/lib/pages.php`
+
+**Implementation Details**:
+
+The `transformInternalLinks()` method is implemented in the `PagesApi` class and is called automatically when processing page content:
+
+```80:190:plugins/wsp-mobile/lib/pages.php
+private function transformInternalLinks(string $html): string {
+    $site = $this->kirby->site();
+    $baseUrl = $this->kirby->url();
+    
+    // Match all <a> tags with href attributes
+    $result = preg_replace_callback(
+        '/<a\s+([^>]*href=["\'])([^"\']+)(["\'][^>]*)>/i',
+        function ($matches) use ($site, $baseUrl) {
+            // ... implementation handles:
+            // - Fragment and query param preservation
+            // - Domain checking (skips external links)
+            // - Multiple matching strategies (URI, URL path, etc.)
+            // - Rewrites to /page/{uuid} format
+        },
+        $html
+    );
+    
+    return $result;
+}
+```
+
+**Features**:
+- ✅ Transforms links in both `content_data()` and `collection_item_data()` responses
+- ✅ Preserves query parameters and fragments (`?param=value#anchor`)
+- ✅ Checks domain to avoid transforming external links
+- ✅ Multiple matching strategies: URI matching, URL path matching, and full site index search
+- ✅ Skips non-HTTP links (mailto:, tel:, javascript:, anchor-only)
+- ✅ Handles both absolute and relative URLs
+
+**Usage**: Applied automatically to all `page_content` fields in API responses.
+
+---
+
+### ⚠️ Option 5: URL Mappings — PARTIALLY IMPLEMENTED
+
+**Status**: Client-side code ready, server-side not implemented
+
+**Client-Side Implementation**:
+
+The Astro app has full support for `url_mappings`:
+
+- ✅ TypeScript types defined in `src/lib/api.ts`:
+```40:40:astro-prototype/src/lib/api.ts
+  url_mappings?: Record<string, string>;
+```
+
+- ✅ `ContentView.astro` includes `buildUrlMap()` function that uses `url_mappings` if available:
+```84:118:astro-prototype/src/components/ContentView.astro
+  function buildUrlMap() {
+    if (urlToUuidMap) return urlToUuidMap;
+    
+    urlToUuidMap = new Map();
+    
+    // Try to get site data from window (set by layout or API)
+    if (window.__mipApi) {
+      window.__mipApi.getSiteData().then((siteData: any) => {
+        // Use url_mappings if available (Option 5)
+        if (siteData.url_mappings) {
+          Object.entries(siteData.url_mappings).forEach(([url, uuid]) => {
+            urlToUuidMap!.set(url, uuid as string);
+            // Also normalize and map path component
+            try {
+              const parsed = new URL(url, window.location.origin);
+              urlToUuidMap!.set(parsed.pathname, uuid as string);
+            } catch {
+              // If URL parsing fails, just use as-is
+            }
+          });
+        }
+        
+        // Also include menu items as before (for backward compatibility)
+        if (siteData.menu) {
+          siteData.menu.forEach((item: MenuItem) => {
+            if (item.page?.url && item.page?.uuid) {
+              // Normalize URL - remove domain, keep path
+              const url = new URL(item.page.url, window.location.origin);
+              const path = url.pathname;
+              urlToUuidMap!.set(path, item.page.uuid);
+              // Also map full URL
+              urlToUuidMap!.set(item.page.url, item.page.uuid);
+            }
+          });
+        }
+      }).catch(() => {
+```
+
+**Server-Side Status**: 
+- ❌ `url_mappings` is **not** currently returned by the `/mobile-api` endpoint
+- The API endpoint in `plugins/wsp-mobile/index.php` only returns `menu` and `site_data`
+- To enable Option 5, add `url_mappings` to the API response (see Option 5 implementation steps above)
+
+**Current Fallback**: The client-side code currently builds the URL map from menu items only, which provides partial coverage for links that weren't transformed by Option 3.
+
+---
+
+### Client-Side Link Processing
+
+**Status**: Implemented as additional safety layer
+
+**Location**: `astro-prototype/src/components/ContentView.astro`
+
+The Astro app includes client-side link processing that:
+
+1. **Marks internal links** with `data-internal-link="true"` attribute
+2. **Preserves original href** in `data-original-href` attribute
+3. **Handles clicks** on internal links that weren't transformed by the server:
+   - Checks if link is already in `/page/{uuid}` format (transformed by server) → allows normal navigation
+   - Otherwise, attempts client-side resolution using the URL map
+   - Falls back to original URL if resolution fails
+
+```162:228:astro-prototype/src/components/ContentView.astro
+  // Handle internal link clicks
+  document.addEventListener('click', (e) => {
+    const link = (e.target as HTMLElement).closest('a[data-internal-link="true"]') as HTMLAnchorElement;
+    if (!link) return;
+    
+    const href = link.getAttribute('href') || '';
+    
+    // If link is already in /page/{uuid} format (transformed by server), let it navigate normally
+    if (href.startsWith('/page/') && /^\/page\/[a-zA-Z0-9]+/.test(href)) {
+      // Already transformed - allow normal navigation
+      return;
+    }
+    
+    // Otherwise, handle client-side resolution
+    e.preventDefault();
+    const originalHref = link.getAttribute('data-original-href') || href;
+    
+    if (!originalHref) return;
+    
+    const map = buildUrlMap();
+    
+    // Try to find UUID in map
+    let uuid: string | undefined;
+    
+    // Try exact match first
+    uuid = map.get(originalHref);
+    
+    // Try normalized path
+    if (!uuid) {
+      try {
+        const url = new URL(originalHref, window.location.origin);
+        uuid = map.get(url.pathname);
+      } catch {
+        // If URL parsing fails, try as-is
+        uuid = map.get(originalHref);
+      }
+    }
+    
+    // Try relative path match
+    if (!uuid && originalHref.startsWith('/')) {
+      uuid = map.get(originalHref);
+    }
+    
+    if (uuid) {
+      // Navigate to page using UUID
+      window.location.href = `/page/${uuid}`;
+      return;
+    }
+    
+    // Fallback: Try to extract UUID from URL pattern
+    // Some URLs might have UUIDs embedded
+    const uuidPattern = /[a-zA-Z0-9]{16}/;
+    const uuidMatch = originalHref.match(uuidPattern);
+    
+    if (uuidMatch) {
+      window.location.href = `/page/${uuidMatch[0]}`;
+      return;
+    }
+    
+    // Last resort: navigate to original URL (might be a slug that needs API resolution)
+    // For now, we'll navigate and let the server handle it
+    if (originalHref.startsWith('/') || originalHref.startsWith('./') || originalHref.startsWith('../')) {
+      window.location.href = originalHref;
+    } else {
+      // External or malformed - navigate anyway
+      window.location.href = originalHref;
+    }
+  });
+```
+
+---
+
+## Current Architecture
+
+The implementation uses a **layered approach**:
+
+1. **Primary**: Server-side transformation (Option 3) handles most links during API response
+2. **Secondary**: Client-side processing marks remaining links and provides fallback resolution
+3. **Tertiary**: URL map built from menu items provides coverage for links missed by server transformation
+
+**Result**: Most internal links are transformed server-side and navigate directly. Links that weren't caught are handled client-side using menu data.
+
+---
+
 ## Testing
 
 After implementing either option:

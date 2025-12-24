@@ -150,6 +150,6 @@ These tests:
 - Verify actual API responses and component rendering
 - Pass successfully with real data
 
-See [integration-tests.md](./integration-tests.md) for full documentation.
+See [integration-tests.md](../integration-tests.md) for full documentation.
 
 **Status**: Integration tests are passing ✅

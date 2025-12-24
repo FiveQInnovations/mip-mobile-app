@@ -3,7 +3,7 @@
 ## Decision
 
 **Chosen for v1:** **Idea 1 — Action Hub + Quick Tasks**  
-Decision record: `docs/decisions/ffci-homepage-action-hub.md`
+Decision record: `../decisions/ffci-homepage-action-hub.md`
 
 Context considered:
 - **Kirby content**: lots of text + PDFs/external links; chapters directory is large; events exist but are currently block-based; forms exist (prayer/chaplain request).

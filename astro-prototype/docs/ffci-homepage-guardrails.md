@@ -3,7 +3,7 @@
 This document is the developer guide for scaffolding the **FFCI v1 homepage** in the Astro prototype.
 
 - **Decision record**: `docs/decisions/ffci-homepage-action-hub.md`
-- **Homepage ideas + evaluation**: `docs/ffci-homepage-ideas-v1.md`
+- **Homepage ideas + evaluation**: `docs/notes/ffci-homepage-ideas-v1.md`
 - **Kirby styleguide (source-of-truth for brand UI)**: `../sites/ws-ffci-copy/docs/styleguide.md`
 
 ## Non-negotiables (v1)
