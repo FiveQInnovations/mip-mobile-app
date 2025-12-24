@@ -8,5 +8,6 @@
   "textColor": "#0f172a",
   "backgroundColor": "#f8fafc",
   "headerStyle": "dark",
-  "logo": "/favicon.svg"
+  "logo": "/favicon.svg",
+  "homepageType": "action-hub"
 }

@@ -1,3 +1,5 @@
+import type { HomepageType } from './api';
+
 export type HeaderStyle = 'light' | 'dark';
 
 export interface SiteConfig {
@@ -11,6 +13,7 @@ export interface SiteConfig {
   backgroundColor?: string;
   headerStyle?: HeaderStyle;
   logo?: string;
+  homepageType?: HomepageType;
 }
 
 const DEFAULT_CONFIG: SiteConfig = {
