@@ -20,39 +20,20 @@ function isHomeActive(): boolean {
   return isHomePage;
 }
 
-// For FFCI: Home (fixed), CMS items, Give (from CMS, last in array)
-// For others: Home (fixed), menu items (up to 4), Give (if donateUrl), rest in More
+// For FFCI: Home (fixed) + all CMS menu items in order (up to 4 items = 5 total)
+// For others: Home (fixed) + menu items (up to 4) + Give (if donateUrl), rest in More
 let visibleItems: MenuItem[];
 let overflowItems: MenuItem[];
-let giveMenuItem: MenuItem | null = null;
 let showGive = false;
 let giveHref = '';
 let giveIsExternal = false;
 
 if (isFFCI) {
-  // Get Give menu item - it should be last in the array from CMS
-  // Assume Give is always present in the CMS menu
-  giveMenuItem = menu.length > 0 && menu[menu.length - 1].label.toLowerCase().includes('give')
-    ? menu[menu.length - 1]
-    : menu.find(item => item.label.toLowerCase().includes('give')) || null;
-  
-  // Always show Give button from CMS
-  if (giveMenuItem) {
-    showGive = true;
-    giveHref = `/page/${giveMenuItem.page.uuid}`;
-    giveIsExternal = false;
-  }
-  
-  // Calculate available slots: Home (1) + Give (1) = 2 fixed items
-  // So we can show 3 CMS items (total 5)
-  const fixedSlots = 2; // Home + Give
-  const maxCmsItems = 5 - fixedSlots;
-  
-  // Get CMS items excluding Give (Give will be shown separately as last button)
-  // Include all other items including Connect
-  const cmsItems = menu.filter(item => item !== giveMenuItem);
-  visibleItems = cmsItems.slice(0, maxCmsItems);
-  overflowItems = cmsItems.slice(maxCmsItems);
+  // Show all CMS menu items in order (CMS determines order, including Give)
+  // Home (1) + up to 4 CMS items = 5 total
+  const MAX_MENU_ITEMS = 4;
+  visibleItems = menu.slice(0, MAX_MENU_ITEMS);
+  overflowItems = menu.slice(MAX_MENU_ITEMS);
 } else {
   // Standard behavior: Home + menu items + Give (if donateUrl)
   showGive = !!donateUrl;
@@ -174,24 +155,6 @@ function renderIcon(label: string, icon?: string): string {
           </a>
         );
       })}
-
-      {/* Give button - from CMS (last in array), always present */}
-      {showGive && giveMenuItem && (
-        <a
-          href={giveHref}
-          class="flex flex-col items-center justify-center min-w-0 flex-1 nav-touch-target"
-          data-testid="nav-give"
-          data-active={isActive(giveMenuItem.page.uuid)}
-          style={`color: ${
-            isActive(giveMenuItem.page.uuid)
-              ? 'var(--color-primary, #2563eb)'
-              : 'var(--color-text, #4b5563)'
-          };`}
-        >
-          <span class="text-lg mb-1" set:html={renderIcon(giveMenuItem.label, giveMenuItem.icon)} data-testid="nav-icon"></span>
-          <span class="text-xs font-medium truncate w-full text-center">{giveMenuItem.label}</span>
-        </a>
-      )}
 
       {/* More menu if overflow */}
       {overflowItems.length > 0 && (
