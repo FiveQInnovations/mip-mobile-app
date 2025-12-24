@@ -43,43 +43,26 @@ describe('Internal Link Navigation - Integration Test', () => {
     cy.url().should('include', '/page/uezb3178BtP3oGuU');
     cy.get('main', { timeout: 10000 }).should('be.visible');
     
-    // Step 3: Find an internal link in the page content
+    // Step 3: Find and click the "FFC Media Ministry" internal link
     // Resources page has "Related Pages" section with internal links
     cy.get('main', { timeout: 10000 }).should('be.visible');
     
-    // Find links - try both transformed and original format
+    // Find the specific "FFC Media Ministry" link
     cy.get('main').within(() => {
-      // First try to find transformed links
-      cy.get('a').then(($links) => {
-        const transformedLinks = Array.from($links).filter((link) => {
-          const href = link.getAttribute('href') || '';
-          return href.startsWith('/page/') && /^\/page\/[a-zA-Z0-9]+/.test(href);
+      // Look for the link containing "FFC Media Ministry" text
+      cy.contains('a', 'FFC Media Ministry')
+        .scrollIntoView()
+        .should('exist')
+        .then(($link) => {
+          const href = $link.attr('href') || '';
+          cy.log(`Found FFC Media Ministry link: ${href}`);
+          
+          // Verify it's an internal link (starts with /page/)
+          expect(href).to.match(/^\/page\/[a-zA-Z0-9]+/);
+          
+          // Step 4: Click the internal link (use force if needed due to clipping)
+          cy.wrap($link).click({ force: true });
         });
-        
-        if (transformedLinks.length > 0) {
-          const firstLink = transformedLinks[0];
-          const href = firstLink.getAttribute('href') || '';
-          cy.log(`Found ${transformedLinks.length} transformed link(s). Clicking: ${href}`);
-          
-          // Step 4: Click the internal link
-          cy.wrap(firstLink).click();
-        } else {
-          // Fallback: try to find any internal link marked with data-internal-link
-          const internalLinks = Array.from($links).filter((link) => {
-            return link.hasAttribute('data-internal-link') && 
-                   link.getAttribute('target') !== '_blank';
-          });
-          
-          if (internalLinks.length > 0) {
-            const firstLink = internalLinks[0];
-            const href = firstLink.getAttribute('href') || '';
-            cy.log(`Found ${internalLinks.length} internal link(s) (not transformed). Clicking: ${href}`);
-            cy.wrap(firstLink).click();
-          } else {
-            throw new Error('No internal links found on Resources page');
-          }
-        }
-      });
     });
     
     // Step 5: Verify we stayed in the app (URL should be /page/{uuid} format)
