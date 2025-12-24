@@ -1,0 +1,55 @@
+appId: com.fiveq.ffci
+---
+- launchApp
+- waitForAnimationToEnd
+
+# Handle optional developer prompts
+- tapOn:
+    text: "Open"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+
+- tapOn:
+    text: "Continue"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+
+# Wait for homepage to load
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# Verify homepage is loaded
+- assertVisible:
+    text: ".*FFCI.*"
+- assertVisible: "Menu"
+
+# Verify Resources is a navigation item in the menu
+- assertVisible: "Resources"
+
+# Tap on Resources navigation item
+- tapOn: "Resources"
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# Verify we navigated to Resources page
+# The page title should be "Resources"
+- assertVisible:
+    text: "Resources"
+    optional: false
+
+# Verify we're on a content page (not still on homepage)
+# The homepage has "Menu" section, so if we see that, we didn't navigate
+- assertNotVisible: "Menu"
+
+# Verify Resources page content is displayed
+# The Resources page should contain content from the API
+# Check for text that appears in the Resources page content
+- assertVisible:
+    text: ".*Resources.*"
+    optional: false
+
+# Take screenshot for verification
+- takeScreenshot: resources-page-loaded
+
