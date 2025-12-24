@@ -201,6 +201,19 @@ function renderIcon(label: string, icon?: string): string {
 </nav>
 
 <script>
+  // Handle Home button click - prevent navigation if already on homepage
+  const homeButton = document.querySelector('[data-testid="nav-home"]');
+  if (homeButton) {
+    homeButton.addEventListener('click', (e) => {
+      // If already on homepage, prevent navigation and scroll to top
+      if (window.location.pathname === '/') {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return false;
+      }
+    });
+  }
+
   // Handle more menu toggle
   const moreButton = document.getElementById('more-menu-button');
   const moreDropdown = document.getElementById('more-menu-dropdown');

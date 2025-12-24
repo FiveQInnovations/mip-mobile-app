@@ -259,3 +259,72 @@ describe('Navigation Polish', () => {
     cy.get('[data-testid="back-button"]').should('not.exist');
   });
 });
+
+describe('ActionHub Homepage Navigation', () => {
+  beforeEach(() => {
+    // Use FFCI fixture to trigger ActionHub homepage
+    // The fixture has app_name: "FFCI Mobile" and title: "Firefighters for Christ International"
+    // which should trigger FFCI detection and force action-hub homepage type
+    cy.intercept('GET', '**/mobile-api', { fixture: 'homepage-action-hub.json' }).as('siteData');
+    cy.intercept('GET', '**/mobile-api/page/*', { fixture: 'page-content.json' }).as('pageData');
+  });
+
+  it('Home button keeps user on ActionHub homepage when already on homepage', () => {
+    cy.visit('/');
+    
+    // Wait for page to load and verify we're on ActionHub homepage
+    cy.get('[data-testid="quick-tasks"]', { timeout: 10000 }).should('exist');
+    cy.get('[data-testid="quick-tasks"]').scrollIntoView().should('be.visible');
+    cy.get('[data-testid="get-connected"]').should('exist');
+    cy.get('[data-testid="featured"]').should('exist');
+    
+    // Verify URL is homepage
+    cy.url().should('eq', Cypress.config().baseUrl + '/');
+    
+    // Store the current page content to verify it doesn't change
+    cy.get('[data-testid="quick-tasks"] h2').should('contain', 'Quick Tasks');
+    
+    // Click Home button
+    cy.get('[data-testid="nav-home"]').click();
+    
+    // Should still be on ActionHub homepage (URL shouldn't change)
+    cy.url().should('eq', Cypress.config().baseUrl + '/');
+    
+    // Verify ActionHub content is still visible
+    cy.get('[data-testid="quick-tasks"]', { timeout: 10000 }).should('exist');
+    cy.get('[data-testid="quick-tasks"]').scrollIntoView().should('be.visible');
+    cy.get('[data-testid="quick-tasks"] h2').should('contain', 'Quick Tasks');
+    cy.get('[data-testid="get-connected"]').should('exist');
+    cy.get('[data-testid="featured"]').should('exist');
+    
+    // Verify Home button is still active
+    cy.get('[data-testid="nav-home"][data-active="true"]').should('exist');
+  });
+
+  it('Home button returns to ActionHub homepage from content page', () => {
+    cy.visit('/');
+    
+    // Verify we're on ActionHub homepage
+    cy.get('[data-testid="quick-tasks"]', { timeout: 10000 }).should('exist');
+    cy.get('[data-testid="quick-tasks"]').scrollIntoView().should('be.visible');
+    
+    // Navigate to a content page
+    cy.get('[data-testid="bottom-nav"] a').not('[data-testid="nav-home"]').first().click();
+    cy.url().should('include', '/page/');
+    
+    // Verify we're on a content page (not homepage)
+    cy.get('[data-testid="quick-tasks"]').should('not.exist');
+    
+    // Click Home button
+    cy.get('[data-testid="nav-home"]').click();
+    
+    // Should return to ActionHub homepage
+    cy.url().should('eq', Cypress.config().baseUrl + '/');
+    
+    // Verify ActionHub content is visible
+    cy.get('[data-testid="quick-tasks"]', { timeout: 10000 }).should('exist');
+    cy.get('[data-testid="quick-tasks"]').scrollIntoView().should('be.visible');
+    cy.get('[data-testid="get-connected"]').should('exist');
+    cy.get('[data-testid="featured"]').should('exist');
+  });
+});

@@ -1,0 +1,54 @@
+{
+  "menu": [
+    {
+      "label": "Resources",
+      "icon": "📚",
+      "page": {
+        "uuid": "resources-uuid",
+        "type": "collection",
+        "url": "/page/resources-uuid"
+      }
+    },
+    {
+      "label": "Chapters",
+      "icon": "📍",
+      "page": {
+        "uuid": "chapters-uuid",
+        "type": "collection",
+        "url": "/page/chapters-uuid"
+      }
+    },
+    {
+      "label": "Connect",
+      "icon": "📞",
+      "page": {
+        "uuid": "connect-uuid",
+        "type": "content",
+        "url": "/page/connect-uuid"
+      }
+    },
+    {
+      "label": "Give",
+      "icon": "❤️",
+      "page": {
+        "uuid": "give-uuid",
+        "type": "content",
+        "url": "/page/give-uuid"
+      }
+    }
+  ],
+  "site_data": {
+    "title": "Firefighters for Christ International",
+    "app_name": "FFCI Mobile",
+    "logo": "/favicon.svg",
+    "social": [
+      {
+        "platform": "donate",
+        "url": "https://example.com/donate",
+        "label": "Donate"
+      }
+    ],
+    "homepage_type": "navigation"
+  }
+}
+
