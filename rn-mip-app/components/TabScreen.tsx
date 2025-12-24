@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { getPage, PageData } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
@@ -9,20 +9,26 @@ interface TabScreenProps {
 }
 
 export function TabScreen({ uuid }: TabScreenProps) {
-  const [pageData, setPageData] = React.useState<PageData | null>(null);
+  const [pageStack, setPageStack] = React.useState<string[]>([uuid]);
+  const [currentPageData, setCurrentPageData] = React.useState<PageData | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const config = getConfig();
 
+  const currentUuid = pageStack[pageStack.length - 1];
+  const canGoBack = pageStack.length > 1;
+
   React.useEffect(() => {
-    loadPage();
-  }, [uuid]);
+    if (currentUuid) {
+      loadPage();
+    }
+  }, [currentUuid]);
 
   async function loadPage() {
     try {
       setLoading(true);
-      const data = await getPage(uuid);
-      setPageData(data);
+      const data = await getPage(currentUuid);
+      setCurrentPageData(data);
       setError(null);
     } catch (err: any) {
       setError(err.message || 'Failed to load page');
@@ -31,6 +37,19 @@ export function TabScreen({ uuid }: TabScreenProps) {
       setLoading(false);
     }
   }
+
+  const navigateToPage = (pageUuid: string) => {
+    setPageStack(prev => [...prev, pageUuid]);
+  };
+
+  const goBack = () => {
+    setPageStack(prev => {
+      if (prev.length > 1) {
+        return prev.slice(0, -1);
+      }
+      return prev;
+    });
+  };
 
   if (loading) {
     return (
@@ -52,64 +71,73 @@ export function TabScreen({ uuid }: TabScreenProps) {
     );
   }
 
-  if (!pageData) {
+  if (!currentPageData) {
     return null;
   }
 
-  const pageType = pageData.page_type || pageData.type || 'content';
+  const pageType = currentPageData.page_type || currentPageData.type || 'content';
 
   return (
-    <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
-      {/* Cover Image */}
-      {pageData.cover && (
-        <Image
-          source={{ uri: pageData.cover }}
-          style={styles.cover}
-          resizeMode="cover"
-        />
+    <View style={styles.container}>
+      {canGoBack && (
+        <TouchableOpacity style={styles.backButton} onPress={goBack}>
+          <Text style={styles.backButtonText}>← Back</Text>
+        </TouchableOpacity>
       )}
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+        {/* Cover Image */}
+        {currentPageData.cover && (
+          <Image
+            source={{ uri: currentPageData.cover }}
+            style={styles.cover}
+            resizeMode="cover"
+          />
+        )}
 
-      {/* Page Title */}
-      <Text style={styles.title}>{pageData.title}</Text>
+        {/* Page Title */}
+        <Text style={styles.title}>{currentPageData.title}</Text>
 
-      {/* Page Content - Render HTML */}
-      {pageType === 'content' && pageData.page_content && (
-        <HTMLContentRenderer html={pageData.page_content} />
-      )}
+        {/* Page Content - Render HTML */}
+        {pageType === 'content' && currentPageData.page_content && (
+          <HTMLContentRenderer html={currentPageData.page_content} onNavigate={navigateToPage} />
+        )}
 
-      {/* Collection Item Type - Render HTML */}
-      {pageType === 'collection-item' && pageData.data?.page_content && (
-        <HTMLContentRenderer html={pageData.data.page_content} />
-      )}
+        {/* Collection Item Type - Render HTML */}
+        {pageType === 'collection-item' && currentPageData.data?.page_content && (
+          <HTMLContentRenderer html={currentPageData.data.page_content} onNavigate={navigateToPage} />
+        )}
 
-      {/* Collection Type - Show children */}
-      {pageType === 'collection' && (
-        <View style={styles.contentSection}>
-          {pageData.children && pageData.children.length > 0 ? (
-            <View>
-              <Text style={styles.sectionTitle}>Collection Items</Text>
-              {pageData.children.map((child: any, index: number) => (
-                <View key={index} style={styles.collectionItem}>
-                  <Text style={styles.collectionItemTitle}>
-                    {child.title || child.type || 'Untitled'}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          ) : (
-            <Text style={styles.emptyText}>No items in this collection</Text>
-          )}
-        </View>
-      )}
-    </ScrollView>
+        {/* Collection Type - Show children */}
+        {pageType === 'collection' && (
+          <View style={styles.contentSection}>
+            {currentPageData.children && currentPageData.children.length > 0 ? (
+              <View>
+                <Text style={styles.sectionTitle}>Collection Items</Text>
+                {currentPageData.children.map((child: any, index: number) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.collectionItem}
+                    onPress={() => navigateToPage(child.uuid)}
+                  >
+                    <Text style={styles.collectionItemTitle}>
+                      {child.title || child.type || 'Untitled'}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ) : (
+              <Text style={styles.emptyText}>No items in this collection</Text>
+            )}
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#ffffff',
   },
   scrollView: {
@@ -118,6 +146,18 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: 20,
+  },
+  backButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#f5f5f5',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: '#1976d2',
+    fontWeight: '600',
   },
   loadingText: {
     marginTop: 10,
@@ -175,4 +215,3 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
   },
 });
-

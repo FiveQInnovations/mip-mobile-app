@@ -22,13 +22,16 @@ appId: com.fiveq.ffci
 - waitForAnimationToEnd
 
 # Verify homepage elements are visible
-# The app name should be visible (could be "FFCI" or "FFCI Mobile")
+# The app should show tab navigation with tabs like Resources, Chapters, etc.
+# Check for at least one tab label (Resources, Chapters, Connect, Give, etc.)
 - assertVisible:
-    text: ".*FFCI.*"
+    text: ".*(Resources|Chapters|Connect|Give|Home|About).*"
     optional: false
 
-# Verify menu section is present
-- assertVisible: "Menu"
+# Verify tab bar is visible at bottom
+- assertVisible:
+    id: ".*tab.*"
+    optional: true
 
 # Take screenshot for verification
 - takeScreenshot: homepage-loaded

@@ -7,9 +7,10 @@ import { getConfig } from '../lib/config';
 interface HTMLContentRendererProps {
   html: string;
   baseUrl?: string;
+  onNavigate?: (uuid: string) => void;
 }
 
-export function HTMLContentRenderer({ html, baseUrl }: HTMLContentRendererProps) {
+export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRendererProps) {
   const router = useRouter();
   const config = getConfig();
   const apiBaseUrl = baseUrl || config.apiBaseUrl;
@@ -47,7 +48,13 @@ export function HTMLContentRenderer({ html, baseUrl }: HTMLContentRendererProps)
       if (uuid) {
         return (
           <TouchableOpacity
-            onPress={() => router.push(`/page/${uuid}`)}
+            onPress={() => {
+              if (onNavigate) {
+                onNavigate(uuid);
+              } else {
+                router.push(`/page/${uuid}`);
+              }
+            }}
             activeOpacity={0.7}
           >
             <TDefaultRenderer {...restProps} />
@@ -62,7 +69,13 @@ export function HTMLContentRenderer({ html, baseUrl }: HTMLContentRendererProps)
         if (internalUuid) {
           return (
             <TouchableOpacity
-              onPress={() => router.push(`/page/${internalUuid}`)}
+              onPress={() => {
+                if (onNavigate) {
+                  onNavigate(internalUuid);
+                } else {
+                  router.push(`/page/${internalUuid}`);
+                }
+              }}
               activeOpacity={0.7}
             >
               <TDefaultRenderer {...restProps} />

@@ -8,7 +8,7 @@ export function TabNavigator() {
   const [siteData, setSiteData] = React.useState<SiteData | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
-  const [selectedTab, setSelectedTab] = React.useState<string | null>(null);
+  const [selectedTabUuid, setSelectedTabUuid] = React.useState<string | null>(null);
   const config = getConfig();
 
   React.useEffect(() => {
@@ -23,7 +23,7 @@ export function TabNavigator() {
       setError(null);
       // Set first tab as selected by default
       if (data.menu.length > 0) {
-        setSelectedTab(data.menu[0].page.uuid);
+        setSelectedTabUuid(data.menu[0].page.uuid);
       }
     } catch (err: any) {
       setError(err.message || 'Failed to load data');
@@ -62,23 +62,24 @@ export function TabNavigator() {
   }
 
   const menuItems = siteData.menu;
+  const selectedTab = menuItems.find(item => item.page.uuid === selectedTabUuid) || menuItems[0];
 
   return (
     <View style={styles.container}>
       {/* Content Area */}
       <View style={styles.contentArea}>
-        {selectedTab && <TabScreen uuid={selectedTab} />}
+        {selectedTabUuid && <TabScreen uuid={selectedTabUuid} />}
       </View>
 
       {/* Bottom Tab Bar */}
       <View style={styles.tabBar}>
         {menuItems.map((item: MenuItem, index: number) => {
-          const isSelected = selectedTab === item.page.uuid;
+          const isSelected = selectedTabUuid === item.page.uuid;
           return (
             <TouchableOpacity
               key={index}
               style={[styles.tabItem, isSelected && styles.tabItemSelected]}
-              onPress={() => setSelectedTab(item.page.uuid)}
+              onPress={() => setSelectedTabUuid(item.page.uuid)}
               accessibilityLabel={`${item.label} tab`}
               accessibilityRole="tab"
               accessibilityState={{ selected: isSelected }}
@@ -124,6 +125,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
+    minHeight: 60,
   },
   tabItem: {
     flex: 1,
@@ -165,4 +167,3 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
-
