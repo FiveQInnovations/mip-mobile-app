@@ -77,7 +77,10 @@ export function TabNavigator() {
       {/* Content Area */}
       <View style={styles.contentArea}>
         {selectedTabUuid === '__home__' ? (
-          <HomeScreen />
+          <HomeScreen 
+            siteData={siteData}
+            onSwitchTab={(uuid) => setSelectedTabUuid(uuid)}
+          />
         ) : (
           selectedTabUuid && <TabScreen uuid={selectedTabUuid} />
         )}

@@ -1,0 +1,17 @@
+appId: com.fiveq.ffci
+---
+# Setup
+- runFlow: _setup.yaml
+
+# Tap on Resources Quick Task (which should be a tab)
+- tapOn:
+    id: "home-quick-resources"
+- waitForAnimationToEnd
+
+# Verify tab bar is still visible
+- assertVisible: "Home tab"
+- assertVisible: "Resources tab"
+
+# Verify Resources tab is selected (we can check selected state if we had a way, but visibility is good enough)
+# Also check for Resources content
+- assertVisible: "Resources"

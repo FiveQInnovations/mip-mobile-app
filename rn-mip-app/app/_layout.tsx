@@ -11,7 +11,14 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name="index" />
-        <Stack.Screen name="page/[uuid]" />
+        <Stack.Screen 
+          name="page/[uuid]" 
+          options={{ 
+            headerShown: true,
+            headerTitle: 'Page', // Will be overridden by page title if possible, or just stay as Page
+            headerBackTitle: 'Back'
+          }} 
+        />
       </Stack>
     </>
   );

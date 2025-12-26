@@ -1,60 +1,24 @@
 import React from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
-import { getSiteData, SiteData } from '../lib/api';
+import { getSiteData, SiteData, MenuItem } from '../lib/api';
 import { getConfig } from '../lib/config';
 
-export function HomeScreen() {
-  const [siteData, setSiteData] = React.useState<SiteData | null>(null);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+interface HomeScreenProps {
+  siteData: SiteData;
+  onSwitchTab: (uuid: string) => void;
+}
+
+export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
   const config = getConfig();
   const router = useRouter();
 
-  React.useEffect(() => {
-    loadData();
-  }, []);
-
-  async function loadData() {
-    try {
-      setLoading(true);
-      const data = await getSiteData();
-      setSiteData(data);
-      setError(null);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load data');
-      console.error('Error loading site data:', err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (loading) {
-    return (
-      <View style={styles.container} accessibilityLabel="Loading screen">
-        <ActivityIndicator size="large" color={config.primaryColor} />
-        <Text accessibilityLabel="Loading text" style={styles.loadingText}>Loading...</Text>
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Error: {error}</Text>
-        <Text style={styles.retryText} onPress={loadData}>
-          Tap to retry
-        </Text>
-      </View>
-    );
-  }
-
-  if (!siteData) {
-    return null;
-  }
-
   const { site_data, menu } = siteData;
-  const logoUrl = site_data.logo;
+  const logoUrl = site_data.logo
+    ? site_data.logo.startsWith('http')
+      ? site_data.logo
+      : `${config.apiBaseUrl}${site_data.logo}`
+    : null;
 
   const findMenuItemByLabel = (label: string) =>
     menu.find((item) => item.label?.toLowerCase() === label.toLowerCase());
@@ -62,6 +26,15 @@ export function HomeScreen() {
   const handleNavigate = (label: string, fallbackUrl?: string) => {
     const target = findMenuItemByLabel(label);
     if (target?.page?.uuid && target.page.uuid !== '__home__') {
+      // Check if this UUID is in our bottom tabs
+      const isTab = menu.some(item => item.page.uuid === target.page.uuid);
+      
+      if (isTab) {
+        onSwitchTab(target.page.uuid);
+        return;
+      }
+
+      // If not a tab, push to stack
       router.push(`/page/${target.page.uuid}`);
       return;
     }
@@ -140,7 +113,7 @@ export function HomeScreen() {
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
       {/* Hero Section (kept from existing) */}
-      {logoUrl && (
+      {logoUrl && !logoUrl.endsWith('.svg') && (
         <View style={styles.logoSection}>
           <Image
             source={{ uri: logoUrl }}
