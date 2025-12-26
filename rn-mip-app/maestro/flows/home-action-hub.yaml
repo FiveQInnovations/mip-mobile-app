@@ -1,0 +1,44 @@
+appId: com.fiveq.ffci
+---
+# Validates the action-hub style home layout (intended to fail before UI update)
+- runFlow: _setup.yaml
+
+- assertVisible:
+    text: "Firefighters for Christ International"
+    optional: false
+
+- assertVisible:
+    text: "Quick Tasks"
+    optional: false
+
+- assertVisible:
+    text: "Prayer Request"
+    optional: false
+- assertVisible:
+    text: "Chaplain Request"
+    optional: false
+- assertVisible:
+    text: "Resources"
+    optional: false
+- assertVisible:
+    text: "Donate"
+    optional: false
+
+- scroll
+
+- assertVisible:
+    text: "Get Connected"
+    optional: false
+- assertVisible:
+    text: "Find a Chapter"
+    optional: false
+- assertVisible:
+    text: "Upcoming Events"
+    optional: false
+
+- assertVisible:
+    text: "Featured"
+    optional: false
+
+- takeScreenshot: home-action-hub
+

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { getSiteData, SiteData } from '../lib/api';
 import { getConfig } from '../lib/config';
@@ -56,9 +56,90 @@ export function HomeScreen() {
   const { site_data, menu } = siteData;
   const logoUrl = site_data.logo;
 
+  const findMenuItemByLabel = (label: string) =>
+    menu.find((item) => item.label?.toLowerCase() === label.toLowerCase());
+
+  const handleNavigate = (label: string, fallbackUrl?: string) => {
+    const target = findMenuItemByLabel(label);
+    if (target?.page?.uuid && target.page.uuid !== '__home__') {
+      router.push(`/page/${target.page.uuid}`);
+      return;
+    }
+    if (target?.page?.url) {
+      Linking.openURL(target.page.url);
+      return;
+    }
+    if (fallbackUrl) {
+      Linking.openURL(fallbackUrl);
+    }
+  };
+
+  const quickTasks = [
+    {
+      key: 'prayer',
+      label: 'Prayer Request',
+      description: 'Submit a prayer request',
+      icon: '🙏',
+      onPress: () => handleNavigate('Prayer Request'),
+      testID: 'home-quick-prayer',
+    },
+    {
+      key: 'chaplain',
+      label: 'Chaplain Request',
+      description: 'Request chaplain support',
+      icon: '✝️',
+      onPress: () => handleNavigate('Chaplain Request'),
+      testID: 'home-quick-chaplain',
+    },
+    {
+      key: 'resources',
+      label: 'Resources',
+      description: 'Browse PDFs and links',
+      icon: '📚',
+      onPress: () => handleNavigate('Resources'),
+      testID: 'home-quick-resources',
+    },
+    {
+      key: 'donate',
+      label: 'Donate',
+      description: 'Opens in browser',
+      icon: '💝',
+      onPress: () =>
+        handleNavigate('Give', 'https://www.firefightersforchrist.org/donate'),
+      testID: 'home-quick-donate',
+    },
+  ];
+
+  const getConnected = [
+    {
+      key: 'chapters',
+      label: 'Find a Chapter',
+      description: 'Search chapters directory',
+      icon: '📍',
+      onPress: () => handleNavigate('Chapters'),
+      testID: 'home-getconnected-chapters',
+    },
+    {
+      key: 'events',
+      label: 'Upcoming Events',
+      description: 'View next 1–3 events',
+      icon: '📅',
+      onPress: () => handleNavigate('Events'),
+      testID: 'home-getconnected-events',
+    },
+  ];
+
+  const featured = {
+    label: 'Featured',
+    title: 'Resources',
+    description: 'Featured resource links',
+    onPress: () => handleNavigate('Resources'),
+    testID: 'home-featured',
+  };
+
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
-      {/* Logo Section */}
+      {/* Hero Section (kept from existing) */}
       {logoUrl && (
         <View style={styles.logoSection}>
           <Image
@@ -72,23 +153,75 @@ export function HomeScreen() {
         </View>
       )}
 
-      {/* App Name */}
-      <Text accessibilityLabel="App name" style={styles.appName}>{site_data.app_name || config.appName}</Text>
+      <Text
+        accessibilityLabel="App name"
+        style={styles.appName}
+        testID="home-hero-app-name"
+      >
+        {site_data.app_name || config.appName}
+      </Text>
 
-      {/* Menu Items */}
-      <View style={styles.menuSection}>
-        <Text testID="menu-section-title" style={styles.sectionTitle}>Menu</Text>
-        {menu.map((item, index) => (
+      {/* Quick Tasks */}
+      <Text style={styles.sectionHeader} testID="home-quick-heading">
+        Quick Tasks
+      </Text>
+      <View style={styles.quickGrid}>
+        {quickTasks.map((item) => (
           <TouchableOpacity
-            key={index}
-            style={styles.menuItem}
-            onPress={() => router.push(`/page/${item.page.uuid}`)}
-            testID={`menu-item-${item.label.toLowerCase()}`}
+            key={item.key}
+            style={styles.quickCard}
+            onPress={item.onPress}
+            accessibilityLabel={item.label}
+            testID={item.testID}
           >
-            <Text style={styles.menuLabel}>{item.label}</Text>
+            <Text style={styles.quickIcon}>{item.icon}</Text>
+            <Text style={styles.quickTitle}>{item.label}</Text>
+            <Text style={styles.quickDescription}>{item.description}</Text>
           </TouchableOpacity>
         ))}
       </View>
+
+      {/* Get Connected */}
+      <Text style={styles.sectionHeader} testID="home-connected-heading">
+        Get Connected
+      </Text>
+      <View style={styles.connectedList}>
+        {getConnected.map((item) => (
+          <TouchableOpacity
+            key={item.key}
+            style={styles.connectedRow}
+            onPress={item.onPress}
+            accessibilityLabel={item.label}
+            testID={item.testID}
+          >
+            <View style={styles.connectedLeft}>
+              <Text style={styles.connectedIcon}>{item.icon}</Text>
+              <View>
+                <Text style={styles.connectedTitle}>{item.label}</Text>
+                <Text style={styles.connectedDescription}>{item.description}</Text>
+              </View>
+            </View>
+            <Text style={styles.chevron}>›</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Featured */}
+      <Text style={styles.sectionHeader} testID="home-featured-heading">
+        {featured.label}
+      </Text>
+      <TouchableOpacity
+        style={styles.featuredCard}
+        onPress={featured.onPress}
+        accessibilityLabel={`${featured.label} ${featured.title}`}
+        testID={featured.testID}
+      >
+        <View style={styles.featuredBadge}>
+          <Text style={styles.featuredBadgeText}>Featured</Text>
+        </View>
+        <Text style={styles.featuredTitle}>{featured.title}</Text>
+        <Text style={styles.featuredDescription}>{featured.description}</Text>
+      </TouchableOpacity>
 
       {/* Homepage Type Info */}
       {config.homepageType && (
@@ -151,30 +284,117 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 30,
+    marginBottom: 24,
     color: '#333',
   },
-  menuSection: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
+  sectionHeader: {
     fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 15,
-    color: '#333',
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: 12,
   },
-  menuItem: {
-    padding: 15,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
+  quickGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginBottom: 24,
+  },
+  quickCard: {
+    flexBasis: '48%',
+    backgroundColor: '#ffffff',
+    borderColor: '#e5e7eb',
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 14,
+    minHeight: 140,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  quickIcon: {
+    fontSize: 26,
     marginBottom: 10,
-    minHeight: 44,
-    justifyContent: 'center',
   },
-  menuLabel: {
+  quickTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: 6,
+  },
+  quickDescription: {
+    fontSize: 13,
+    color: '#475569',
+  },
+  connectedList: {
+    marginBottom: 24,
+  },
+  connectedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    borderColor: '#e5e7eb',
+    borderWidth: 1,
+    borderRadius: 12,
+    marginBottom: 12,
+    backgroundColor: '#ffffff',
+  },
+  connectedLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flexShrink: 1,
+  },
+  connectedIcon: {
+    fontSize: 22,
+  },
+  connectedTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#0f172a',
+  },
+  connectedDescription: {
+    fontSize: 13,
+    color: '#475569',
+    marginTop: 2,
+  },
+  chevron: {
+    fontSize: 20,
+    color: '#94a3b8',
+  },
+  featuredCard: {
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: '#eff6ff',
+    borderColor: '#bfdbfe',
+    borderWidth: 1,
+    marginBottom: 24,
+  },
+  featuredBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#2563eb',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    marginBottom: 10,
+  },
+  featuredBadgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  featuredTitle: {
     fontSize: 18,
-    fontWeight: '500',
-    color: '#333',
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: 6,
+  },
+  featuredDescription: {
+    fontSize: 14,
+    color: '#475569',
   },
   infoSection: {
     padding: 15,
