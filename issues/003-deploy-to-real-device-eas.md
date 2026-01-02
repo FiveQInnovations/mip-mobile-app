@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: blocked
 area: rn-mip-app
 created: 2026-01-20
 ---
