@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: done
 area: rn-mip-app
 created: 2026-01-21
 ---
@@ -8,6 +8,8 @@ created: 2026-01-21
 
 ## Context
 Set up Expo Model Context Protocol (MCP) Server to enable AI-assisted tools (like Cursor) to interact with Expo projects, access documentation, manage dependencies, and automate visual verification/testing. This will enhance AI capabilities for working with the React Native app.
+
+**📖 Complete Setup Guide:** See the [Setup Guide](#setup-guide) section below for step-by-step instructions.
 
 **Reference:** https://docs.expo.dev/eas/ai/mcp/
 

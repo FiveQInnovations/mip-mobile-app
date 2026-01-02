@@ -26,6 +26,7 @@ The existing FFCI app is built on the SubSplash platform:
 
 - **[Mobile App Specification](docs/mobile-app-specification.md)** - Complete technical specification
 - **[Deployment Quick Guide](docs/deployment-quick-guide.md)** - Workflow for adding features and deploying to BrowserStack
+- **[Expo MCP Server Setup](tickets/014-setup-expo-mcp-server.md)** - Guide for setting up Expo MCP Server with Cursor
 - **[FFCI Strategy Meeting](meetings/ffci-mobile-app-strategy.md)** - December 8, 2025 planning meeting
 - **[Local Development Guide](docs/guide-to-running-locally.md)** - How to run the FFCI site locally
 - **[KQL/Headless Reference](docs/kirby-headless-cef.md)** - Example of KQL API setup

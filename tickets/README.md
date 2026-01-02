@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## In Progress
-- [014](014-setup-expo-mcp-server.md) - Set Up Expo MCP Server Locally
+(none)
 
 ## Backlog
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
@@ -31,6 +31,7 @@ Quick reference for active tasks. See individual files for details.
 - [004](004-resources-page-loading-delay.md) - Resources page loading delay
 - [010](010-integrate-browserstack-api.md) - Integrate BrowserStack App Live API
 - [010](done/010-integrate-browserstack-api.md) - Integrate BrowserStack App Live API
+- [014](014-setup-expo-mcp-server.md) - Set Up Expo MCP Server Locally
 
 ---
 
