@@ -11,10 +11,10 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## Backlog
-(none)
+- [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
 
 ## Blocked
-- [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
+(none)
 
 ## Done
 - [001](done/001-api-key-auth.md) - Update RN app to use X-API-Key authentication

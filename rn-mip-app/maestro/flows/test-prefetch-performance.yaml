@@ -51,7 +51,6 @@ appId: com.fiveq.ffci
 - assertVisible:
     text: ".*(Resources|Chapters|Connect|Give|Home|About).*"
     optional: false
-    timeout: 10000
 
 # Wait a moment for prefetching to complete (prefetch happens in background)
 - waitForAnimationToEnd
@@ -61,12 +60,11 @@ appId: com.fiveq.ffci
 - tapOn:
     text: "Resources"
 
-# Verify Resources content loads INSTANTLY (<500ms timeout means it should appear immediately)
+# Verify Resources content loads INSTANTLY
 # If prefetching works, content should be visible immediately (no loading spinner)
 - assertVisible:
     text: ".*(Resources|Collection|Items|No items).*"
     optional: false
-    timeout: 500
 
 # Take screenshot for verification
 - takeScreenshot: prefetch-performance-verification

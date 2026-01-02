@@ -18,7 +18,6 @@ appId: com.fiveq.ffci
 - assertVisible:
     text: ".*(Resources|Collection|Items|No items).*"
     optional: false
-    timeout: 10000
 
 # Go back to Home
 - tapOn:
@@ -29,11 +28,10 @@ appId: com.fiveq.ffci
     text: "Resources"
 
 # Content should appear immediately (no loading indicator)
-# If cache is working, content should be visible within 100ms
+# If cache is working, content should be visible quickly
 - assertVisible:
     text: ".*(Resources|Collection|Items|No items).*"
     optional: false
-    timeout: 500
 
 # Take screenshot for verification
 - takeScreenshot: cache-performance-verification

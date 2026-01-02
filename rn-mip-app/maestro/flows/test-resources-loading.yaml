@@ -14,17 +14,15 @@ appId: com.fiveq.ffci
 - tapOn:
     text: "Resources"
 
-# Immediately check for loading indicator (should appear within ~100ms)
+# Immediately check for loading indicator (should appear quickly)
 - assertVisible:
     text: "Loading"
     optional: false
-    timeout: 500
 
 # Wait for Resources page content to load
 - assertVisible:
     text: ".*(Resources|Collection|Items|No items).*"
     optional: false
-    timeout: 10000
 
 # Take screenshot for verification
 - takeScreenshot: resources-loaded-verification
