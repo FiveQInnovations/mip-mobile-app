@@ -22,10 +22,9 @@ Quick reference for active tasks. See individual files for details.
 - [012](012-eas-build-webhook.md) - EAS Build Completion Webhook
 - [013](013-speed-up-eas-android-builds.md) - Speed Up EAS Android Build Time
 - [014](014-setup-expo-mcp-server.md) - Set Up Expo MCP Server Locally
-- [015](015-ios-browserstack-without-apple-dev-account.md) - Build and Upload iOS to BrowserStack Without Apple Developer Account
 
 ## Blocked
-(none)
+- [015](015-ios-browserstack-without-apple-dev-account.md) - Build and Upload iOS to BrowserStack Without Apple Developer Account
 
 ## Done
 - [001](done/001-api-key-auth.md) - Update RN app to use X-API-Key authentication
