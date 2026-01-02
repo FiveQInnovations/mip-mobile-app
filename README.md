@@ -14,6 +14,13 @@ This project builds a reusable mobile app template that displays content from Ki
 **Timeline**: Target launch late February / early March 2025  
 **Urgency**: FFCI's current SubSplash app expires January 15, 2025
 
+## Current App Reference
+
+The existing FFCI app is built on the SubSplash platform:
+- **iOS App Store**: https://apps.apple.com/us/app/firefighters-for-christ/id1461816552
+- **Platform**: SubSplash (version 6.3.1 as of September 2023)
+- **Developer**: FIREFIGHTERS FOR CHRIST INTERNATIONAL
+
 ## Quick Links
 
 - **[Mobile App Specification](docs/mobile-app-specification.md)** - Complete technical specification
