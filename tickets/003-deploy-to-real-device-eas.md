@@ -17,8 +17,8 @@ Need to deploy the React Native app to a real device using Expo Application Serv
 - [ ] Deploy and verify iOS app on physical device
 - [x] Build Android app via EAS
 - [x] Deploy and verify Android app on physical device (BrowserStack)
-- [ ] Test on physical devices
-- [ ] Document deployment process
+- [x] Test on physical devices (BrowserStack)
+- [x] Document deployment process
 
 ## Notes
 
@@ -369,4 +369,46 @@ Since using a personal device is challenging, researched cloud-based services th
 
 **Related Tickets:**
 - Ticket #010: Integrate BrowserStack App Live API (for automated uploads)
+
+---
+
+### ✅ BrowserStack Deployment Successful (2026-01-20)
+
+**Status:** Completed - Successfully deployed and tested on BrowserStack
+
+**Deployment Summary:**
+- ✅ Built Android preview APK using EAS Build
+- ✅ Uploaded APK to BrowserStack App Live
+- ✅ Tested on real Android device (Samsung Galaxy S25)
+- ✅ App launched successfully without crashes
+- ✅ All core functionality verified and working
+
+**Key Learnings:**
+- Preview profile (`--profile preview`) is required for BrowserStack testing (standalone build, no dev server needed)
+- React version must be exactly `19.1.0` to match React Native 0.81.5 requirements
+- `NPM_CONFIG_LEGACY_PEER_DEPS` environment variable in `eas.json` handles peer dependency conflicts
+- Pre-build validation script (`./scripts/pre-build-check.sh`) catches dependency issues before EAS build
+
+**Next Steps:**
+- ✅ Create comprehensive deployment script for consistent builds - **COMPLETED**
+- ✅ Document reliable deployment process - **COMPLETED**
+- ✅ Test iOS simulator and Maestro tests to ensure full workflow - **COMPLETED**
+
+**Deployment Scripts Created:**
+- `./scripts/deploy-to-browserstack.sh` - Complete deployment workflow (validation + build + upload)
+- `./scripts/pre-build-check.sh` - Updated to use `NPM_CONFIG_LEGACY_PEER_DEPS` for consistency
+- `./scripts/build-and-download-preview.sh` - Builds Android preview APK with EAS
+- `./scripts/upload-to-browserstack.sh` - Uploads APK to BrowserStack App Live
+
+**Documentation Created:**
+- **[docs/deployment-workflow.md](../../docs/deployment-workflow.md)** - Complete deployment guide
+- Updated `docs/how-to-build-android.md` - Added pre-build check details
+- Updated `rn-mip-app/README.md` - Added deployment scripts section
+
+**Testing Results:**
+- ✅ npm install works correctly with `--legacy-peer-deps`
+- ✅ Pre-build validation passes (with `NPM_CONFIG_LEGACY_PEER_DEPS` environment variable)
+- ✅ iOS simulator is available and running
+- ✅ Maestro tests run successfully
+- ✅ Full deployment workflow tested and documented
 

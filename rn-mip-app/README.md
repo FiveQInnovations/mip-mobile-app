@@ -52,10 +52,23 @@ See **[docs/ios-simulator-network-setup.md](./docs/ios-simulator-network-setup.m
 
 ## Scripts
 
+### Development
 - `npm start` - Start Metro bundler
 - `npm run ios` - Build and run on iOS
 - `npm run android` - Build and run on Android
-- `npm run test:maestro:ios` - Run Maestro UI tests
+
+### Testing
+- `npm run test:maestro:ios` - Run Maestro UI tests on iOS
+- `npm run test:maestro:android` - Run Maestro UI tests on Android
+- `npm run test:maestro` - Run all Maestro tests
+
+### Deployment
+- `./scripts/pre-build-check.sh` - Validate dependencies before EAS build
+- `./scripts/build-and-download-preview.sh` - Build Android preview APK with EAS
+- `./scripts/deploy-to-browserstack.sh` - Complete deployment workflow (build + upload)
+- `./scripts/upload-to-browserstack.sh <apk>` - Upload APK to BrowserStack
+
+See **[deployment-workflow.md](../docs/deployment-workflow.md)** for complete deployment guide.
 
 ## Configuration
 
@@ -65,6 +78,8 @@ See **[docs/ios-simulator-network-setup.md](./docs/ios-simulator-network-setup.m
 
 ## Documentation
 
+- **[Deployment Workflow](../docs/deployment-workflow.md)** - Complete guide for deploying to BrowserStack
+- **[How to Build Android](../docs/how-to-build-android.md)** - Android build reference
 - **[iOS Simulator Network Setup](./docs/ios-simulator-network-setup.md)** - Complete guide for network connectivity
 - **[TODO](./docs/TODO.md)** - Items to revisit (images, internal links, etc.)
 - **[TEMP_SETUP_STATUS.md](./TEMP_SETUP_STATUS.md)** - Development status and notes

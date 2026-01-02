@@ -31,6 +31,8 @@ if [ -d "node_modules" ]; then
 fi
 
 # Run npm ci with same flags EAS uses
+# EAS sets NPM_CONFIG_LEGACY_PEER_DEPS=true via eas.json env vars
+export NPM_CONFIG_LEGACY_PEER_DEPS=true
 if npm ci --include=dev 2>&1; then
     echo ""
     echo "✅ npm ci succeeded - dependencies are compatible"

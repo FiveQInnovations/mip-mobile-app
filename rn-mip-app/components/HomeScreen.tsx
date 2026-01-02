@@ -136,6 +136,10 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
         {site_data.app_name || config.appName}
       </Text>
 
+      <Text style={styles.helloWorld} testID="hello-world">
+        Hello World
+      </Text>
+
       {/* Quick Tasks */}
       <Text style={styles.sectionHeader} testID="home-quick-heading">
         Quick Tasks
@@ -286,6 +290,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 24,
     color: '#333',
+  },
+  helloWorld: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 24,
+    color: '#2563eb',
   },
   sectionHeader: {
     fontSize: 20,

@@ -9,6 +9,7 @@ Quick reference for active tasks. See individual files for details.
 
 ## In Progress
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
+- [016](016-reliable-android-emulator-local.md) - Run Android Emulator Reliably Locally
 
 ## Backlog
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
@@ -22,7 +23,6 @@ Quick reference for active tasks. See individual files for details.
 - [013](013-speed-up-eas-android-builds.md) - Speed Up EAS Android Build Time
 - [014](014-setup-expo-mcp-server.md) - Set Up Expo MCP Server Locally
 - [015](015-ios-browserstack-without-apple-dev-account.md) - Build and Upload iOS to BrowserStack Without Apple Developer Account
-- [016](016-reliable-android-emulator-local.md) - Run Android Emulator Reliably Locally
 
 ## Blocked
 (none)

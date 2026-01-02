@@ -71,12 +71,14 @@ Before starting an EAS build, run the pre-build check to catch dependency issues
 
 This script:
 - Verifies `package-lock.json` exists (required for `npm ci`)
-- Runs `npm ci` to catch dependency conflicts (same as EAS Build)
+- Runs `npm ci` with `NPM_CONFIG_LEGACY_PEER_DEPS=true` (same as EAS Build)
 - Runs `expo-doctor` to check for common issues
 
 **Why this matters:** EAS builds can take 20+ minutes. Catching dependency conflicts locally (which fail in ~1 minute) saves significant time.
 
 The build script (`./scripts/build-and-download-preview.sh`) automatically runs this check before starting a build.
+
+**Note:** The pre-build check uses the same environment variable (`NPM_CONFIG_LEGACY_PEER_DEPS`) that EAS Build uses, ensuring consistency between local validation and EAS builds.
 
 ## Common Issues
 
@@ -92,5 +94,11 @@ The build script (`./scripts/build-and-download-preview.sh`) automatically runs 
 - This is a peer dependency conflict (e.g., React version mismatch)
 - **Fix:** Run `./scripts/pre-build-check.sh` locally to reproduce and fix
 - Common cause: React version doesn't match react-dom requirements
-- Solution: Update React to match react-dom's peer dependency requirement
+- Solution: Ensure React is exactly `19.1.0` (required by React Native 0.81.5)
+- The `NPM_CONFIG_LEGACY_PEER_DEPS` environment variable in `eas.json` handles these conflicts
+
+**Pre-build check fails with "npm ci" errors:**
+- This means `package-lock.json` is out of sync with `package.json`
+- **Fix:** Run `npm install --legacy-peer-deps` to regenerate `package-lock.json`
+- Then run `./scripts/pre-build-check.sh` again to verify
 
