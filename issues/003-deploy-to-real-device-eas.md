@@ -1,5 +1,5 @@
 ---
-status: in_progress
+status: in-progress
 area: rn-mip-app
 created: 2026-01-20
 ---

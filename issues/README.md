@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## In Progress
-(none)
+- [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
 
 ## Backlog
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
