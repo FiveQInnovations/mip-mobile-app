@@ -29,6 +29,7 @@ Quick reference for active tasks. See individual files for details.
 - [009](009-update-package-versions-expo-sdk.md) - Update package versions to match Expo SDK requirements
 - [010](010-integrate-browserstack-api.md) - Integrate BrowserStack App Live API
 - [010](done/010-integrate-browserstack-api.md) - Integrate BrowserStack App Live API
+- [012](012-eas-build-webhook.md) - EAS Build Completion Webhook
 - [014](014-setup-expo-mcp-server.md) - Set Up Expo MCP Server Locally
 
 ---
