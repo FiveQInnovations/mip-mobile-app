@@ -8,10 +8,9 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## In Progress
-(none)
+- [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
 
 ## Backlog
-- [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
 - [004](004-resources-page-loading-delay.md) - Resources page loading delay
 
 ## Blocked
