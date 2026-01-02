@@ -84,12 +84,23 @@ async function fetchJson<T>(url: string, label: string): Promise<T> {
   const basicAuth = base64Encode('fiveq:demo');
   
   try {
+    // Log the actual auth header being sent for debugging
+    console.log('[API] Basic Auth header:', `Basic ${basicAuth}`);
+    console.log('[API] Full headers:', {
+      'X-API-Key': config.apiKey,
+      'Authorization': `Basic ${basicAuth}`,
+      'Content-Type': 'application/json',
+    });
+    
     const response = await fetch(url, {
+      method: 'GET',
       headers: {
         'X-API-Key': config.apiKey,
         'Authorization': `Basic ${basicAuth}`,
         'Content-Type': 'application/json',
       },
+      // Ensure credentials are included (though not needed for Basic Auth)
+      credentials: 'omit',
     });
     console.log('[API] Response status:', response.status, 'for', label);
 
