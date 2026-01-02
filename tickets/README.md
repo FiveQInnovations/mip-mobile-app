@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## In Progress
-(none)
+- [014](014-setup-expo-mcp-server.md) - Set Up Expo MCP Server Locally
 
 ## Backlog
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
@@ -19,7 +19,6 @@ Quick reference for active tasks. See individual files for details.
 - [011](011-android-baseline-ux.md) - Android Baseline UX Issues
 - [012](012-eas-build-webhook.md) - EAS Build Completion Webhook
 - [013](013-speed-up-eas-android-builds.md) - Speed Up EAS Android Build Time
-- [014](014-setup-expo-mcp-server.md) - Set Up Expo MCP Server Locally
 - [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
 
 ## Blocked
@@ -30,6 +29,7 @@ Quick reference for active tasks. See individual files for details.
 - [001](done/001-api-key-auth.md) - Update RN app to use X-API-Key authentication
 - [002](002-enable-api-on-ffci-site.md) - Enable API on the real FFCI site
 - [004](004-resources-page-loading-delay.md) - Resources page loading delay
+- [010](010-integrate-browserstack-api.md) - Integrate BrowserStack App Live API
 - [010](done/010-integrate-browserstack-api.md) - Integrate BrowserStack App Live API
 
 ---
