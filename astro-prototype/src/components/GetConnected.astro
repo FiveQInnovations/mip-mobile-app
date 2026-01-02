@@ -1,11 +1,14 @@
 ---
 import type { MenuItem } from '../lib/api';
 
+import type { SocialLink } from '../lib/api';
+
 interface Props {
   menu: MenuItem[];
+  social?: SocialLink[];
 }
 
-const { menu } = Astro.props;
+const { menu, social = [] } = Astro.props;
 
 // Find menu items by label matching
 function findMenuItemByLabel(menu: MenuItem[], labels: string[]): MenuItem | null {
@@ -21,6 +24,29 @@ function findMenuItemByLabel(menu: MenuItem[], labels: string[]): MenuItem | nul
 
 const chapters = findMenuItemByLabel(menu, ['Chapter', 'Chapters', 'Find a Chapter']);
 const events = findMenuItemByLabel(menu, ['Event', 'Events', 'Upcoming Events']);
+
+// Map social platform names to icons
+function getSocialIcon(platform?: string, label?: string): string {
+  const platformLower = platform?.toLowerCase() || '';
+  const labelLower = label?.toLowerCase() || '';
+  
+  if (platformLower.includes('facebook') || labelLower.includes('facebook')) {
+    return '📘';
+  } else if (platformLower.includes('instagram') || labelLower.includes('instagram')) {
+    return '📷';
+  } else if (platformLower.includes('twitter') || labelLower.includes('twitter') || platformLower.includes('x')) {
+    return '🐦';
+  } else if (platformLower.includes('youtube') || labelLower.includes('youtube')) {
+    return '📺';
+  } else if (platformLower.includes('website') || labelLower.includes('website') || platformLower.includes('web')) {
+    return '🌐';
+  } else if (platformLower.includes('membership') || labelLower.includes('membership')) {
+    return '👥';
+  } else if (platformLower.includes('donate') || labelLower.includes('donate')) {
+    return '💝';
+  }
+  return '🔗';
+}
 
 const connectedItems = [
   {
@@ -40,6 +66,22 @@ const connectedItems = [
     menuItem: events,
   },
 ];
+
+// Add social links (excluding donate, which is handled separately)
+const socialItems = social
+  .filter(s => {
+    const platformLower = s.platform?.toLowerCase() || '';
+    const labelLower = s.label?.toLowerCase() || '';
+    return !platformLower.includes('donate') && !labelLower.includes('donate');
+  })
+  .map((s, index) => ({
+    id: `social-${index}`,
+    label: s.label || s.platform || 'Social Link',
+    helperText: s.platform ? `Visit our ${s.platform}` : 'Visit us online',
+    icon: getSocialIcon(s.platform, s.label),
+    href: s.url,
+    isExternal: true,
+  }));
 ---
 
 <div class="px-4 py-4" data-testid="get-connected">
@@ -48,7 +90,7 @@ const connectedItems = [
     {connectedItems.map((item) => (
       <a
         href={item.href}
-        class="block bg-white rounded-lg border border-gray-200 p-4 transition-all hover:shadow-md active:scale-[0.98]"
+        class="block bg-white rounded-lg shadow-sm p-4 transition-all hover:shadow-md active:scale-[0.98]"
         data-testid={`connected-item-${item.id}`}
         style="min-height: 64px; display: flex; align-items: center; gap: 3;"
       >
@@ -71,5 +113,40 @@ const connectedItems = [
         </svg>
       </a>
     ))}
+    
+    {/* Social Links Section */}
+    {socialItems.length > 0 && (
+      <>
+        <h3 class="text-base font-semibold text-gray-900 mt-4 mb-2">Follow Us</h3>
+        {socialItems.map((item) => (
+          <a
+            href={item.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="block bg-white rounded-lg shadow-sm p-4 transition-all hover:shadow-md active:scale-[0.98]"
+            data-testid={`social-item-${item.id}`}
+            style="min-height: 64px; display: flex; align-items: center; gap: 3;"
+          >
+            <span class="text-2xl flex-shrink-0" role="img" aria-label={item.label}>
+              {item.icon}
+            </span>
+            <div class="flex-1 min-w-0 ml-3">
+              <h3 class="text-base font-semibold text-gray-900">{item.label}</h3>
+              <p class="text-xs text-gray-600 mt-0.5">{item.helperText}</p>
+            </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-gray-400 flex-shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        ))}
+      </>
+    )}
   </div>
 </div>

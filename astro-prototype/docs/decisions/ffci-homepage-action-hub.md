@@ -56,3 +56,6 @@ One rotating highlight to keep the homepage feeling “alive” without requirin
 - Homepage loads fast and feels native (no “webpage scroll fatigue”).
 - Pattern can be reused for the next client with minimal changes (swap labels/links/config).
 
+
+
+

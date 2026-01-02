@@ -68,7 +68,7 @@ const quickTasks = [
         href={task.href}
         target={task.isExternal ? '_blank' : undefined}
         rel={task.isExternal ? 'noopener noreferrer' : undefined}
-        class="block bg-white rounded-lg border border-gray-200 p-4 transition-all hover:shadow-md active:scale-[0.98]"
+        class="block bg-white rounded-lg shadow-sm p-4 transition-all hover:shadow-md active:scale-[0.98]"
         data-testid={`quick-task-${task.id}`}
         style="min-height: 120px; display: flex; flex-direction: column; justify-content: space-between;"
       >
