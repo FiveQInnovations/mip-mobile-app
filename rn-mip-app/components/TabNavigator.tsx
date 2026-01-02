@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { getSiteData, SiteData, MenuItem } from '../lib/api';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, InteractionManager } from 'react-native';
+import { getSiteData, SiteData, MenuItem, prefetchMainTabs } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { TabScreen } from './TabScreen';
 import { HomeScreen } from './HomeScreen';
@@ -24,6 +24,13 @@ export function TabNavigator() {
       setError(null);
       // Set Home tab as selected by default
       setSelectedTabUuid('__home__');
+      
+      // Prefetch all main tab content after critical path (homepage) loads
+      // Use InteractionManager to run after animations/interactions complete
+      InteractionManager.runAfterInteractions(() => {
+        console.log('[TabNavigator] Site data loaded, starting prefetch of main tabs...');
+        prefetchMainTabs(data.menu);
+      });
     } catch (err: any) {
       setError(err.message || 'Failed to load data');
       console.error('Error loading site data:', err);

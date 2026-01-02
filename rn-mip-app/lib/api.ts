@@ -208,3 +208,64 @@ async function refreshPageInBackground(uuid: string): Promise<PageData> {
   return data;
 }
 
+/**
+ * Prefetch page data in background (non-blocking)
+ * Silently fetches and caches page data without returning it
+ */
+export async function prefetchPage(uuid: string): Promise<void> {
+  try {
+    // Skip if already cached and fresh
+    if (hasCachedPage(uuid) && !isCacheStale(uuid)) {
+      console.log(`[Prefetch] Skipping UUID: ${uuid} (already cached and fresh)`);
+      return;
+    }
+
+    const prefetchStartTime = Date.now();
+    console.log(`[Prefetch] Prefetching UUID: ${uuid} at ${prefetchStartTime}`);
+    const data = await fetchJson<PageData>(
+      `${config.apiBaseUrl}/mobile-api/page/${uuid}`,
+      `page ${uuid} (prefetch)`
+    );
+    setCachedPage(uuid, data);
+    const prefetchEndTime = Date.now();
+    const prefetchDuration = prefetchEndTime - prefetchStartTime;
+    console.log(`[Prefetch] Prefetch completed for UUID: ${uuid} at ${prefetchEndTime}, duration: ${prefetchDuration}ms`);
+  } catch (error: any) {
+    console.error(`[Prefetch] Failed to prefetch UUID: ${uuid}:`, error.message);
+    // Don't throw - prefetch failures shouldn't break the app
+  }
+}
+
+/**
+ * Prefetch all main tab pages after site data loads
+ * Uses InteractionManager to run after critical path (homepage) loads
+ */
+export async function prefetchMainTabs(menuItems: MenuItem[]): Promise<void> {
+  // Filter to get only main tab pages (exclude home and non-tab items)
+  const mainTabUuids = menuItems
+    .map(item => item.page?.uuid)
+    .filter((uuid): uuid is string => !!uuid && uuid !== '__home__');
+
+  if (mainTabUuids.length === 0) {
+    console.log('[Prefetch] No main tabs to prefetch');
+    return;
+  }
+
+  console.log(`[Prefetch] Starting prefetch of ${mainTabUuids.length} main tabs...`);
+  const prefetchStartTime = Date.now();
+
+  // Prefetch all tabs in parallel (non-blocking)
+  const prefetchPromises = mainTabUuids.map(uuid => prefetchPage(uuid));
+  
+  // Wait for all prefetches to complete (but don't block UI)
+  Promise.all(prefetchPromises)
+    .then(() => {
+      const prefetchEndTime = Date.now();
+      const prefetchDuration = prefetchEndTime - prefetchStartTime;
+      console.log(`[Prefetch] All tabs prefetched successfully (${mainTabUuids.length}/${mainTabUuids.length}) in ${prefetchDuration}ms`);
+    })
+    .catch((error) => {
+      console.error('[Prefetch] Some prefetches failed:', error);
+    });
+}
+

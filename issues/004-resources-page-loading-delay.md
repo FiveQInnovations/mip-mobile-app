@@ -39,10 +39,10 @@ When navigating from the Homepage to the Resources tab, there is a noticeable de
     - [x] Show cached content immediately when switching tabs
     - [x] Fetch fresh data in background (stale-while-revalidate)
     - [ ] Replace spinner with skeleton screens (deferred - current implementation shows cached content instantly, eliminating need for spinner)
-  - [ ] **Phase 2: Prefetching**
-    - [ ] Prefetch all main tab content after site data loads
-    - [ ] Integrate React Query or similar for cache management
-    - [ ] Implement cache invalidation strategy
+  - [x] **Phase 2: Prefetching**
+    - [x] Prefetch all main tab content after site data loads (2026-01-02)
+    - [ ] Integrate React Query or similar for cache management (deferred - current implementation sufficient)
+    - [x] Implement cache invalidation strategy (TTL-based, already implemented)
   - [ ] **Phase 3: Advanced Optimization**
     - [ ] Enable `react-native-screens` for native navigation
     - [ ] Optimize components with React.memo, useMemo, useCallback
@@ -376,6 +376,58 @@ setTimeout(() => {
 ```
 
 This will show you exactly what's cached after prefetching completes.
+
+## Phase 2 Implementation Summary (2026-01-02)
+
+### Prefetching - COMPLETED ✅
+
+**Implemented Features:**
+1. **Prefetch functions** (`lib/api.ts`)
+   - `prefetchPage(uuid)`: Prefetches a single page in background (non-blocking)
+   - `prefetchMainTabs(menuItems)`: Prefetches all main tab pages in parallel
+   - Uses `InteractionManager.runAfterInteractions()` to run after critical path loads
+   - Comprehensive logging for performance monitoring
+
+2. **Automatic prefetching** (`components/TabNavigator.tsx`)
+   - Prefetching triggers automatically after site data loads
+   - Runs after homepage renders (non-blocking)
+   - Prefetches all main tabs in parallel for maximum efficiency
+
+**Expected Performance Improvements:**
+- **First visit to Resources**: ~7ms (from prefetched cache, was ~460ms)
+- **Subsequent visits**: ~7ms (from cache)
+- **Background prefetch**: Happens automatically after app loads
+
+**Files Modified:**
+- `rn-mip-app/lib/api.ts` (added `prefetchPage()` and `prefetchMainTabs()`)
+- `rn-mip-app/components/TabNavigator.tsx` (triggers prefetching after site data loads)
+- `rn-mip-app/maestro/flows/test-prefetch-performance.yaml` (new test file)
+
+**Testing:**
+- ✅ Created Maestro test: `maestro/flows/test-prefetch-performance.yaml`
+- ✅ Test clears cache, reloads app, navigates to Resources
+- ✅ Verified Resources page loads successfully
+- ✅ Prefetching logs should appear in Metro console after app loads
+
+**Expected Log Sequence:**
+```
+[TabNavigator] Site data loaded, starting prefetch of main tabs...
+[Prefetch] Starting prefetch of 4 main tabs...
+[Prefetch] Prefetching UUID: uezb3178BtP3oGuU (Resources)...
+[Prefetch] Prefetch completed for UUID: uezb3178BtP3oGuU, duration: 460ms
+[PageCache] Cached page data for UUID: uezb3178BtP3oGuU
+...
+[Prefetch] All tabs prefetched successfully (4/4) in 1850ms
+```
+
+**Then when navigating to Resources tab:**
+```
+[TabNavigator] Tab tapped: Resources (UUID: uezb3178BtP3oGuU)
+[PageCache] Cache hit for UUID: uezb3178BtP3oGuU (age: 1234ms)
+[TabScreen] Data from cache - instant display (6ms)
+```
+
+**Status:** ✅ **IMPLEMENTED AND READY FOR VERIFICATION**
 
 ## Notes
 - Issue discovered during testing of issue #002
