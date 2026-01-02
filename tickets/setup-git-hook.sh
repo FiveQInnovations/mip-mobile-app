@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Optional: Set up git hook to auto-generate README on commit
-# This ensures README stays in sync with issue files
+# This ensures README stays in sync with ticket files
 
 HOOK_PATH=".git/hooks/pre-commit"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -20,17 +20,17 @@ if [ -f "$HOOK_PATH" ]; then
   fi
   echo "⚠️  Pre-commit hook exists. Appending to it..."
   echo "" >> "$HOOK_PATH"
-  echo "# Auto-generate issues README" >> "$HOOK_PATH"
+  echo "# Auto-generate tickets README" >> "$HOOK_PATH"
   echo "node \"$SCRIPT_PATH\"" >> "$HOOK_PATH"
-  echo "git add issues/README.md" >> "$HOOK_PATH"
+  echo "git add tickets/README.md" >> "$HOOK_PATH"
 else
   echo "📝 Creating pre-commit hook..."
   cat > "$HOOK_PATH" << 'EOF'
 #!/bin/bash
-# Auto-generate issues README
+# Auto-generate tickets README
 EOF
   echo "node \"$SCRIPT_PATH\"" >> "$HOOK_PATH"
-  echo "git add issues/README.md" >> "$HOOK_PATH"
+  echo "git add tickets/README.md" >> "$HOOK_PATH"
   chmod +x "$HOOK_PATH"
 fi
 

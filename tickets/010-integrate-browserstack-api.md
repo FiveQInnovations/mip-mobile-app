@@ -71,7 +71,7 @@ curl -u "USERNAME:ACCESS_KEY" -X POST "https://api-cloud.browserstack.com/app-li
 - Automatically upload builds for testing
 - Requires API credentials in CI/CD secrets
 
-### Related Issues
-- Issue #003: Deploy to Real device (EAS) - BrowserStack chosen as testing solution
+### Related Tickets
+- Ticket #003: Deploy to Real device (EAS) - BrowserStack chosen as testing solution
 
 

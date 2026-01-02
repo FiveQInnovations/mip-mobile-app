@@ -16,7 +16,7 @@ Currently need to run a local server to test the mobile app. Need to enable the 
 - Must verify mobile app works without local DDEV server running
 - This confirms production-ready configuration
 
-**Note:** Issue #001 verified X-API-Key auth works with local server. This issue is specifically about making it work with the deployed production server.
+**Note:** Ticket #001 verified X-API-Key auth works with local server. This ticket is specifically about making it work with the deployed production server.
 
 **Authentication Requirements:**
 - X-API-Key header: `777359235aecc10fdfb144041dfdacfc80ca0751c7bed7b14c96f935456fc4ce`

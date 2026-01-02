@@ -1,10 +1,10 @@
-# Issues
+# Tickets
 
 Quick reference for active tasks. See individual files for details.
 
-> **Note:** This README is auto-generated from issue files. To regenerate it, run:
+> **Note:** This README is auto-generated from ticket files. To regenerate it, run:
 > ```bash
-> node issues/generate-readme.js
+> node tickets/generate-readme.js
 > ```
 
 ## In Progress

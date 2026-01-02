@@ -247,11 +247,11 @@ Found EAS configuration in `/Users/anthony/clients/mlj/mljtrust-mobile` (set up 
 
 **Expo Doctor Findings:**
 - EAS Build ran `expo-doctor` automatically and detected 4 issues
-- Issues documented as separate backlog items:
-  - Issue #006: Add `.expo/` to `.gitignore`
-  - Issue #007: Install missing peer dependency `expo-constants`
-  - Issue #008: Resolve native config sync issues (app.json vs native folders)
-  - Issue #009: Update package versions to match Expo SDK requirements
+- Tickets documented as separate backlog items:
+  - Ticket #006: Add `.expo/` to `.gitignore`
+  - Ticket #007: Install missing peer dependency `expo-constants`
+  - Ticket #008: Resolve native config sync issues (app.json vs native folders)
+  - Ticket #009: Update package versions to match Expo SDK requirements
 - These are non-blocking for the current build but should be addressed
 
 ---
@@ -320,7 +320,7 @@ Since using a personal device is challenging, researched cloud-based services th
 3. ✅ Upload to BrowserStack App Live (manual upload for now)
 4. ✅ Select Android device and begin testing
 5. ✅ Verify all functionality as outlined in deployment steps above
-6. Future: Integrate BrowserStack API for automated uploads (see Issue #010)
+6. Future: Integrate BrowserStack API for automated uploads (see Ticket #010)
 
 ---
 
@@ -367,6 +367,6 @@ Since using a personal device is challenging, researched cloud-based services th
 - `eas.json`: Added `NPM_CONFIG_LEGACY_PEER_DEPS` environment variable to preview profile
 - `package-lock.json`: Updated with correct React version
 
-**Related Issues:**
-- Issue #010: Integrate BrowserStack App Live API (for automated uploads)
+**Related Tickets:**
+- Ticket #010: Integrate BrowserStack App Live API (for automated uploads)
 

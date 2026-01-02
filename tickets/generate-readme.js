@@ -1,22 +1,22 @@
 #!/usr/bin/env node
 
 /**
- * Generates README.md from issue files by reading their frontmatter and titles.
- * Run this script whenever issues are added, removed, or status changes.
+ * Generates README.md from ticket files by reading their frontmatter and titles.
+ * Run this script whenever tickets are added, removed, or status changes.
  * 
  * Usage:
  *   node generate-readme.js
  * 
  * Or add to git hook:
- *   echo 'node issues/generate-readme.js' >> .git/hooks/pre-commit
+ *   echo 'node tickets/generate-readme.js' >> .git/hooks/pre-commit
  */
 
 const fs = require('fs');
 const path = require('path');
 
-const ISSUES_DIR = __dirname;
-const README_PATH = path.join(ISSUES_DIR, 'README.md');
-const DONE_DIR = path.join(ISSUES_DIR, 'done');
+const TICKETS_DIR = __dirname;
+const README_PATH = path.join(TICKETS_DIR, 'README.md');
+const DONE_DIR = path.join(TICKETS_DIR, 'done');
 
 // Status categories in order
 const STATUS_ORDER = ['in-progress', 'backlog', 'blocked', 'done'];
@@ -47,19 +47,19 @@ function extractTitle(content) {
   return titleMatch ? titleMatch[1] : 'Untitled';
 }
 
-function getIssueFiles() {
-  // Get active issues from main directory
-  const activeFiles = fs.readdirSync(ISSUES_DIR)
+function getTicketFiles() {
+  // Get active tickets from main directory
+  const activeFiles = fs.readdirSync(TICKETS_DIR)
     .filter(file => file.endsWith('.md') && file !== 'README.md' && file !== '_template.md')
     .map(file => ({
       filename: file,
-      path: path.join(ISSUES_DIR, file),
+      path: path.join(TICKETS_DIR, file),
       number: file.match(/^(\d+)/)?.[1],
       isDone: false,
     }))
-    .filter(file => file.number); // Only numbered issues
+    .filter(file => file.number); // Only numbered tickets
   
-  // Get done issues from done/ directory
+  // Get done tickets from done/ directory
   const doneFiles = fs.existsSync(DONE_DIR) 
     ? fs.readdirSync(DONE_DIR)
         .filter(file => file.endsWith('.md') && file !== 'README.md')
@@ -79,7 +79,7 @@ function getIssueFiles() {
   return allFiles;
 }
 
-function readIssue(file) {
+function readTicket(file) {
   const content = fs.readFileSync(file.path, 'utf-8');
   const frontmatter = parseFrontmatter(content);
   const title = extractTitle(content);
@@ -100,29 +100,29 @@ function readIssue(file) {
   };
 }
 
-function generateREADME(issues) {
-  // Group issues by status
+function generateREADME(tickets) {
+  // Group tickets by status
   const byStatus = {};
   STATUS_ORDER.forEach(status => {
     byStatus[status] = [];
   });
   
-  issues.forEach(issue => {
-    if (byStatus[issue.status]) {
-      byStatus[issue.status].push(issue);
+  tickets.forEach(ticket => {
+    if (byStatus[ticket.status]) {
+      byStatus[ticket.status].push(ticket);
     } else {
-      console.warn(`Warning: Unknown status "${issue.status}" in ${issue.filename}`);
+      console.warn(`Warning: Unknown status "${ticket.status}" in ${ticket.filename}`);
     }
   });
   
   // Generate README content
-  let content = `# Issues
+  let content = `# Tickets
 
 Quick reference for active tasks. See individual files for details.
 
-> **Note:** This README is auto-generated from issue files. To regenerate it, run:
+> **Note:** This README is auto-generated from ticket files. To regenerate it, run:
 > \`\`\`bash
-> node issues/generate-readme.js
+> node tickets/generate-readme.js
 > \`\`\`
 
 `;
@@ -130,14 +130,14 @@ Quick reference for active tasks. See individual files for details.
   // Generate sections for each status
   STATUS_ORDER.forEach(status => {
     const label = STATUS_LABELS[status];
-    const statusIssues = byStatus[status];
+    const statusTickets = byStatus[status];
     
     content += `## ${label}\n`;
-    if (statusIssues.length === 0) {
+    if (statusTickets.length === 0) {
       content += `(none)\n\n`;
     } else {
-      statusIssues.forEach(issue => {
-        content += `- [${issue.number}](${issue.filename}) - ${issue.title}\n`;
+      statusTickets.forEach(ticket => {
+        content += `- [${ticket.number}](${ticket.filename}) - ${ticket.title}\n`;
       });
       content += `\n`;
     }
@@ -166,22 +166,22 @@ Quick reference for active tasks. See individual files for details.
 
 // Main execution
 try {
-  const issueFiles = getIssueFiles();
-  const issues = issueFiles
-    .map(readIssue)
-    .filter(issue => issue !== null);
+  const ticketFiles = getTicketFiles();
+  const tickets = ticketFiles
+    .map(readTicket)
+    .filter(ticket => ticket !== null);
   
-  const readmeContent = generateREADME(issues);
+  const readmeContent = generateREADME(tickets);
   fs.writeFileSync(README_PATH, readmeContent, 'utf-8');
   
-  const totalIssues = issues.length;
-  const doneCount = issues.filter(i => i.status === 'done').length;
-  const activeCount = totalIssues - doneCount;
+  const totalTickets = tickets.length;
+  const doneCount = tickets.filter(i => i.status === 'done').length;
+  const activeCount = totalTickets - doneCount;
   
-  console.log(`✅ Generated README.md with ${totalIssues} issue(s) (${activeCount} active, ${doneCount} done)`);
+  console.log(`✅ Generated README.md with ${totalTickets} ticket(s) (${activeCount} active, ${doneCount} done)`);
   console.log(`   Status breakdown:`);
   STATUS_ORDER.forEach(status => {
-    const count = issues.filter(i => i.status === status).length;
+    const count = tickets.filter(i => i.status === status).length;
     if (count > 0) {
       console.log(`   - ${STATUS_LABELS[status]}: ${count}`);
     }
