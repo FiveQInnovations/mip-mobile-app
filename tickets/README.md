@@ -18,6 +18,11 @@ Quick reference for active tasks. See individual files for details.
 - [009](009-update-package-versions-expo-sdk.md) - Update package versions to match Expo SDK requirements
 - [010](010-integrate-browserstack-api.md) - Integrate BrowserStack App Live API
 - [011](011-android-baseline-ux.md) - Android Baseline UX Issues
+- [012](012-eas-build-webhook.md) - EAS Build Completion Webhook
+- [013](013-speed-up-eas-android-builds.md) - Speed Up EAS Android Build Time
+- [014](014-setup-expo-mcp-server.md) - Set Up Expo MCP Server Locally
+- [015](015-ios-browserstack-without-apple-dev-account.md) - Build and Upload iOS to BrowserStack Without Apple Developer Account
+- [016](016-reliable-android-emulator-local.md) - Run Android Emulator Reliably Locally
 
 ## Blocked
 (none)
