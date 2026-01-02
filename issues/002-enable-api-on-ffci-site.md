@@ -50,9 +50,13 @@ Currently need to run a local server to test the mobile app. Need to enable the 
   - Error: `Failed to fetch page uezb3178BtP3oGuU (500)`
   - Homepage loads fine, but Resources tab fails with 500 error
   - **Note:** Initial testing was done with local DDEV server still running, which may have masked this issue
-  - **Root cause:** Base64 encoding function had a bug in the fallback implementation
-  - **Fix:** Updated base64 encoding function to properly handle padding
-  - **Status:** Fixed in code, app needs to be reloaded to pick up changes
+  - **Root cause:** Base64 encoding function had a bug in the fallback implementation (incorrect padding logic)
+  - **Fix:** Updated base64 encoding function to properly handle padding and character encoding
+  - **Status:** 
+    - ✅ Code fix verified: Base64 encoding produces correct output (`Zml2ZXE6ZGVtbw==`)
+    - ✅ API endpoint verified: Works correctly with curl (returns 200 OK)
+    - ⚠️ App needs reload: Simulator app still using old code, needs Expo dev server reload or rebuild
+  - **Next steps:** Reload app through Expo dev server (`r` key in Expo CLI) or rebuild to test the fix
 - ✅ Maestro tests pass with deployed API (homepage flows):
   - home-action-hub flow: ✅ All assertions pass
   - homepage-loads flow: ✅ Passes
