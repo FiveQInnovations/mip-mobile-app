@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: done
 area: rn-mip-app
 created: 2026-01-20
 ---
@@ -10,17 +10,17 @@ created: 2026-01-20
 Several packages have version mismatches with the installed Expo SDK. Some are minor version mismatches and some are patch versions. While these may not cause immediate issues, keeping packages aligned with Expo SDK requirements ensures compatibility and reduces potential bugs.
 
 ## Tasks
-- [ ] Run `npx expo install --check` to review dependency updates
-- [ ] Update packages with minor version mismatches:
+- [x] Run `npx expo install --check` to review dependency updates
+- [x] Update packages with minor version mismatches:
   - `react-native-screens`: ~4.16.0 (found 4.19.0)
   - `react-native-webview`: 13.15.0 (found 13.16.0)
   - `@react-navigation/bottom-tabs`: ^7.4.0 (found ^7.9.0)
   - `@react-navigation/native-stack`: ^7.3.16 (found ^7.9.0)
-- [ ] Update packages with patch version mismatches:
+- [x] Update packages with patch version mismatches:
   - `@react-navigation/native`: ^7.1.8 (found ^7.1.26)
 - [ ] Test app functionality after updates
 - [ ] Verify EAS builds still work correctly
-- [ ] If any packages need to stay on current versions, add them to `expo.install.exclude` in `package.json`
+- [x] If any packages need to stay on current versions, add them to `expo.install.exclude` in `package.json`
 
 ## Notes
 
