@@ -8,7 +8,6 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## In Progress
-- [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
 - [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
 
 ## Backlog
@@ -24,6 +23,7 @@ Quick reference for active tasks. See individual files for details.
 - [014](014-setup-expo-mcp-server.md) - Set Up Expo MCP Server Locally
 
 ## Blocked
+- [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
 - [015](015-ios-browserstack-without-apple-dev-account.md) - Build and Upload iOS to BrowserStack Without Apple Developer Account
 
 ## Done

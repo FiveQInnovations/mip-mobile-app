@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: blocked
 area: rn-mip-app
 created: 2026-01-20
 ---
@@ -41,26 +41,32 @@ Need to deploy the React Native app to a real device using Expo Application Serv
 
 ### 🚫 BLOCKER: Apple Developer Account Access (2026-01-20)
 
-**Status:** Blocked - Waiting on 2FA access
+**Status:** Blocked - Waiting for Five Q Apple Developer Account access (expected next week)
 
 **Issue:**
 - EAS build requires Apple Developer Account login for iOS builds
-- Credentials available in 1Password
-- 2FA codes are sent to Nathan's phone number
-- Cannot complete Apple Developer Account authentication without 2FA code
+- Free Apple ID (Personal Team) does not work with EAS Build (see ticket #015)
+- Need access to Five Q paid Apple Developer Account to proceed with iOS builds
 
 **Action Taken:**
-- Pinged Nathan for assistance with 2FA
-- Waiting for response
+- Tested with free Apple ID - confirmed EAS requires paid account
+- Waiting for access to Five Q Apple Developer Account (expected next week)
 
 **Blocked Tasks:**
 - Cannot complete `eas build --profile development --platform ios`
+- Cannot complete `eas build --profile preview --platform ios`
 - Cannot proceed with iOS device deployment
-- Android builds may still be possible (not blocked by Apple Developer Account)
+- Android builds are working (not blocked by Apple Developer Account)
 
-**Workaround Options:**
-- Try Android build first: `eas build --profile development --platform android` (doesn't require Apple Developer Account)
-- Consider local iOS build if credentials can be configured manually (see issue #005 for Apple account linking)
+**Related Tickets:**
+- Ticket #005: Link Apple Account with EAS - Will need to complete when account access available
+- Ticket #015: Build iOS without Apple Dev Account - Confirmed EAS requires paid account
+
+**Next Steps When Unblocked:**
+- Get access to Five Q Apple Developer Account credentials
+- Link account with EAS (ticket #005)
+- Build iOS preview IPA: `eas build --profile preview --platform ios`
+- Deploy and verify iOS app on physical device (BrowserStack)
 
 ---
 
