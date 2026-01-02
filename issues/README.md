@@ -16,8 +16,10 @@ Quick reference for active tasks. See individual files for details.
 ## Blocked
 (none)
 
+## Done
+- [001](done/001-api-key-auth.md) - Update RN app to use X-API-Key authentication
+
 ---
-See `done/` for completed tasks.
 
 ## Status Values
 - `backlog` - Not started yet
