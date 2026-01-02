@@ -1,4 +1,5 @@
 import { getConfig } from './config';
+import { toByteArray, fromByteArray } from 'base64-js';
 
 const config = getConfig();
 
@@ -59,32 +60,20 @@ export class ApiError extends Error {
 }
 
 // Base64 encoder for React Native (Basic Auth)
-// React Native doesn't have btoa natively, so we use a proper implementation
 function base64Encode(str: string): string {
-  // Try native btoa first (available in some React Native environments)
-  if (typeof btoa !== 'undefined') {
-    return btoa(str);
+  // Convert string to UTF-8 bytes, then to base64
+  // TextEncoder might not be available in all React Native environments
+  let utf8Bytes: Uint8Array;
+  if (typeof TextEncoder !== 'undefined') {
+    utf8Bytes = new TextEncoder().encode(str);
+  } else {
+    // Fallback: manual UTF-8 encoding
+    utf8Bytes = new Uint8Array(str.length);
+    for (let i = 0; i < str.length; i++) {
+      utf8Bytes[i] = str.charCodeAt(i);
+    }
   }
-  
-  // Fallback: proper base64 encoding implementation
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-  let output = '';
-  let i = 0;
-  
-  while (i < str.length) {
-    const a = str.charCodeAt(i++);
-    const b = i < str.length ? str.charCodeAt(i++) : 0;
-    const c = i < str.length ? str.charCodeAt(i++) : 0;
-    
-    const bitmap = (a << 16) | (b << 8) | c;
-    
-    output += chars.charAt((bitmap >> 18) & 63);
-    output += chars.charAt((bitmap >> 12) & 63);
-    output += i - 2 < str.length ? chars.charAt((bitmap >> 6) & 63) : '=';
-    output += i - 1 < str.length ? chars.charAt(bitmap & 63) : '=';
-  }
-  
-  return output;
+  return fromByteArray(utf8Bytes);
 }
 
 async function fetchJson<T>(url: string, label: string): Promise<T> {
