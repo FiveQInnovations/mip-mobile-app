@@ -81,6 +81,8 @@ See **[deployment-workflow.md](../docs/deployment-workflow.md)** for complete de
 - **[Deployment Workflow](../docs/deployment-workflow.md)** - Complete guide for deploying to BrowserStack
 - **[How to Build Android](../docs/how-to-build-android.md)** - Android build reference
 - **[iOS Simulator Network Setup](./docs/ios-simulator-network-setup.md)** - Complete guide for network connectivity
+- **[EAS Webhook Setup](./docs/eas-webhook-setup.md)** - Complete webhook setup and configuration
+- **[EAS Webhook Running Guide](./docs/eas-webhook-running-guide.md)** - Quick reference for starting/stopping webhook server
 - **[TODO](./docs/TODO.md)** - Items to revisit (images, internal links, etc.)
 - **[TEMP_SETUP_STATUS.md](./TEMP_SETUP_STATUS.md)** - Development status and notes
 

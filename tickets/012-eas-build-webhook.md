@@ -52,5 +52,8 @@ Created webhook server at `scripts/eas-webhook-server.js` with:
 5. Create EAS webhook: `eas webhook:create --url <ngrok-url>/webhook --secret <your-secret-from-env>`
 6. Trigger a build to test webhook reception
 
-See `docs/eas-webhook-setup.md` for detailed setup instructions.
+## Documentation
+
+- **[EAS Webhook Setup Guide](./rn-mip-app/docs/eas-webhook-setup.md)** - Complete setup and configuration instructions
+- **[EAS Webhook Running Guide](./rn-mip-app/docs/eas-webhook-running-guide.md)** - Quick reference for starting/stopping the webhook server
 
