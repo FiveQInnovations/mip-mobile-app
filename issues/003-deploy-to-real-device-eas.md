@@ -16,7 +16,7 @@ Need to deploy the React Native app to a real device using Expo Application Serv
 - [ ] Build iOS app via EAS
 - [ ] Deploy and verify iOS app on physical device
 - [x] Build Android app via EAS
-- [ ] Deploy and verify Android app on physical device
+- [x] Deploy and verify Android app on physical device (BrowserStack)
 - [ ] Test on physical devices
 - [ ] Document deployment process
 
@@ -233,9 +233,9 @@ Found EAS configuration in `/Users/anthony/clients/mlj/mljtrust-mobile` (set up 
    - Ensure development build profile is correct (not production)
 
 **Notes:**
-- This is a standalone development build (does not require Expo Go)
-- App runs independently on device without development server connection
-- Can optionally connect to development server for hot reloading during development
+- ⚠️ **Development build requires dev server**: The `development` profile includes `developmentClient: true`, which means the app requires a running Expo dev server (`npx expo start --dev-client`) to load JavaScript bundles
+- For standalone testing (BrowserStack, physical devices without dev server), use the `preview` profile instead: `eas build --profile preview --platform android`
+- See **[docs/how-to-build-android.md](../../docs/how-to-build-android.md)** for build type reference
 - First-time installation may take longer due to app size
 
 ### ✅ Emulator Verification (2026-01-02)
@@ -316,9 +316,57 @@ Since using a personal device is challenging, researched cloud-based services th
 
 **Next Steps:**
 1. ✅ BrowserStack account confirmed (already have account)
-2. Download APK from EAS build link
-3. Upload to BrowserStack App Live (manual upload for now)
-4. Select Android device and begin testing
-5. Verify all functionality as outlined in deployment steps above
+2. ✅ Download APK from EAS build link
+3. ✅ Upload to BrowserStack App Live (manual upload for now)
+4. ✅ Select Android device and begin testing
+5. ✅ Verify all functionality as outlined in deployment steps above
 6. Future: Integrate BrowserStack API for automated uploads (see Issue #010)
+
+---
+
+### ✅ BrowserStack Testing - React Version Fix (2026-01-02)
+
+**Status:** Resolved - App successfully tested on BrowserStack
+
+**Issue Encountered:**
+- Initial preview build (`ffci-preview-20260102-141742.apk`) crashed on BrowserStack with React version mismatch error:
+  ```
+  FATAL EXCEPTION: com.facebook.react.common.JavascriptException
+  Error: Incompatible React versions:
+    - react: 19.2.3
+    - react-native-renderer: 19.1.0
+  ```
+- React Native 0.81.5 requires React 19.1.0, but package.json had React 19.2.3
+
+**Fix Applied:**
+1. **Updated `package.json`**: Changed React from `^19.2.3` to `19.1.0` (exact version required by React Native 0.81.5)
+2. **Updated `eas.json`**: Added `NPM_CONFIG_LEGACY_PEER_DEPS: "true"` to preview profile to handle peer dependency conflicts
+3. **Reinstalled dependencies**: Ran `npm install --legacy-peer-deps` locally
+4. **Rebuilt preview APK**: Created new build with fixed React version
+
+**Build Details:**
+- **Build ID:** `04e82f0b-9e54-415c-9d94-4ed4e528384b`
+- **Profile:** `preview`
+- **Platform:** Android
+- **Build URL:** https://expo.dev/accounts/fiveq-innovations/projects/ffci-app/builds/04e82f0b-9e54-415c-9d94-4ed4e528384b
+- **APK File:** `ffci-preview-fixed-20260102-145905.apk` (92.06 MB)
+- **BrowserStack App URL:** `bs://42fd983b3cb998bc0935680dc97e354e07d358be`
+
+**Testing Results:**
+- ✅ App launches successfully on BrowserStack (Samsung Galaxy S25)
+- ✅ No React version mismatch errors
+- ✅ Homepage loads correctly with all sections visible:
+  - Quick Tasks (Prayer Request, Chaplain Request, Resources, Donate)
+  - Get Connected (Find a Chapter, Upcoming Events)
+  - Featured section
+  - Bottom navigation bar (Home, Resources, Careers, About, Get Involved)
+- ✅ App is fully functional and ready for further testing
+
+**Files Modified:**
+- `package.json`: React version set to `19.1.0`
+- `eas.json`: Added `NPM_CONFIG_LEGACY_PEER_DEPS` environment variable to preview profile
+- `package-lock.json`: Updated with correct React version
+
+**Related Issues:**
+- Issue #010: Integrate BrowserStack App Live API (for automated uploads)
 
