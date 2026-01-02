@@ -1,5 +1,5 @@
 ---
-status: done
+status: in-progress
 area: rn-mip-app
 created: 2026-01-20
 ---
@@ -20,7 +20,7 @@ This can lead to configuration drift between what's in `app.json` and what's act
   - [x] Updated `.gitignore` to ignore `ios/` and `android/` folders
   - [x] Remove native folders from git tracking: `git rm -r --cached ios/ android/`
   - [x] Commit changes
-- [ ] Verify EAS builds use correct configuration
+- [ ] Verify EAS builds use correct configuration - **PENDING: Waiting for next EAS build to verify native folders are regenerated from app.json**
 - [x] Document decision and rationale
 
 ## Notes
