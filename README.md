@@ -3,8 +3,9 @@
 React Native mobile app for FFCI (Firefighters for Christ International) built with Expo, pulling content from the Kirby CMS website via KQL API.
 
 ## Cursor Rule
-- Commit as you work, but only in the correct project: `astro-prototype/` for the Astro PWA, `plugins/` for the Kirby plugin, `sites/` for the Kirby site. Check the folder path before staging so changes land in the right repo.
-- Always verify changes by running the relevant Cypress specs, and run the full Cypress suite (`npx cypress run`) and ensure it passes before marking a task complete.
+- Commit as you work, but only in the correct project: `rn-mip-app/` for the React Native app, `astro-prototype/` for the Astro PWA, `plugins/` for the Kirby plugin, `sites/` for the Kirby site. Check the folder path before staging so changes land in the right repo.
+- For mobile app changes: Always test locally on iOS Simulator and run Maestro tests (`npm run test:maestro:ios`) before deploying.
+- For Astro PWA changes: Run Cypress specs (`npx cypress run`) and ensure all tests pass before marking a task complete.
 
 ## Project Overview
 
@@ -24,6 +25,7 @@ The existing FFCI app is built on the SubSplash platform:
 ## Quick Links
 
 - **[Mobile App Specification](docs/mobile-app-specification.md)** - Complete technical specification
+- **[Deployment Quick Guide](docs/deployment-quick-guide.md)** - Workflow for adding features and deploying to BrowserStack
 - **[FFCI Strategy Meeting](meetings/ffci-mobile-app-strategy.md)** - December 8, 2025 planning meeting
 - **[Local Development Guide](docs/guide-to-running-locally.md)** - How to run the FFCI site locally
 - **[KQL/Headless Reference](docs/kirby-headless-cef.md)** - Example of KQL API setup
@@ -33,17 +35,24 @@ The existing FFCI app is built on the SubSplash platform:
 
 ```
 mip-mobile-app/
+├── rn-mip-app/              # React Native mobile app (main project)
+│   ├── app/                 # Expo Router app directory
+│   ├── components/          # React components
+│   ├── lib/                 # API and utilities
+│   ├── maestro/             # Maestro UI tests
+│   └── scripts/             # Deployment scripts
+├── astro-prototype/         # Astro PWA prototype (separate project)
 ├── docs/                    # Documentation
 │   ├── mobile-app-specification.md
+│   ├── deployment-quick-guide.md
 │   ├── guide-to-running-locally.md
-│   ├── kirby-headless-cef.md
-│   └── scope-additions.md
-├── meetings/                # Meeting notes
-│   └── ffci-mobile-app-strategy.md
-├── sites/
-│   └── ws-ffci/             # FFCI Kirby CMS site (content source)
-└── plugins/
-    └── wsp-mobile/          # Mobile API plugin (needs to be installed)
+│   └── ...
+├── meetings/                 # Meeting notes
+├── tickets/                  # Development tickets
+├── sites/                   # Kirby CMS sites
+│   └── ws-ffci/             # FFCI site (content source)
+└── plugins/                  # Kirby plugins
+    └── wsp-mobile/          # Mobile API plugin
 ```
 
 ## Technical Stack
@@ -59,10 +68,11 @@ mip-mobile-app/
 
 ### Prerequisites
 
-- Docker and DDEV installed
+- **Node.js 20.18.0** (managed via `mise`)
+- **EAS CLI**: `npm install -g eas-cli`
+- Docker and DDEV (for Kirby CMS site)
 - Bitbucket SSH access (for Composer dependencies)
-- Node.js & npm
-- Expo CLI
+- iOS Simulator (for mobile app testing)
 
 ### Setting Up the FFCI Site Locally
 
@@ -104,6 +114,30 @@ The FFCI site (`sites/ws-ffci/`) needs to be running locally so you can:
    ```
 
 See [guide-to-running-locally.md](docs/guide-to-running-locally.md) for troubleshooting.
+
+### Running the Mobile App Locally
+
+1. Navigate to the React Native app:
+   ```bash
+   cd rn-mip-app
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install --legacy-peer-deps
+   ```
+
+3. Start Metro bundler with iOS Simulator:
+   ```bash
+   mise exec -- bash -c "export LANG=en_US.UTF-8 && npx expo start --ios --clear"
+   ```
+
+4. Run Maestro tests:
+   ```bash
+   npm run test:maestro:ios
+   ```
+
+See [deployment-quick-guide.md](docs/deployment-quick-guide.md) for the complete development workflow.
 
 ### Installing the Mobile Plugin
 
@@ -154,6 +188,24 @@ See [kirby-headless-cef.md](docs/kirby-headless-cef.md) for KQL query examples.
    - Homepage Type (content/collection/navigation)
    - Mobile Main Menu structure
 
+## Adding Features & Deployment
+
+When adding new features or making changes to the mobile app, follow the **[Deployment Quick Guide](docs/deployment-quick-guide.md)** for the complete workflow:
+
+1. Make code changes
+2. Test locally on iOS Simulator
+3. Run Maestro tests
+4. Build Android preview APK with EAS
+5. Upload to BrowserStack for testing
+6. Commit changes
+
+**Important for Cursor AI:** When asking Cursor to follow the deployment guide, explicitly request a plan first:
+```
+Create a Plan to follow the guide: @docs/deployment-quick-guide.md
+```
+
+This ensures the agent tests locally before building, which saves time and build minutes. Without explicitly creating a plan, the agent may skip local testing and jump straight to EAS builds.
+
 ## Key Requirements
 
 ### Phase 1: Core App (Current Scope)
@@ -185,10 +237,16 @@ See the [mobile-app-specification.md](docs/mobile-app-specification.md) for deta
 - **Target Launch**: Late February / Early March 2025
 - **Urgent Deadline**: FFCI's SubSplash app expires January 15, 2025
 
-## Next Steps
+## Development Status
 
-1. Review [mobile-app-specification.md](docs/mobile-app-specification.md) for complete requirements
-2. Set up local FFCI site using DDEV
-3. Install and configure `wsp-mobile` plugin
-4. Test KQL queries against local site
-5. Begin React Native app development
+The React Native mobile app is in active development. Current capabilities:
+
+- ✅ Content loading from Kirby CMS via KQL API
+- ✅ Homepage with Quick Tasks and Featured sections
+- ✅ Tab navigation based on CMS menu structure
+- ✅ Page rendering with HTML content
+- ✅ Local testing with iOS Simulator and Maestro
+- ✅ Android preview builds via EAS
+- ✅ BrowserStack integration for device testing
+
+See [tickets/README.md](tickets/README.md) for active development tickets and progress tracking.
