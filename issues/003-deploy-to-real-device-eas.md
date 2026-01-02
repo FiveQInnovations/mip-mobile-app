@@ -238,6 +238,13 @@ Found EAS configuration in `/Users/anthony/clients/mlj/mljtrust-mobile` (set up 
 - Can optionally connect to development server for hot reloading during development
 - First-time installation may take longer due to app size
 
+### ✅ Emulator Verification (2026-01-02)
+
+- Installed latest EAS Android development build (`eas-build-latest.apk`) on Pixel 6 emulator (emulator-5554) and confirmed homepage loads fully against `https://ffci.fiveq.dev` (screenshot: `rn-mip-app/android-emulator-home.png`).
+- Also built and installed local debug dev-client via `expo run:android`; homepage loads and prefetch logs confirm API success.
+- Added Android-specific Maestro flow (`maestro/flows/homepage-loads-android.yaml`) and npm script `test:maestro:android`.
+- Maestro run currently blocked on Android by driver connection error `UNAVAILABLE: io exception (Connection refused localhost:7001)`; emulator is running and reachable via adb. Next step: restart emulator or reinstall Maestro driver and re-run `MAESTRO_DEVICE=emulator-5554 npm run test:maestro:android`.
+
 **Expo Doctor Findings:**
 - EAS Build ran `expo-doctor` automatically and detected 4 issues
 - Issues documented as separate backlog items:
@@ -246,4 +253,72 @@ Found EAS configuration in `/Users/anthony/clients/mlj/mljtrust-mobile` (set up 
   - Issue #008: Resolve native config sync issues (app.json vs native folders)
   - Issue #009: Update package versions to match Expo SDK requirements
 - These are non-blocking for the current build but should be addressed
+
+---
+
+### ☁️ Cloud Device Testing Options (2026-01-20)
+
+**Status:** Research Complete - Recommendations provided
+
+**Context:**
+Since using a personal device is challenging, researched cloud-based services that allow APK upload and testing on real Android devices.
+
+**Recommended Option: BrowserStack App Live** ⭐
+
+**Why BrowserStack:**
+- ✅ **Direct APK Upload**: Upload APK files directly (no need for app store)
+- ✅ **Real Devices**: Access to wide range of real Android devices with different OS versions
+- ✅ **Interactive Testing**: Manual testing with full device interaction
+- ✅ **Debugging Tools**: Device logs, crash reports, network captures
+- ✅ **Easy Setup**: Simple upload and select device workflow
+- ✅ **Paid Service**: Professional platform with reliable infrastructure
+
+**How to Use BrowserStack:**
+1. Sign up for BrowserStack account (paid plans available)
+2. Navigate to [App Live dashboard](https://www.browserstack.com/app-live)
+3. Upload APK file:
+   - Click "Uploaded Apps" → "Upload"
+   - Upload the APK from EAS build (download from build link first)
+4. Select Android device from available options
+5. Start interactive testing session
+6. Test app functionality, navigation, performance on real device
+
+**Alternative Options:**
+
+**1. Firebase Test Lab** (Google)
+- Cloud-based Android testing infrastructure
+- Good for automated testing (Robo tests, instrumented tests)
+- Less ideal for manual interactive testing
+- Pricing: Pay-per-use model
+
+**2. AWS Device Farm**
+- Amazon's cloud device testing service
+- Supports both manual and automated testing
+- Good integration with AWS ecosystem
+- Pricing: Pay-per-use model
+
+**3. Sauce Labs**
+- Similar to BrowserStack, cloud device testing platform
+- Supports APK upload and real device testing
+- Good for both manual and automated testing
+
+**4. EAS Internal Distribution** (Already Configured)
+- ✅ Already set up in `eas.json` with `"distribution": "internal"`
+- ✅ Build ready: https://expo.dev/accounts/fiveq-innovations/projects/ffci-app/builds/3cbc5e05-0a44-4611-8a3f-6e554e12d7c2
+- ⚠️ Still requires access to a physical device (just makes installation easier)
+- Best for: Sharing with team members who have devices
+
+**Recommendation:**
+**Use BrowserStack App Live** for immediate testing needs. It's specifically designed for this use case - uploading an APK and testing on real devices in the cloud without needing physical hardware.
+
+**Decision (2026-01-20):**
+✅ **BrowserStack selected** - Account already exists, ready to use immediately.
+
+**Next Steps:**
+1. ✅ BrowserStack account confirmed (already have account)
+2. Download APK from EAS build link
+3. Upload to BrowserStack App Live (manual upload for now)
+4. Select Android device and begin testing
+5. Verify all functionality as outlined in deployment steps above
+6. Future: Integrate BrowserStack API for automated uploads (see Issue #010)
 
