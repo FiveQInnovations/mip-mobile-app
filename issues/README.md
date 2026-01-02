@@ -16,6 +16,7 @@ Quick reference for active tasks. See individual files for details.
 - [007](007-install-expo-constants-peer-dependency.md) - Install missing peer dependency: expo-constants
 - [008](008-resolve-native-config-sync-issues.md) - Resolve native config sync issues (app.json vs native folders)
 - [009](009-update-package-versions-expo-sdk.md) - Update package versions to match Expo SDK requirements
+- [010](010-integrate-browserstack-api.md) - Integrate BrowserStack App Live API
 
 ## Blocked
 (none)

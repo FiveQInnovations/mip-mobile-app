@@ -9,6 +9,7 @@
     "web": "expo start --web",
     "test:maestro": "maestro test maestro/flows/",
     "test:maestro:ios": "maestro test maestro/flows/homepage-loads.yaml",
+    "test:maestro:android": "maestro test maestro/flows/homepage-loads-android.yaml",
     "test:maestro:navigation": "maestro test maestro/flows/navigation-resources.yaml"
   },
   "dependencies": {

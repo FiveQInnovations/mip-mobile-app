@@ -1,0 +1,20 @@
+appId: com.fiveq.ffci
+---
+# Android-specific homepage verification
+- runFlow: _setup.yaml
+- waitForAnimationToEnd
+
+# Confirm key homepage content renders
+- assertVisible:
+    text: "FFCI"
+    optional: false
+- assertVisible:
+    text: "Prayer Request"
+    optional: false
+- assertVisible:
+    text: "Resources"
+    optional: false
+
+# Capture a reference screenshot
+- takeScreenshot: homepage-loaded-android
+
