@@ -1,5 +1,6 @@
 import { getConfig } from './config';
 import { toByteArray, fromByteArray } from 'base64-js';
+import { getCachedPage, setCachedPage, hasCachedPage, isCacheStale } from './pageCache';
 
 const config = getConfig();
 
@@ -142,10 +143,68 @@ export async function getSiteData(): Promise<SiteData> {
   return fetchJson<SiteData>(url, 'site data');
 }
 
+/**
+ * Fetch page data directly from API (bypasses cache)
+ */
 export async function getPage(uuid: string): Promise<PageData> {
-  return fetchJson<PageData>(
+  const data = await fetchJson<PageData>(
     `${config.apiBaseUrl}/mobile-api/page/${uuid}`,
     `page ${uuid}`
   );
+  // Store in cache after fetching
+  setCachedPage(uuid, data);
+  return data;
+}
+
+/**
+ * Get page data with cache support (stale-while-revalidate pattern)
+ * Returns cached data immediately if available, then fetches fresh data in background
+ * Also returns a promise that resolves when background refresh completes (if applicable)
+ */
+export async function getPageWithCache(uuid: string): Promise<{ 
+  data: PageData; 
+  fromCache: boolean;
+  refreshPromise?: Promise<PageData>;
+}> {
+  const cached = getCachedPage(uuid);
+  const hasCache = hasCachedPage(uuid);
+  const stale = isCacheStale(uuid);
+
+  // If we have fresh cache, return it immediately and refresh in background
+  if (cached && !stale) {
+    console.log(`[API] Returning fresh cached data for UUID: ${uuid}`);
+    const refreshPromise = refreshPageInBackground(uuid);
+    return { data: cached, fromCache: true, refreshPromise };
+  }
+
+  // If we have stale cache, return it immediately and refresh in background
+  if (cached && stale) {
+    console.log(`[API] Returning stale cached data for UUID: ${uuid}, refreshing in background`);
+    const refreshPromise = refreshPageInBackground(uuid);
+    return { data: cached, fromCache: true, refreshPromise };
+  }
+
+  // No cache, fetch fresh data
+  console.log(`[API] No cache for UUID: ${uuid}, fetching fresh data`);
+  const data = await getPage(uuid);
+  return { data, fromCache: false };
+}
+
+/**
+ * Refresh page data in background and update cache
+ * Returns the fresh page data
+ */
+async function refreshPageInBackground(uuid: string): Promise<PageData> {
+  const refreshStartTime = Date.now();
+  console.log(`[API] Background refresh started for UUID: ${uuid} at ${refreshStartTime}`);
+  const data = await fetchJson<PageData>(
+    `${config.apiBaseUrl}/mobile-api/page/${uuid}`,
+    `page ${uuid} (background refresh)`
+  );
+  setCachedPage(uuid, data);
+  const refreshEndTime = Date.now();
+  const refreshDuration = refreshEndTime - refreshStartTime;
+  console.log(`[API] Background refresh completed for UUID: ${uuid} at ${refreshEndTime}, duration: ${refreshDuration}ms`);
+  return data;
 }
 

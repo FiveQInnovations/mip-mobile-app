@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { getPage, PageData } from '../lib/api';
+import { getPageWithCache, PageData } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
+import { hasCachedPage } from '../lib/pageCache';
 
 interface TabScreenProps {
   uuid: string;
@@ -12,6 +13,7 @@ export function TabScreen({ uuid }: TabScreenProps) {
   const [pageStack, setPageStack] = React.useState<string[]>([uuid]);
   const [currentPageData, setCurrentPageData] = React.useState<PageData | null>(null);
   const [loading, setLoading] = React.useState(true);
+  const [refreshing, setRefreshing] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const config = getConfig();
 
@@ -20,7 +22,8 @@ export function TabScreen({ uuid }: TabScreenProps) {
 
   React.useEffect(() => {
     const mountTime = Date.now();
-    console.log(`[TabScreen] Component mounted at ${mountTime} with UUID: ${uuid}, loading state: ${loading}`);
+    const hasCache = hasCachedPage(currentUuid);
+    console.log(`[TabScreen] Component mounted at ${mountTime} with UUID: ${uuid}, hasCache: ${hasCache}, loading state: ${loading}`);
     return () => {
       const unmountTime = Date.now();
       console.log(`[TabScreen] Component unmounting at ${unmountTime} for UUID: ${uuid}`);
@@ -29,7 +32,7 @@ export function TabScreen({ uuid }: TabScreenProps) {
 
   React.useEffect(() => {
     const timestamp = Date.now();
-    console.log(`[TabScreen] useEffect triggered at ${timestamp}, currentUuid: ${currentUuid}, loading state: ${loading}`);
+    console.log(`[TabScreen] useEffect triggered at ${timestamp}, currentUuid: ${currentUuid}`);
     if (currentUuid) {
       loadPage();
     }
@@ -38,28 +41,67 @@ export function TabScreen({ uuid }: TabScreenProps) {
   async function loadPage() {
     const startTime = Date.now();
     console.log(`[TabScreen] loadPage() called at ${startTime} for UUID: ${currentUuid}`);
+    
+    // Check if we have cached data
+    const hasCache = hasCachedPage(currentUuid);
+    
     try {
-      console.log(`[TabScreen] Setting loading=true at ${Date.now()}`);
-      setLoading(true);
+      if (!hasCache) {
+        // No cache - show loading indicator
+        console.log(`[TabScreen] No cache, setting loading=true at ${Date.now()}`);
+        setLoading(true);
+      } else {
+        // We have cache - it will be returned immediately, but set refreshing state
+        console.log(`[TabScreen] Cache available, will show cached content immediately`);
+        setRefreshing(true);
+      }
+
       const apiStartTime = Date.now();
-      console.log(`[TabScreen] Starting API call at ${apiStartTime}`);
-      const data = await getPage(currentUuid);
+      console.log(`[TabScreen] Calling getPageWithCache at ${apiStartTime}`);
+      const { data, fromCache, refreshPromise } = await getPageWithCache(currentUuid);
       const apiEndTime = Date.now();
       const apiDuration = apiEndTime - apiStartTime;
-      console.log(`[TabScreen] API call completed at ${apiEndTime}, duration: ${apiDuration}ms`);
+      
+      console.log(`[TabScreen] getPageWithCache completed at ${apiEndTime}, duration: ${apiDuration}ms, fromCache: ${fromCache}`);
+      
       setCurrentPageData(data);
       setError(null);
       console.log(`[TabScreen] Page data set, title: ${data.title || 'N/A'}`);
+      
+      // If data came from cache, it was instant - no loading needed
+      if (fromCache) {
+        console.log(`[TabScreen] Data from cache - instant display (${apiDuration}ms), background refresh in progress`);
+        setLoading(false);
+        setRefreshing(true);
+        
+        // Wait for background refresh to complete and update UI
+        if (refreshPromise) {
+          refreshPromise
+            .then(freshData => {
+              const refreshCompleteTime = Date.now();
+              const totalTime = refreshCompleteTime - apiStartTime;
+              console.log(`[TabScreen] Background refresh completed at ${refreshCompleteTime}, total time: ${totalTime}ms`);
+              setCurrentPageData(freshData);
+              setRefreshing(false);
+            })
+            .catch(err => {
+              console.error(`[TabScreen] Background refresh error:`, err);
+              setRefreshing(false);
+            });
+        }
+      } else {
+        // Fresh data fetched - done loading
+        setLoading(false);
+        setRefreshing(false);
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to load page');
       console.error(`[TabScreen] Error loading page at ${Date.now()}:`, err);
-    } finally {
-      const endTime = Date.now();
-      const totalDuration = endTime - startTime;
-      console.log(`[TabScreen] Setting loading=false at ${endTime}, total duration: ${totalDuration}ms`);
       setLoading(false);
+      setRefreshing(false);
     }
   }
+
 
   const navigateToPage = (pageUuid: string) => {
     setPageStack(prev => [...prev, pageUuid]);
