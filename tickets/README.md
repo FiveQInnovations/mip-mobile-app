@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## In Progress
-- [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
+(none)
 
 ## Backlog
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
@@ -21,6 +21,7 @@ Quick reference for active tasks. See individual files for details.
 - [012](012-eas-build-webhook.md) - EAS Build Completion Webhook
 - [013](013-speed-up-eas-android-builds.md) - Speed Up EAS Android Build Time
 - [014](014-setup-expo-mcp-server.md) - Set Up Expo MCP Server Locally
+- [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
 
 ## Blocked
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
