@@ -37,7 +37,22 @@ npm run test:maestro:ios
 
 ### 3. Build Android Preview APK with EAS
 
-**Run the complete deployment script:**
+**Option A: Automated Webhook Workflow (Recommended if set up)**
+
+If you have the webhook server running:
+```bash
+cd rn-mip-app
+eas build --profile preview --platform android
+```
+
+The webhook server will automatically:
+- ✅ Download APK when build completes
+- ✅ Upload to BrowserStack automatically
+- ✅ No manual steps needed!
+
+**Option B: Manual Deployment Script**
+
+Run the complete deployment script:
 ```bash
 cd rn-mip-app
 ./scripts/deploy-to-browserstack.sh
@@ -72,6 +87,8 @@ This script automatically:
    ```
 
 ### 4. Upload to BrowserStack
+
+**If using automated webhook workflow:** Upload happens automatically when build completes.
 
 **If using the deployment script:** Upload happens automatically.
 

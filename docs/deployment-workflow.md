@@ -9,6 +9,19 @@ This workflow ensures consistent, reliable deployments by:
 2. **EAS Build** - Creates Android APK using Expo Application Services
 3. **BrowserStack upload** - Uploads APK for testing on real devices
 
+### Deployment Options
+
+**Option 1: Automated Webhook Workflow (Recommended)**
+- Set up webhook server once
+- Automatically downloads and uploads builds when they complete
+- No manual intervention needed after initial setup
+- Best for: Regular builds, CI/CD workflows
+
+**Option 2: Manual Script Workflow**
+- Run deployment script when needed
+- Full control over when builds happen
+- Best for: One-off builds, testing new features
+
 ## Prerequisites
 
 ### Required Tools
@@ -25,11 +38,61 @@ Set these environment variables (or create `.env` file):
 ```bash
 BROWSERSTACK_USERNAME=your_username
 BROWSERSTACK_ACCESS_KEY=your_access_key
+WEBHOOK_SECRET=your_webhook_secret  # For automated workflow only
+```
+
+**Note:** For the automated webhook workflow, you also need `WEBHOOK_SECRET`. Generate one with:
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 ## Quick Start
 
-### Full Deployment (Recommended)
+### Option 1: Automated Webhook Workflow (Recommended)
+
+**One-time setup:**
+
+1. **Set up webhook server:**
+   ```bash
+   cd rn-mip-app
+   cp .env.example .env
+   # Edit .env and add WEBHOOK_SECRET (generate with command above)
+   ```
+
+2. **Start webhook server:**
+   ```bash
+   npm run webhook:server
+   ```
+
+3. **Expose with tunnel** (in another terminal):
+   ```bash
+   # Option A: Using ngrok (requires auth token)
+   ngrok http 3000
+   
+   # Option B: Using localtunnel (no auth needed)
+   npx localtunnel --port 3000
+   ```
+
+4. **Create EAS webhook:**
+   ```bash
+   cd rn-mip-app
+   WEBHOOK_SECRET=$(node -e "require('dotenv').config(); console.log(process.env.WEBHOOK_SECRET)") && \
+   eas webhook:create \
+     --url <your-tunnel-url>/webhook \
+     --secret "$WEBHOOK_SECRET" \
+     --event BUILD \
+     --non-interactive
+   ```
+
+**After setup, builds are automated:**
+- Trigger EAS build: `eas build --profile preview --platform android`
+- Webhook server automatically downloads APK when build completes
+- Webhook server automatically uploads to BrowserStack
+- No manual steps needed!
+
+See **[EAS Webhook Running Guide](../rn-mip-app/docs/eas-webhook-running-guide.md)** for detailed setup instructions.
+
+### Option 2: Manual Script Workflow
 
 Run the complete deployment workflow:
 
@@ -209,6 +272,19 @@ cd rn-mip-app
    ```
 3. Or upload manually via BrowserStack dashboard
 
+### Webhook Not Processing Builds
+
+**Issue:** Builds complete but aren't automatically uploaded
+
+**Solution:**
+1. Verify webhook server is running: `ps aux | grep eas-webhook-server`
+2. Check webhook server logs for errors
+3. Verify EAS webhook is configured: `eas webhook:list`
+4. Ensure tunnel is running (ngrok/localtunnel)
+5. Check that `WEBHOOK_SECRET` matches in `.env` and EAS webhook
+6. Verify BrowserStack credentials are set in `.env` file
+7. Check webhook server logs for download/upload errors
+
 ## Scripts Reference
 
 ### `./scripts/pre-build-check.sh`
@@ -222,14 +298,20 @@ cd rn-mip-app
 - Downloads APK when complete
 
 ### `./scripts/deploy-to-browserstack.sh`
-- Complete deployment workflow
+- Complete manual deployment workflow
 - Runs validation, build, and upload
-- Recommended for consistent deployments
+- Use when webhook automation isn't available
 
 ### `./scripts/upload-to-browserstack.sh`
 - Uploads APK to BrowserStack App Live
 - Requires BrowserStack credentials
 - Returns app URL for testing
+
+### `./scripts/eas-webhook-server.js`
+- Webhook server for automated deployments
+- Listens for EAS build completion events
+- Automatically downloads and uploads builds
+- Run with: `npm run webhook:server`
 
 ## Best Practices
 
@@ -237,10 +319,14 @@ cd rn-mip-app
 2. **Use `preview` profile** for BrowserStack testing (standalone build)
 3. **Keep React version at `19.1.0`** (required by React Native 0.81.5)
 4. **Test locally first** (iOS simulator, Maestro tests) before deploying
-5. **Use the deployment script** (`./scripts/deploy-to-browserstack.sh`) for consistency
+5. **Use automated webhook workflow** for regular builds (set up once, runs automatically)
+6. **Use manual script workflow** for one-off builds or when webhook isn't available
+7. **Keep webhook server running** if using automated workflow (or run in background)
 
 ## Related Documentation
 
+- **[EAS Webhook Setup Guide](../rn-mip-app/docs/eas-webhook-setup.md)** - Complete webhook setup instructions
+- **[EAS Webhook Running Guide](../rn-mip-app/docs/eas-webhook-running-guide.md)** - Quick reference for webhook server
 - **[How to Build Android](./how-to-build-android.md)** - Build type reference
 - **[iOS Simulator Network Setup](../rn-mip-app/docs/ios-simulator-network-setup.md)** - Local development setup
 - **[Maestro Testing Guide](../rn-mip-app/maestro/README.md)** - UI testing
