@@ -1,7 +1,8 @@
 ---
-status: in-progress
+status: done
 area: ws-ffci-copy
-created: 2026-01-20
+created: 2026-01-02
+completed: 2026-01-02
 ---
 
 # Enable API on the real FFCI site
@@ -34,7 +35,7 @@ Currently need to run a local server to test the mobile app. Need to enable the 
 
 ## Notes
 
-**Current Status (2026-01-20):**
+**Current Status (2026-01-02):**
 - ✅ X-API-Key authentication implemented and working locally
 - ✅ Local DDEV site (`ws-ffci.ddev.site`) working with proxy
 - ✅ Deployed API at `ffci.fiveq.dev` is FULLY CONFIGURED and working
@@ -61,7 +62,7 @@ Currently need to run a local server to test the mobile app. Need to enable the 
   - home-action-hub flow: ✅ All assertions pass
   - homepage-loads flow: ✅ Passes
   - home-tab-navigation flow: ✅ Passes
-  - navigation-resources flow: ⚠️ Needs re-testing after fix
+  - navigation-resources flow: ✅ **VERIFIED - All steps pass** (tested 2026-01-02)
 
 **Implementation Summary:**
 1. ✅ Verified API key on `ffci.fiveq.dev` - Already configured
@@ -69,7 +70,11 @@ Currently need to run a local server to test the mobile app. Need to enable the 
 3. ✅ Added HTTP Basic Auth to API client (`rn-mip-app/lib/api.ts`)
 4. ✅ Tested app in iOS simulator without local DDEV server
 5. ✅ Verified homepage loads successfully with deployed API
-6. ✅ Ran Maestro test (home-action-hub) - All assertions pass
+6. ✅ Ran Maestro tests - All flows pass:
+   - home-action-hub ✅
+   - homepage-loads ✅
+   - home-tab-navigation ✅
+   - navigation-resources ✅
 
 **API Configuration:**
 - Endpoint: `https://ffci.fiveq.dev/mobile-api`
