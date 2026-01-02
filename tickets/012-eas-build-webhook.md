@@ -38,12 +38,19 @@ Created webhook server at `scripts/eas-webhook-server.js` with:
 - `body-parser` - Raw body parsing for signature verification
 - `safe-compare` - Constant-time string comparison to prevent timing attacks
 
+### Environment Setup
+- Webhook server now loads `WEBHOOK_SECRET` from `.env` file automatically
+- Generated secure webhook secret: `51c8b7689ea19830ff5f5ebd1ba4423e82887e85eab7cd40de202ff827684eb6`
+- Added `WEBHOOK_SECRET` to `.env.example` for reference
+- Server uses `dotenv` to load environment variables
+
 ### Next Steps for Testing
-1. Install dependencies: `npm install`
-2. Start webhook server: `WEBHOOK_SECRET=your-secret npm run webhook:server`
-3. Start ngrok tunnel: `ngrok http 3000`
-4. Create EAS webhook: `eas webhook:create --url <ngrok-url>/webhook --secret <your-secret>`
-5. Trigger a build to test webhook reception
+1. Copy `.env.example` to `.env`: `cp .env.example .env`
+2. Verify `WEBHOOK_SECRET` is set in `.env` (or generate a new one)
+3. Start webhook server: `npm run webhook:server`
+4. Start ngrok tunnel: `ngrok http 3000`
+5. Create EAS webhook: `eas webhook:create --url <ngrok-url>/webhook --secret <your-secret-from-env>`
+6. Trigger a build to test webhook reception
 
 See `docs/eas-webhook-setup.md` for detailed setup instructions.
 

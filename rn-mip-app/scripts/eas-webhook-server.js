@@ -6,15 +6,23 @@
  * Receives webhook notifications from Expo EAS when builds complete.
  * Verifies webhook authenticity using HMAC-SHA1 signature verification.
  * 
+ * Setup:
+ *   1. Copy .env.example to .env: cp .env.example .env
+ *   2. Ensure WEBHOOK_SECRET is set in .env file
+ * 
  * Usage:
- *   WEBHOOK_SECRET=your-secret-key node scripts/eas-webhook-server.js [port]
+ *   npm run webhook:server
+ *   Or: node scripts/eas-webhook-server.js [port]
  *   Default port: 3000
  * 
  * For local testing with ngrok:
- *   1. Start this server: WEBHOOK_SECRET=your-secret node scripts/eas-webhook-server.js
+ *   1. Start this server: npm run webhook:server
  *   2. Start ngrok: ngrok http 3000
- *   3. Use the ngrok URL when creating webhook with: eas webhook:create
+ *   3. Create webhook: eas webhook:create --url <ngrok-url>/webhook --secret <your-secret-from-env>
  */
+
+// Load environment variables from .env file
+require('dotenv').config();
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -26,7 +34,13 @@ const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
 
 if (!WEBHOOK_SECRET) {
   console.error('ERROR: WEBHOOK_SECRET environment variable is required');
-  console.error('Usage: WEBHOOK_SECRET=your-secret-key node scripts/eas-webhook-server.js [port]');
+  console.error('');
+  console.error('You can set it in one of these ways:');
+  console.error('  1. Create a .env file in the project root with: WEBHOOK_SECRET=your-secret-key');
+  console.error('  2. Export as environment variable: export WEBHOOK_SECRET=your-secret-key');
+  console.error('  3. Pass inline: WEBHOOK_SECRET=your-secret-key node scripts/eas-webhook-server.js');
+  console.error('');
+  console.error('See .env.example for reference.');
   process.exit(1);
 }
 

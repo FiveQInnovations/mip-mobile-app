@@ -19,22 +19,35 @@ The webhook server receives notifications from Expo EAS when builds complete (su
 npm install
 ```
 
-2. The webhook server script is located at `scripts/eas-webhook-server.js`
+2. Set up your webhook secret:
+   - Copy `.env.example` to `.env`: `cp .env.example .env`
+   - Generate a secure secret (or use the one in `.env.example`):
+     ```bash
+     node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+     ```
+   - Add `WEBHOOK_SECRET=your-generated-secret` to your `.env` file
+
+3. The webhook server script is located at `scripts/eas-webhook-server.js`
 
 ## Running the Webhook Server
 
 ### Start the Server
 
-Set the `WEBHOOK_SECRET` environment variable and start the server:
+The server automatically loads environment variables from `.env` file. Simply start it:
 
 ```bash
-WEBHOOK_SECRET=your-secret-key npm run webhook:server
+npm run webhook:server
 ```
 
 Or specify a custom port:
 
 ```bash
-WEBHOOK_SECRET=your-secret-key PORT=3000 node scripts/eas-webhook-server.js
+PORT=3001 npm run webhook:server
+```
+
+**Alternative:** You can also set `WEBHOOK_SECRET` as an environment variable:
+```bash
+WEBHOOK_SECRET=your-secret-key npm run webhook:server
 ```
 
 The server will start on port 3000 by default and listen for webhook POST requests at `/webhook`.
@@ -45,8 +58,9 @@ For local testing, you need to expose the webhook server to the internet using n
 
 1. Start the webhook server (in one terminal):
 ```bash
-WEBHOOK_SECRET=your-secret-key npm run webhook:server
+npm run webhook:server
 ```
+(The server will automatically load `WEBHOOK_SECRET` from your `.env` file)
 
 2. Start ngrok (in another terminal):
 ```bash
@@ -137,9 +151,10 @@ Example `build.completed` payload:
 
 ### Signature Verification Fails
 
-- Ensure `WEBHOOK_SECRET` matches the secret used when creating the webhook with `eas webhook:create`
+- Ensure `WEBHOOK_SECRET` in your `.env` file matches the secret used when creating the webhook with `eas webhook:create`
 - Verify the webhook server is receiving the raw request body (not parsed JSON)
 - Check that the `expo-signature` header is present in the request
+- Make sure your `.env` file is in the `rn-mip-app/` directory (same level as `package.json`)
 
 ### Webhook Not Received
 
