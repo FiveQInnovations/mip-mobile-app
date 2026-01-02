@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Linking, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, StyleSheet, Linking, TouchableOpacity, useWindowDimensions, Image } from 'react-native';
 import RenderHTML, { HTMLSource } from 'react-native-render-html';
 import { useRouter } from 'expo-router';
 import { getConfig } from '../lib/config';
@@ -34,8 +34,54 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
     }
   };
 
-  // Custom renderer for anchor tags
+  // Resolve image source URL - handles relative URLs and validates
+  const resolveImageSource = (src: string | undefined | null): string | null => {
+    if (!src || src.trim() === '' || src === 'about:///blank' || src.startsWith('about://')) {
+      return null;
+    }
+
+    // If it's already a full URL, return it
+    if (src.startsWith('http://') || src.startsWith('https://')) {
+      return src;
+    }
+
+    // If it's a data URL, return it
+    if (src.startsWith('data:')) {
+      return src;
+    }
+
+    // Resolve relative URLs against baseUrl
+    try {
+      const resolvedUrl = new URL(src, apiBaseUrl);
+      return resolvedUrl.toString();
+    } catch {
+      // If URL resolution fails, return null to skip rendering
+      return null;
+    }
+  };
+
+  // Custom renderer for image tags
   const renderers = {
+    img: ({ TDefaultRenderer, ...props }: any) => {
+      const { src, ...restProps } = props;
+      const resolvedSrc = resolveImageSource(src);
+
+      // If source is invalid or empty, don't render the image
+      if (!resolvedSrc) {
+        return null;
+      }
+
+      // Calculate image width based on content width (accounting for padding)
+      const imageWidth = width - 32; // Subtract horizontal padding
+
+      return (
+        <Image
+          source={{ uri: resolvedSrc }}
+          style={[styles.htmlImage, { width: imageWidth }]}
+          resizeMode="contain"
+        />
+      );
+    },
     a: ({ TDefaultRenderer, ...props }: any) => {
       const { href, ...restProps } = props;
       
@@ -213,6 +259,11 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
     paddingVertical: 8,
+  },
+  htmlImage: {
+    aspectRatio: 16 / 9,
+    marginTop: 16,
+    marginBottom: 16,
   },
 });
 
