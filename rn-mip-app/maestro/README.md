@@ -23,7 +23,13 @@ maestro --udid <DEVICE_ID> test maestro/flows/homepage-loads.yaml
 
 ## Test Files
 
-- `flows/homepage-loads.yaml` - Tests that the homepage loads and displays correctly
+- `flows/homepage-loads.yaml` - Tests that the homepage loads and displays correctly (iOS)
+- `flows/homepage-loads-android.yaml` - Android-specific homepage test
+- `flows/homepage-sanity-check-browserstack.yaml` - Simple sanity check for BrowserStack testing
+
+## BrowserStack Testing
+
+For testing on BrowserStack cloud devices, see [BrowserStack Testing Guide](./BROWSERSTACK.md).
 
 ## Notes
 
