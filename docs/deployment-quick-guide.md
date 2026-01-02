@@ -8,7 +8,6 @@ Complete workflow for making code changes, testing locally, and deploying to Bro
 - EAS CLI installed: `npm install -g eas-cli`
 - BrowserStack credentials set (in `.env` or environment variables)
 - iOS Simulator available
-- DDEV running (for local API access)
 
 ## Complete Workflow
 
