@@ -47,7 +47,7 @@ const server = http.createServer((req, res) => {
     const headers = { ...proxyRes.headers };
     headers['Access-Control-Allow-Origin'] = '*';
     headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
-    headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
+      headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-API-Key';
     
     res.writeHead(proxyRes.statusCode, headers);
     proxyRes.pipe(res);
