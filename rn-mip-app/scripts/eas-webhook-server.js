@@ -28,6 +28,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const safeCompare = require('safe-compare');
+const { execSync } = require('child_process');
+const path = require('path');
+const fs = require('fs');
+const https = require('https');
+const { uploadFromUrl, uploadFile } = require('./upload-to-browserstack');
 
 const PORT = process.argv[2] || process.env.PORT || 3000;
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
@@ -83,6 +88,151 @@ function parseWebhookPayload(body) {
   }
 }
 
+/**
+ * Download build artifact from EAS
+ * @param {string} buildId - The build ID
+ * @param {string} platform - The platform (android/ios)
+ * @param {string} artifactUrl - Optional direct download URL from artifacts.buildUrl
+ * @returns {Promise<string>} - Path to downloaded file
+ */
+async function downloadBuildArtifact(buildId, platform, artifactUrl = null) {
+  const outputDir = path.join(__dirname, '..');
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+  const extension = platform === 'android' ? 'apk' : 'ipa';
+  const filename = `ffci-build-${buildId.slice(0, 8)}-${timestamp}.${extension}`;
+  const outputPath = path.join(outputDir, filename);
+
+  console.log(`[DOWNLOAD] Downloading ${platform} build artifact...`);
+  console.log(`[DOWNLOAD] Build ID: ${buildId}`);
+
+  // Try direct download from artifact URL first (faster)
+  if (artifactUrl && platform === 'android') {
+    try {
+      console.log(`[DOWNLOAD] Attempting direct download from: ${artifactUrl}`);
+      return await downloadFromUrl(artifactUrl, outputPath);
+    } catch (error) {
+      console.log(`[DOWNLOAD] Direct download failed, trying eas build:download: ${error.message}`);
+    }
+  }
+
+  // Fallback to eas build:download command
+  try {
+    console.log(`[DOWNLOAD] Using eas build:download command...`);
+    execSync(
+      `eas build:download --platform ${platform} --id ${buildId} --output "${outputPath}"`,
+      { cwd: outputDir, stdio: 'inherit' }
+    );
+
+    if (fs.existsSync(outputPath)) {
+      console.log(`[DOWNLOAD] ✅ Downloaded to: ${outputPath}`);
+      return outputPath;
+    } else {
+      throw new Error('Downloaded file not found');
+    }
+  } catch (error) {
+    console.error(`[DOWNLOAD] ❌ Failed to download: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * Download file from URL
+ * @param {string} url - URL to download from
+ * @param {string} outputPath - Path to save file
+ * @returns {Promise<string>} - Path to downloaded file
+ */
+function downloadFromUrl(url, outputPath) {
+  return new Promise((resolve, reject) => {
+    const file = fs.createWriteStream(outputPath);
+    
+    https.get(url, (response) => {
+      if (response.statusCode === 302 || response.statusCode === 301) {
+        // Follow redirect
+        https.get(response.headers.location, (redirectResponse) => {
+          redirectResponse.pipe(file);
+          file.on('finish', () => {
+            file.close();
+            resolve(outputPath);
+          });
+        }).on('error', reject);
+      } else if (response.statusCode === 200) {
+        response.pipe(file);
+        file.on('finish', () => {
+          file.close();
+          resolve(outputPath);
+        });
+      } else {
+        reject(new Error(`Download failed with status ${response.statusCode}`));
+      }
+    }).on('error', (error) => {
+      fs.unlink(outputPath, () => {}); // Delete partial file
+      reject(error);
+    });
+  });
+}
+
+/**
+ * Upload build to BrowserStack
+ * @param {string} filePath - Path to APK/IPA file
+ * @param {string} buildId - Build ID for custom ID
+ * @returns {Promise<void>}
+ */
+async function uploadToBrowserStack(filePath, buildId) {
+  console.log(`[BROWSERSTACK] Uploading to BrowserStack...`);
+  console.log(`[BROWSERSTACK] File: ${path.basename(filePath)}`);
+  console.log(`[BROWSERSTACK] Build ID: ${buildId}`);
+
+  try {
+    const result = await uploadFile(filePath, `eas-build-${buildId}`);
+    console.log(`[BROWSERSTACK] ✅ Upload successful!`);
+    if (result.app_url) {
+      console.log(`[BROWSERSTACK] 🔗 App URL: ${result.app_url}`);
+    }
+    if (result.app_id) {
+      console.log(`[BROWSERSTACK] 🆔 App ID: ${result.app_id}`);
+    }
+  } catch (error) {
+    console.error(`[BROWSERSTACK] ❌ Upload failed: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * Process completed build: download and upload to BrowserStack
+ * @param {object} build - Build data from webhook
+ */
+async function processCompletedBuild(build) {
+  const { id: buildId, platform, status, artifacts } = build;
+
+  // Only process successful Android builds for now
+  if (platform !== 'android') {
+    console.log(`[PROCESS] Skipping ${platform} build (only Android supported for BrowserStack)`);
+    return;
+  }
+
+  if (status !== 'finished') {
+    console.log(`[PROCESS] Skipping build with status: ${status}`);
+    return;
+  }
+
+  try {
+    // Download the build artifact
+    const artifactUrl = artifacts?.buildUrl || null;
+    const downloadedFile = await downloadBuildArtifact(buildId, platform, artifactUrl);
+
+    // Upload to BrowserStack
+    await uploadToBrowserStack(downloadedFile, buildId);
+
+    console.log(`[PROCESS] ✅ Successfully processed build ${buildId}`);
+    
+    // Optionally clean up downloaded file after upload
+    // fs.unlinkSync(downloadedFile);
+  } catch (error) {
+    console.error(`[PROCESS] ❌ Failed to process build ${buildId}: ${error.message}`);
+    // Don't throw - we don't want to fail the webhook response
+  }
+}
+
 // Webhook endpoint
 app.post('/webhook', (req, res) => {
   const expoSignature = req.headers['expo-signature'];
@@ -120,8 +270,10 @@ app.post('/webhook', (req, res) => {
   console.log('[WEBHOOK] Payload:', JSON.stringify(payload, null, 2));
 
   // Handle different event types
+  // Note: EAS webhook payload structure is { type: "build.completed", data: { ...build info... } }
   if (payload.type === 'build.completed') {
-    const build = payload.data;
+    // Handle both nested (data) and flat payload structures
+    const build = payload.data || payload;
     console.log(`[WEBHOOK] Build completed:`);
     console.log(`  - Build ID: ${build.id}`);
     console.log(`  - Platform: ${build.platform}`);
@@ -133,6 +285,13 @@ app.post('/webhook', (req, res) => {
       if (build.artifacts) {
         console.log(`  - Artifacts available:`, build.artifacts);
       }
+      
+      // Process completed build: download and upload to BrowserStack
+      // Run asynchronously so we can respond to webhook immediately
+      processCompletedBuild(build).catch((error) => {
+        console.error(`[WEBHOOK] ❌ Error processing build: ${error.message}`);
+        console.error(`[WEBHOOK] Stack:`, error.stack);
+      });
     } else if (build.status === 'errored') {
       console.log(`  - ❌ Build failed`);
       if (build.error) {
