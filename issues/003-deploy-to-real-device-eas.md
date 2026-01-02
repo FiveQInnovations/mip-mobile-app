@@ -13,8 +13,10 @@ Need to deploy the React Native app to a real device using Expo Application Serv
 - [x] Set up EAS account/project
 - [x] Configure EAS build settings
 - [x] Create development build configuration
-- [ ] Build and deploy to iOS device
-- [ ] Build and deploy to Android device
+- [ ] Build iOS app via EAS
+- [ ] Deploy and verify iOS app on physical device
+- [x] Build Android app via EAS
+- [ ] Deploy and verify Android app on physical device
 - [ ] Test on physical devices
 - [ ] Document deployment process
 
@@ -161,4 +163,87 @@ Found EAS configuration in `/Users/anthony/clients/mlj/mljtrust-mobile` (set up 
 - `eas.json`: Added `NPM_CONFIG_LEGACY_PEER_DEPS` environment variable for development profile
 - `maestro/config.yaml`: Added empty `envs: {}` to fix parsing error
 - `maestro/flows/*.yaml`: Removed unsupported `timeout` properties from assertVisible commands
+
+---
+
+### ✅ Android Build Successful (2026-01-20)
+
+**Status:** Completed - Android development build created successfully
+
+**Build Details:**
+- **Build ID:** `3cbc5e05-0a44-4611-8a3f-6e554e12d7c2`
+- **Profile:** `development`
+- **Platform:** Android
+- **Build Link:** https://expo.dev/accounts/fiveq-innovations/projects/ffci-app/builds/3cbc5e05-0a44-4611-8a3f-6e554e12d7c2
+
+**Build Process:**
+- ✅ Project files compressed and uploaded to EAS Build (5.6 MB)
+- ✅ Project fingerprint computed successfully
+- ✅ Build completed without errors
+- ✅ QR code generated for easy installation on Android devices
+
+**Installation:**
+- Scan the QR code or visit the build link on an Android device to install the app
+- Build is configured for internal distribution (development profile)
+
+**Next Steps:**
+- ✅ Build completed successfully - ready for deployment
+- ⏳ **PENDING:** Deploy and verify on physical Android device (see deployment steps below)
+- Proceed with iOS build once Apple Developer Account access is resolved
+
+---
+
+### 📱 Android Device Deployment Steps (Pending)
+
+**Status:** Not Started - Build ready, awaiting deployment to physical device
+
+**Deployment Process:**
+
+1. **Access the Build:**
+   - Build Link: https://expo.dev/accounts/fiveq-innovations/projects/ffci-app/builds/3cbc5e05-0a44-4611-8a3f-6e554e12d7c2
+   - QR code available in build output (scan with Android device)
+
+2. **Install on Android Device:**
+   - Option A: Scan QR code from build output with Android device camera
+   - Option B: Open build link directly on Android device browser
+   - Option C: Download APK manually and transfer to device
+
+3. **Enable Installation from Unknown Sources (if needed):**
+   - Android Settings → Security → Enable "Install unknown apps" for browser/file manager
+   - May need to allow installation from specific source (browser/file manager)
+
+4. **Install and Launch:**
+   - Tap the downloaded APK to install
+   - Grant necessary permissions when prompted
+   - Launch the app from device home screen
+
+5. **Verify Functionality:**
+   - [ ] App launches without crashes
+   - [ ] Homepage loads correctly
+   - [ ] Navigation between tabs works
+   - [ ] Resources page loads (previously had loading delay issues)
+   - [ ] API authentication works correctly
+   - [ ] All core features function as expected
+   - [ ] Performance is acceptable on real device
+
+6. **Troubleshooting (if needed):**
+   - If installation fails, check Android version compatibility
+   - Verify device has sufficient storage space
+   - Check device logs for errors: `adb logcat` (if device connected via USB)
+   - Ensure development build profile is correct (not production)
+
+**Notes:**
+- This is a standalone development build (does not require Expo Go)
+- App runs independently on device without development server connection
+- Can optionally connect to development server for hot reloading during development
+- First-time installation may take longer due to app size
+
+**Expo Doctor Findings:**
+- EAS Build ran `expo-doctor` automatically and detected 4 issues
+- Issues documented as separate backlog items:
+  - Issue #006: Add `.expo/` to `.gitignore`
+  - Issue #007: Install missing peer dependency `expo-constants`
+  - Issue #008: Resolve native config sync issues (app.json vs native folders)
+  - Issue #009: Update package versions to match Expo SDK requirements
+- These are non-blocking for the current build but should be addressed
 

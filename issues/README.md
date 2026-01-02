@@ -12,6 +12,10 @@ Quick reference for active tasks. See individual files for details.
 
 ## Backlog
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
+- [006](006-add-expo-to-gitignore.md) - Add .expo directory to .gitignore
+- [007](007-install-expo-constants-peer-dependency.md) - Install missing peer dependency: expo-constants
+- [008](008-resolve-native-config-sync-issues.md) - Resolve native config sync issues (app.json vs native folders)
+- [009](009-update-package-versions-expo-sdk.md) - Update package versions to match Expo SDK requirements
 
 ## Blocked
 (none)

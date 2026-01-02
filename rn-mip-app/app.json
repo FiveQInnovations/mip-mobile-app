@@ -52,6 +52,13 @@
     "plugins": [
       "expo-router",
       "expo-dev-client"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f0f371f0-e1b5-4100-b39f-615d9c6ffcf1"
+      }
+    },
+    "owner": "fiveq-innovations"
   }
 }
