@@ -137,7 +137,7 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
       </Text>
 
       <Text style={styles.helloWorld} testID="hello-world">
-        Hello World
+        Deployment Test
       </Text>
 
       {/* Quick Tasks */}
