@@ -42,15 +42,22 @@ Currently need to run a local server to test the mobile app. Need to enable the 
   - API Key authentication: CONFIGURED ✅
   - Requires both X-API-Key header AND HTTP Basic Auth
   - Basic Auth credentials: `fiveq/demo` (likely temporary for staging/dev)
-  - **Verified:** Tested on 2026-01-20 - API responds successfully with both auth methods
+  - **Verified:** Tested on 2026-01-02 - API responds successfully with both auth methods
 - ✅ Mobile app updated to include Basic Auth credentials
 - ✅ Config updated to use `https://ffci.fiveq.dev`
 - ✅ Verified on iOS simulator - homepage loads successfully
-- ✅ Maestro tests pass with deployed API:
+- ⚠️ **Issue discovered:** Resources page fails to load after stopping local DDEV server
+  - Error: `Failed to fetch page uezb3178BtP3oGuU (500)`
+  - Homepage loads fine, but Resources tab fails with 500 error
+  - **Note:** Initial testing was done with local DDEV server still running, which may have masked this issue
+  - **Root cause:** Base64 encoding function had a bug in the fallback implementation
+  - **Fix:** Updated base64 encoding function to properly handle padding
+  - **Status:** Fixed in code, app needs to be reloaded to pick up changes
+- ✅ Maestro tests pass with deployed API (homepage flows):
   - home-action-hub flow: ✅ All assertions pass
   - homepage-loads flow: ✅ Passes
   - home-tab-navigation flow: ✅ Passes
-  - navigation-resources flow: ✅ Passes
+  - navigation-resources flow: ⚠️ Needs re-testing after fix
 
 **Implementation Summary:**
 1. ✅ Verified API key on `ffci.fiveq.dev` - Already configured

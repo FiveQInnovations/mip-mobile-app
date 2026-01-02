@@ -58,24 +58,32 @@ export class ApiError extends Error {
   }
 }
 
-// Simple base64 encoder for React Native (Basic Auth)
+// Base64 encoder for React Native (Basic Auth)
+// React Native doesn't have btoa natively, so we use a proper implementation
 function base64Encode(str: string): string {
+  // Try native btoa first (available in some React Native environments)
   if (typeof btoa !== 'undefined') {
     return btoa(str);
   }
-  // Fallback for environments without btoa
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  
+  // Fallback: proper base64 encoding implementation
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
   let output = '';
-  for (let i = 0; i < str.length; i += 3) {
-    const a = str.charCodeAt(i);
-    const b = i + 1 < str.length ? str.charCodeAt(i + 1) : 0;
-    const c = i + 2 < str.length ? str.charCodeAt(i + 2) : 0;
+  let i = 0;
+  
+  while (i < str.length) {
+    const a = str.charCodeAt(i++);
+    const b = i < str.length ? str.charCodeAt(i++) : 0;
+    const c = i < str.length ? str.charCodeAt(i++) : 0;
+    
     const bitmap = (a << 16) | (b << 8) | c;
+    
     output += chars.charAt((bitmap >> 18) & 63);
     output += chars.charAt((bitmap >> 12) & 63);
-    output += i + 1 < str.length ? chars.charAt((bitmap >> 6) & 63) : '=';
-    output += i + 2 < str.length ? chars.charAt(bitmap & 63) : '=';
+    output += i - 2 < str.length ? chars.charAt((bitmap >> 6) & 63) : '=';
+    output += i - 1 < str.length ? chars.charAt(bitmap & 63) : '=';
   }
+  
   return output;
 }
 
