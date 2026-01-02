@@ -64,6 +64,38 @@ mip-mobile-app/
 - **Backend**: Kirby CMS with KQL API
 - **Analytics**: Firebase Analytics
 
+## Continuous Native Generation (CNG)
+
+This project uses **Continuous Native Generation (CNG)**, which means the native iOS and Android projects are generated on-demand from configuration files rather than being manually maintained.
+
+### What is CNG?
+
+CNG is a process where native projects (`ios/` and `android/` directories) are automatically generated from:
+- Your `app.json`/`app.config.js` configuration
+- Your `package.json` dependencies
+- Config plugins (for custom native modifications)
+- Expo's prebuild template
+
+When you run `npx expo run:ios`, `npx expo run:android`, or build with EAS, Expo automatically runs `npx expo prebuild` to generate fresh native projects.
+
+### Important: Do Not Modify Native Folders
+
+⚠️ **Do not manually edit files in the `ios/` or `android/` directories.** These folders are generated artifacts (similar to `node_modules`) and will be overwritten the next time prebuild runs.
+
+- ✅ **Do**: Modify `app.json`/`app.config.js` for configuration changes
+- ✅ **Do**: Use config plugins for native customizations
+- ✅ **Do**: Use Expo Modules API for custom native code
+- ❌ **Don't**: Edit files directly in `ios/` or `android/` folders
+
+### Benefits of CNG
+
+- **Easier upgrades**: Upgrade React Native/Expo SDK by updating dependencies and running `npx expo prebuild --clean`
+- **Less code to maintain**: Only commit what's unique to your app, not boilerplate
+- **Automatic native module linking**: Expo handles linking via autolinking
+- **Cleaner git history**: Native folders are in `.gitignore` (like `node_modules`)
+
+For more information, see the [Expo CNG documentation](https://docs.expo.dev/workflow/continuous-native-generation/).
+
 ## Local Development Setup
 
 ### Prerequisites
