@@ -9,7 +9,7 @@ Quick reference for active tasks. See individual files for details.
 
 ## In Progress
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
-- [016](016-reliable-android-emulator-local.md) - Run Android Emulator Reliably Locally
+- [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
 
 ## Backlog
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS

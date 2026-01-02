@@ -1,28 +1,52 @@
 ---
-status: backlog
+status: in-progress
 area: rn-mip-app
 created: 2026-01-21
 ---
 
-# Run Android Emulator Reliably Locally
+# Prove Android Emulator Reliability with Maestro Testing
 
 ## Context
-Need to ensure Android emulator runs reliably for local development and testing. Current setup may have issues with emulator startup, device management, or build installation. Explore Expo Orbit as a potential solution for simplifying emulator management and build deployment.
+Prove Android emulator reliability by creating a simple Maestro test that verifies the home screen loads correctly. The test must run successfully 5 times in a row to demonstrate consistent emulator behavior. Additionally, the test must follow the "Break and Verify" pattern - introduce an intentional error and verify the test catches it and fails appropriately.
 
-**Reference:** https://docs.expo.dev/build/orbit/
+**Success Criteria:**
+- Simple Maestro test for Android home screen
+- Test runs successfully 5 consecutive times
+- Break and Verify: Test fails when error is introduced, passes when error is removed
 
 ## Tasks
-- [ ] Document current Android emulator issues/limitations
-- [ ] Verify Android Studio and Android SDK are properly installed
-- [ ] Research Expo Orbit capabilities for Android emulator management
-- [ ] Install Expo Orbit: `brew install expo-orbit` (macOS)
-- [ ] Configure Orbit to launch on login (optional)
-- [ ] Test Orbit's ability to list and launch Android emulators
-- [ ] Test installing and launching EAS builds on emulator via Orbit
-- [ ] Test installing local APK files via Orbit drag-and-drop
-- [ ] Compare Orbit workflow vs manual emulator management
-- [ ] Document reliable emulator startup and management process
-- [ ] Explore running Android emulators without audio if needed
+- [ ] Create simple Maestro test for Android home screen
+- [ ] Test runs successfully 5 times in a row
+- [ ] Implement Break and Verify pattern:
+  - [ ] Introduce intentional error (e.g., wrong text assertion)
+  - [ ] Verify test fails as expected
+  - [ ] Remove error and verify test passes again
+- [ ] Document test and reliability results
 
 ## Notes
 
+### Previous Investigation: Expo Orbit (2026-01-21)
+
+**Status:** Orbit installed and tested, but limited value for core issue
+
+**Findings:**
+- ✅ Orbit successfully installed and can detect Android SDK
+- ✅ Orbit CLI can list devices (`list-devices` command works)
+- ✅ Orbit can install apps on emulator
+- ❌ **Main issue:** Orbit doesn't solve the core problem of reliably controlling/managing the emulator after installation
+
+**Conclusion:**
+- Orbit is useful for app installation but doesn't address emulator control reliability
+- Decided to prove reliability through Maestro testing instead
+
+---
+
+### New Approach: Maestro Test-Based Reliability Proof (2026-01-21)
+
+**Strategy:** Prove emulator reliability by demonstrating consistent test execution
+- If a simple Maestro test can run successfully 5 times in a row, the emulator is reliable enough
+- Break and Verify pattern ensures the test is actually working correctly
+
+**Existing Test Reference:**
+- `rn-mip-app/maestro/flows/homepage-loads-android.yaml` - Existing Android homepage test
+- Can use as starting point or create new simplified version
