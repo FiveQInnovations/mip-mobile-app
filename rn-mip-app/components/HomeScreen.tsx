@@ -112,6 +112,11 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
 
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+      {/* DEBUG: Baseline test - this should always appear if app is rebuilding */}
+      <View style={styles.debugBanner}>
+        <Text style={styles.debugText}>Hello world - App is rebuilding!</Text>
+      </View>
+
       {/* Hero Section (kept from existing) */}
       {logoUrl && !logoUrl.endsWith('.svg') && (
         <View style={styles.logoSection}>
@@ -383,6 +388,18 @@ const styles = StyleSheet.create({
   infoValue: {
     fontSize: 16,
     color: '#333',
+  },
+  debugBanner: {
+    backgroundColor: '#10b981',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  debugText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
 
