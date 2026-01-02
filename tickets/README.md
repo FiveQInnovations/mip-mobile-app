@@ -11,7 +11,6 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## Backlog
-- [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
 - [006](006-add-expo-to-gitignore.md) - Add .expo directory to .gitignore
 - [007](007-install-expo-constants-peer-dependency.md) - Install missing peer dependency: expo-constants
 - [008](008-resolve-native-config-sync-issues.md) - Resolve native config sync issues (app.json vs native folders)
@@ -23,6 +22,7 @@ Quick reference for active tasks. See individual files for details.
 
 ## Blocked
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
+- [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
 - [015](015-ios-browserstack-without-apple-dev-account.md) - Build and Upload iOS to BrowserStack Without Apple Developer Account
 
 ## Done
