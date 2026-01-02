@@ -77,7 +77,8 @@ function base64Encode(str: string): string {
 }
 
 async function fetchJson<T>(url: string, label: string): Promise<T> {
-  console.log('[API] Making request to:', url);
+  const requestStartTime = Date.now();
+  console.log(`[API] Making request to: ${url} at ${requestStartTime}`);
   console.log('[API] Config apiBaseUrl:', config.apiBaseUrl);
   
   // HTTP Basic Auth credentials for deployed server
@@ -92,6 +93,8 @@ async function fetchJson<T>(url: string, label: string): Promise<T> {
       'Content-Type': 'application/json',
     });
     
+    const fetchStartTime = Date.now();
+    console.log(`[API] fetch() called at ${fetchStartTime}`);
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -102,6 +105,9 @@ async function fetchJson<T>(url: string, label: string): Promise<T> {
       // Ensure credentials are included (though not needed for Basic Auth)
       credentials: 'omit',
     });
+    const fetchEndTime = Date.now();
+    const fetchDuration = fetchEndTime - fetchStartTime;
+    console.log(`[API] fetch() completed at ${fetchEndTime}, duration: ${fetchDuration}ms`);
     console.log('[API] Response status:', response.status, 'for', label);
 
     if (!response.ok) {
@@ -112,9 +118,19 @@ async function fetchJson<T>(url: string, label: string): Promise<T> {
       );
     }
 
-    return response.json() as Promise<T>;
+    const jsonStartTime = Date.now();
+    console.log(`[API] Starting JSON parse at ${jsonStartTime}`);
+    const result = await response.json() as Promise<T>;
+    const jsonEndTime = Date.now();
+    const jsonDuration = jsonEndTime - jsonStartTime;
+    const totalDuration = jsonEndTime - requestStartTime;
+    console.log(`[API] JSON parse completed at ${jsonEndTime}, duration: ${jsonDuration}ms`);
+    console.log(`[API] Total request duration for ${label}: ${totalDuration}ms`);
+    return result;
   } catch (error: any) {
-    console.error('[API] Fetch error:', error.message, error);
+    const errorTime = Date.now();
+    const errorDuration = errorTime - requestStartTime;
+    console.error(`[API] Fetch error at ${errorTime} (${errorDuration}ms after start):`, error.message, error);
     console.error('[API] Error details:', JSON.stringify(error, null, 2));
     throw error;
   }

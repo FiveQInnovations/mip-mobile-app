@@ -19,21 +19,44 @@ export function TabScreen({ uuid }: TabScreenProps) {
   const canGoBack = pageStack.length > 1;
 
   React.useEffect(() => {
+    const mountTime = Date.now();
+    console.log(`[TabScreen] Component mounted at ${mountTime} with UUID: ${uuid}, loading state: ${loading}`);
+    return () => {
+      const unmountTime = Date.now();
+      console.log(`[TabScreen] Component unmounting at ${unmountTime} for UUID: ${uuid}`);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const timestamp = Date.now();
+    console.log(`[TabScreen] useEffect triggered at ${timestamp}, currentUuid: ${currentUuid}, loading state: ${loading}`);
     if (currentUuid) {
       loadPage();
     }
   }, [currentUuid]);
 
   async function loadPage() {
+    const startTime = Date.now();
+    console.log(`[TabScreen] loadPage() called at ${startTime} for UUID: ${currentUuid}`);
     try {
+      console.log(`[TabScreen] Setting loading=true at ${Date.now()}`);
       setLoading(true);
+      const apiStartTime = Date.now();
+      console.log(`[TabScreen] Starting API call at ${apiStartTime}`);
       const data = await getPage(currentUuid);
+      const apiEndTime = Date.now();
+      const apiDuration = apiEndTime - apiStartTime;
+      console.log(`[TabScreen] API call completed at ${apiEndTime}, duration: ${apiDuration}ms`);
       setCurrentPageData(data);
       setError(null);
+      console.log(`[TabScreen] Page data set, title: ${data.title || 'N/A'}`);
     } catch (err: any) {
       setError(err.message || 'Failed to load page');
-      console.error('Error loading page:', err);
+      console.error(`[TabScreen] Error loading page at ${Date.now()}:`, err);
     } finally {
+      const endTime = Date.now();
+      const totalDuration = endTime - startTime;
+      console.log(`[TabScreen] Setting loading=false at ${endTime}, total duration: ${totalDuration}ms`);
       setLoading(false);
     }
   }

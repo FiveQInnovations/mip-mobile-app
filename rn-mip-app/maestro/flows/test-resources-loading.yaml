@@ -1,0 +1,31 @@
+appId: com.fiveq.ffci
+---
+# Test Resources page loading delay
+# This test verifies the loading indicator appears and measures load time
+
+- runFlow: _setup.yaml
+
+# Verify homepage is loaded
+- assertVisible:
+    text: ".*(Resources|Chapters|Connect|Give|Home|About).*"
+    optional: false
+
+# Tap on Resources tab
+- tapOn:
+    text: "Resources"
+
+# Immediately check for loading indicator (should appear within ~100ms)
+- assertVisible:
+    text: "Loading"
+    optional: false
+    timeout: 500
+
+# Wait for Resources page content to load
+- assertVisible:
+    text: ".*(Resources|Collection|Items|No items).*"
+    optional: false
+    timeout: 10000
+
+# Take screenshot for verification
+- takeScreenshot: resources-loaded-verification
+

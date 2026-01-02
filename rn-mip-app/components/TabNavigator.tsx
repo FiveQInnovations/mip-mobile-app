@@ -82,7 +82,7 @@ export function TabNavigator() {
             onSwitchTab={(uuid) => setSelectedTabUuid(uuid)}
           />
         ) : (
-          selectedTabUuid && <TabScreen uuid={selectedTabUuid} />
+          selectedTabUuid && <TabScreen key={selectedTabUuid} uuid={selectedTabUuid} />
         )}
       </View>
 
@@ -94,7 +94,11 @@ export function TabNavigator() {
             <TouchableOpacity
               key={index}
               style={[styles.tabItem, isSelected && styles.tabItemSelected]}
-              onPress={() => setSelectedTabUuid(item.page.uuid)}
+              onPress={() => {
+                const tapTime = Date.now();
+                console.log(`[TabNavigator] Tab tapped: ${item.label} (UUID: ${item.page.uuid}) at ${tapTime}`);
+                setSelectedTabUuid(item.page.uuid);
+              }}
               accessibilityLabel={`${item.label} tab`}
               accessibilityRole="tab"
               accessibilityState={{ selected: isSelected }}
