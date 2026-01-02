@@ -1,6 +1,7 @@
 {
   "siteId": "ffci",
-  "apiBaseUrl": "https://ws-ffci-copy.ddev.site",
+  "apiBaseUrl": "https://ffci.fiveq.dev",
+  "apiKey": "777359235aecc10fdfb144041dfdacfc80ca0751c7bed7b14c96f935456fc4ce",
   "appName": "FFCI Mobile",
   "appSlug": "ffci-mobile",
   "primaryColor": "#D9232A",

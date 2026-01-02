@@ -58,13 +58,39 @@ export class ApiError extends Error {
   }
 }
 
+// Simple base64 encoder for React Native (Basic Auth)
+function base64Encode(str: string): string {
+  if (typeof btoa !== 'undefined') {
+    return btoa(str);
+  }
+  // Fallback for environments without btoa
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  let output = '';
+  for (let i = 0; i < str.length; i += 3) {
+    const a = str.charCodeAt(i);
+    const b = i + 1 < str.length ? str.charCodeAt(i + 1) : 0;
+    const c = i + 2 < str.length ? str.charCodeAt(i + 2) : 0;
+    const bitmap = (a << 16) | (b << 8) | c;
+    output += chars.charAt((bitmap >> 18) & 63);
+    output += chars.charAt((bitmap >> 12) & 63);
+    output += i + 1 < str.length ? chars.charAt((bitmap >> 6) & 63) : '=';
+    output += i + 2 < str.length ? chars.charAt(bitmap & 63) : '=';
+  }
+  return output;
+}
+
 async function fetchJson<T>(url: string, label: string): Promise<T> {
   console.log('[API] Making request to:', url);
   console.log('[API] Config apiBaseUrl:', config.apiBaseUrl);
+  
+  // HTTP Basic Auth credentials for deployed server
+  const basicAuth = base64Encode('fiveq:demo');
+  
   try {
     const response = await fetch(url, {
       headers: {
-        'Authorization': `Bearer ${config.apiToken}`,
+        'X-API-Key': config.apiKey,
+        'Authorization': `Basic ${basicAuth}`,
         'Content-Type': 'application/json',
       },
     });
