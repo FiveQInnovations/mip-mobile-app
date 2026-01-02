@@ -172,6 +172,8 @@ Based on industry best practices for React Native tab navigation performance:
 - ✅ Component remounting fixed
 - ✅ Root cause identified (API delay, no caching)
 - ✅ Phase 1: Quick Wins implemented (2026-01-02)
+- ✅ Verification utilities added (2026-01-02)
+- ✅ Dev tools button added and tested (2026-01-02)
 
 ## Implementation Summary (2026-01-02)
 
@@ -200,14 +202,16 @@ Based on industry best practices for React Native tab navigation performance:
 - **Background refresh**: Updates UI seamlessly when fresh data arrives
 
 **Files Modified:**
-- `rn-mip-app/lib/pageCache.ts` (new file)
+- `rn-mip-app/lib/pageCache.ts` (new file, added cache status functions)
 - `rn-mip-app/lib/api.ts` (added cache support)
 - `rn-mip-app/components/TabScreen.tsx` (uses cached data immediately)
+- `rn-mip-app/components/HomeScreen.tsx` (added dev tools button for cache clearing)
 
 **Testing:**
 - ✅ Created Maestro test: `maestro/flows/test-cache-performance.yaml`
 - ✅ Verified on iOS simulator (iPhone 16 Plus)
 - ✅ Performance measurements confirmed
+- ✅ Dev button tested via Maestro automation (cache clearing verified)
 
 ### Test Results (2026-01-02)
 
@@ -239,8 +243,139 @@ Based on industry best practices for React Native tab navigation performance:
 5. Check Metro logs for cache hit messages and timing
 
 **Next Steps:**
-- Verify on simulator and measure actual performance improvements
-- Consider Phase 2 (prefetching) if further optimization needed
+- ✅ Verification utilities added (2026-01-02)
+- ✅ Dev button added for easy cache clearing (2026-01-02)
+- ✅ Cache clearing tested and verified (2026-01-02)
+- Ready for Phase 2 (prefetching) implementation
+
+## Verification Utilities Added (2026-01-02)
+
+### Cache Status Functions
+Added to `lib/pageCache.ts`:
+- `getCacheStatus()` - Returns cache status for all pages with age and stale info
+- `logCacheStatus()` - Logs cache status to console for debugging
+
+### Dev Tools Button
+Added temporary dev button to homepage (`components/HomeScreen.tsx`):
+- Located at bottom of homepage in "🔧 Dev Tools (Temp)" section
+- Red "🗑️ Clear Cache" button for easy cache clearing
+- Shows confirmation alert when cache is cleared
+- Displays temporary "✓ Cache Cleared!" feedback
+- **Status:** ✅ Tested and working via Maestro automation
+
+### Testing Results
+- ✅ Button successfully clears cache
+- ✅ Alert confirmation works correctly
+- ✅ Cache status logging functional
+- ✅ Ready for Phase 2 prefetching verification
+
+## Phase 2 Verification Guide
+
+### How to Verify Prefetching Works (Even with Simulator Already Running)
+
+Since the simulator is already running and cache is populated, here are ways to verify Phase 2 prefetching:
+
+#### Method 1: Clear Cache and Reload (Recommended)
+
+1. **Clear cache using the dev button:**
+   - On the homepage, scroll to the bottom
+   - Tap the "🗑️ Clear Cache" button in the Dev Tools section
+   - An alert will confirm the cache is cleared
+   - Or use Metro console: `require('./lib/pageCache').clearAllCache()`
+
+2. **Reload the app:**
+   - Press `Cmd+R` in simulator to reload
+   - Or shake device and select "Reload"
+
+3. **Watch Metro logs for prefetch activity:**
+   ```
+   [Prefetch] Starting prefetch of all main tabs...
+   [Prefetch] Prefetching UUID: uezb3178BtP3oGuU (Resources)
+   [Prefetch] Prefetching UUID: ... (Chapters)
+   [API] Background prefetch completed for UUID: ...
+   [PageCache] Cached page data for UUID: ...
+   ```
+
+4. **Check cache status:**
+   - In Metro console, run: `require('./lib/pageCache').logCacheStatus()`
+   - Should show all main tab pages cached immediately after app loads
+
+5. **Navigate to Resources tab:**
+   - Should load instantly (<10ms) from prefetched cache
+   - No loading spinner should appear
+
+#### Method 2: Use Cache Status Function
+
+Add this to your app temporarily (or use React Native Debugger):
+
+```typescript
+import { logCacheStatus, clearAllCache } from './lib/pageCache';
+
+// Check what's cached
+logCacheStatus();
+
+// Clear cache to test prefetching
+clearAllCache();
+```
+
+#### Method 3: Check Logs After App Load
+
+After implementing prefetching, check Metro logs immediately after app loads:
+
+**Expected log sequence:**
+```
+[TabNavigator] Site data loaded
+[Prefetch] Starting prefetch of 5 main tabs...
+[Prefetch] Prefetching UUID: uezb3178BtP3oGuU (Resources)...
+[API] Background prefetch completed for UUID: uezb3178BtP3oGuU, duration: 460ms
+[PageCache] Cached page data for UUID: uezb3178BtP3oGuU
+[Prefetch] Prefetching UUID: ... (Chapters)...
+...
+[Prefetch] All tabs prefetched successfully (5/5)
+```
+
+**Then when navigating to Resources tab:**
+```
+[TabNavigator] Tab tapped: Resources (UUID: uezb3178BtP3oGuU)
+[PageCache] Cache hit for UUID: uezb3178BtP3oGuU (age: 1234ms)
+[TabScreen] Data from cache - instant display (6ms)
+```
+
+#### Method 4: Performance Comparison
+
+**Before prefetching:**
+- First visit to Resources: ~460ms (API call)
+- Subsequent visits: ~7ms (from cache)
+
+**After prefetching:**
+- First visit to Resources: ~7ms (from prefetched cache)
+- Subsequent visits: ~7ms (from cache)
+
+#### Verification Checklist
+
+- [ ] Prefetch logs appear in Metro console after app loads
+- [ ] All main tab pages are cached (check with `logCacheStatus()`)
+- [ ] First navigation to Resources tab is instant (<10ms)
+- [ ] No loading spinner appears on first visit
+- [ ] Background refresh still works (updates cache silently)
+- [ ] Cache persists across tab switches
+
+#### Quick Test Script
+
+Add this temporarily to `TabNavigator.tsx` after site data loads:
+
+```typescript
+// After setSiteData(data) in loadData()
+import { logCacheStatus } from '../lib/pageCache';
+
+// Log cache status after 2 seconds (allowing prefetch to complete)
+setTimeout(() => {
+  console.log('[Verification] Cache status after prefetch:');
+  logCacheStatus();
+}, 2000);
+```
+
+This will show you exactly what's cached after prefetching completes.
 
 ## Notes
 - Issue discovered during testing of issue #002

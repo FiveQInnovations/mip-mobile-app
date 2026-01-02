@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Linking, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { getSiteData, SiteData, MenuItem } from '../lib/api';
 import { getConfig } from '../lib/config';
+import { clearAllCache, logCacheStatus } from '../lib/pageCache';
 
 interface HomeScreenProps {
   siteData: SiteData;
@@ -12,6 +13,7 @@ interface HomeScreenProps {
 export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
   const config = getConfig();
   const router = useRouter();
+  const [cacheCleared, setCacheCleared] = React.useState(false);
 
   const { site_data, menu } = siteData;
   const logoUrl = site_data.logo
@@ -203,6 +205,31 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
           <Text style={styles.infoValue}>{config.homepageType}</Text>
         </View>
       )}
+
+      {/* Dev Tools - Temporary */}
+      <View style={styles.devSection}>
+        <Text style={styles.devSectionHeader}>🔧 Dev Tools (Temp)</Text>
+        <TouchableOpacity
+          style={styles.devButton}
+          onPress={() => {
+            clearAllCache();
+            logCacheStatus();
+            setCacheCleared(true);
+            setTimeout(() => setCacheCleared(false), 3000);
+            Alert.alert('Cache Cleared', 'All cached pages have been cleared. Reload app to test prefetching.');
+          }}
+          testID="dev-clear-cache"
+        >
+          <Text style={styles.devButtonText}>
+            {cacheCleared ? '✓ Cache Cleared!' : '🗑️ Clear Cache'}
+          </Text>
+        </TouchableOpacity>
+        {cacheCleared && (
+          <Text style={styles.devMessage}>
+            Cache cleared! Reload app (Cmd+R) to test prefetching.
+          </Text>
+        )}
+      </View>
     </ScrollView>
   );
 }
@@ -383,6 +410,39 @@ const styles = StyleSheet.create({
   infoValue: {
     fontSize: 16,
     color: '#333',
+  },
+  devSection: {
+    marginTop: 24,
+    padding: 16,
+    backgroundColor: '#fff7ed',
+    borderColor: '#fed7aa',
+    borderWidth: 2,
+    borderRadius: 12,
+    borderStyle: 'dashed',
+  },
+  devSectionHeader: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#9a3412',
+    marginBottom: 12,
+  },
+  devButton: {
+    backgroundColor: '#dc2626',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  devButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  devMessage: {
+    marginTop: 8,
+    fontSize: 12,
+    color: '#9a3412',
+    fontStyle: 'italic',
   },
 });
 
