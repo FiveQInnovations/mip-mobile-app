@@ -12,7 +12,6 @@ Quick reference for active tasks. See individual files for details.
 
 ## Backlog
 - [011](011-android-baseline-ux.md) - Android Baseline UX Issues
-- [012](012-eas-build-webhook.md) - EAS Build Completion Webhook
 - [013](013-speed-up-eas-android-builds.md) - Speed Up EAS Android Build Time
 - [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
 
