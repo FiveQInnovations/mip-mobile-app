@@ -28,10 +28,12 @@ mise exec -- bash -c "export LANG=en_US.UTF-8 && npx expo start --ios --clear"
 - If not, press `Cmd+R` to reload
 - Verify your changes appear correctly
 
-**Optional - Run Maestro tests:**
+**Run Maestro tests:**
 ```bash
 npm run test:maestro:ios
 ```
+
+> **Important:** Always run tests locally before starting an EAS build. EAS builds take ~12 minutes and consume build minutes. Verify your changes work locally first to avoid wasting time and resources on builds that will fail.
 
 ### 3. Build Android Preview APK with EAS
 
