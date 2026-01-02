@@ -44,7 +44,11 @@ export function TabNavigator() {
   if (error) {
     return (
       <View style={styles.container}>
-        <Text style={styles.errorText}>Error: {error}</Text>
+        {/* DEBUG: Baseline test - this should always appear if app is rebuilding */}
+        <View style={styles.debugBanner}>
+          <Text style={styles.debugText}>Hello world - App is rebuilding!</Text>
+        </View>
+        <Text style={styles.errorText}>API Error: {error}</Text>
         <Text style={styles.retryText} onPress={loadData}>
           Tap to retry
         </Text>
@@ -180,5 +184,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1976d2',
     textDecorationLine: 'underline',
+  },
+  debugBanner: {
+    backgroundColor: '#10b981',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    alignItems: 'center',
+    marginTop: 20,
+    marginHorizontal: 20,
+  },
+  debugText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
