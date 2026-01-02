@@ -2,6 +2,8 @@
 
 React Native mobile app for FFCI built with Expo.
 
+> Note: This README is maintained manually.
+
 ## Quick Start
 
 ### Prerequisites
@@ -64,5 +66,6 @@ See **[docs/ios-simulator-network-setup.md](./docs/ios-simulator-network-setup.m
 ## Documentation
 
 - **[iOS Simulator Network Setup](./docs/ios-simulator-network-setup.md)** - Complete guide for network connectivity
+- **[TODO](./docs/TODO.md)** - Items to revisit (images, internal links, etc.)
 - **[TEMP_SETUP_STATUS.md](./TEMP_SETUP_STATUS.md)** - Development status and notes
 

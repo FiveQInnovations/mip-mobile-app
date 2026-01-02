@@ -2,6 +2,11 @@
 
 Quick reference for active tasks. See individual files for details.
 
+> **Note:** This README is auto-generated from issue files. To regenerate it, run:
+> ```bash
+> node issues/generate-readme.js
+> ```
+
 ## In Progress
 - [002](002-enable-api-on-ffci-site.md) - Enable API on the real FFCI site
 
