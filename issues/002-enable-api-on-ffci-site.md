@@ -46,17 +46,17 @@ Currently need to run a local server to test the mobile app. Need to enable the 
 - ✅ Mobile app updated to include Basic Auth credentials
 - ✅ Config updated to use `https://ffci.fiveq.dev`
 - ✅ Verified on iOS simulator - homepage loads successfully
-- ⚠️ **Issue discovered:** Resources page fails to load after stopping local DDEV server
-  - Error: `Failed to fetch page uezb3178BtP3oGuU (500)`
-  - Homepage loads fine, but Resources tab fails with 500 error
-  - **Note:** Initial testing was done with local DDEV server still running, which may have masked this issue
-  - **Root cause:** Base64 encoding function had a bug in the fallback implementation (incorrect padding logic)
-  - **Fix:** Updated base64 encoding function to properly handle padding and character encoding
-  - **Status:** 
-    - ✅ Code fix verified: Base64 encoding produces correct output (`Zml2ZXE6ZGVtbw==`)
-    - ✅ API endpoint verified: Works correctly with curl (returns 200 OK)
-    - ⚠️ App needs reload: Simulator app still using old code, needs Expo dev server reload or rebuild
-  - **Next steps:** Reload app through Expo dev server (`r` key in Expo CLI) or rebuild to test the fix
+- ✅ **Issue resolved:** Resources page now loads successfully
+  - **Root cause:** `lib/config.ts` was hardcoding proxy URL (`http://192.168.0.106:8888`) instead of using deployed API URL from `ffci.json`
+  - **Fix:** Removed proxy URL override in `lib/config.ts` to use `https://ffci.fiveq.dev` from config file
+  - **Additional fixes:**
+    - Updated base64 encoding to use `base64-js` library for reliable encoding
+    - Added Basic Auth header to all API requests
+  - **Status:** ✅ **FULLY WORKING**
+    - Homepage loads successfully ✅
+    - Resources page loads successfully ✅
+    - All tabs working ✅
+    - App connects directly to deployed API without local server ✅
 - ✅ Maestro tests pass with deployed API (homepage flows):
   - home-action-hub flow: ✅ All assertions pass
   - homepage-loads flow: ✅ Passes
