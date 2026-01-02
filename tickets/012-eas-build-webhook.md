@@ -40,8 +40,8 @@ Created webhook server at `scripts/eas-webhook-server.js` with:
 
 ### Environment Setup
 - Webhook server now loads `WEBHOOK_SECRET` from `.env` file automatically
-- Generated secure webhook secret: `51c8b7689ea19830ff5f5ebd1ba4423e82887e85eab7cd40de202ff827684eb6`
-- Added `WEBHOOK_SECRET` to `.env.example` for reference
+- Added `WEBHOOK_SECRET` placeholder to `.env.example` for reference
+- Users should generate their own secret: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
 - Server uses `dotenv` to load environment variables
 
 ### Next Steps for Testing
