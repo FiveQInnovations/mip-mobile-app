@@ -3,10 +3,11 @@
 Quick reference for active tasks. See individual files for details.
 
 ## In Progress
-(none)
+- [002](002-enable-api-on-ffci-site.md) - Enable API on the real FFCI site
 
 ## Backlog
 - [001](001-api-key-auth.md) - Update RN app to use X-API-Key authentication
+- [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
 
 ## Blocked
 (none)
