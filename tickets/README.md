@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [052](052-internal-links-url-mapping.md) - Internal Links URL-to-UUID Mapping
 
 ## In Progress
 (none)
@@ -16,7 +16,7 @@ Quick reference for active tasks. See individual files for details.
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [052](052-internal-links-url-mapping.md) - Internal Links URL-to-UUID Mapping
+- [053](053-remove-html-crash-debug-screen.md) - Remove HTML Crash Debug Screen
 
 ### 🟡 Nice to Have
 - [019](019-form-detection-api-flag.md) - Form Detection API Flag

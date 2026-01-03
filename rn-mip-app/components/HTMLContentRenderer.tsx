@@ -116,6 +116,9 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
   const renderersProps = {
     a: {
       onPress: (event: any, href: string) => {
+        // Prevent default behavior (opening in browser via Linking.openURL)
+        event?.preventDefault?.();
+        
         console.log('[HTMLContentRenderer] Link pressed:', href);
 
         if (!href) return;
