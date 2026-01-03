@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [051](051-external-links-handling.md) - External Links Handling
 
 ## In Progress
-- [051](051-external-links-handling.md) - External Links Handling
+(none)
 
 ## Backlog
 
