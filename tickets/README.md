@@ -8,16 +8,14 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [055](055-quick-tasks-in-app-alternatives.md) - Quick Tasks In-App Alternatives
-- [056](056-homepage-featured-section-content.md) - Homepage Featured Section Content
+(none)
 
 ## In Progress
-(none)
+- [058](058-tab-icons.md) - Add Icons to Each Tab
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [058](058-tab-icons.md) - Add Icons to Each Tab
 - [059](059-internal-page-visual-design.md) - Internal Page Visual Design Improvements
 
 ### 🟡 Nice to Have
@@ -84,6 +82,8 @@ Quick reference for active tasks. See individual files for details.
 - [052](052-internal-links-url-mapping.md) - Internal Links URL-to-UUID Mapping
 - [053](053-remove-html-crash-debug-screen.md) - Remove Debug Elements from HomeScreen
 - [054](054-internal-page-back-navigation.md) - Internal Page Back Navigation Not Working
+- [055](055-quick-tasks-in-app-alternatives.md) - Quick Tasks In-App Alternatives
+- [056](056-homepage-featured-section-content.md) - Homepage Featured Section Content
 - [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
 
 ---
