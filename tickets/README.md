@@ -11,7 +11,7 @@ Quick reference for active tasks. See individual files for details.
 - [052](052-internal-links-url-mapping.md) - Internal Links URL-to-UUID Mapping
 
 ## In Progress
-(none)
+- [054](054-internal-page-back-navigation.md) - Internal Page Back Navigation Not Working
 
 ## Backlog
 
