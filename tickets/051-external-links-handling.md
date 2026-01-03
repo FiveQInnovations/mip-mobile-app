@@ -47,6 +47,36 @@ External links in HTML content on the Resources page do NOT open when tapped:
    - Does `Linking.openURL()` succeed or fail?
 2. **Try alternative approach** - Use `renderersProps.a.onPress` instead of wrapping in TouchableOpacity (see code below)
 
+### How to Check Console Logs
+
+**Method 1: Metro Bundler Terminal (Easiest)**
+- Run `npm start` or `expo start --dev-client` in terminal
+- Console logs appear directly in the terminal output
+- Look for logs prefixed with `[HTMLContentRenderer]`
+
+**Method 2: Expo Dev Tools**
+- Press `j` in Metro bundler terminal to open Expo Dev Tools in browser
+- Or open `http://localhost:19002` in browser
+- View logs in the "Logs" tab
+
+**Method 3: iOS Simulator Logs**
+- In iOS Simulator: Device → Console (or Cmd+Shift+C)
+- Filter by searching for "HTMLContentRenderer"
+- Shows all system logs including React Native console.log
+
+**Method 4: React Native Debugger (Advanced)**
+- Install React Native Debugger: `brew install --cask react-native-debugger`
+- Enable remote debugging in app (shake device → "Debug")
+- View logs in React Native Debugger console
+
+**Quick Test:**
+1. Start app: `cd rn-mip-app && npm start`
+2. Navigate to Resources page
+3. Tap "Find Out How" link
+4. Check terminal/Metro output for `[HTMLContentRenderer]` logs
+5. If NO logs appear → renderer function not being called
+6. If logs appear but no "External link tapped" → onPress not firing
+
 ## Code Changes Made
 
 ### HTMLContentRenderer.tsx Updates
