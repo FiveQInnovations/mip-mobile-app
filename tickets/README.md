@@ -10,6 +10,7 @@ Quick reference for active tasks. See individual files for details.
 ## In Progress
 - [017](017-prayer-request-form-handling.md) - Prayer Request Form Handling
 - [046](046-reliable-maestro-tests-android.md) - Reliable Maestro Tests for Android
+- [047](047-reliable-maestro-tests-ios.md) - Reliable Maestro Tests for iOS
 
 ## Backlog
 
