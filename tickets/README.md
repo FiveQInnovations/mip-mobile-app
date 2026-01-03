@@ -49,6 +49,9 @@ Quick reference for active tasks. See individual files for details.
 - [033](033-maestro-collection-test.md) - Maestro Test: Collection Grid and Navigation
 - [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
 
+### Unassigned
+- [049](049-ticket-generator-qa-status.md) - Ticket Generator Does Not Recognize "qa" Status
+
 ## Blocked
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
