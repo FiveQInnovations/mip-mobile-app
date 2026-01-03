@@ -1,10 +1,9 @@
 appId: com.fiveq.ffci
 ---
-# Validates the action-hub style home layout (intended to fail before UI update)
 - runFlow: _setup.yaml
 
 - assertVisible:
-    text: "Firefighters for Christ International"
+    text: "Firefighters for Christ"
     optional: false
 
 - assertVisible:
