@@ -129,15 +129,15 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
       )}
 
       <Text
-        accessibilityLabel="App name"
+        accessibilityLabel="Firefighters for Christ International"
         style={styles.appName}
         testID="home-hero-app-name"
       >
-        {site_data.app_name || config.appName}
+        Firefighters for Christ International
       </Text>
 
       <Text style={styles.helloWorld} testID="hello-world">
-        Deployment Test
+        9:46
       </Text>
 
       {/* Quick Tasks */}

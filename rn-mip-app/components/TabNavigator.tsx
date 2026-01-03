@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, InteractionManager, Platform } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, InteractionManager, Platform, BackHandler } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getSiteData, SiteData, MenuItem, prefetchMainTabs } from '../lib/api';
 import { getConfig } from '../lib/config';
@@ -17,6 +17,23 @@ export function TabNavigator() {
   React.useEffect(() => {
     loadData();
   }, []);
+
+  // Handle Android back button
+  React.useEffect(() => {
+    if (Platform.OS !== 'android') return;
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      // If not on Home tab, navigate to Home
+      if (selectedTabUuid !== '__home__') {
+        setSelectedTabUuid('__home__');
+        return true; // Prevent default (exit app)
+      }
+      // On Home tab, allow default behavior (exit app)
+      return false;
+    });
+
+    return () => backHandler.remove();
+  }, [selectedTabUuid]);
 
   async function loadData() {
     try {

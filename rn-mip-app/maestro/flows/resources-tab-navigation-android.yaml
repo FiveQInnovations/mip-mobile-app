@@ -3,8 +3,8 @@ appId: com.fiveq.ffci
 # Test navigating to Resources tab
 # This test verifies that tapping the Resources tab navigates correctly
 
-# Setup: launch app and dismiss developer prompts
-- runFlow: _setup.yaml
+# Note: App should be launched via adb before running this test
+# The app is launched externally to avoid Maestro launchApp issues on Android
 
 # Verify we start on Home screen
 - assertVisible:
