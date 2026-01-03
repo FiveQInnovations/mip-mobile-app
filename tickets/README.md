@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
+(none)
 
 ## In Progress
 (none)
@@ -87,6 +87,7 @@ Quick reference for active tasks. See individual files for details.
 - [051](051-external-links-handling.md) - External Links Handling
 - [052](052-internal-links-url-mapping.md) - Internal Links URL-to-UUID Mapping
 - [054](054-internal-page-back-navigation.md) - Internal Page Back Navigation Not Working
+- [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
 
 ---
 
