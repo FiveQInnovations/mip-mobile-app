@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [037](037-error-offline-screen.md) - Error/Offline Screen Design
+(none)
 
 ## In Progress
 (none)
@@ -77,6 +77,7 @@ Quick reference for active tasks. See individual files for details.
 - [017](017-prayer-request-form-handling.md) - Prayer Request Form Handling
 - [018](018-chaplain-request-form-handling.md) - Chaplain Request Form Handling
 - [032](done/032-maestro-content-page-test.md) - Maestro Test: Content Page Rendering
+- [037](037-error-offline-screen.md) - Error/Offline Screen Design
 - [043](043-svg-logo-support.md) - Fix SVG Logo Support
 - [046](046-reliable-maestro-tests-android.md) - Reliable Maestro Tests for Android
 - [047](047-reliable-maestro-tests-ios.md) - Reliable Maestro Tests for iOS
