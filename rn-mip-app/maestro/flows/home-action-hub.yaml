@@ -2,12 +2,16 @@ appId: com.fiveq.ffci
 ---
 - runFlow: _setup.yaml
 
-# Wait for app to fully load after setup
+# Wait for app to fully load after setup - API call may take time
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+- waitForAnimationToEnd
 - waitForAnimationToEnd
 - waitForAnimationToEnd
 
+# First verify we can see Quick Tasks (indicates homepage loaded)
 - assertVisible:
-    text: "Firefighters for Christ International"
+    text: "Quick Tasks"
     optional: false
 
 - assertVisible:

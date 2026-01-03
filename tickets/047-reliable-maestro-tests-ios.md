@@ -70,13 +70,21 @@ Building on the work from Android testing ([016](016-reliable-android-emulator-l
 
 ### Test Status (2026-01-03)
 
-**Current Issue:** Tests are failing because the app isn't loading content. This appears to be due to:
-1. Metro bundler needs to be running (✅ now started)
-2. Backend API needs to be accessible (may need DDEV proxy if using local backend)
-3. App may need more time to load after launch
+**Current Issue:** Tests are failing because the app isn't rendering content after launch. 
 
-**Next Steps:**
-- Verify backend API is accessible from iOS simulator
-- Ensure DDEV proxy is running if using local DDEV backend
-- Add appropriate wait times for app loading
-- Test each flow individually once app loads successfully
+**Setup Status:**
+- ✅ Metro bundler is running (port 8081)
+- ✅ iOS Simulator is booted
+- ✅ Test suite script created
+- ✅ Individual test files updated
+- ❌ App not loading content (blank screen)
+
+**Investigation Needed:**
+- App may need manual launch first to connect to Metro
+- App may need to be rebuilt for iOS (`npx expo run:ios`)
+- Network/API connectivity may need verification
+- App may be showing error state that's not being detected
+
+**Test Requirements:**
+- Each individual test must pass 5 times consecutively to be marked as stable
+- Full test suite (`npm run test:maestro:ios:all`) must pass 3 times consecutively before marking suite as stable
