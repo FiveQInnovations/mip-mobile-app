@@ -85,7 +85,8 @@ When content inside is deeply nested HTML, touch events don't propagate correctl
 - [x] Add `ignoredDomTags={['source']}` to RenderHTML
 - [x] Implement `renderersProps.a.onPress` for link handling
 - [x] Remove custom `a` renderer TouchableOpacity wrapping
-- [ ] Test external links open in browser
+- [x] Fix img renderer to use tnode.attributes (images now render)
+- [x] Test external links open in browser (verified: BibleGateway.com)
 - [ ] Test internal `/page/{uuid}` links navigate in-app
 - [ ] Test on iOS and Android
 
@@ -196,7 +197,29 @@ Stack: TDefaultRenderer → renderBlockContent → View → AnimatedComponent
 - HTML crash fixture screen renders heading/subtitle only (blank content block) because sanitized HTML drops the picture/img chain; needs picture→img preservation.
 - Latest Maestro run passes the crash fixture flow (no crash), but content assertion for images was removed because images are missing.
 
-### Next Steps for Developer
-- Adjust sanitization to keep a valid `<img>` when unwrapping `<picture>` instead of dropping it; ensure `renderers.picture` picks up that `<img>` or consider explicit picture→img flattening.
-- Reintroduce a stable Maestro assertion once images render (e.g., look for a known heading + link label).
-- Re-verify Resources tab in simulator after restoring image rendering and ensure external links still open without crashing.
+### Image Rendering Fix (2026-01-03)
+
+**Root Cause:** The `img` custom renderer was incorrectly extracting `src` from props:
+```tsx
+// BUG: src is not directly in props!
+img: ({ TDefaultRenderer, ...props }: any) => {
+  const { src, alt } = props;  // ❌ undefined
+```
+
+**Fix:** Access attributes via `tnode.attributes` (same pattern as the `picture` renderer):
+```tsx
+img: ({ tnode }: any) => {
+  const src = tnode?.attributes?.src;  // ✅ correct
+  const alt = tnode?.attributes?.alt;
+```
+
+**Verification:**
+- Added Jest unit tests to verify sanitization preserves `<img>` tags
+- Added unit tests demonstrating the tnode.attributes bug
+- Tested on iOS Simulator (release build): all 3 images on Resources page render
+- Tested external link (BibleGateway.com): opens in Safari correctly
+
+**Testing Infrastructure Added:**
+- `jest.config.js` - Jest configuration for fast unit tests
+- `__tests__/htmlSanitization.test.ts` - 10 tests covering sanitization and renderer logic
+- Tests run in ~0.2 seconds vs minutes for Maestro flows

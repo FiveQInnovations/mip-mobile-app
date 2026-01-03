@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Linking, TouchableOpacity, useWindowDimensions, Image } from 'react-native';
+import { View, StyleSheet, Linking, useWindowDimensions, Image } from 'react-native';
 import RenderHTML, { HTMLSource } from 'react-native-render-html';
 import { useRouter } from 'expo-router';
 import { getConfig } from '../lib/config';
@@ -15,6 +15,24 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
   const config = getConfig();
   const apiBaseUrl = baseUrl || config.apiBaseUrl;
   const { width } = useWindowDimensions();
+
+  // Remove problematic tags before parsing to avoid react-native-render-html crashing
+  const sanitizeHtml = (input: string): string => {
+    if (!input) return '';
+    // Drop <source> tags entirely
+    let working = input.replace(/<source[^>]*\/?>/gi, '');
+
+    // Replace <picture>...<img>...</picture> with just the first <img> tag
+    working = working.replace(/<picture[^>]*>([\s\S]*?)<\/picture>/gi, (_m, inner) => {
+      const imgMatch = inner.match(/<img[^>]*>/i);
+      return imgMatch ? imgMatch[0] : '';
+    });
+
+    // Remove any img with empty src which can produce invalid nodes
+    working = working.replace(/<img[^>]*\ssrc\s*=\s*""[^>]*>/gi, '');
+
+    return working;
+  };
 
   // Extract UUID from /page/{uuid} URLs
   const extractUuidFromUrl = (href: string): string | null => {
@@ -65,8 +83,10 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
 
   // Custom renderer for image tags
   const renderers = {
-    img: ({ TDefaultRenderer, ...props }: any) => {
-      const { src, ...restProps } = props;
+    img: ({ tnode }: any) => {
+      // Attributes are in tnode.attributes, not directly in props
+      const src = tnode?.attributes?.src;
+      const alt = tnode?.attributes?.alt;
       const resolvedSrc = resolveImageSource(src);
 
       // If source is invalid or empty, don't render the image
@@ -79,12 +99,14 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
           source={{ uri: resolvedSrc }}
           style={[styles.htmlImage, { width: imageWidth }]}
           resizeMode="contain"
+          accessibilityLabel={alt}
         />
       );
     },
     picture: ({ TDefaultRenderer, tnode, ...props }: any) => {
       // Find the <img> child inside <picture> (may be nested in <source> siblings)
       const findImgNode = (node: any): any => {
+        if (!node) return null;
         if (node.tagName === 'img') return node;
         if (node.children) {
           for (const child of node.children) {
@@ -113,110 +135,74 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
       }
       return null;
     },
-    figure: ({ TDefaultRenderer, ...props }: any) => {
+    figure: ({ TDefaultRenderer, tnode, ...props }: any) => {
       // Render figure contents (will now properly handle picture inside)
-      return <TDefaultRenderer {...props} />;
-    },
-    a: ({ TDefaultRenderer, tnode, ...props }: any) => {
-      // Extract href from tnode.attributes (correct way per react-native-render-html docs)
-      const href = tnode?.attributes?.href || props.href;
-      // Exclude href from restProps to avoid passing it to TDefaultRenderer
-      const { href: _, ...restProps } = props;
-      
-      // Log all link render attempts
-      console.log('[HTMLContentRenderer] Link renderer called, href:', href, 'tnode:', tnode?.tagName, 'attributes:', tnode?.attributes);
-      
-      if (!href) {
-        console.log('[HTMLContentRenderer] No href found, rendering default');
-        return <TDefaultRenderer {...props} />;
-      }
-
-      // Check if it's a /page/{uuid} link (already transformed by server)
-      const uuid = extractUuidFromUrl(href);
-      if (uuid) {
-        console.log('[HTMLContentRenderer] UUID link detected:', uuid);
-        return (
-          <TouchableOpacity
-            onPress={() => {
-              console.log('[HTMLContentRenderer] UUID link tapped:', uuid);
-              if (onNavigate) {
-                onNavigate(uuid);
-              } else {
-                router.push(`/page/${uuid}`);
-              }
-            }}
-            activeOpacity={0.7}
-          >
-            <TDefaultRenderer {...restProps} />
-          </TouchableOpacity>
-        );
-      }
-
-      // Check if it's an internal link
-      const isInternal = isInternalLink(href);
-      console.log('[HTMLContentRenderer] Link type check - href:', href, 'isInternal:', isInternal);
-      
-      if (isInternal) {
-        // Try to extract UUID from internal URLs
-        const internalUuid = extractUuidFromUrl(href);
-        if (internalUuid) {
-          console.log('[HTMLContentRenderer] Internal UUID link detected:', internalUuid);
-          return (
-            <TouchableOpacity
-              onPress={() => {
-                console.log('[HTMLContentRenderer] Internal UUID link tapped:', internalUuid);
-                if (onNavigate) {
-                  onNavigate(internalUuid);
-                } else {
-                  router.push(`/page/${internalUuid}`);
-                }
-              }}
-              activeOpacity={0.7}
-            >
-              <TDefaultRenderer {...restProps} />
-            </TouchableOpacity>
-          );
-        }
-        // For other internal links, we could navigate or handle differently
-        // For now, just render as normal link
-        console.log('[HTMLContentRenderer] Internal link (non-UUID) detected:', href);
-        return (
-          <TouchableOpacity
-            onPress={() => {
-              // Could implement URL-to-UUID mapping here if needed
-              console.log('[HTMLContentRenderer] Internal link clicked:', href);
-            }}
-            activeOpacity={0.7}
-          >
-            <TDefaultRenderer {...restProps} />
-          </TouchableOpacity>
-        );
-      }
-
-      // External link - open in browser
-      console.log('[HTMLContentRenderer] External link detected:', href);
-      return (
-        <TouchableOpacity
-          onPress={() => {
-            console.log('[HTMLContentRenderer] External link tapped, calling Linking.openURL for:', href);
-            Linking.openURL(href)
-              .then(() => {
-                console.log('[HTMLContentRenderer] Linking.openURL succeeded for:', href);
-              })
-              .catch((err) => {
-                console.error('[HTMLContentRenderer] Linking.openURL failed for:', href, 'Error:', err);
-              });
-          }}
-          activeOpacity={0.7}
-        >
-          <TDefaultRenderer {...restProps} />
-        </TouchableOpacity>
-      );
-    },
+      // Explicitly pass tnode to ensure it's not lost
+      return <TDefaultRenderer tnode={tnode} {...props} />;
+    }
   };
 
+  const renderersProps = {
+    a: {
+      onPress: (event: any, href: string) => {
+        console.log('[HTMLContentRenderer] Link pressed:', href);
+
+        if (!href) return;
+
+        // Check if it's a /page/{uuid} link (already transformed by server)
+        const uuid = extractUuidFromUrl(href);
+        if (uuid) {
+          console.log('[HTMLContentRenderer] UUID link detected:', uuid);
+          if (onNavigate) {
+            onNavigate(uuid);
+          } else {
+            router.push(`/page/${uuid}`);
+          }
+          return;
+        }
+
+        // Check if it's an internal link
+        const isInternal = isInternalLink(href);
+        console.log('[HTMLContentRenderer] Link type check - href:', href, 'isInternal:', isInternal);
+        
+        if (isInternal) {
+          // Try to extract UUID from internal URLs
+          const internalUuid = extractUuidFromUrl(href);
+          if (internalUuid) {
+            console.log('[HTMLContentRenderer] Internal UUID link detected:', internalUuid);
+            if (onNavigate) {
+              onNavigate(internalUuid);
+            } else {
+              router.push(`/page/${internalUuid}`);
+            }
+            return;
+          }
+          // For other internal links, log for now
+          console.log('[HTMLContentRenderer] Internal link (non-UUID) detected:', href);
+          return;
+        }
+
+        // External link - open in browser
+        console.log('[HTMLContentRenderer] External link detected:', href);
+        Linking.openURL(href)
+          .then(() => {
+            console.log('[HTMLContentRenderer] Linking.openURL succeeded for:', href);
+          })
+          .catch((err) => {
+            console.error('[HTMLContentRenderer] Linking.openURL failed for:', href, 'Error:', err);
+          });
+      }
+    }
+  };
+
+  const cleanHtml = sanitizeHtml(html);
+  console.log('[HTMLContentRenderer] Original HTML length:', html.length);
+  console.log('[HTMLContentRenderer] Cleaned HTML length:', cleanHtml.length);
+  // Log first 100 chars of cleaned HTML to verify
+  console.log('[HTMLContentRenderer] Cleaned HTML start:', cleanHtml.substring(0, 100));
+
   const source: HTMLSource = {
-    html,
+    html: cleanHtml,
   };
 
   // Base styles for HTML content
@@ -306,6 +292,8 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
         source={source}
         tagsStyles={tagsStyles}
         renderers={renderers}
+        renderersProps={renderersProps}
+        ignoredDomTags={['source']}
         systemFonts={systemFonts}
         defaultTextProps={{
           style: baseStyle,
@@ -326,4 +314,3 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
 });
-
