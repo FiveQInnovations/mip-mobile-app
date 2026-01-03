@@ -26,19 +26,24 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
   const findMenuItemByLabel = (label: string) =>
     menu.find((item) => item.label?.toLowerCase() === label.toLowerCase());
 
-  const handleNavigate = (label: string, fallbackUrl?: string) => {
+  // Navigate by label (looks up in menu) or directly by UUID
+  // fallbackUrl: opens in browser if nothing else matches
+  // directUuid: navigate directly to this UUID (for pages not in menu)
+  const handleNavigate = (label: string, fallbackUrl?: string, directUuid?: string) => {
     const target = findMenuItemByLabel(label);
-    if (target?.page?.uuid && target.page.uuid !== '__home__') {
+    const targetUuid = target?.page?.uuid || directUuid;
+    
+    if (targetUuid && targetUuid !== '__home__') {
       // Check if this UUID is in our bottom tabs
-      const isTab = menu.some(item => item.page.uuid === target.page.uuid);
+      const isTab = menu.some(item => item.page.uuid === targetUuid);
       
       if (isTab) {
-        onSwitchTab(target.page.uuid);
+        onSwitchTab(targetUuid);
         return;
       }
 
       // If not a tab, push to stack
-      router.push(`/page/${target.page.uuid}`);
+      router.push(`/page/${targetUuid}`);
       return;
     }
     if (target?.page?.url) {
@@ -50,14 +55,53 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
     }
   };
 
+  // Quick Tasks: All items navigate in-app (no browser)
+  // UUIDs from ticket 055: Chapters=pik8ysClOFGyllBY, Events=6ffa8qmIpJHM0C3r, 
+  // Resources=uezb3178BtP3oGuU, Get Involved=3e56Ag4tc8SfnGAv
   const quickTasks = [
+    {
+      key: 'chapters',
+      label: 'Find a Chapter',
+      description: 'Connect with local firefighters',
+      icon: '📍',
+      onPress: () => handleNavigate('Chapters', undefined, 'pik8ysClOFGyllBY'),
+      testID: 'home-quick-chapters',
+    },
+    {
+      key: 'events',
+      label: 'Upcoming Events',
+      description: 'Retreats, trainings, & more',
+      icon: '📅',
+      onPress: () => handleNavigate('Events', undefined, '6ffa8qmIpJHM0C3r'),
+      testID: 'home-quick-events',
+    },
+    {
+      key: 'resources',
+      label: 'Resources',
+      description: 'PDFs, videos, & links',
+      icon: '📚',
+      onPress: () => handleNavigate('Resources', undefined, 'uezb3178BtP3oGuU'),
+      testID: 'home-quick-resources',
+    },
+    {
+      key: 'getinvolved',
+      label: 'Get Involved',
+      description: 'Outreach & volunteer',
+      icon: '🤝',
+      onPress: () => handleNavigate('Get Involved', undefined, '3e56Ag4tc8SfnGAv'),
+      testID: 'home-quick-getinvolved',
+    },
+  ];
+
+  // Get Connected: Items that open in browser
+  const getConnected = [
     {
       key: 'prayer',
       label: 'Prayer Request',
       description: 'Submit a prayer request',
       icon: '🙏',
       onPress: () => handleNavigate('Prayer Request', 'https://ffci.fiveq.dev/prayer-request'),
-      testID: 'home-quick-prayer',
+      testID: 'home-connected-prayer',
     },
     {
       key: 'chaplain',
@@ -65,43 +109,15 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
       description: 'Request chaplain support',
       icon: '✝️',
       onPress: () => handleNavigate('Chaplain Request', 'https://ffci.fiveq.dev/chaplain-request'),
-      testID: 'home-quick-chaplain',
-    },
-    {
-      key: 'resources',
-      label: 'Resources',
-      description: 'Browse PDFs and links',
-      icon: '📚',
-      onPress: () => handleNavigate('Resources'),
-      testID: 'home-quick-resources',
+      testID: 'home-connected-chaplain',
     },
     {
       key: 'donate',
       label: 'Donate',
-      description: 'Opens in browser',
+      description: 'Support the ministry',
       icon: '💝',
-      onPress: () =>
-        handleNavigate('Give', 'https://www.firefightersforchrist.org/donate'),
-      testID: 'home-quick-donate',
-    },
-  ];
-
-  const getConnected = [
-    {
-      key: 'chapters',
-      label: 'Find a Chapter',
-      description: 'Search chapters directory',
-      icon: '📍',
-      onPress: () => handleNavigate('Chapters'),
-      testID: 'home-getconnected-chapters',
-    },
-    {
-      key: 'events',
-      label: 'Upcoming Events',
-      description: 'View next 1–3 events',
-      icon: '📅',
-      onPress: () => handleNavigate('Events'),
-      testID: 'home-getconnected-events',
+      onPress: () => handleNavigate('Give', 'https://www.firefightersforchrist.org/donate'),
+      testID: 'home-connected-donate',
     },
   ];
 

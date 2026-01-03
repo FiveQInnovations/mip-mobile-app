@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [055](055-quick-tasks-in-app-alternatives.md) - Quick Tasks In-App Alternatives
 
 ## In Progress
-- [055](055-quick-tasks-in-app-alternatives.md) - Quick Tasks In-App Alternatives
+(none)
 
 ## Backlog
 

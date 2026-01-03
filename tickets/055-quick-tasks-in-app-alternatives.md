@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: qa
 area: rn-mip-app
 phase: core
 created: 2026-01-19
@@ -40,13 +40,13 @@ This keeps all content accessible while prioritizing native navigation for prima
 
 ## Tasks
 
-- [ ] Update `quickTasks` array in `HomeScreen.tsx`:
+- [x] Update `quickTasks` array in `HomeScreen.tsx`:
   - Chapters, Events, Resources, Get Involved
-- [ ] Update `getConnected` array in `HomeScreen.tsx`:
+- [x] Update `getConnected` array in `HomeScreen.tsx`:
   - Prayer Request, Chaplain Request, Donate
-- [ ] Update Maestro tests for new testIDs and labels
-- [ ] Test all Quick Tasks navigate in-app correctly
-- [ ] Test all Get Connected items open browser correctly
+- [x] Update Maestro tests for new testIDs and labels
+- [x] Test all Quick Tasks navigate in-app correctly
+- [x] Test all Get Connected items open browser correctly
 
 ## Related
 

@@ -15,10 +15,18 @@ appId: com.fiveq.ffci
     text: "Firefighters for Christ International"
 - assertVisible:
     text: "Quick Tasks"
+# Quick Tasks are all in-app: Chapters, Events, Resources, Get Involved
 - assertVisible:
-    text: "Prayer Request"
+    text: "Find a Chapter"
+- assertVisible:
+    text: "Upcoming Events"
 - assertVisible:
     text: "Resources"
+# Get Connected has browser items
+- assertVisible:
+    text: "Get Connected"
+- assertVisible:
+    text: "Prayer Request"
 
 # Verify tab bar is visible
 - assertVisible:
