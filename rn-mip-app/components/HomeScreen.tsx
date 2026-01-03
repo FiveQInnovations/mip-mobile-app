@@ -56,7 +56,7 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
       label: 'Prayer Request',
       description: 'Submit a prayer request',
       icon: '🙏',
-      onPress: () => handleNavigate('Prayer Request'),
+      onPress: () => handleNavigate('Prayer Request', 'https://ffci.fiveq.dev/prayer-request'),
       testID: 'home-quick-prayer',
     },
     {

@@ -104,8 +104,8 @@ const handleNavigate = (label: string, fallbackUrl?: string) => {
 - [x] Review the Kirby site code and the wsp-forms plugin to understand how forms are structured and handled
 - [x] Determine which form handling approach to use (WebView vs link out)
 - [x] Identify the Prayer Request form URL on the FFCI website
-- [ ] Add fallback URL to Prayer Request quick task button
-- [ ] Test form opens correctly in Safari/Chrome
+- [x] Add fallback URL to Prayer Request quick task button
+- [x] Test form opens correctly in Safari/Chrome
 - [ ] Verify form submission works from external browser
 - [ ] Ensure user can return to app after submission
 
