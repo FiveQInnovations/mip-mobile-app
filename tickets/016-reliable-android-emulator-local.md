@@ -15,13 +15,13 @@ Prove Android emulator reliability by creating a simple Maestro test that verifi
 - Break and Verify: Test fails when error is introduced, passes when error is removed
 
 ## Tasks
-- [ ] Create simple Maestro test for Android home screen
-- [ ] Test runs successfully 5 times in a row
+- [x] Create simple Maestro test for Android home screen
+- [x] Test runs successfully 5 times in a row
 - [ ] Implement Break and Verify pattern:
   - [ ] Introduce intentional error (e.g., wrong text assertion)
   - [ ] Verify test fails as expected
   - [ ] Remove error and verify test passes again
-- [ ] Document test and reliability results
+- [x] Document test and reliability results
 
 ## Notes
 
