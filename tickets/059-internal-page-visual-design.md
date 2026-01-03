@@ -72,20 +72,34 @@ Since this app is a **template for multiple ministries**:
 
 ## Implementation Plan (v1)
 
-Focus on general chrome improvements (no collection enhancements in v1):
+Focus on chrome and HTML rendering improvements (no collection enhancements in v1):
 
-1. **Back button styling**
-   - Add chevron icon instead of text arrow
-   - Use primaryColor accent
-   - Match HomeScreen row styling
+### 1. Back button styling
+- Add chevron icon instead of text arrow
+- Use primaryColor accent
+- Match HomeScreen row styling
 
-2. **Page header banner**
-   - Subtle colored bar or gradient using primaryColor
-   - Better title typography
+### 2. Page header/title area
+- Subtle colored bar or gradient using primaryColor
+- Better title typography with brand accent
 
-3. **Loading state**
-   - Replace spinner with skeleton placeholder
-   - Show content shape while loading
+### 3. HTMLContentRenderer enhancements
+Content pages like Resources get their visual richness from HTML. Enhance the tag styles:
+
+**Current state** (hardcoded colors):
+- Headings use `color: '#333'`
+- Blockquote has `borderLeftColor: '#ddd'`
+- Links use `config.primaryColor` ✓
+
+**Proposed changes**:
+- **Headings (h1-h4)** - Use `config.textColor` or `config.secondaryColor` for brand consistency
+- **Blockquotes** - Use `config.primaryColor` for left border, subtle background tint
+- **Spacing** - Slightly more generous margins between sections
+- **HR/dividers** - If present, use primaryColor accent
+
+### 4. Loading state
+- Replace spinner with skeleton placeholder
+- Show content shape while loading
 
 ---
 
@@ -115,6 +129,7 @@ Focus on general chrome improvements (no collection enhancements in v1):
 - [x] Research architecture and available data (scouting complete)
 - [ ] Improve back button styling (chevron icon, primaryColor accent)
 - [ ] Add header/banner with primaryColor
+- [ ] Enhance HTMLContentRenderer tag styles (headings, blockquotes, spacing)
 - [ ] Implement skeleton loading states
 - [ ] Test visual changes on iOS and Android
 
