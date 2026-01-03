@@ -72,6 +72,24 @@ The webhook server automatically:
 - Created `docs/eas-webhook-setup.md` - Complete setup guide
 - Created `docs/eas-webhook-running-guide.md` - Quick reference for running server
 
+### File Logging ✅
+
+Added file logging functionality to webhook server:
+- Logs directory: `logs/eas-webhook-YYYY-MM-DD.log` (one file per day)
+- Logs all webhook events, build processing, downloads, and BrowserStack uploads
+- JSON format with timestamps for easy parsing
+- Created automation script `scripts/test-webhook-automated.sh` for end-to-end testing
+
+### Local Testing Limitations ⚠️
+
+**Note:** While the webhook implementation is complete and functional, local testing has reliability issues:
+- Localtunnel connections are unstable and frequently disconnect
+- Tunnel URLs change on each restart, requiring webhook reconfiguration
+- Long-running builds (10-20 minutes) make it difficult to keep tunnels active
+- Manual deployment workflow (`scripts/deploy-to-browserstack.sh`) is more reliable for local use
+
+**Recommendation:** Webhook automation works best in production/CI environments with stable URLs. For local development, use the manual deployment script.
+
 ## Documentation
 
 - **[EAS Webhook Setup Guide](./rn-mip-app/docs/eas-webhook-setup.md)** - Complete setup and configuration instructions
