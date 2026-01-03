@@ -27,6 +27,7 @@ Quick reference for active tasks. See individual files for details.
 - [044](044-refresh-indicator-overlay.md) - Add Refresh Indicator During Background Refresh
 - [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
 - [055](055-quick-tasks-in-app-alternatives.md) - Quick Tasks In-App Alternatives
+- [056](056-homepage-featured-section-content.md) - Homepage Featured Section Content
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
