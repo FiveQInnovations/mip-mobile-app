@@ -18,7 +18,6 @@ These issues need to be fixed to provide a proper Android user experience that m
 - [x] Create reliable Maestro test for Android baseline UX verification
   - [x] Research Maestro test structure for Android back button testing
   - [x] Create Maestro flow to test back button navigation behavior
-  - [ ] Create Maestro flow to verify tab bar visibility above system navigation bar
   - [x] Test Maestro flows locally on Android emulator
 - [x] Fix back button behavior to navigate within app instead of closing
   - [x] Investigate React Navigation back handler configuration
@@ -96,6 +95,7 @@ These issues need to be fixed to provide a proper Android user experience that m
   - Different screen sizes and aspect ratios
 
 ### Maybe Later / Future Enhancements
+- [ ] Create Maestro flow to verify tab bar visibility above system navigation bar
 - [ ] Set up Maestro test execution on BrowserStack App Automate (supports Maestro v1.39.13+)
   - Can upload Maestro test suites (zipped Flow files) via REST API
   - Supports parallel test execution across multiple devices
