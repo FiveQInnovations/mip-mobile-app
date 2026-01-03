@@ -148,10 +148,6 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
         Firefighters for Christ International
       </Text>
 
-      <Text style={styles.helloWorld} testID="hello-world">
-        9:46
-      </Text>
-
       {/* Quick Tasks */}
       <Text style={styles.sectionHeader} testID="home-quick-heading">
         Quick Tasks
@@ -214,14 +210,6 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
         <Text style={styles.featuredDescription}>{featured.description}</Text>
       </TouchableOpacity>
 
-      {/* Homepage Type Info */}
-      {config.homepageType && (
-        <View style={styles.infoSection}>
-          <Text style={styles.infoLabel}>Homepage Type:</Text>
-          <Text style={styles.infoValue}>{config.homepageType}</Text>
-        </View>
-      )}
-
       {/* Dev Tools - Temporary */}
       <View style={styles.devSection}>
         <Text style={styles.devSectionHeader}>🔧 Dev Tools (Temp)</Text>
@@ -239,14 +227,6 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
           <Text style={styles.devButtonText}>
             {cacheCleared ? '✓ Cache Cleared!' : '🗑️ Clear Cache'}
           </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.devButton, styles.devSecondaryButton]}
-          onPress={() => router.push('/debug/html-crash')}
-          accessibilityLabel="Open HTML crash fixture"
-          testID="dev-html-crash"
-        >
-          <Text style={styles.devButtonText}>Open HTML Crash Fixture</Text>
         </TouchableOpacity>
         {cacheCleared && (
           <Text style={styles.devMessage}>
@@ -310,13 +290,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 24,
     color: '#333',
-  },
-  helloWorld: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 24,
-    color: '#2563eb',
   },
   sectionHeader: {
     fontSize: 20,
@@ -427,21 +400,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#475569',
   },
-  infoSection: {
-    padding: 15,
-    backgroundColor: '#e3f2fd',
-    borderRadius: 8,
-  },
-  infoLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1976d2',
-    marginBottom: 5,
-  },
-  infoValue: {
-    fontSize: 16,
-    color: '#333',
-  },
   devSection: {
     marginTop: 24,
     padding: 16,
@@ -463,10 +421,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 8,
     alignItems: 'center',
-  },
-  devSecondaryButton: {
-    marginTop: 12,
-    backgroundColor: '#0f766e',
   },
   devButtonText: {
     color: '#fff',

@@ -8,16 +8,18 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [053](053-remove-html-crash-debug-screen.md) - Remove Debug Elements from HomeScreen
 
 ## In Progress
-- [053](053-remove-html-crash-debug-screen.md) - Remove Debug Elements from HomeScreen
+(none)
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
 - [055](055-quick-tasks-in-app-alternatives.md) - Quick Tasks In-App Alternatives
 - [056](056-homepage-featured-section-content.md) - Homepage Featured Section Content
+- [058](058-tab-icons.md) - Add Icons to Each Tab
+- [059](059-internal-page-visual-design.md) - Internal Page Visual Design Improvements
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
