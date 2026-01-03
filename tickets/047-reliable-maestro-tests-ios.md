@@ -130,14 +130,31 @@ done
 
 **Findings:**
 - ✅ Tests properly detect regressions
-- ✅ iOS rebuild time: ~1:41 (101 seconds) - significant time investment for each change
+- ✅ iOS rebuild time: ~1:41 (101 seconds) for full rebuild, ~24 seconds for cached rebuild
 - ✅ Test failure was immediate and clear - assertion failed as expected
-- ⚠️ **Important:** Each code change requires full rebuild (~1:41) before tests can verify the change
 
-**Recommendations:**
-- Use Metro bundler hot reload for development (faster iteration)
-- Full rebuilds (`npx expo run:ios`) are needed when:
+**Key Difference: Android vs iOS Testing:**
+
+**Android Testing:**
+- Uses `adb` to launch app directly
+- Installs standalone APK (no Metro bundler)
+- **Full rebuild required for EVERY change** (JavaScript or native)
+- No hot reload available for testing
+
+**iOS Testing:**
+- Uses `launchApp` which launches dev client app
+- **Dev client CAN connect to Metro bundler** (unlike Android)
+- **Metro bundler allows hot reload** for JavaScript changes
+- Full rebuild (`npx expo run:ios`) only needed for:
   - Native code changes
   - Pod dependencies change
-  - App configuration changes
-- For test verification, ensure app is rebuilt after any production code changes
+  - App configuration changes (app.json, Info.plist)
+  - First build or after cleaning
+
+**Recommendations:**
+- **For JavaScript/React code changes:** Use Metro bundler - no rebuild needed!
+  - Start Metro: `npm start` or `npx expo start`
+  - Run tests: `maestro test` - Metro will serve updated JavaScript
+  - Much faster iteration (~seconds vs ~1:41)
+- **For native/config changes:** Full rebuild required (`npx expo run:ios`)
+- **For test verification:** Can use Metro bundler for JS changes, rebuild only for native changes
