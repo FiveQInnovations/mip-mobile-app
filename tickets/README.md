@@ -11,20 +11,15 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [053](053-remove-html-crash-debug-screen.md) - Remove Debug Elements from HomeScreen
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [053](053-remove-html-crash-debug-screen.md) - Remove HTML Crash Debug Screen
 - [055](055-quick-tasks-in-app-alternatives.md) - Quick Tasks In-App Alternatives
 - [056](056-homepage-featured-section-content.md) - Homepage Featured Section Content
 
 ### 🟡 Nice to Have
-- [019](019-form-detection-api-flag.md) - Form Detection API Flag
-- [020](020-webview-form-pages.md) - WebView Full-Page Fallback for Form Pages
-- [026](026-collection-pull-to-refresh.md) - Collection Pull-to-Refresh
-- [027](027-collection-pagination.md) - Collection Pagination
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
 - [044](044-refresh-indicator-overlay.md) - Add Refresh Indicator During Background Refresh
 - [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
