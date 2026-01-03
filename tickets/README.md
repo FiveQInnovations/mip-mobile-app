@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## In Progress
-- [011](011-android-baseline-ux.md) - Android Baseline UX Issues
+(none)
 
 ## Backlog
 
@@ -25,6 +25,7 @@ Quick reference for active tasks. See individual files for details.
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
 - [043](043-svg-logo-support.md) - Fix SVG Logo Support
 - [044](044-refresh-indicator-overlay.md) - Add Refresh Indicator During Background Refresh
+- [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
@@ -69,6 +70,7 @@ Quick reference for active tasks. See individual files for details.
 - [009](009-update-package-versions-expo-sdk.md) - Update package versions to match Expo SDK requirements
 - [010](010-integrate-browserstack-api.md) - Integrate BrowserStack App Live API
 - [010](done/010-integrate-browserstack-api.md) - Integrate BrowserStack App Live API
+- [011](011-android-baseline-ux.md) - Android Baseline UX Issues
 - [012](012-eas-build-webhook.md) - EAS Build Completion Webhook
 - [014](014-setup-expo-mcp-server.md) - Set Up Expo MCP Server Locally
 

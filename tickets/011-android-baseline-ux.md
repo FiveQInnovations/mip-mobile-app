@@ -1,7 +1,8 @@
 ---
-status: in-progress
+status: done
 area: rn-mip-app
 created: 2026-01-02
+completed: 2026-01-02
 ---
 
 # Android Baseline UX Issues
@@ -117,4 +118,9 @@ These issues need to be fixed to provide a proper Android user experience that m
 - Fix verified with Maestro test - test passes successfully
 - Test uses adb to launch app (avoids Maestro launchApp issues on Android)
 - App properly reloads Home screen when navigating back (verified with content change test)
+- Fix tested and verified on BrowserStack - works correctly
+- Built and deployed to BrowserStack App Live (App ID: `bs://135d65428e373b4ac2fa3084ebf4b5c05b284c12`)
+
+### Future Enhancement
+- See ticket #045 for potential improvement: maintain tab navigation history instead of always going to Home
 
