@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, InteractionManager } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, InteractionManager, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getSiteData, SiteData, MenuItem, prefetchMainTabs } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { TabScreen } from './TabScreen';
@@ -11,6 +12,7 @@ export function TabNavigator() {
   const [error, setError] = React.useState<string | null>(null);
   const [selectedTabUuid, setSelectedTabUuid] = React.useState<string | null>(null);
   const config = getConfig();
+  const insets = useSafeAreaInsets();
 
   React.useEffect(() => {
     loadData();
@@ -94,7 +96,7 @@ export function TabNavigator() {
       </View>
 
       {/* Bottom Tab Bar */}
-      <View style={styles.tabBar}>
+      <View style={[styles.tabBar, { paddingBottom: Platform.OS === 'android' ? insets.bottom : 0 }]}>
         {allTabs.map((item: MenuItem, index: number) => {
           const isSelected = selectedTabUuid === item.page.uuid;
           return (
