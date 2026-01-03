@@ -24,6 +24,13 @@ This should navigate to the corresponding page within the app using its UUID, no
 - [ ] Consider caching URL-to-UUID mappings for performance
 - [ ] Test on both iOS and Android
 
+## Research Findings (2026-01-03)
+- Current client handling: `HTMLContentRenderer` only auto-navigates `/page/{uuid}`; other “internal” links are logged and not navigated. A URL-to-UUID step is still needed for slugs like `/resources/ffc-media-ministry`.
+- Server transformer: `wsp-mobile/lib/pages.php` `transformInternalLinks()` already rewrites anchors to `/page/{uuid}` when the host matches. It skips different-domain links and also skips `page://{uuid}` scheme used in button blocks; that likely leaves links untransformed.
+- Confirmed content: Resources → FFC Media Ministry page slug `/resources/ffc-media-ministry` has UUID `i0dejBvPtZELv9j6`; other mapped slugs: mobile app `Po6XqRpOh6DwJeqF`, store `lLzSDKBGJdNxpeGU`, chaplain program `d03IfODmmcTxLioa`, chaplain resources `PCLlwORLKbMnLPtN`, prayer request form `iTQ9ZV8UId5Chxew`.
+- Likely fix path: either (a) extend `transformInternalLinks()` to treat `page://{uuid}` as internal and to allow known host aliases, so HTML arrives as `/page/{uuid}`; or (b) add an API endpoint for slug→UUID and resolve client-side on click; or (c) add a client-side map/cache for common slugs. Server-side rewrite keeps app logic minimal.
+- Verification to do: fetch `mobile-api/page/{resourcesUuid}` to inspect rendered HTML and confirm whether the link currently appears as full URL, slug, or `page://{uuid}`; after fix, ensure the anchor becomes `/page/i0dejBvPtZELv9j6` and that in-app navigation works.
+
 ## Solution Options
 
 ### Option A: API Endpoint for URL Mapping
