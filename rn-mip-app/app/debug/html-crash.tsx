@@ -8,7 +8,7 @@ export default function HtmlCrashScreen() {
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
       <Text
         style={styles.title}
-        accessibilityLabel="HTML crash fixture heading"
+        accessibilityLabel="HTML Crash Fixture"
         testID="html-crash-heading"
       >
         HTML Crash Fixture
