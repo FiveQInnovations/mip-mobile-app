@@ -107,7 +107,49 @@ eas build --profile testing --platform android
 **Trade-off:** Slower iteration (rebuild vs hot reload), but consistency matters more for automated testing.
 
 **Next Steps:**
-- [ ] Try local Android release build: `npx expo run:android --variant release`
-- [ ] Install on emulator and verify app launches without dev menu
-- [ ] Run existing Maestro test against preview build
-- [ ] Verify 5 consecutive successful runs
+- [x] Try local Android release build: `./gradlew assembleRelease`
+- [x] Install on emulator and verify app launches without dev menu
+- [x] Run existing Maestro test against preview build
+- [x] Verify 5 consecutive successful runs
+
+---
+
+### Test Results: Preview Build Success (2026-01-03)
+
+**Build Method:** Local Gradle release build (`./gradlew assembleRelease`)
+
+**Test Execution:**
+- Built release APK: `android/app/build/outputs/apk/release/app-release.apk`
+- Installed on emulator: `Maestro_Pixel_6_API_30_1` (emulator-5554)
+- Test file: `maestro/flows/homepage-loads-android.yaml`
+
+**Key Findings:**
+1. ✅ Release build works without Metro server - no dev menu prompts
+2. ✅ App launches successfully with `adb shell am start`
+3. ⚠️ Maestro's `launchApp` command fails with release builds - must use adb
+4. ⚠️ `clearState` closes the app - removed from test flow
+5. ✅ Test passes consistently when app is launched via adb before test
+
+**Test Results - 5 Consecutive Runs:**
+- Run 1: ✅ PASSED
+- Run 2: ✅ PASSED
+- Run 3: ✅ PASSED
+- Run 4: ✅ PASSED
+- Run 5: ✅ PASSED
+
+**All assertions passed in all runs:**
+- "Firefighters for Christ International" visible
+- "Quick Tasks" visible
+- "Prayer Request" visible
+- "Resources" visible
+- "Home" tab visible
+
+**Test Command:**
+```bash
+adb shell am force-stop com.fiveq.ffci && \
+adb shell am start -n com.fiveq.ffci/.MainActivity && \
+sleep 3 && \
+maestro test maestro/flows/homepage-loads-android.yaml
+```
+
+**Conclusion:** Preview/release builds provide deterministic testing without Metro dependency. The workflow is reliable when using adb to launch the app before running Maestro tests.

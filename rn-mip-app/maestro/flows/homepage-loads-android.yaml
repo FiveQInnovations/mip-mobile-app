@@ -7,7 +7,8 @@ appId: com.fiveq.ffci
 #   adb shell am start -n com.fiveq.ffci/.MainActivity
 # Then run the test (it will work without launchApp if app is already running)
 
-- launchApp
+# App should be launched with adb before running this test:
+#   adb shell am force-stop com.fiveq.ffci && adb shell am start -n com.fiveq.ffci/.MainActivity
 - waitForAnimationToEnd
 
 # Wait for homepage to load
@@ -15,7 +16,7 @@ appId: com.fiveq.ffci
 
 # Confirm key homepage content renders
 - assertVisible:
-    text: "FFCI"
+    text: "Firefighters for Christ International"
 - assertVisible:
     text: "Quick Tasks"
 - assertVisible:
