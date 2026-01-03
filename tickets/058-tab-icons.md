@@ -18,11 +18,9 @@ The bottom tab bar currently shows text labels for each tab but lacks icons. The
 - API menu items from `Mobilemainmenu` don't include icons
 - Tab bar renders text-only for most tabs
 
-## Solution Options
+## Solution
 
-1. **Hardcode icons in app** - Map tab labels to appropriate icons in the React Native app
-2. **Add icons to API** - Extend wsp-mobile plugin to include icon names in menu response
-3. **Use icon library** - Install `@expo/vector-icons` or similar for native icons
+**Hardcode icons in app** - Map tab labels to icons using `@expo/vector-icons` (bundled with Expo). Icons are manually decided in the app code rather than driven by API.
 
 ## Tasks
 
@@ -48,23 +46,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 <Ionicons name="home" size={24} color="#666" />
 ```
 
-### Kirby Blueprint Already Has Icon Field
-- `wsp-mobile/blueprints/tabs/mobile.yml` lines 48-51 define an `icon` field in `mobileMainMenu`
-- However, it's a `files` type (expects uploaded image), not an icon name string
-- API option would require: blueprint change + `menu.php` update to include icon in response
-
 ### Code References
 - **TabNavigator.tsx lines 126-128**: Already has conditional icon rendering
 - **TabNavigator.tsx line 86**: Home tab hardcoded with emoji `🏠`
 - **TabNavigator.tsx lines 180-183**: `tabIcon` style already exists (fontSize: 20, marginBottom: 4)
 - **api.ts lines 13-17**: `MenuItem` interface already has `icon?: string`
-
-### Recommended Approach
-**Option 1 (Hardcode icons in app)** is the fastest path:
-1. No API changes needed
-2. @expo/vector-icons already available
-3. Tab labels are well-known (Home, Resources, Prayer Request, Chaplain Request)
-4. Create a simple label-to-icon mapping
 
 ### Implementation Outline
 1. Import `Ionicons` from `@expo/vector-icons/Ionicons`
