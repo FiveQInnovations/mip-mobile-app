@@ -1,5 +1,6 @@
 ---
-status: in-progress
+status: done
+completed: 2026-01-02
 area: rn-mip-app
 created: 2026-01-20
 ---
@@ -20,7 +21,7 @@ This can lead to configuration drift between what's in `app.json` and what's act
   - [x] Updated `.gitignore` to ignore `ios/` and `android/` folders
   - [x] Remove native folders from git tracking: `git rm -r --cached ios/ android/`
   - [x] Commit changes
-- [ ] Verify EAS builds use correct configuration - **PENDING: Waiting for next EAS build to verify native folders are regenerated from app.json**
+- [x] Verify EAS builds use correct configuration - **VERIFIED: Build 71e09527-d4e9-4b06-8ac0-7b572c2a6ea4 succeeded with CNG (native folders regenerated from app.json)**
 - [x] Document decision and rationale
 
 ## Notes
@@ -57,7 +58,7 @@ This can lead to configuration drift between what's in `app.json` and what's act
 1. ✅ Add `ios/` and `android/` to `.gitignore` - **COMPLETED**
 2. ✅ Remove native folders from git tracking: `git rm -r --cached ios/ android/` - **COMPLETED**
 3. ✅ Commit the changes - **COMPLETED** (commit: `95248d4`)
-4. ⏳ Verify EAS builds regenerate native folders correctly from `app.json` - **PENDING** (next EAS build)
+4. ✅ Verify EAS builds regenerate native folders correctly from `app.json` - **VERIFIED** (build 71e09527-d4e9-4b06-8ac0-7b572c2a6ea4, 2026-01-02)
 5. ✅ Local development: Run `npx expo prebuild` when needed, or let `expo run:ios`/`expo run:android` handle it automatically - **DOCUMENTED**
 
 **Implementation Summary (2026-01-20):**
@@ -69,4 +70,17 @@ This can lead to configuration drift between what's in `app.json` and what's act
 - All `app.json` properties will be synced during builds (orientation, icon, splash, ios, android, scheme, plugins)
 
 **Note:** The custom `NSAppTransportSecurity` settings in `app.json` (lines 18-36) will be automatically applied to the regenerated `Info.plist` during prebuild, so no custom config plugins are needed for this use case.
+
+### Verification Complete (2026-01-02) ✅
+
+**Build Verified:** `71e09527-d4e9-4b06-8ac0-7b572c2a6ea4`
+- Build commit: `c0e038a` (after CNG implementation commit `95248d4`)
+- Status: ✅ Finished successfully
+- Verification:
+  - ✅ No native folders tracked in git at build commit
+  - ✅ `.gitignore` includes `ios/` and `android/` 
+  - ✅ Build succeeded (EAS Build automatically ran `expo prebuild`)
+  - ✅ App works correctly on BrowserStack (tested manually)
+  
+**Conclusion:** CNG is working correctly. EAS Build automatically regenerates native folders from `app.json` on each build, ensuring all configuration properties (orientation, icon, splash, ios, android, scheme, plugins) are properly synced.
 

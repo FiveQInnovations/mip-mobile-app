@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## In Progress
-- [008](008-resolve-native-config-sync-issues.md) - Resolve native config sync issues (app.json vs native folders)
+(none)
 
 ## Backlog
 - [011](011-android-baseline-ux.md) - Android Baseline UX Issues
@@ -26,6 +26,7 @@ Quick reference for active tasks. See individual files for details.
 - [004](004-resources-page-loading-delay.md) - Resources page loading delay
 - [006](006-add-expo-to-gitignore.md) - Add .expo directory to .gitignore
 - [007](007-install-expo-constants-peer-dependency.md) - Install missing peer dependency: expo-constants
+- [008](008-resolve-native-config-sync-issues.md) - Resolve native config sync issues (app.json vs native folders)
 - [009](009-update-package-versions-expo-sdk.md) - Update package versions to match Expo SDK requirements
 - [010](010-integrate-browserstack-api.md) - Integrate BrowserStack App Live API
 - [010](done/010-integrate-browserstack-api.md) - Integrate BrowserStack App Live API
