@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [059](059-internal-page-visual-design.md) - Internal Page Visual Design Improvements
+(none)
 
 ## In Progress
 (none)
@@ -86,6 +86,7 @@ Quick reference for active tasks. See individual files for details.
 - [056](056-homepage-featured-section-content.md) - Homepage Featured Section Content
 - [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
 - [058](058-tab-icons.md) - Add Icons to Each Tab
+- [059](059-internal-page-visual-design.md) - Internal Page Visual Design Improvements
 
 ---
 
