@@ -18,6 +18,7 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🔴 Core Functionality (FFCI)
 - [053](053-remove-html-crash-debug-screen.md) - Remove HTML Crash Debug Screen
+- [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
 
 ### 🟡 Nice to Have
 - [019](019-form-detection-api-flag.md) - Form Detection API Flag
