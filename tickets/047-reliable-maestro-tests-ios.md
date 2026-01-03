@@ -117,3 +117,27 @@ for i in {1..3}; do
   npm run test:maestro:ios:all
 done
 ```
+
+### Break and Verify Test (2026-01-03)
+
+**Purpose:** Verify that tests actually catch regressions by intentionally breaking the code and confirming tests fail.
+
+**Test Performed:**
+- Changed "Quick Tasks" → "Broken Text" in `HomeScreen.tsx`
+- Rebuilt iOS app: **1:41.02 elapsed time** (101 seconds)
+- Ran test: ✅ **Test correctly failed** - Assertion for "Quick Tasks" failed as expected
+- Reverted change and rebuilt
+
+**Findings:**
+- ✅ Tests properly detect regressions
+- ✅ iOS rebuild time: ~1:41 (101 seconds) - significant time investment for each change
+- ✅ Test failure was immediate and clear - assertion failed as expected
+- ⚠️ **Important:** Each code change requires full rebuild (~1:41) before tests can verify the change
+
+**Recommendations:**
+- Use Metro bundler hot reload for development (faster iteration)
+- Full rebuilds (`npx expo run:ios`) are needed when:
+  - Native code changes
+  - Pod dependencies change
+  - App configuration changes
+- For test verification, ensure app is rebuilt after any production code changes
