@@ -9,9 +9,10 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [052](052-internal-links-url-mapping.md) - Internal Links URL-to-UUID Mapping
+- [054](054-internal-page-back-navigation.md) - Internal Page Back Navigation Not Working
 
 ## In Progress
-- [054](054-internal-page-back-navigation.md) - Internal Page Back Navigation Not Working
+(none)
 
 ## Backlog
 

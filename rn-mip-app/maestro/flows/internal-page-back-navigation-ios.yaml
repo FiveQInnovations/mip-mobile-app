@@ -17,20 +17,23 @@ appId: com.fiveq.ffci
     optional: false
 - waitForAnimationToEnd
 
-# Verify we're on Resources screen
+# Verify we're on Resources screen and wait for content to fully load
 - assertVisible:
     text: "Resources for Firefighters and Their Families"
     optional: false
-
-# Scroll down to find the "FFC Media Ministry" link
-- scroll
 - waitForAnimationToEnd
-- scroll
 - waitForAnimationToEnd
 
-# Tap on "FFC Media Ministry" link to navigate to internal page
+# Scroll down to find and tap the "FFC Media Ministry" link
+- scrollUntilVisible:
+    element:
+      text: "FFC Media Ministry"
+    direction: DOWN
+    timeout: 20000
+- waitForAnimationToEnd
 - tapOn:
     text: "FFC Media Ministry"
+    index: 0
     optional: false
 - waitForAnimationToEnd
 

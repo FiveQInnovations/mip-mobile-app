@@ -48,6 +48,7 @@ STABLE_TESTS=(
     "maestro/flows/tab-switch-from-home-ios.yaml"
     "maestro/flows/content-page-rendering-ios.yaml"
     "maestro/flows/resources-tab-navigation-ios.yaml"
+    "maestro/flows/internal-page-back-navigation-ios.yaml"
 )
 
 # Track results
