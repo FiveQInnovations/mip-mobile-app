@@ -12,9 +12,11 @@ researched: 2026-01-03
 Currently, external links in HTML content (like "Find Out How" on the Resources page) don't open properly. These links should open in the device's default browser.
 
 ## Problem
-On the Resources page, the "Find Out How" link should open: https://harvest.org/know-god/how-to-know-god/
+On the Resources page, external links are NOT opening:
+- ❌ "Find Out How" link should open: https://harvest.org/know-god/how-to-know-god/ but does NOTHING
+- ❌ BibleGateway link does NOT open
 
-Currently, external links may not be handled correctly in `HTMLContentRenderer.tsx`. The link renderer checks for internal links but may not properly handle external links that should open in Safari/Chrome.
+Currently, external links are not being handled correctly in `HTMLContentRenderer.tsx`. Despite code that appears correct (`Linking.openURL()` for external links), the links fail to open when tapped.
 
 ---
 
@@ -95,12 +97,19 @@ The Donate button in `HomeScreen.tsx` works via `handleNavigate()` which:
 
 This is **separate** from `HTMLContentRenderer` and works independently.
 
-### Possible Issues to Verify
+### Testing Results (2026-01-03)
 
-1. **The code looks correct** - external links SHOULD work. Need to verify if the issue is real.
-2. **Possible silent failure** - `Linking.openURL()` might fail silently without error handling
-3. **TouchableOpacity overlap** - Parent container might be absorbing touch events
-4. **HTML rendering** - Button blocks might not render to plain `<a>` tags as expected
+**CONFIRMED ISSUE**: Testing revealed that external links are NOT working:
+- ❌ "Find Out How" link does NOT open anything
+- ❌ BibleGateway link does NOT open anything
+
+### Possible Root Causes
+
+1. **Silent failure** - `Linking.openURL()` might fail silently without error handling
+2. **TouchableOpacity overlap** - Parent container might be absorbing touch events
+3. **HTML rendering** - Button blocks might not render to plain `<a>` tags as expected
+4. **Event handler not firing** - The `onPress` handler might not be triggered
+5. **Linking module issue** - React Native Linking might not be properly configured
 
 ### Recommended Verification Steps
 
@@ -122,11 +131,12 @@ Linking.openURL(href).catch(err => console.error('Linking error:', err));
 ---
 
 ## Tasks
-- [ ] Verify if external links actually work (may be a false positive issue)
-- [ ] Add error handling/logging to `Linking.openURL()` calls
-- [ ] Test "Find Out How" link on Resources page opens https://harvest.org/know-god/how-to-know-god/
-- [ ] Test BibleGateway.com link on Resources page
-- [ ] Verify other external links throughout the app work correctly
+- [x] Verify if external links actually work (may be a false positive issue) - **CONFIRMED: Links do NOT work**
+- [ ] Add error handling/logging to `Linking.openURL()` calls to diagnose the issue
+- [ ] Debug why "Find Out How" link does NOT open https://harvest.org/know-god/how-to-know-god/
+- [ ] Debug why BibleGateway link does NOT open
+- [ ] Fix the root cause preventing external links from opening
+- [ ] Verify other external links throughout the app work correctly after fix
 - [ ] Test on both iOS and Android
 
 ## Related Files

@@ -4,6 +4,7 @@ import { getPageWithCache, PageData } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
 import { hasCachedPage } from '../lib/pageCache';
+import { ErrorScreen } from './ErrorScreen';
 
 interface TabScreenProps {
   uuid: string;
@@ -14,7 +15,7 @@ export function TabScreen({ uuid }: TabScreenProps) {
   const [currentPageData, setCurrentPageData] = React.useState<PageData | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<Error | null>(null);
   const config = getConfig();
 
   const currentUuid = pageStack[pageStack.length - 1];
@@ -95,7 +96,7 @@ export function TabScreen({ uuid }: TabScreenProps) {
         setRefreshing(false);
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to load page');
+      setError(err instanceof Error ? err : new Error(err.message || 'Failed to load page'));
       console.error(`[TabScreen] Error loading page at ${Date.now()}:`, err);
       setLoading(false);
       setRefreshing(false);
@@ -126,14 +127,7 @@ export function TabScreen({ uuid }: TabScreenProps) {
   }
 
   if (error) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Error: {error}</Text>
-        <Text style={styles.retryText} onPress={loadPage}>
-          Tap to retry
-        </Text>
-      </View>
-    );
+    return <ErrorScreen error={error} onRetry={loadPage} retrying={loading || refreshing} />;
   }
 
   if (!currentPageData) {

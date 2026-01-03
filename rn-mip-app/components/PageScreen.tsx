@@ -3,6 +3,7 @@ import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator } from 're
 import { getPage, PageData } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
+import { ErrorScreen } from './ErrorScreen';
 
 interface PageScreenProps {
   uuid: string;
@@ -11,7 +12,7 @@ interface PageScreenProps {
 export function PageScreen({ uuid }: PageScreenProps) {
   const [pageData, setPageData] = React.useState<PageData | null>(null);
   const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<Error | null>(null);
   const config = getConfig();
 
   React.useEffect(() => {
@@ -25,7 +26,7 @@ export function PageScreen({ uuid }: PageScreenProps) {
       setPageData(data);
       setError(null);
     } catch (err: any) {
-      setError(err.message || 'Failed to load page');
+      setError(err instanceof Error ? err : new Error(err.message || 'Failed to load page'));
       console.error('Error loading page:', err);
     } finally {
       setLoading(false);
@@ -42,14 +43,7 @@ export function PageScreen({ uuid }: PageScreenProps) {
   }
 
   if (error) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Error: {error}</Text>
-        <Text style={styles.retryText} onPress={loadPage}>
-          Tap to retry
-        </Text>
-      </View>
-    );
+    return <ErrorScreen error={error} onRetry={loadPage} retrying={loading} />;
   }
 
   if (!pageData) {

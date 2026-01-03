@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [037](037-error-offline-screen.md) - Error/Offline Screen Design
 
 ## In Progress
-- [037](037-error-offline-screen.md) - Error/Offline Screen Design
+(none)
 
 ## Backlog
 

@@ -5,11 +5,12 @@ import { getSiteData, SiteData, MenuItem, prefetchMainTabs } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { TabScreen } from './TabScreen';
 import { HomeScreen } from './HomeScreen';
+import { ErrorScreen } from './ErrorScreen';
 
 export function TabNavigator() {
   const [siteData, setSiteData] = React.useState<SiteData | null>(null);
   const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<Error | null>(null);
   const [selectedTabUuid, setSelectedTabUuid] = React.useState<string | null>(null);
   const config = getConfig();
   const insets = useSafeAreaInsets();
@@ -51,7 +52,7 @@ export function TabNavigator() {
         prefetchMainTabs(data.menu);
       });
     } catch (err: any) {
-      setError(err.message || 'Failed to load data');
+      setError(err instanceof Error ? err : new Error(err.message || 'Failed to load data'));
       console.error('Error loading site data:', err);
     } finally {
       setLoading(false);
@@ -68,14 +69,7 @@ export function TabNavigator() {
   }
 
   if (error) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>API Error: {error}</Text>
-        <Text style={styles.retryText} onPress={loadData}>
-          Tap to retry
-        </Text>
-      </View>
-    );
+    return <ErrorScreen error={error} onRetry={loadData} retrying={loading} />;
   }
 
   if (!siteData || siteData.menu.length === 0) {
