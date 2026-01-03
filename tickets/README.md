@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [048](048-content-page-images-not-rendering.md) - Content Page Images Not Rendering
+(none)
 
 ## In Progress
 (none)
@@ -19,6 +19,8 @@ Quick reference for active tasks. See individual files for details.
 - [017](017-prayer-request-form-handling.md) - Prayer Request Form Handling
 - [018](018-chaplain-request-form-handling.md) - Chaplain Request Form Handling
 - [037](037-error-offline-screen.md) - Error/Offline Screen Design
+- [051](051-external-links-handling.md) - External Links Handling
+- [052](052-internal-links-url-mapping.md) - Internal Links URL-to-UUID Mapping
 
 ### 🟡 Nice to Have
 - [019](019-form-detection-api-flag.md) - Form Detection API Flag
@@ -79,6 +81,7 @@ Quick reference for active tasks. See individual files for details.
 - [043](043-svg-logo-support.md) - Fix SVG Logo Support
 - [046](046-reliable-maestro-tests-android.md) - Reliable Maestro Tests for Android
 - [047](047-reliable-maestro-tests-ios.md) - Reliable Maestro Tests for iOS
+- [048](048-content-page-images-not-rendering.md) - Content Page Images Not Rendering
 - [049](049-ticket-generator-qa-status.md) - Ticket Generator Does Not Recognize "qa" Status
 
 ---
