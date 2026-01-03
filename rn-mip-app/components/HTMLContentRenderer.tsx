@@ -117,19 +117,28 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
       // Render figure contents (will now properly handle picture inside)
       return <TDefaultRenderer {...props} />;
     },
-    a: ({ TDefaultRenderer, ...props }: any) => {
-      const { href, ...restProps } = props;
+    a: ({ TDefaultRenderer, tnode, ...props }: any) => {
+      // Extract href from tnode.attributes (correct way per react-native-render-html docs)
+      const href = tnode?.attributes?.href || props.href;
+      // Exclude href from restProps to avoid passing it to TDefaultRenderer
+      const { href: _, ...restProps } = props;
+      
+      // Log all link render attempts
+      console.log('[HTMLContentRenderer] Link renderer called, href:', href, 'tnode:', tnode?.tagName, 'attributes:', tnode?.attributes);
       
       if (!href) {
+        console.log('[HTMLContentRenderer] No href found, rendering default');
         return <TDefaultRenderer {...props} />;
       }
 
       // Check if it's a /page/{uuid} link (already transformed by server)
       const uuid = extractUuidFromUrl(href);
       if (uuid) {
+        console.log('[HTMLContentRenderer] UUID link detected:', uuid);
         return (
           <TouchableOpacity
             onPress={() => {
+              console.log('[HTMLContentRenderer] UUID link tapped:', uuid);
               if (onNavigate) {
                 onNavigate(uuid);
               } else {
@@ -144,13 +153,18 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
       }
 
       // Check if it's an internal link
-      if (isInternalLink(href)) {
+      const isInternal = isInternalLink(href);
+      console.log('[HTMLContentRenderer] Link type check - href:', href, 'isInternal:', isInternal);
+      
+      if (isInternal) {
         // Try to extract UUID from internal URLs
         const internalUuid = extractUuidFromUrl(href);
         if (internalUuid) {
+          console.log('[HTMLContentRenderer] Internal UUID link detected:', internalUuid);
           return (
             <TouchableOpacity
               onPress={() => {
+                console.log('[HTMLContentRenderer] Internal UUID link tapped:', internalUuid);
                 if (onNavigate) {
                   onNavigate(internalUuid);
                 } else {
@@ -165,11 +179,12 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
         }
         // For other internal links, we could navigate or handle differently
         // For now, just render as normal link
+        console.log('[HTMLContentRenderer] Internal link (non-UUID) detected:', href);
         return (
           <TouchableOpacity
             onPress={() => {
               // Could implement URL-to-UUID mapping here if needed
-              console.log('Internal link clicked:', href);
+              console.log('[HTMLContentRenderer] Internal link clicked:', href);
             }}
             activeOpacity={0.7}
           >
@@ -179,9 +194,19 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
       }
 
       // External link - open in browser
+      console.log('[HTMLContentRenderer] External link detected:', href);
       return (
         <TouchableOpacity
-          onPress={() => Linking.openURL(href)}
+          onPress={() => {
+            console.log('[HTMLContentRenderer] External link tapped, calling Linking.openURL for:', href);
+            Linking.openURL(href)
+              .then(() => {
+                console.log('[HTMLContentRenderer] Linking.openURL succeeded for:', href);
+              })
+              .catch((err) => {
+                console.error('[HTMLContentRenderer] Linking.openURL failed for:', href, 'Error:', err);
+              });
+          }}
           activeOpacity={0.7}
         >
           <TDefaultRenderer {...restProps} />

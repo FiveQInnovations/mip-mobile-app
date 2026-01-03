@@ -11,12 +11,11 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [051](051-external-links-handling.md) - External Links Handling
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [051](051-external-links-handling.md) - External Links Handling
 - [052](052-internal-links-url-mapping.md) - Internal Links URL-to-UUID Mapping
 
 ### 🟡 Nice to Have
