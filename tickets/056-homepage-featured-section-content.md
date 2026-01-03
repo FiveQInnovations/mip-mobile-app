@@ -50,7 +50,28 @@ The Featured section renders as a highlighted card with a "Featured" badge, dist
 
 ---
 
-### Option 2: Featured Chapter (Static)
+### Option 2: Chaplain Resources (Downloadable Content)
+**Description**: Feature the Chaplain Resources page, which contains **downloadable content** and is directly relevant to first responders and chaplains.
+
+**Target page**: `https://ffci.fiveq.dev/get-involved/ffc-chaplain-program/chaplain-resources`
+
+**Content**:
+- Title: "Chaplain Resources"
+- Description: "Downloadable tools and resources for chaplains"
+- Action: Navigate to the Chaplain Resources page (prefer in-app if it has a UUID; otherwise open in browser)
+
+**Pros**:
+- Highly practical / utility-driven
+- Clear value proposition (downloads)
+- Supports chaplain program without requiring form submission
+
+**Cons**:
+- Needs verification that the page is available via the mobile menu/API (UUID) for in-app navigation
+- If it’s not exposed via `mobileMainMenu`, featuring it may require: adding it to the menu, or adding a dedicated API endpoint / mapping
+
+---
+
+### Option 3: Featured Chapter (Static)
 **Description**: Highlight a specific chapter (like the website's "Metro Atlanta Chapter").
 
 **Content**:
@@ -71,7 +92,7 @@ The Featured section renders as a highlighted card with a "Featured" badge, dist
 
 ---
 
-### Option 3: Featured Event (Dynamic or Static)
+### Option 4: Featured Event (Dynamic or Static)
 **Description**: Highlight an upcoming event.
 
 **Content**:
@@ -92,7 +113,7 @@ The Featured section renders as a highlighted card with a "Featured" badge, dist
 
 ---
 
-### Option 4: Call to Action (Know God)
+### Option 5: Call to Action (Know God)
 **Description**: Highlight the gospel/salvation message.
 
 **Content**:
@@ -111,7 +132,7 @@ The Featured section renders as a highlighted card with a "Featured" badge, dist
 
 ---
 
-### Option 5: Crisis Support Banner
+### Option 6: Crisis Support Banner
 **Description**: Highlight crisis/mental health resources.
 
 **Content**:
@@ -131,7 +152,7 @@ The Featured section renders as a highlighted card with a "Featured" badge, dist
 
 ---
 
-### Option 6: Rotating/Configurable Featured
+### Option 7: Rotating/Configurable Featured
 **Description**: Make Featured section configurable from CMS.
 
 **Content**:
@@ -150,7 +171,7 @@ The Featured section renders as a highlighted card with a "Featured" badge, dist
 
 ---
 
-### Option 7: FFC Store Promotion
+### Option 8: FFC Store Promotion
 **Description**: Highlight the FFC Store for merchandise.
 
 **Content**:
@@ -169,7 +190,7 @@ The Featured section renders as a highlighted card with a "Featured" badge, dist
 
 ---
 
-### Option 8: Get Involved / Volunteer
+### Option 9: Get Involved / Volunteer
 **Description**: Highlight volunteer/outreach opportunities.
 
 **Content**:
