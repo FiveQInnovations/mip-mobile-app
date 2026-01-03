@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: in-progress
 area: rn-mip-app
 phase: core
 created: 2026-01-02
@@ -25,3 +25,4 @@ Per the spec, forms can be handled via:
 - Related to ticket 018 (Chaplain Request)
 - Related to ticket 019 (Form detection flag)
 - Related to ticket 020 (WebView fallback for forms)
+- **Before implementing:** Review the Kirby site code and the wsp-forms plugin to understand how forms are structured and handled
