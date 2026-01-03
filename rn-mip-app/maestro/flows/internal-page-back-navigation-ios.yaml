@@ -1,0 +1,51 @@
+appId: com.fiveq.ffci
+---
+# Test internal page back navigation on iOS
+# This test verifies that after navigating to an internal page via a link,
+# tapping the "← Back" button returns to the previous page.
+#
+# Ticket: 054-internal-page-back-navigation
+
+# Verify we start on Home screen
+- assertVisible:
+    text: "Quick Tasks"
+    optional: false
+
+# Navigate to Resources tab
+- tapOn:
+    text: "Resources tab"
+    optional: false
+- waitForAnimationToEnd
+
+# Verify we're on Resources screen
+- assertVisible:
+    text: "Resources for Firefighters and Their Families"
+    optional: false
+
+# Scroll down to find the "FFC Media Ministry" link
+- scroll
+- waitForAnimationToEnd
+- scroll
+- waitForAnimationToEnd
+
+# Tap on "FFC Media Ministry" link to navigate to internal page
+- tapOn:
+    text: "FFC Media Ministry"
+    optional: false
+- waitForAnimationToEnd
+
+# Verify we're on the FFC Media Ministry page
+- assertVisible:
+    text: "FFC Media Ministry"
+    optional: false
+
+# Tap the "← Back" button to return to Resources page
+- tapOn:
+    text: "← Back"
+    optional: false
+- waitForAnimationToEnd
+
+# Verify we're back on the Resources page
+- assertVisible:
+    text: "Resources for Firefighters and Their Families"
+    optional: false
