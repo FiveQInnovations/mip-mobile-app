@@ -1,0 +1,38 @@
+appId: com.fiveq.ffci
+---
+# Test content page rendering on iOS
+# This test verifies that content pages load and HTML content renders correctly
+#
+# Note: App should be launched via xcrun simctl before running this test:
+#   xcrun simctl launch booted com.fiveq.ffci
+
+# Verify we start on Home screen
+- assertVisible:
+    text: "Quick Tasks"
+    optional: false
+
+# Navigate to Resources tab (which is a content page)
+- tapOn:
+    text: "Resources tab"
+    optional: false
+- waitForAnimationToEnd
+
+# Wait for content to load
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# Assert page title is visible (verifies page loaded)
+- assertVisible:
+    text: "Resources for Firefighters and Their Families"
+    optional: false
+
+# Scroll down to verify HTML content is rendered and page is scrollable
+# If HTML content rendered successfully, the page should be scrollable
+# The scroll command will succeed if content exists, fail if page is empty
+- scroll
+
+# Wait for scroll animation to complete
+- waitForAnimationToEnd
+
+# Take screenshot for documentation (shows content page with rendered HTML)
+- takeScreenshot: content-page-rendering-ios

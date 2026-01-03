@@ -12,6 +12,7 @@
     "test:maestro:ios:all": "./scripts/run-maestro-ios-all.sh",
     "build:ios:release": "./scripts/build-ios-release.sh",
     "test:maestro:ios:standalone": "./scripts/run-maestro-ios.sh",
+    "test:maestro:ios:standalone:all": "./scripts/run-maestro-ios-all.sh",
     "test:maestro:android": "./scripts/run-maestro-android.sh",
     "test:maestro:android:5x": "./scripts/run-maestro-android-5x.sh",
     "test:maestro:android:all": "./scripts/run-maestro-android-all.sh",

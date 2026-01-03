@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run all stable iOS Maestro tests in sequence
+# Run all stable iOS Maestro tests in sequence (standalone build, no Metro)
 # Usage: ./scripts/run-maestro-ios-all.sh
 
 set -e
@@ -7,6 +7,9 @@ set -e
 # Get the directory of this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# App bundle ID
+APP_ID="com.fiveq.ffci"
 
 # Kill stale Maestro processes that may be blocking port 7001
 STALE_PID=$(lsof -ti :7001 2>/dev/null || true)
@@ -18,10 +21,33 @@ fi
 
 cd "$PROJECT_ROOT"
 
+# App bundle path
+APP_PATH="$PROJECT_ROOT/ios/build/Build/Products/Release-iphonesimulator/FFCIMobile.app"
+
+# Check if app bundle exists
+if [ ! -d "$APP_PATH" ]; then
+    echo "⚠️  App bundle not found at $APP_PATH"
+    echo "   Build with: ./scripts/build-ios-release.sh"
+    exit 1
+fi
+
+# Check if simulator is booted
+BOOTED_SIM=$(xcrun simctl list devices | grep -i "booted" | head -1)
+if [ -z "$BOOTED_SIM" ]; then
+    echo "⚠️  No booted iOS simulator found"
+    echo "   Boot a simulator first"
+    exit 1
+fi
+
+echo "📱 Installing app on simulator..."
+xcrun simctl install booted "$APP_PATH"
+
 # List of stable iOS test flows (in order)
 STABLE_TESTS=(
-    "maestro/flows/home-action-hub.yaml"
-    "maestro/flows/tab-switch-from-home.yaml"
+    "maestro/flows/homepage-loads-ios.yaml"
+    "maestro/flows/tab-switch-from-home-ios.yaml"
+    "maestro/flows/content-page-rendering-ios.yaml"
+    "maestro/flows/resources-tab-navigation-ios.yaml"
 )
 
 # Track results
@@ -40,6 +66,12 @@ for test_file in "${STABLE_TESTS[@]}"; do
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "📋 Test: $test_name"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    # Relaunch app before each test to ensure clean state
+    echo "🔄 Relaunching app for clean state..."
+    xcrun simctl terminate booted "$APP_ID" 2>/dev/null || true
+    xcrun simctl launch booted "$APP_ID"
+    sleep 3
     
     if maestro test "$test_file"; then
         echo "✅ PASSED: $test_name"

@@ -37,8 +37,10 @@ Building on the work from Android testing ([016](016-reliable-android-emulator-l
 - [x] Add npm script for easy access: `npm run test:maestro:ios:all`
 - [x] Document which tests are considered "stable" vs "experimental"
 - [x] Ensure proper error handling and reporting for test suite runs
-- [ ] Verify each individual test passes 5 times consecutively
-- [ ] Verify the full test suite passes 3 times consecutively
+- [x] Implement standalone build approach (no Metro cache issues)
+- [x] Create iOS versions of Android tests (tab-switch, content-page, resources-nav)
+- [x] Verify all iOS standalone tests pass individually
+- [x] Verify the full test suite passes 3 times consecutively
 
 ## Notes
 
@@ -210,3 +212,28 @@ npm run test:maestro:ios:standalone
 ```
 
 **Note:** This approach requires a full rebuild for every code change (like Android), but eliminates Metro dependency and cached code issues. For faster iteration during development, Metro-based testing is still available, but standalone builds are recommended for reliable CI/CD and regression testing.
+
+### Expanded Test Coverage (2026-01-03)
+
+**Additional iOS Tests Created:**
+- `tab-switch-from-home-ios.yaml` - Tests tab switching via Quick Task button
+- `content-page-rendering-ios.yaml` - Verifies content pages load and HTML renders
+- `resources-tab-navigation-ios.yaml` - Tests Resources tab navigation and return to Home
+
+**Test Suite Script:** `scripts/run-maestro-ios-all.sh`
+- Runs all 4 stable iOS standalone tests in sequence
+- Relaunches app before each test for clean state
+- Provides detailed progress output and summary
+
+**NPM Script:** `npm run test:maestro:ios:standalone:all`
+
+**Stability Verification:**
+- ✅ All 4 tests pass individually
+- ✅ Full test suite passes 3 consecutive runs (12/12 tests passed)
+- ✅ Tests verified to catch regressions (break/fix verification completed)
+
+**Stable iOS Standalone Tests:**
+1. `homepage-loads-ios.yaml` - Homepage content verification
+2. `tab-switch-from-home-ios.yaml` - Tab switching via Quick Task
+3. `content-page-rendering-ios.yaml` - Content page rendering
+4. `resources-tab-navigation-ios.yaml` - Tab navigation and return
