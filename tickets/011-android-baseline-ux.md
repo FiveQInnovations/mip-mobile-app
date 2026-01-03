@@ -20,8 +20,6 @@ These issues need to be fixed to provide a proper Android user experience that m
   - [x] Create Maestro flow to test back button navigation behavior
   - [ ] Create Maestro flow to verify tab bar visibility above system navigation bar
   - [x] Test Maestro flows locally on Android emulator
-  - [ ] Set up Maestro test execution on BrowserStack App Automate (supports Maestro v1.39.13+)
-  - [ ] Verify Maestro tests run reliably and consistently
 - [x] Fix back button behavior to navigate within app instead of closing
   - [x] Investigate React Navigation back handler configuration
   - [x] Implement proper back button handling for Android
@@ -32,7 +30,6 @@ These issues need to be fixed to provide a proper Android user experience that m
   - [x] Adjust tab bar positioning to account for system navigation bar
   - [x] Test on various Android devices with different navigation bar styles
   - [x] Verify tab bar is fully visible and accessible
-- [ ] Test fixes on BrowserStack with multiple Android devices
 - [ ] Verify fixes work on physical Android devices
 
 ## Notes
@@ -98,12 +95,14 @@ These issues need to be fixed to provide a proper Android user experience that m
   - Button navigation (traditional Android)
   - Different screen sizes and aspect ratios
 
-### Maestro Testing Setup
-- BrowserStack App Automate supports Maestro tests (requires Maestro v1.39.13+)
-- Can upload Maestro test suites (zipped Flow files) via REST API
-- Supports parallel test execution across multiple devices
-- Provides detailed logs, video, and network data for debugging
-- Reference: https://www.browserstack.com/docs/app-automate/maestro/overview
+### Maybe Later / Future Enhancements
+- [ ] Set up Maestro test execution on BrowserStack App Automate (supports Maestro v1.39.13+)
+  - Can upload Maestro test suites (zipped Flow files) via REST API
+  - Supports parallel test execution across multiple devices
+  - Provides detailed logs, video, and network data for debugging
+  - Reference: https://www.browserstack.com/docs/app-automate/maestro/overview
+- [ ] Test fixes on BrowserStack with multiple Android devices
+- [ ] Verify Maestro tests run reliably and consistently in CI/CD
 
 ### Test Notes (2026-01-02)
 - Created `resources-tab-navigation-android.yaml` test to verify Resources tab navigation and back button behavior
