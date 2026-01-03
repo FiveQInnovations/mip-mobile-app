@@ -43,3 +43,7 @@ android/
 
 # Webhook server logs
 logs/
+
+# Build artifacts
+*.apk
+*.ipa
