@@ -19,8 +19,9 @@ const README_PATH = path.join(TICKETS_DIR, 'README.md');
 const DONE_DIR = path.join(TICKETS_DIR, 'done');
 
 // Status categories in order
-const STATUS_ORDER = ['in-progress', 'backlog', 'blocked', 'maybe', 'done'];
+const STATUS_ORDER = ['qa', 'in-progress', 'backlog', 'blocked', 'maybe', 'done'];
 const STATUS_LABELS = {
+  'qa': 'QA',
   'in-progress': 'In Progress',
   'backlog': 'Backlog',
   'blocked': 'Blocked',
@@ -193,6 +194,7 @@ Quick reference for active tasks. See individual files for details.
   content += `---
 
 ## Status Values
+- \`qa\` - Ready for review/QA, review before starting new work
 - \`backlog\` - Not started yet
 - \`in-progress\` - Currently working on this
 - \`blocked\` - Waiting on something else

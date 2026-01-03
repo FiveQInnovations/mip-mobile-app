@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: done
 area: tickets
 phase: tooling
 created: 2026-01-03
@@ -19,10 +19,10 @@ Warning: Unknown status "qa" in 047-reliable-maestro-tests-ios.md
 The commit succeeds, but `qa` tickets are not properly counted in the status breakdown.
 
 ## Tasks
-- [ ] Find the ticket README generator script
-- [ ] Add "qa" to the list of valid statuses
-- [ ] Verify warning no longer appears for qa status tickets
-- [ ] Verify qa tickets are counted in status breakdown
+- [x] Find the ticket README generator script
+- [x] Add "qa" to the list of valid statuses
+- [x] Verify warning no longer appears for qa status tickets
+- [x] Verify qa tickets are counted in status breakdown
 
 ## Notes
 - The workflow rule is correct; the generator script needs updating

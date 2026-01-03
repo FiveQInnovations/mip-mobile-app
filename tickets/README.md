@@ -7,6 +7,9 @@ Quick reference for active tasks. See individual files for details.
 > node tickets/generate-readme.js
 > ```
 
+## QA
+(none)
+
 ## In Progress
 - [048](048-content-page-images-not-rendering.md) - Content Page Images Not Rendering
 
@@ -50,9 +53,6 @@ Quick reference for active tasks. See individual files for details.
 - [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
 - [050](050-maestro-test-organization.md) - Research Maestro Test Organization
 
-### Unassigned
-- [049](049-ticket-generator-qa-status.md) - Ticket Generator Does Not Recognize "qa" Status
-
 ## Blocked
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
@@ -78,10 +78,13 @@ Quick reference for active tasks. See individual files for details.
 - [032](done/032-maestro-content-page-test.md) - Maestro Test: Content Page Rendering
 - [043](043-svg-logo-support.md) - Fix SVG Logo Support
 - [046](046-reliable-maestro-tests-android.md) - Reliable Maestro Tests for Android
+- [047](047-reliable-maestro-tests-ios.md) - Reliable Maestro Tests for iOS
+- [049](049-ticket-generator-qa-status.md) - Ticket Generator Does Not Recognize "qa" Status
 
 ---
 
 ## Status Values
+- `qa` - Ready for review/QA, review before starting new work
 - `backlog` - Not started yet
 - `in-progress` - Currently working on this
 - `blocked` - Waiting on something else
