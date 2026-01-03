@@ -13,6 +13,34 @@ Quick reference for active tasks. See individual files for details.
 ## Backlog
 - [013](013-speed-up-eas-android-builds.md) - Speed Up EAS Android Build Time
 - [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
+- [017](017-prayer-request-form-handling.md) - Prayer Request Form Handling
+- [018](018-chaplain-request-form-handling.md) - Chaplain Request Form Handling
+- [019](019-form-detection-api-flag.md) - Form Detection API Flag
+- [020](020-webview-form-pages.md) - WebView Full-Page Fallback for Form Pages
+- [021](021-native-video-player.md) - Native Video Player Component
+- [022](022-youtube-vimeo-embed.md) - YouTube/Vimeo Embed Support
+- [023](023-audio-player-component.md) - Audio Player Component
+- [024](024-collection-item-metadata.md) - Display Video/Audio Metadata on Collection Items
+- [025](025-collection-cover-images.md) - Collection Grid Cover Images
+- [026](026-collection-pull-to-refresh.md) - Collection Pull-to-Refresh
+- [027](027-collection-pagination.md) - Collection Pagination
+- [028](028-firebase-setup.md) - Firebase Analytics Setup
+- [029](029-firebase-navigation-events.md) - Firebase Navigation Events (app_open, screen_view, content_view)
+- [030](030-firebase-media-events.md) - Firebase Media Events (video_play, video_complete, audio_play)
+- [031](031-firebase-external-link-event.md) - Firebase External Link Event
+- [032](032-maestro-content-page-test.md) - Maestro Test: Content Page Rendering
+- [033](033-maestro-collection-test.md) - Maestro Test: Collection Grid and Navigation
+- [034](034-maestro-video-test.md) - Maestro Test: Video Playback
+- [035](035-maestro-audio-test.md) - Maestro Test: Audio Playback
+- [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
+- [037](037-error-offline-screen.md) - Error/Offline Screen Design
+- [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
+- [039](039-c4i-site-config.md) - Create C4I Site Configuration
+- [040](040-eas-build-profiles.md) - Set Up EAS Build Profiles for Multiple Sites
+- [041](041-new-site-guide.md) - Document "Adding a New Site" Step-by-Step Guide
+- [042](042-remove-dev-tools.md) - Remove Dev Tools Section Before Production
+- [043](043-svg-logo-support.md) - Fix SVG Logo Support
+- [044](044-refresh-indicator-overlay.md) - Add Refresh Indicator During Background Refresh
 
 ## Blocked
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
