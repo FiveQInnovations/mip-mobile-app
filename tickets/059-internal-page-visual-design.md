@@ -42,28 +42,6 @@ This means:
 4. **Page title** - 24pt bold
 5. **Collection item cards** - Gray boxes with title text only
 
-### API Data Gap for Collections
-
-The `wsp-mobile` plugin's `collection_data()` function returns minimal child data:
-
-```php
-// Current: Only uuid, type, url
-"children" => $page->children()->map(function ($item) {
-    return [
-        "uuid" => $item->uuid()->id(),
-        "type" => $item->intendedTemplate()->name(),
-        "url" => $item->url()
-    ];
-})->data()
-```
-
-**Missing from children:**
-- `title` - The child page's title
-- `cover` - Cover image URL (available via `cover_image()`)
-- `description` - Page description or excerpt
-
-**Recommendation:** Enhance API to include title and cover for children items before implementing thumbnails in the app.
-
 ### Established Design Patterns (from HomeScreen/ErrorScreen)
 
 Already implemented patterns that should be reused:
@@ -89,61 +67,25 @@ From `configs/ffci.json`:
 Since this app is a **template for multiple ministries**:
 1. All colors must come from config, not hardcoded FFCI values
 2. Design patterns should work with any color scheme
-3. Consider extracting shared card component
-4. Content type icons could map template types (video-item → 🎬, etc.)
 
 ---
 
-## Prioritized Implementation Plan
+## Implementation Plan (v1)
 
-### Phase 1: Low-Effort, High-Impact (App Only)
-
-These require no API changes:
+Focus on general chrome improvements (no collection enhancements in v1):
 
 1. **Back button styling**
    - Add chevron icon instead of text arrow
    - Use primaryColor accent
    - Match HomeScreen row styling
 
-2. **Collection item cards**
-   - Apply HomeScreen card styling (shadows, borders, radius)
-   - Add content type emoji based on `type` field
-   - Better padding and touch feedback
-
-3. **Page header banner**
+2. **Page header banner**
    - Subtle colored bar or gradient using primaryColor
    - Better title typography
 
-4. **Loading state**
+3. **Loading state**
    - Replace spinner with skeleton placeholder
    - Show content shape while loading
-
-### Phase 2: Requires API Enhancement
-
-1. **Collection item thumbnails**
-   - Need API to return `cover` in children array
-   - Display thumbnail on left side of card
-   - Fallback to content type icon when no image
-
-2. **Collection item descriptions**
-   - Need API to return `title` and optionally `description`
-   - Show 1-2 line preview text
-
-### API Changes Required (wsp-mobile)
-
-Update `collection_data()` in `lib/pages.php`:
-
-```php
-"children" => $page->children()->map(function ($item) {
-    return [
-        "uuid" => $item->uuid()->id(),
-        "type" => $item->intendedTemplate()->name(),
-        "title" => $item->title()->value(),
-        "cover" => $this->cover_image($item),
-        "url" => $item->url()
-    ];
-})->data()
-```
 
 ---
 
@@ -154,11 +96,9 @@ Update `collection_data()` in `lib/pages.php`:
 - [ ] Use site's primary color for section dividers or accents
 - [ ] Consider a gradient or colored banner at the top of collection pages
 
-### Collection Items
-- [ ] Add thumbnail images for collection items (if available from API)
-- [ ] Use cards with shadows for better visual separation
-- [ ] Add icons or visual indicators for content types (PDF, video, article)
-- [ ] Implement alternating backgrounds or subtle borders
+### Collection Items (deferred to v2)
+- Collection item thumbnails and descriptions require API enhancements
+- Not in scope for v1
 
 ### Typography & Spacing
 - [ ] Improve typography hierarchy (title, subtitle, body)
@@ -172,12 +112,8 @@ Update `collection_data()` in `lib/pages.php`:
 
 ## Tasks
 
-- [ ] Review current screens and identify highest-impact improvements
 - [x] Research architecture and available data (scouting complete)
-- [ ] Enhance API: Add title/cover to collection children (wsp-mobile)
-- [ ] Apply HomeScreen card styles to collection items
-- [ ] Add content type icons based on template type
-- [ ] Improve back button styling
+- [ ] Improve back button styling (chevron icon, primaryColor accent)
 - [ ] Add header/banner with primaryColor
 - [ ] Implement skeleton loading states
 - [ ] Test visual changes on iOS and Android
@@ -187,5 +123,5 @@ Update `collection_data()` in `lib/pages.php`:
 - Keep changes lightweight—avoid overcomplicating the component structure
 - Ensure accessibility is maintained (contrast ratios, touch targets)
 - Most visual richness for content pages comes from HTML, not app styling
-- Collection pages are the main focus for app-side visual improvements
+- Collection enhancements (thumbnails, descriptions) deferred to v2 (requires API changes)
 - All colors must use config values for multi-ministry reusability
