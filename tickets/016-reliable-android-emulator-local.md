@@ -152,4 +152,10 @@ sleep 3 && \
 maestro test maestro/flows/homepage-loads-android.yaml
 ```
 
-**Conclusion:** Preview/release builds provide deterministic testing without Metro dependency. The workflow is reliable when using adb to launch the app before running Maestro tests.
+**Automation Scripts Created:**
+- `scripts/run-maestro-android.sh` - Single test run with adb launch
+- `scripts/run-maestro-android-5x.sh` - 5 consecutive runs for reliability testing
+- `npm run test:maestro:android` - npm script wrapper
+- `npm run test:maestro:android:5x` - npm script for 5x runs
+
+**Conclusion:** Preview/release builds provide deterministic testing without Metro dependency. The workflow is reliable when using adb to launch the app before running Maestro tests. Scripts have been created to automate this workflow.
