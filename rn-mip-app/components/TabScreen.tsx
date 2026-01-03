@@ -1,10 +1,87 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Animated } from 'react-native';
 import { getPageWithCache, PageData } from '../lib/api';
-import { getConfig } from '../lib/config';
+import { getConfig, SiteConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
 import { hasCachedPage } from '../lib/pageCache';
 import { ErrorScreen } from './ErrorScreen';
+
+// Skeleton loading component for visual polish
+function SkeletonLoader({ config }: { config: SiteConfig }) {
+  const opacity = React.useRef(new Animated.Value(0.4)).current;
+
+  React.useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0.4,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [opacity]);
+
+  return (
+    <View style={skeletonStyles.container} accessibilityLabel="Loading content">
+      {/* Header accent bar */}
+      <View style={[skeletonStyles.headerAccent, { backgroundColor: config.primaryColor }]} />
+      
+      {/* Title skeleton */}
+      <View style={skeletonStyles.contentArea}>
+        <Animated.View style={[skeletonStyles.titleSkeleton, { opacity }]} />
+        
+        {/* Content skeletons */}
+        <Animated.View style={[skeletonStyles.lineSkeleton, { opacity, width: '100%' }]} />
+        <Animated.View style={[skeletonStyles.lineSkeleton, { opacity, width: '90%' }]} />
+        <Animated.View style={[skeletonStyles.lineSkeleton, { opacity, width: '75%' }]} />
+        
+        {/* Paragraph gap */}
+        <View style={{ height: 16 }} />
+        
+        <Animated.View style={[skeletonStyles.lineSkeleton, { opacity, width: '100%' }]} />
+        <Animated.View style={[skeletonStyles.lineSkeleton, { opacity, width: '85%' }]} />
+        <Animated.View style={[skeletonStyles.lineSkeleton, { opacity, width: '95%' }]} />
+        <Animated.View style={[skeletonStyles.lineSkeleton, { opacity, width: '60%' }]} />
+      </View>
+    </View>
+  );
+}
+
+const skeletonStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  headerAccent: {
+    height: 4,
+    width: '100%',
+  },
+  contentArea: {
+    padding: 16,
+    paddingTop: 24,
+  },
+  titleSkeleton: {
+    height: 28,
+    width: '60%',
+    backgroundColor: '#e2e8f0',
+    borderRadius: 6,
+    marginBottom: 24,
+  },
+  lineSkeleton: {
+    height: 16,
+    backgroundColor: '#e2e8f0',
+    borderRadius: 4,
+    marginBottom: 12,
+  },
+});
 
 interface TabScreenProps {
   uuid: string;
@@ -118,12 +195,7 @@ export function TabScreen({ uuid }: TabScreenProps) {
   };
 
   if (loading) {
-    return (
-      <View style={styles.container} accessibilityLabel="Loading screen">
-        <ActivityIndicator size="large" color={config.primaryColor} />
-        <Text accessibilityLabel="Loading text" style={styles.loadingText}>Loading...</Text>
-      </View>
-    );
+    return <SkeletonLoader config={config} />;
   }
 
   if (error) {
@@ -136,14 +208,41 @@ export function TabScreen({ uuid }: TabScreenProps) {
 
   const pageType = currentPageData.page_type || currentPageData.type || 'content';
 
+  // Dynamic styles that use config colors
+  const dynamicStyles = {
+    headerAccent: {
+      height: 4,
+      width: '100%' as const,
+      backgroundColor: config.primaryColor,
+    },
+    backButtonIcon: {
+      color: config.primaryColor,
+    },
+    title: {
+      color: config.textColor || '#0f172a',
+    },
+    sectionTitle: {
+      color: config.textColor || '#0f172a',
+    },
+    collectionItem: {
+      borderLeftColor: config.primaryColor,
+    },
+  };
+
   return (
     <View style={styles.container}>
+      {/* Header accent bar - subtle brand color */}
+      <View style={dynamicStyles.headerAccent} />
+      
       {canGoBack && (
         <TouchableOpacity 
           style={styles.backButton} 
           onPress={goBack}
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
         >
-          <Text style={styles.backButtonText}>← Back</Text>
+          <Text style={[styles.backButtonIcon, dynamicStyles.backButtonIcon]}>‹</Text>
+          <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
       )}
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
@@ -157,7 +256,7 @@ export function TabScreen({ uuid }: TabScreenProps) {
         )}
 
         {/* Page Title */}
-        <Text style={styles.title}>{currentPageData.title}</Text>
+        <Text style={[styles.title, dynamicStyles.title]}>{currentPageData.title}</Text>
 
         {/* Page Content - Render HTML */}
         {pageType === 'content' && currentPageData.page_content && (
@@ -174,16 +273,27 @@ export function TabScreen({ uuid }: TabScreenProps) {
           <View style={styles.contentSection}>
             {currentPageData.children && currentPageData.children.length > 0 ? (
               <View>
-                <Text style={styles.sectionTitle}>Collection Items</Text>
+                <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>
+                  {currentPageData.children.length} Items
+                </Text>
                 {currentPageData.children.map((child: any, index: number) => (
                   <TouchableOpacity
                     key={index}
-                    style={styles.collectionItem}
+                    style={[styles.collectionItem, dynamicStyles.collectionItem]}
                     onPress={() => navigateToPage(child.uuid)}
+                    accessibilityRole="button"
                   >
-                    <Text style={styles.collectionItemTitle}>
-                      {child.title || child.type || 'Untitled'}
-                    </Text>
+                    <View style={styles.collectionItemContent}>
+                      <Text style={styles.collectionItemTitle}>
+                        {child.title || child.type || 'Untitled'}
+                      </Text>
+                      {child.description && (
+                        <Text style={styles.collectionItemDescription} numberOfLines={2}>
+                          {child.description}
+                        </Text>
+                      )}
+                    </View>
+                    <Text style={styles.collectionChevron}>›</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -210,71 +320,91 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   backButton: {
-    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
     paddingVertical: 12,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f8fafc',
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    zIndex: 10,
+    borderBottomColor: '#e5e7eb',
+    gap: 4,
+  },
+  backButtonIcon: {
+    fontSize: 28,
+    fontWeight: '300',
+    marginTop: -2,
   },
   backButtonText: {
     fontSize: 16,
-    color: '#1976d2',
-    fontWeight: '600',
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#666',
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#d32f2f',
-    marginBottom: 10,
-  },
-  retryText: {
-    fontSize: 16,
-    color: '#1976d2',
-    textDecorationLine: 'underline',
+    color: '#475569',
+    fontWeight: '500',
   },
   cover: {
     width: '100%',
     aspectRatio: 16 / 9,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f1f5f9',
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 26,
+    fontWeight: '700',
     paddingHorizontal: 16,
-    paddingTop: 24,
+    paddingTop: 20,
     paddingBottom: 8,
-    color: '#333',
+    letterSpacing: -0.5,
   },
   contentSection: {
     paddingHorizontal: 16,
     paddingTop: 16,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 14,
     fontWeight: '600',
-    marginBottom: 16,
-    color: '#333',
+    marginBottom: 12,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   collectionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 16,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
-    marginBottom: 8,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    borderLeftWidth: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  collectionItemContent: {
+    flex: 1,
+    paddingRight: 8,
   },
   collectionItemTitle: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#333',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0f172a',
+    marginBottom: 2,
+  },
+  collectionItemDescription: {
+    fontSize: 14,
+    color: '#64748b',
+    lineHeight: 20,
+  },
+  collectionChevron: {
+    fontSize: 22,
+    color: '#94a3b8',
+    fontWeight: '300',
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
+    color: '#64748b',
     textAlign: 'center',
-    paddingVertical: 24,
+    paddingVertical: 32,
+    fontStyle: 'italic',
   },
 });

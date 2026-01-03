@@ -179,12 +179,17 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
     html: cleanHtml,
   };
 
-  // Base styles for HTML content
+  // Base styles for HTML content - use config colors for brand consistency
   const baseStyle = {
     fontSize: 16,
-    lineHeight: 24,
-    color: '#333',
+    lineHeight: 26,
+    color: '#475569',
   };
+
+  // Use config colors for brand consistency
+  const textColor = config.textColor || '#0f172a';
+  const secondaryColor = config.secondaryColor || '#024D91';
+  const primaryColor = config.primaryColor || '#D9232A';
 
   const tagsStyles = {
     body: {
@@ -192,68 +197,105 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
       padding: 0,
     },
     p: {
-      marginTop: 12,
-      marginBottom: 12,
+      marginTop: 14,
+      marginBottom: 14,
       ...baseStyle,
+      color: '#475569',
     },
     h1: {
       fontSize: 28,
       fontWeight: 'bold' as const,
-      marginTop: 24,
+      marginTop: 28,
       marginBottom: 16,
-      color: '#333',
+      color: textColor,
+      letterSpacing: -0.5,
     },
     h2: {
       fontSize: 24,
       fontWeight: 'bold' as const,
-      marginTop: 20,
-      marginBottom: 12,
-      color: '#333',
+      marginTop: 24,
+      marginBottom: 14,
+      color: textColor,
+      letterSpacing: -0.3,
     },
     h3: {
       fontSize: 20,
-      fontWeight: '600' as const,
-      marginTop: 16,
-      marginBottom: 10,
-      color: '#333',
+      fontWeight: '700' as const,
+      marginTop: 20,
+      marginBottom: 12,
+      color: secondaryColor,
     },
     h4: {
       fontSize: 18,
       fontWeight: '600' as const,
-      marginTop: 14,
+      marginTop: 18,
+      marginBottom: 10,
+      color: secondaryColor,
+    },
+    h5: {
+      fontSize: 16,
+      fontWeight: '600' as const,
+      marginTop: 16,
       marginBottom: 8,
-      color: '#333',
+      color: textColor,
+    },
+    h6: {
+      fontSize: 14,
+      fontWeight: '600' as const,
+      marginTop: 14,
+      marginBottom: 6,
+      color: textColor,
+      textTransform: 'uppercase' as const,
+      letterSpacing: 0.5,
     },
     ul: {
-      marginTop: 12,
-      marginBottom: 12,
+      marginTop: 14,
+      marginBottom: 14,
       paddingLeft: 20,
     },
     ol: {
-      marginTop: 12,
-      marginBottom: 12,
+      marginTop: 14,
+      marginBottom: 14,
       paddingLeft: 20,
     },
     li: {
-      marginBottom: 8,
+      marginBottom: 10,
       ...baseStyle,
+      color: '#475569',
     },
     img: {
-      marginTop: 16,
-      marginBottom: 16,
+      marginTop: 20,
+      marginBottom: 20,
     },
     a: {
-      color: config.primaryColor,
+      color: primaryColor,
       textDecorationLine: 'underline' as const,
+      fontWeight: '500' as const,
     },
     blockquote: {
       borderLeftWidth: 4,
-      borderLeftColor: '#ddd',
+      borderLeftColor: primaryColor,
       paddingLeft: 16,
-      marginTop: 12,
-      marginBottom: 12,
+      paddingVertical: 8,
+      marginTop: 16,
+      marginBottom: 16,
+      backgroundColor: '#f8fafc',
       fontStyle: 'italic' as const,
       ...baseStyle,
+      color: '#64748b',
+    },
+    hr: {
+      marginTop: 24,
+      marginBottom: 24,
+      borderTopWidth: 2,
+      borderTopColor: '#e2e8f0',
+    },
+    strong: {
+      fontWeight: '700' as const,
+      color: textColor,
+    },
+    em: {
+      fontStyle: 'italic' as const,
     },
   };
 
@@ -280,11 +322,12 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 12,
   },
   htmlImage: {
     aspectRatio: 16 / 9,
-    marginTop: 16,
-    marginBottom: 16,
+    marginTop: 20,
+    marginBottom: 20,
+    borderRadius: 8,
   },
 });

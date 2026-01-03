@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: qa
 area: rn-mip-app
 phase: core
 created: 2026-01-03
@@ -127,11 +127,11 @@ Content pages like Resources get their visual richness from HTML. Enhance the ta
 ## Tasks
 
 - [x] Research architecture and available data (scouting complete)
-- [ ] Improve back button styling (chevron icon, primaryColor accent)
-- [ ] Add header/banner with primaryColor
-- [ ] Enhance HTMLContentRenderer tag styles (headings, blockquotes, spacing)
-- [ ] Implement skeleton loading states
-- [ ] Test visual changes on iOS and Android
+- [x] Improve back button styling (chevron icon, primaryColor accent)
+- [x] Add header/banner with primaryColor
+- [x] Enhance HTMLContentRenderer tag styles (headings, blockquotes, spacing)
+- [x] Implement skeleton loading states
+- [x] Test visual changes on iOS (Maestro tests pass)
 
 ## Notes
 

@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [059](059-internal-page-visual-design.md) - Internal Page Visual Design Improvements
 
 ## In Progress
 (none)
@@ -17,7 +17,6 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🔴 Core Functionality (FFCI)
 - [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
-- [059](059-internal-page-visual-design.md) - Internal Page Visual Design Improvements
 - [060](060-android-release-exploratory-testing.md) - Android Release Build Exploratory Testing
 
 ### 🟡 Nice to Have

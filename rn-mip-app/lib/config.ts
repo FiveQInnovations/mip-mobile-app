@@ -11,6 +11,9 @@ export interface SiteConfig {
   appSlug: string;
   primaryColor: string;
   secondaryColor: string;
+  textColor?: string;
+  backgroundColor?: string;
+  headerStyle?: 'light' | 'dark';
   iosBundle: string;
   androidPackage: string;
   logo?: string;

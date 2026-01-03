@@ -30,11 +30,14 @@ appId: com.fiveq.ffci
       text: "FFC Media Ministry"
     direction: DOWN
     timeout: 20000
+    centerElement: true
+- waitForAnimationToEnd
 - waitForAnimationToEnd
 - tapOn:
     text: "FFC Media Ministry"
     index: 0
     optional: false
+- waitForAnimationToEnd
 - waitForAnimationToEnd
 
 # Verify we're on the FFC Media Ministry page
@@ -42,9 +45,9 @@ appId: com.fiveq.ffci
     text: "FFC Media Ministry"
     optional: false
 
-# Tap the "← Back" button to return to Resources page
+# Tap the "Back" button to return to Resources page
 - tapOn:
-    text: "← Back"
+    text: "Back"
     optional: false
 - waitForAnimationToEnd
 
