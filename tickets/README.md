@@ -48,6 +48,7 @@ Quick reference for active tasks. See individual files for details.
 ### 📋 Testing
 - [033](033-maestro-collection-test.md) - Maestro Test: Collection Grid and Navigation
 - [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
+- [050](050-maestro-test-organization.md) - Research Maestro Test Organization
 
 ### Unassigned
 - [049](049-ticket-generator-qa-status.md) - Ticket Generator Does Not Recognize "qa" Status
