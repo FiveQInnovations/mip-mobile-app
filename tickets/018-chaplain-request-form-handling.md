@@ -1,6 +1,7 @@
 ---
 status: backlog
 area: rn-mip-app
+phase: core
 created: 2026-01-02
 ---
 

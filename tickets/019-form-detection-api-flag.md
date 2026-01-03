@@ -1,6 +1,7 @@
 ---
 status: backlog
 area: wsp-mobile
+phase: nice-to-have
 created: 2026-01-02
 ---
 

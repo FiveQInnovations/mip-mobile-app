@@ -1,6 +1,7 @@
 ---
 status: backlog          # backlog | in-progress | blocked | done
 area: general            # rn-mip-app | wsp-mobile | ws-ffci-copy | astro-prototype | general
+phase: core              # core | nice-to-have | c4i | production | testing
 created: YYYY-MM-DD
 ---
 

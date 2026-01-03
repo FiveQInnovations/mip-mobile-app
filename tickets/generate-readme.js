@@ -19,12 +19,23 @@ const README_PATH = path.join(TICKETS_DIR, 'README.md');
 const DONE_DIR = path.join(TICKETS_DIR, 'done');
 
 // Status categories in order
-const STATUS_ORDER = ['in-progress', 'backlog', 'blocked', 'done'];
+const STATUS_ORDER = ['in-progress', 'backlog', 'blocked', 'maybe', 'done'];
 const STATUS_LABELS = {
   'in-progress': 'In Progress',
   'backlog': 'Backlog',
   'blocked': 'Blocked',
+  'maybe': 'Maybe',
   'done': 'Done',
+};
+
+// Phase categories for backlog grouping
+const PHASE_ORDER = ['core', 'nice-to-have', 'c4i', 'production', 'testing'];
+const PHASE_LABELS = {
+  'core': '🔴 Core Functionality (FFCI)',
+  'nice-to-have': '🟡 Nice to Have',
+  'c4i': '🟣 C4I Phase',
+  'production': '🟢 Production Ready',
+  'testing': '📋 Testing',
 };
 
 function parseFrontmatter(content) {
@@ -97,6 +108,7 @@ function readTicket(file) {
     title,
     status,
     area: frontmatter?.area || 'general',
+    phase: frontmatter?.phase || null,
   };
 }
 
@@ -135,6 +147,40 @@ Quick reference for active tasks. See individual files for details.
     content += `## ${label}\n`;
     if (statusTickets.length === 0) {
       content += `(none)\n\n`;
+    } else if (status === 'backlog') {
+      // Group backlog by phase
+      const byPhase = {};
+      PHASE_ORDER.forEach(phase => {
+        byPhase[phase] = [];
+      });
+      byPhase['unassigned'] = [];
+      
+      statusTickets.forEach(ticket => {
+        if (ticket.phase && byPhase[ticket.phase]) {
+          byPhase[ticket.phase].push(ticket);
+        } else {
+          byPhase['unassigned'].push(ticket);
+        }
+      });
+      
+      // Output each phase that has tickets
+      PHASE_ORDER.forEach(phase => {
+        if (byPhase[phase].length > 0) {
+          content += `\n### ${PHASE_LABELS[phase]}\n`;
+          byPhase[phase].forEach(ticket => {
+            content += `- [${ticket.number}](${ticket.filename}) - ${ticket.title}\n`;
+          });
+        }
+      });
+      
+      // Output unassigned if any
+      if (byPhase['unassigned'].length > 0) {
+        content += `\n### Unassigned\n`;
+        byPhase['unassigned'].forEach(ticket => {
+          content += `- [${ticket.number}](${ticket.filename}) - ${ticket.title}\n`;
+        });
+      }
+      content += `\n`;
     } else {
       statusTickets.forEach(ticket => {
         content += `- [${ticket.number}](${ticket.filename}) - ${ticket.title}\n`;
@@ -150,7 +196,15 @@ Quick reference for active tasks. See individual files for details.
 - \`backlog\` - Not started yet
 - \`in-progress\` - Currently working on this
 - \`blocked\` - Waiting on something else
+- \`maybe\` - Low priority, revisit later
 - \`done\` - Completed (move to \`done/\` folder)
+
+## Phases (for backlog prioritization)
+- \`core\` - Core functionality, fix first
+- \`nice-to-have\` - Polish, not blocking launch
+- \`c4i\` - C4I-specific, after FFCI launch
+- \`production\` - Final tasks before App Store submission
+- \`testing\` - Ongoing test coverage
 
 ## Areas
 - \`rn-mip-app\` - React Native mobile app
