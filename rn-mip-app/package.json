@@ -10,8 +10,6 @@
     "test:maestro": "maestro test maestro/flows/",
     "test:maestro:ios": "maestro test maestro/flows/home-action-hub.yaml",
     "test:maestro:android": "maestro test maestro/flows/homepage-loads-android.yaml",
-    "test:maestro:navigation": "maestro test maestro/flows/tab-switch-from-home.yaml",
-    "test:maestro:browserstack": "maestro cloud test maestro/flows/homepage-sanity-check-browserstack.yaml",
     "webhook:server": "node scripts/eas-webhook-server.js"
   },
   "dependencies": {
