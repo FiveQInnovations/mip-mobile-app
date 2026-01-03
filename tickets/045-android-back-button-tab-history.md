@@ -1,7 +1,7 @@
 ---
 status: backlog
 area: rn-mip-app
-phase: nice-to-have
+phase: core
 created: 2026-01-02
 ---
 
@@ -42,6 +42,6 @@ Implement a tab navigation history stack:
 - `rn-mip-app/components/TabNavigator.tsx` - Tab navigation component with BackHandler
 
 ## Notes
-- This is a "nice to have" enhancement - current behavior (always going to Home) is acceptable
+- Promoted to core functionality for proper Android navigation experience
 - User tested on BrowserStack and confirmed current behavior works, but noted this would be an improvement
 - Related to ticket #011 (Android Baseline UX) which implemented the basic back button functionality

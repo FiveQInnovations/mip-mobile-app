@@ -16,12 +16,13 @@ Quick reference for active tasks. See individual files for details.
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
+- [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
 - [059](059-internal-page-visual-design.md) - Internal Page Visual Design Improvements
+- [060](060-android-release-exploratory-testing.md) - Android Release Build Exploratory Testing
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
 - [044](044-refresh-indicator-overlay.md) - Add Refresh Indicator During Background Refresh
-- [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
