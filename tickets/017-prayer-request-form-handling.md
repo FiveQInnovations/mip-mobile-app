@@ -15,6 +15,7 @@ Per the spec, forms can be handled via:
 - **Option B**: Link out — prompt user to open form in Safari/Chrome
 
 ## Tasks
+- [ ] Review the Kirby site code and the wsp-forms plugin to understand how forms are structured and handled
 - [ ] Determine which form handling approach to use (WebView vs link out)
 - [ ] Identify the Prayer Request form URL on the FFCI website
 - [ ] Implement navigation to open the form (WebView or external browser)
@@ -25,4 +26,3 @@ Per the spec, forms can be handled via:
 - Related to ticket 018 (Chaplain Request)
 - Related to ticket 019 (Form detection flag)
 - Related to ticket 020 (WebView fallback for forms)
-- **Before implementing:** Review the Kirby site code and the wsp-forms plugin to understand how forms are structured and handled
