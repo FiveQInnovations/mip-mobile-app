@@ -1,19 +1,31 @@
 appId: com.fiveq.ffci
 ---
-# Android-specific homepage verification
-- runFlow: _setup.yaml
+# Simple Android homepage verification
+# No setup flow needed - simplified for Android
+# 
+# Note: launchApp may not work reliably - if test fails, launch app manually first:
+#   adb shell am start -n com.fiveq.ffci/.MainActivity
+# Then run the test (it will work without launchApp if app is already running)
+
+- launchApp
+- waitForAnimationToEnd
+
+# Wait for homepage to load
 - waitForAnimationToEnd
 
 # Confirm key homepage content renders
 - assertVisible:
     text: "FFCI"
-    optional: false
+- assertVisible:
+    text: "Quick Tasks"
 - assertVisible:
     text: "Prayer Request"
-    optional: false
 - assertVisible:
     text: "Resources"
-    optional: false
+
+# Verify tab bar is visible
+- assertVisible:
+    text: "Home"
 
 # Capture a reference screenshot
 - takeScreenshot: homepage-loaded-android
