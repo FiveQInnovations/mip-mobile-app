@@ -7,7 +7,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "test:maestro": "maestro test maestro/flows/",
+    "test:maestro": "npm run test:maestro:ios",
     "test:maestro:ios": "maestro test maestro/flows/home-action-hub.yaml",
     "test:maestro:android": "maestro test maestro/flows/homepage-loads-android.yaml",
     "webhook:server": "node scripts/eas-webhook-server.js"
