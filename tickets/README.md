@@ -8,14 +8,13 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## In Progress
-- [017](017-prayer-request-form-handling.md) - Prayer Request Form Handling
-- [046](046-reliable-maestro-tests-android.md) - Reliable Maestro Tests for Android
 - [047](047-reliable-maestro-tests-ios.md) - Reliable Maestro Tests for iOS
 - [048](048-content-page-images-not-rendering.md) - Content Page Images Not Rendering
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
+- [017](017-prayer-request-form-handling.md) - Prayer Request Form Handling
 - [018](018-chaplain-request-form-handling.md) - Chaplain Request Form Handling
 - [037](037-error-offline-screen.md) - Error/Offline Screen Design
 
@@ -75,6 +74,7 @@ Quick reference for active tasks. See individual files for details.
 - [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
 - [032](done/032-maestro-content-page-test.md) - Maestro Test: Content Page Rendering
 - [043](043-svg-logo-support.md) - Fix SVG Logo Support
+- [046](046-reliable-maestro-tests-android.md) - Reliable Maestro Tests for Android
 
 ---
 
