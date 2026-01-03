@@ -19,7 +19,7 @@ appId: com.fiveq.ffci
 
 # Verify we're on Resources screen by checking for Resources title
 - assertVisible:
-    text: "Resources"
+    text: "Resources for Firefighters and Their Families"
     optional: false
 
 # Press Android back button
