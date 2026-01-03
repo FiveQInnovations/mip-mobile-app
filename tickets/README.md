@@ -9,6 +9,7 @@ Quick reference for active tasks. See individual files for details.
 
 ## In Progress
 - [017](017-prayer-request-form-handling.md) - Prayer Request Form Handling
+- [032](032-maestro-content-page-test.md) - Maestro Test: Content Page Rendering
 - [046](046-reliable-maestro-tests-android.md) - Reliable Maestro Tests for Android
 - [047](047-reliable-maestro-tests-ios.md) - Reliable Maestro Tests for iOS
 
@@ -24,7 +25,6 @@ Quick reference for active tasks. See individual files for details.
 - [026](026-collection-pull-to-refresh.md) - Collection Pull-to-Refresh
 - [027](027-collection-pagination.md) - Collection Pagination
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
-- [043](043-svg-logo-support.md) - Fix SVG Logo Support
 - [044](044-refresh-indicator-overlay.md) - Add Refresh Indicator During Background Refresh
 - [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
 
@@ -48,7 +48,6 @@ Quick reference for active tasks. See individual files for details.
 - [042](042-remove-dev-tools.md) - Remove Dev Tools Section Before Production
 
 ### 📋 Testing
-- [032](032-maestro-content-page-test.md) - Maestro Test: Content Page Rendering
 - [033](033-maestro-collection-test.md) - Maestro Test: Collection Grid and Navigation
 - [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
 
@@ -74,6 +73,7 @@ Quick reference for active tasks. See individual files for details.
 - [012](012-eas-build-webhook.md) - EAS Build Completion Webhook
 - [014](014-setup-expo-mcp-server.md) - Set Up Expo MCP Server Locally
 - [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
+- [043](043-svg-logo-support.md) - Fix SVG Logo Support
 
 ---
 
