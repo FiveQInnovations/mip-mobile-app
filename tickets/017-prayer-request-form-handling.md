@@ -106,8 +106,13 @@ const handleNavigate = (label: string, fallbackUrl?: string) => {
 - [x] Identify the Prayer Request form URL on the FFCI website
 - [x] Add fallback URL to Prayer Request quick task button
 - [x] Test form opens correctly in Safari/Chrome
-- [ ] Verify form submission works from external browser
-- [ ] Ensure user can return to app after submission
+- [x] Verify form submission works from external browser
+- [x] Ensure user can return to app after submission
+
+## Verification
+- ✅ **Manual verification completed**: Link correctly navigates to the Prayer Request page (not a long Resources page requiring scrolling)
+- ✅ **Form submission tested**: Successfully submitted a test form from external browser
+- ✅ **Release build verified**: Built in Release mode and verified Safari opens correctly with correct URL
 
 ## Implementation Notes
 - The fix is a one-line change: add fallback URL to the onPress handler
