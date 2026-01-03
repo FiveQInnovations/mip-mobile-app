@@ -11,12 +11,11 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [037](037-error-offline-screen.md) - Error/Offline Screen Design
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [037](037-error-offline-screen.md) - Error/Offline Screen Design
 - [051](051-external-links-handling.md) - External Links Handling
 - [052](052-internal-links-url-mapping.md) - Internal Links URL-to-UUID Mapping
 
