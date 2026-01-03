@@ -1,7 +1,8 @@
 ---
-status: in-progress
+status: done
 area: rn-mip-app
 created: 2026-01-21
+completed: 2026-01-03
 ---
 
 # Prove Android Emulator Reliability with Maestro Testing
@@ -17,10 +18,16 @@ Prove Android emulator reliability by creating a simple Maestro test that verifi
 ## Tasks
 - [x] Create simple Maestro test for Android home screen
 - [x] Test runs successfully 5 times in a row
-- [ ] Implement Break and Verify pattern:
-  - [ ] Introduce intentional error (e.g., wrong text assertion)
-  - [ ] Verify test fails as expected
-  - [ ] Remove error and verify test passes again
+- [x] Troubleshoot UIAutomation connection issue:
+  - [x] Investigate why Maestro's UIAutomation service cannot connect to Android emulator
+  - [x] **Root cause:** Stale Maestro Java process holding port 7001 in CLOSE_WAIT state
+  - [x] **Fix:** Kill stale process with `kill -9 <PID>` or check with `lsof -i :7001`
+- [x] Implement Break and Verify pattern:
+  - [x] Break production code: Changed `HomeScreen.tsx` "Quick Tasks" → "BROKEN TEXT"
+  - [x] Rebuild release APK with broken code
+  - [x] Verify test fails as expected (caught the regression)
+  - [x] Revert production code and rebuild
+  - [x] Verify test passes again
 - [x] Document test and reliability results
 
 ## Notes
@@ -159,3 +166,68 @@ maestro test maestro/flows/homepage-loads-android.yaml
 - `npm run test:maestro:android:5x` - npm script for 5x runs
 
 **Conclusion:** Preview/release builds provide deterministic testing without Metro dependency. The workflow is reliable when using adb to launch the app before running Maestro tests. Scripts have been created to automate this workflow.
+
+---
+
+### UIAutomation Connection Issue (2026-01-03)
+
+**Status:** Blocking baseline test execution
+
+**Problem:**
+Maestro's UIAutomation service cannot connect to Android emulator, preventing test execution:
+- Error: `io.grpc.StatusRuntimeException: INTERNAL: UiAutomation not connected, UiAutomation@7cd8243[id=-1, flags=0]`
+- App launches successfully via `adb shell am start`
+- App displays correctly on emulator (verified via screenshot)
+- Maestro cannot read UI hierarchy to find elements
+
+**What Works:**
+- ✅ APK installation: `adb install -r android/app/build/outputs/apk/release/app-release.apk`
+- ✅ App launch: `adb shell am start -n com.fiveq.ffci/.MainActivity`
+- ✅ App displays homepage correctly
+- ✅ Maestro packages installed on device (`dev.mobile.maestro`, `dev.mobile.maestro.test`)
+
+**What Doesn't Work:**
+- ❌ Maestro's `launchApp` command (fails with release builds - expected)
+- ❌ Maestro's UIAutomation service connection
+- ❌ Reading UI hierarchy after app launch via adb
+
+**Attempted Solutions:**
+1. Increased wait time after app launch (3s → 5s → 8s)
+2. Enabled accessibility services
+3. Verified app is running before test
+4. Restarted Maestro packages on device
+5. Added APK reinstall step to script
+
+**Resolution (2026-01-03):**
+- ✅ **Root cause identified:** Stale Maestro Java process holding port 7001 in CLOSE_WAIT state
+- ✅ **Fix:** Kill the stale process: `lsof -i :7001` to find PID, then `kill -9 <PID>`
+- ✅ **Prevention:** Add port check to test script before running Maestro
+
+**Diagnostic command:**
+```bash
+lsof -i :7001
+```
+If this shows a Java process with CLOSE_WAIT connections, kill it before running Maestro tests.
+
+---
+
+### Break and Verify Pattern Results (2026-01-03)
+
+**Status:** ✅ Complete
+
+**Approach:** Modified production code (not test code) to verify test catches real regressions.
+
+**Test Flow:**
+1. **Baseline established:** Test passes with correct production code
+2. **Break production code:** Changed `HomeScreen.tsx` line 145: `"Quick Tasks"` → `"BROKEN TEXT"`
+3. **Rebuild APK:** `./gradlew assembleRelease` (14s incremental build)
+4. **Verified failure:** Test correctly failed - caught the regression
+5. **Revert and rebuild:** Restored production code, rebuilt APK
+6. **Fix verified:** Test passes again
+
+**Results:**
+- ✅ Baseline: PASSED
+- ✅ Broken production code: FAILED (test caught the regression)
+- ✅ Fixed production code: PASSED
+
+**Conclusion:** The Maestro test correctly detects production code regressions. The test is reliable for catching real bugs in the app.

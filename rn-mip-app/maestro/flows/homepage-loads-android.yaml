@@ -11,9 +11,6 @@ appId: com.fiveq.ffci
 #   adb shell am force-stop com.fiveq.ffci && adb shell am start -n com.fiveq.ffci/.MainActivity
 - waitForAnimationToEnd
 
-# Wait for homepage to load
-- waitForAnimationToEnd
-
 # Confirm key homepage content renders
 - assertVisible:
     text: "Firefighters for Christ International"

@@ -8,7 +8,6 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## In Progress
-- [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
 - [017](017-prayer-request-form-handling.md) - Prayer Request Form Handling
 
 ## Backlog
@@ -72,6 +71,7 @@ Quick reference for active tasks. See individual files for details.
 - [011](011-android-baseline-ux.md) - Android Baseline UX Issues
 - [012](012-eas-build-webhook.md) - EAS Build Completion Webhook
 - [014](014-setup-expo-mcp-server.md) - Set Up Expo MCP Server Locally
+- [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
 
 ---
 
