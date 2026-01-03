@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
 
 ## In Progress
-- [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
+(none)
 
 ## Backlog
 

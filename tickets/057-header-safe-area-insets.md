@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: qa
 area: rn-mip-app
 phase: core
 created: 2026-01-03
@@ -24,10 +24,10 @@ This was discovered while fixing ticket 054. The "← Back" button in `TabScreen
 
 Review and ensure all header/navigation elements respect safe area insets:
 
-- [ ] `TabScreen.tsx` - Back button (already fixed)
-- [ ] `HomeScreen.tsx` - Any header elements
-- [ ] `PageScreen.tsx` - Used for `/page/[uuid]` route (uses Expo Router header)
-- [ ] Any other screens with custom headers
+- [x] `TabScreen.tsx` - Back button (now handled by parent)
+- [x] `HomeScreen.tsx` - Any header elements (now handled by parent)
+- [x] `PageScreen.tsx` - Uses Expo Router header (handles safe area automatically)
+- [x] `TabNavigator.tsx` - **FIX APPLIED**: Added `paddingTop: insets.top` to content area
 
 ## Technical Approach
 

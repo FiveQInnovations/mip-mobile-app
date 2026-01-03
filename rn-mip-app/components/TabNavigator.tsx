@@ -94,8 +94,8 @@ export function TabNavigator() {
 
   return (
     <View style={styles.container}>
-      {/* Content Area */}
-      <View style={styles.contentArea}>
+      {/* Content Area - paddingTop ensures content respects status bar safe area */}
+      <View style={[styles.contentArea, { paddingTop: insets.top }]}>
         {selectedTabUuid === '__home__' ? (
           <HomeScreen 
             siteData={siteData}

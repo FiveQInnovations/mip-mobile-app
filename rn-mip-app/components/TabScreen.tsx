@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getPageWithCache, PageData } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
@@ -12,7 +11,6 @@ interface TabScreenProps {
 }
 
 export function TabScreen({ uuid }: TabScreenProps) {
-  const insets = useSafeAreaInsets();
   const [pageStack, setPageStack] = React.useState<string[]>([uuid]);
   const [currentPageData, setCurrentPageData] = React.useState<PageData | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -142,7 +140,7 @@ export function TabScreen({ uuid }: TabScreenProps) {
     <View style={styles.container}>
       {canGoBack && (
         <TouchableOpacity 
-          style={[styles.backButton, { marginTop: insets.top }]} 
+          style={styles.backButton} 
           onPress={goBack}
         >
           <Text style={styles.backButtonText}>← Back</Text>
