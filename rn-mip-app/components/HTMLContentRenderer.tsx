@@ -60,6 +60,9 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
     }
   };
 
+  // Calculate image width based on content width (accounting for padding)
+  const imageWidth = width - 32; // Subtract horizontal padding
+
   // Custom renderer for image tags
   const renderers = {
     img: ({ TDefaultRenderer, ...props }: any) => {
@@ -71,9 +74,6 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
         return null;
       }
 
-      // Calculate image width based on content width (accounting for padding)
-      const imageWidth = width - 32; // Subtract horizontal padding
-
       return (
         <Image
           source={{ uri: resolvedSrc }}
@@ -81,6 +81,41 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
           resizeMode="contain"
         />
       );
+    },
+    picture: ({ TDefaultRenderer, tnode, ...props }: any) => {
+      // Find the <img> child inside <picture> (may be nested in <source> siblings)
+      const findImgNode = (node: any): any => {
+        if (node.tagName === 'img') return node;
+        if (node.children) {
+          for (const child of node.children) {
+            const found = findImgNode(child);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+      
+      const imgNode = findImgNode(tnode);
+      if (imgNode) {
+        const src = imgNode.attributes?.src;
+        const alt = imgNode.attributes?.alt;
+        const resolvedSrc = resolveImageSource(src);
+        if (resolvedSrc) {
+          return (
+            <Image
+              source={{ uri: resolvedSrc }}
+              style={[styles.htmlImage, { width: imageWidth }]}
+              resizeMode="contain"
+              accessibilityLabel={alt}
+            />
+          );
+        }
+      }
+      return null;
+    },
+    figure: ({ TDefaultRenderer, ...props }: any) => {
+      // Render figure contents (will now properly handle picture inside)
+      return <TDefaultRenderer {...props} />;
     },
     a: ({ TDefaultRenderer, ...props }: any) => {
       const { href, ...restProps } = props;
