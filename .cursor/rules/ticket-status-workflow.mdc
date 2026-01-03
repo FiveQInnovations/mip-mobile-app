@@ -1,0 +1,10 @@
+---
+description: "Ticket status workflow - agents can only move to QA, not Done"
+alwaysApply: true
+---
+
+- Ticket status workflow: `backlog` → `in-progress` → `qa` → `done`
+- Agents are ONLY allowed to move tickets to `qa` status when work is complete
+- Agents MUST NOT move tickets to `done` status - only the user can mark tickets as done
+- This ensures the user reviews all completed work before marking it complete
+- When a ticket is ready for review, change status to `qa` and note that it's ready for QA

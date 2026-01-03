@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: done
 area: rn-mip-app
 phase: testing
 created: 2026-01-02
@@ -15,7 +15,7 @@ The spec requires Maestro test coverage for content pages. Need to verify that p
 - [x] Navigate to a content page (e.g., Resources)
 - [x] Assert page title is visible
 - [x] Assert HTML content renders (look for specific text)
-- [x] Verify images load if present
+- [ ] Verify images load if present
 - [x] Take screenshot for documentation
 
 ## Notes
@@ -51,3 +51,5 @@ The spec requires Maestro test coverage for content pages. Need to verify that p
 - Successful scroll confirms content exists and renders properly
 
 For more specific HTML content assertions, the test can be enhanced once we know the exact content structure of the Resources page. The current test provides baseline verification that content pages load and render HTML correctly.
+
+**Note:** Image rendering issue discovered during testing - see ticket #048 for details.

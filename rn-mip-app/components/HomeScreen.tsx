@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Linking, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { SvgUri } from 'react-native-svg';
 import { getSiteData, SiteData, MenuItem } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { clearAllCache, logCacheStatus } from '../lib/pageCache';
@@ -112,16 +113,27 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
     testID: 'home-featured',
   };
 
+  const isSvgLogo = logoUrl && logoUrl.endsWith('.svg');
+
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
       {/* Hero Section (kept from existing) */}
-      {logoUrl && !logoUrl.endsWith('.svg') && (
+      {logoUrl && (
         <View style={styles.logoSection}>
-          <Image
-            source={{ uri: logoUrl }}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+          {isSvgLogo ? (
+            <SvgUri
+              uri={logoUrl}
+              width={200}
+              height={120}
+              style={styles.logo}
+            />
+          ) : (
+            <Image
+              source={{ uri: logoUrl }}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          )}
           {site_data.title && (
             <Text style={styles.siteTitle}>{site_data.title}</Text>
           )}
