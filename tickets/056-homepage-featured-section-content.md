@@ -55,19 +55,27 @@ The Featured section renders as a highlighted card with a "Featured" badge, dist
 
 **Target page**: `https://ffci.fiveq.dev/get-involved/ffc-chaplain-program/chaplain-resources`
 
+**Verified (2026-01-19)**:
+- **Kirby content file**: `ws-ffci/content/4_get-involved/6_ffc-chaplain-program/1_chaplain-resources/default.txt`
+- **UUID**: `PCLlwORLKbMnLPtN`
+- **Content type**: includes multiple `downloads` blocks with PDF downloads (explicitly described in content as “These resources for chaplains are PDF downloads.”)
+- **Mobile menu exposure**: **NOT** currently included in `Mobilemainmenu` in `ws-ffci/content/site.txt` (so it will **not** appear in `siteData.menu`).
+
 **Content**:
 - Title: "Chaplain Resources"
 - Description: "Downloadable tools and resources for chaplains"
-- Action: Navigate to the Chaplain Resources page (prefer in-app if it has a UUID; otherwise open in browser)
+- Action (recommended): Navigate in-app directly to `/page/PCLlwORLKbMnLPtN`
 
 **Pros**:
 - Highly practical / utility-driven
 - Clear value proposition (downloads)
 - Supports chaplain program without requiring form submission
+- **In-app capable**: page has a stable UUID (`PCLlwORLKbMnLPtN`)
 
 **Cons**:
-- Needs verification that the page is available via the mobile menu/API (UUID) for in-app navigation
-- If it’s not exposed via `mobileMainMenu`, featuring it may require: adding it to the menu, or adding a dedicated API endpoint / mapping
+- Because it’s not in `Mobilemainmenu`, the app **can’t** use `handleNavigate('...')` label matching (unless we add it to the menu).
+  - Adding it to `Mobilemainmenu` would also add a new bottom tab (likely not desired).
+  - Better approach for Featured: **hardcode the UUID navigation** for this one card (no menu change needed).
 
 ---
 
