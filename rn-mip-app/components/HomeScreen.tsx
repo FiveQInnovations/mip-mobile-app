@@ -64,7 +64,7 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
       label: 'Chaplain Request',
       description: 'Request chaplain support',
       icon: '✝️',
-      onPress: () => handleNavigate('Chaplain Request'),
+      onPress: () => handleNavigate('Chaplain Request', 'https://ffci.fiveq.dev/chaplain-request'),
       testID: 'home-quick-chaplain',
     },
     {
