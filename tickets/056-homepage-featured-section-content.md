@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: qa
 area: rn-mip-app
 phase: core
 created: 2026-01-19
@@ -29,11 +29,11 @@ Replace the single Featured card with two featured items:
 
 ## Tasks
 
-- [ ] Update Featured section in `HomeScreen.tsx` to show two cards
-- [ ] Implement Chaplain Resources card with hardcoded UUID navigation
-- [ ] Implement Know God card with browser link
-- [ ] Test both cards navigate correctly
-- [ ] Update Maestro tests for new Featured content
+- [x] Update Featured section in `HomeScreen.tsx` to show two cards
+- [x] Implement Chaplain Resources card with hardcoded UUID navigation
+- [x] Implement Know God card with browser link
+- [x] Test both cards navigate correctly
+- [x] Update Maestro tests for new Featured content
 
 ## Related
 

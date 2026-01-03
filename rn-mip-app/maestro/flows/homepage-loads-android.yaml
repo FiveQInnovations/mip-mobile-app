@@ -29,6 +29,18 @@ appId: com.fiveq.ffci
 - assertVisible:
     text: "Prayer Request"
 
+# Scroll to see Featured section
+- scroll
+- waitForAnimationToEnd
+
+# Featured section has two items
+- assertVisible:
+    text: "Featured"
+- assertVisible:
+    text: "Chaplain Resources"
+- assertVisible:
+    text: "Do You Know God?"
+
 # Verify tab bar is visible
 - assertVisible:
     text: "Home"

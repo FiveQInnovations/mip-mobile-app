@@ -9,9 +9,10 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [055](055-quick-tasks-in-app-alternatives.md) - Quick Tasks In-App Alternatives
+- [056](056-homepage-featured-section-content.md) - Homepage Featured Section Content
 
 ## In Progress
-- [056](056-homepage-featured-section-content.md) - Homepage Featured Section Content
+(none)
 
 ## Backlog
 

@@ -121,13 +121,23 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
     },
   ];
 
-  const featured = {
-    label: 'Featured',
-    title: 'Resources',
-    description: 'Featured resource links',
-    onPress: () => handleNavigate('Resources'),
-    testID: 'home-featured',
-  };
+  // Featured items: Chaplain Resources (in-app) and Know God (browser)
+  const featuredItems = [
+    {
+      key: 'chaplain-resources',
+      title: 'Chaplain Resources',
+      description: 'Downloadable tools and resources for chaplains',
+      onPress: () => router.push('/page/PCLlwORLKbMnLPtN'),
+      testID: 'home-featured-chaplain-resources',
+    },
+    {
+      key: 'know-god',
+      title: 'Do You Know God?',
+      description: 'You were created to know God personally',
+      onPress: () => Linking.openURL('https://www.harvest.org/know-god'),
+      testID: 'home-featured-know-god',
+    },
+  ];
 
   const isSvgLogo = logoUrl && logoUrl.endsWith('.svg');
 
@@ -211,20 +221,25 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
 
       {/* Featured */}
       <Text style={styles.sectionHeader} testID="home-featured-heading">
-        {featured.label}
+        Featured
       </Text>
-      <TouchableOpacity
-        style={styles.featuredCard}
-        onPress={featured.onPress}
-        accessibilityLabel={`${featured.label} ${featured.title}`}
-        testID={featured.testID}
-      >
-        <View style={styles.featuredBadge}>
-          <Text style={styles.featuredBadgeText}>Featured</Text>
-        </View>
-        <Text style={styles.featuredTitle}>{featured.title}</Text>
-        <Text style={styles.featuredDescription}>{featured.description}</Text>
-      </TouchableOpacity>
+      <View style={styles.featuredGrid}>
+        {featuredItems.map((item) => (
+          <TouchableOpacity
+            key={item.key}
+            style={styles.featuredCard}
+            onPress={item.onPress}
+            accessibilityLabel={item.title}
+            testID={item.testID}
+          >
+            <View style={styles.featuredBadge}>
+              <Text style={styles.featuredBadgeText}>Featured</Text>
+            </View>
+            <Text style={styles.featuredTitle}>{item.title}</Text>
+            <Text style={styles.featuredDescription}>{item.description}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
 
       {/* Dev Tools - Temporary */}
       <View style={styles.devSection}>
@@ -385,13 +400,19 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#94a3b8',
   },
+  featuredGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginBottom: 24,
+  },
   featuredCard: {
+    flexBasis: '48%',
     padding: 16,
     borderRadius: 12,
     backgroundColor: '#eff6ff',
     borderColor: '#bfdbfe',
     borderWidth: 1,
-    marginBottom: 24,
   },
   featuredBadge: {
     alignSelf: 'flex-start',
