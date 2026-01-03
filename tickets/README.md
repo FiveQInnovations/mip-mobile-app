@@ -8,7 +8,6 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## In Progress
-- [047](047-reliable-maestro-tests-ios.md) - Reliable Maestro Tests for iOS
 - [048](048-content-page-images-not-rendering.md) - Content Page Images Not Rendering
 
 ## Backlog

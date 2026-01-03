@@ -9,7 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Default test file
-TEST_FILE="${1:-maestro/flows/home-action-hub.yaml}"
+TEST_FILE="${1:-maestro/flows/homepage-loads-ios.yaml}"
 
 cd "$PROJECT_ROOT"
 

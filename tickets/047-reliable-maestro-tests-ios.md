@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: qa
 area: rn-mip-app
 phase: testing
 created: 2026-01-03
@@ -17,19 +17,21 @@ Building on the work from Android testing ([016](016-reliable-android-emulator-l
 - [033](033-maestro-collection-test.md) - Maestro Test: Collection Grid and Navigation
 - [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
 
-**Current Stable iOS Tests:**
-- `maestro/flows/home-action-hub.yaml` - Comprehensive homepage test (uses iOS setup flow)
-- `maestro/flows/tab-switch-from-home.yaml` - Tab switching test (uses iOS setup flow)
-
-**Shared Setup:**
-- `maestro/flows/_setup.yaml` - Shared setup flow (uses launchApp, works reliably on iOS simulators)
+**Current Stable iOS Tests (standalone, no Metro):**
+- `maestro/flows/homepage-loads-ios.yaml` - Homepage content verification
+- `maestro/flows/tab-switch-from-home-ios.yaml` - Tab switching via Quick Task
+- `maestro/flows/content-page-rendering-ios.yaml` - Content page rendering
+- `maestro/flows/resources-tab-navigation-ios.yaml` - Tab navigation and return
 
 **Test Classification:**
-- **Stable:** Tests that use `_setup.yaml` with `launchApp`, which works reliably on iOS simulators
-- **iOS-specific:** Tests designed for iOS that leverage `launchApp` functionality
+- Tests with `-ios` suffix use standalone Release builds (no Metro cache issues)
+- Tests with `-android` suffix use standalone APK builds (no Metro cache issues)
+- Metro-based tests (`_setup.yaml`, `launchApp`) have been removed due to caching issues
 
-**Existing Scripts:**
-- `npm run test:maestro:ios` - Currently runs only `home-action-hub.yaml`
+**Scripts:**
+- `npm run test:maestro:ios` - Run single iOS test
+- `npm run test:maestro:ios:all` - Run all 4 iOS tests
+- `npm run build:ios:release` - Build Release .app for simulator
 
 ## Tasks
 - [x] Identify all stable iOS test flows
@@ -41,6 +43,7 @@ Building on the work from Android testing ([016](016-reliable-android-emulator-l
 - [x] Create iOS versions of Android tests (tab-switch, content-page, resources-nav)
 - [x] Verify all iOS standalone tests pass individually
 - [x] Verify the full test suite passes 3 times consecutively
+- [x] Remove Metro-based tests (caching issues)
 
 ## Notes
 
@@ -211,7 +214,7 @@ npm run build:ios:release
 npm run test:maestro:ios:standalone
 ```
 
-**Note:** This approach requires a full rebuild for every code change (like Android), but eliminates Metro dependency and cached code issues. For faster iteration during development, Metro-based testing is still available, but standalone builds are recommended for reliable CI/CD and regression testing.
+**Note:** This approach requires a full rebuild for every code change (like Android), but eliminates Metro dependency and cached code issues. Metro-based tests have been removed in favor of standalone builds for reliable CI/CD and regression testing.
 
 ### Expanded Test Coverage (2026-01-03)
 
@@ -225,7 +228,7 @@ npm run test:maestro:ios:standalone
 - Relaunches app before each test for clean state
 - Provides detailed progress output and summary
 
-**NPM Script:** `npm run test:maestro:ios:standalone:all`
+**NPM Script:** `npm run test:maestro:ios:all`
 
 **Stability Verification:**
 - ✅ All 4 tests pass individually
@@ -237,3 +240,14 @@ npm run test:maestro:ios:standalone
 2. `tab-switch-from-home-ios.yaml` - Tab switching via Quick Task
 3. `content-page-rendering-ios.yaml` - Content page rendering
 4. `resources-tab-navigation-ios.yaml` - Tab navigation and return
+
+### Metro-Based Tests Removed (2026-01-03)
+
+**Removed Files:**
+- `_setup.yaml` - Shared setup with `launchApp` (caused caching issues)
+- `home-action-hub.yaml` - Used Metro bundler via `_setup.yaml`
+- `tab-switch-from-home.yaml` - Used Metro bundler via `_setup.yaml`
+
+**Reason:** Metro-based tests experienced cached code issues where stale JavaScript would persist even after source code changes. The standalone Release build approach eliminates this problem by bundling JavaScript directly into the app at build time.
+
+**Convention:** Tests with `-ios` or `-android` suffix are stable standalone tests. Metro-based tests (no suffix) have been removed.
