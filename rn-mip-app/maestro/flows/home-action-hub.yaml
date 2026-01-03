@@ -2,8 +2,12 @@ appId: com.fiveq.ffci
 ---
 - runFlow: _setup.yaml
 
+# Wait for app to fully load after setup
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
 - assertVisible:
-    text: "Firefighters for Christ"
+    text: "Firefighters for Christ International"
     optional: false
 
 - assertVisible:

@@ -62,7 +62,21 @@ Building on the work from Android testing ([016](016-reliable-android-emulator-l
 **Prerequisites:**
 - iOS Simulator must be booted and available
 - App must be built for iOS (`npx expo run:ios`)
-- Dev server should be running (`npm start`)
+- **Metro bundler must be running** (`npm start` or `npx expo start`)
+- **DDEV proxy may be needed** if using local DDEV backend (`node scripts/ddev-proxy.js [port]`)
 - Maestro will use `launchApp` to launch the app automatically
 
-**Note:** iOS tests use `_setup.yaml` which leverages `launchApp` - this works reliably on iOS simulators (unlike Android where we use `adb` launch).
+**Note:** iOS tests use `_setup.yaml` which leverages `launchApp` - this works reliably on iOS simulators (unlike Android where we use `adb` launch). However, the app requires Metro bundler to be running to load JavaScript, and may require the DDEV proxy if testing against a local backend.
+
+### Test Status (2026-01-03)
+
+**Current Issue:** Tests are failing because the app isn't loading content. This appears to be due to:
+1. Metro bundler needs to be running (✅ now started)
+2. Backend API needs to be accessible (may need DDEV proxy if using local backend)
+3. App may need more time to load after launch
+
+**Next Steps:**
+- Verify backend API is accessible from iOS simulator
+- Ensure DDEV proxy is running if using local DDEV backend
+- Add appropriate wait times for app loading
+- Test each flow individually once app loads successfully
