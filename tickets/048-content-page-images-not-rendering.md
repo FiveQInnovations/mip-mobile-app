@@ -1,5 +1,5 @@
 ---
-status: qa
+status: done
 area: rn-mip-app
 phase: bug
 created: 2026-01-21
