@@ -11,7 +11,7 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-- [017](017-prayer-request-form-handling.md) - Prayer Request Form Handling
+(none)
 
 ## Backlog
 
@@ -76,6 +76,7 @@ Quick reference for active tasks. See individual files for details.
 - [012](012-eas-build-webhook.md) - EAS Build Completion Webhook
 - [014](014-setup-expo-mcp-server.md) - Set Up Expo MCP Server Locally
 - [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
+- [017](017-prayer-request-form-handling.md) - Prayer Request Form Handling
 - [032](done/032-maestro-content-page-test.md) - Maestro Test: Content Page Rendering
 - [043](043-svg-logo-support.md) - Fix SVG Logo Support
 - [046](046-reliable-maestro-tests-android.md) - Reliable Maestro Tests for Android
