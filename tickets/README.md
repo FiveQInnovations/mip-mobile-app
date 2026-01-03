@@ -8,6 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## In Progress
+- [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
 - [017](017-prayer-request-form-handling.md) - Prayer Request Form Handling
 
 ## Backlog
@@ -57,7 +58,6 @@ Quick reference for active tasks. See individual files for details.
 
 ## Maybe
 - [013](013-speed-up-eas-android-builds.md) - Speed Up EAS Android Build Time
-- [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
 
 ## Done
 - [001](done/001-api-key-auth.md) - Update RN app to use X-API-Key authentication
