@@ -1,0 +1,26 @@
+appId: com.fiveq.ffci
+---
+# Focused crash reproduction for nested picture/source HTML
+
+# Ensure home is loaded
+- assertVisible:
+    text: "Quick Tasks"
+    optional: false
+
+# Scroll down to Dev Tools section
+- scroll
+- scroll
+- scroll
+- scroll
+- scroll
+
+# Open the HTML crash fixture screen
+- tapOn:
+    id: "dev-html-crash"
+    optional: false
+- waitForAnimationToEnd
+
+# Expect the crash-prone screen to render; currently fails because app crashes
+- assertVisible:
+    text: "HTML Crash Fixture"
+    optional: false

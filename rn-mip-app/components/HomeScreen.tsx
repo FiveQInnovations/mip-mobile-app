@@ -240,6 +240,14 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
             {cacheCleared ? '✓ Cache Cleared!' : '🗑️ Clear Cache'}
           </Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.devButton, styles.devSecondaryButton]}
+          onPress={() => router.push('/debug/html-crash')}
+          accessibilityLabel="Open HTML crash fixture"
+          testID="dev-html-crash"
+        >
+          <Text style={styles.devButtonText}>Open HTML Crash Fixture</Text>
+        </TouchableOpacity>
         {cacheCleared && (
           <Text style={styles.devMessage}>
             Cache cleared! Reload app (Cmd+R) to test prefetching.
@@ -455,6 +463,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 8,
     alignItems: 'center',
+  },
+  devSecondaryButton: {
+    marginTop: 12,
+    backgroundColor: '#0f766e',
   },
   devButtonText: {
     color: '#fff',
