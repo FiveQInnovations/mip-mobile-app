@@ -124,9 +124,9 @@ done
 
 **Test Performed:**
 - Changed "Quick Tasks" → "Broken Text" in `HomeScreen.tsx`
-- Rebuilt iOS app: **1:41.02 elapsed time** (101 seconds)
+- Rebuilt iOS app (first rebuild): **1:41.02 elapsed time** (101 seconds)
 - Ran test: ✅ **Test correctly failed** - Assertion for "Quick Tasks" failed as expected
-- Reverted change and rebuilt
+- Reverted change and rebuilt (cached rebuild): **23.77 seconds** (much faster due to caching)
 
 **Findings:**
 - ✅ Tests properly detect regressions
