@@ -1,0 +1,25 @@
+appId: com.fiveq.ffci
+---
+# Android-specific tab switch test
+# App should be launched with adb before running this test:
+#   adb shell am force-stop com.fiveq.ffci && adb shell am start -n com.fiveq.ffci/.MainActivity
+
+# Wait for app to load
+- waitForAnimationToEnd
+
+# Verify we start on Home screen
+- assertVisible:
+    text: "Quick Tasks"
+    optional: false
+
+# Tap on Resources Quick Task (which should navigate to Resources tab)
+- tapOn:
+    id: "home-quick-resources"
+- waitForAnimationToEnd
+
+# Verify tab bar is still visible
+- assertVisible: "Home tab"
+- assertVisible: "Resources tab"
+
+# Verify Resources tab is selected and Resources content is visible
+- assertVisible: "Resources"
