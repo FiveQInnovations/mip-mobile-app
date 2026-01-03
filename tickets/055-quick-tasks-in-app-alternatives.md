@@ -60,10 +60,12 @@ Having 3 out of 4 Quick Tasks open external browsers creates a fragmented experi
 - [x] Recommend new Quick Task configuration
 
 ### Implementation (Pending)
-- [ ] Update `HomeScreen.tsx` with new Quick Tasks
-- [ ] Test navigation works correctly for new tasks
-- [ ] Update Maestro tests if Quick Tasks change
-- [ ] Consider keeping some browser-based tasks vs replacing all
+- [ ] Update `quickTasks` array in `HomeScreen.tsx` (Chapters, Events, Resources, Get Involved)
+- [ ] Update `getConnected` array in `HomeScreen.tsx` (Prayer, Chaplain, Donate)
+- [ ] Decide on Featured section (remove or repurpose)
+- [ ] Test all Quick Tasks navigate in-app correctly
+- [ ] Test all Get Connected items open browser correctly
+- [ ] Update Maestro tests for new testIDs and labels
 
 ## Related
 
@@ -208,33 +210,140 @@ The mobile menu is configured in `content/site.txt` under `Mobilemainmenu:`:
 - Loses quick access to Chaplain Request form
 - Loses quick access to Donate
 
-### Recommendation: **Option 1** (Chapters + Events)
+### Recommendation: **Swap Sections** (Refined)
+
+The initial recommendation was to simply replace Quick Tasks items. However, this would leave the "Get Connected" section empty. The refined approach is to **swap the sections** - move in-app items UP to Quick Tasks, and browser-based items DOWN to "Get Connected".
+
+#### Current Homepage Structure:
+```
+Quick Tasks (4 items):
+├── Prayer Request → browser
+├── Chaplain Request → browser
+├── Resources → in-app ✅
+└── Donate → browser
+
+Get Connected (2 items):
+├── Chapters → in-app ✅
+└── Events → in-app ✅
+
+Featured:
+└── Resources → in-app
+```
+
+#### Proposed Homepage Structure:
+```
+Quick Tasks (4 items - ALL in-app):
+├── Chapters → in-app ✅
+├── Events → in-app ✅
+├── Resources → in-app ✅
+└── Get Involved → in-app ✅
+
+Get Connected (3 items - browser-based):
+├── Prayer Request → browser (form)
+├── Chaplain Request → browser (form)
+└── Donate → browser (payment)
+
+Featured:
+└── (keep as-is or remove since Resources is in Quick Tasks)
+```
 
 **Rationale**:
-1. **Chapters** is a core action - users frequently need to find/connect with chapters
-2. **Events** drives engagement - users want to see upcoming events
-3. Both already work perfectly in-app (no WebView needed)
-4. Forms remain accessible via main menu tabs or "Get Connected" section
-5. Maximizes in-app experience (75% in-app vs 25%)
+1. **Quick Tasks become 100% in-app** - best possible UX for primary actions
+2. **Browser-based items move to secondary position** - "Get Connected" semantically fits for support requests
+3. **All sections stay populated** - no empty sections
+4. **Forms/donations still accessible** - just in a secondary location where browser handoff is more expected
+5. **Get Involved** fills the 4th Quick Task slot - action-oriented, navigates in-app
 
-**Implementation**:
-- Replace Prayer Request and Chaplain Request Quick Tasks
-- Add Chapters and Events as Quick Tasks
-- Keep Resources and Donate
-- Forms remain accessible via menu navigation
+**Implementation Changes**:
 
-**New Quick Tasks**:
-1. **Chapters** - Find/connect with local chapters (in-app)
-2. **Events** - View upcoming events (in-app)
-3. **Resources** - Browse PDFs and links (in-app) ✅
-4. **Donate** - Opens donation page (browser)
+1. **Quick Tasks** (`quickTasks` array):
+   - Remove: Prayer Request, Chaplain Request, Donate
+   - Add: Chapters, Events
+   - Keep: Resources
+   - Add: Get Involved (new)
+
+2. **Get Connected** (`getConnected` array):
+   - Remove: Chapters, Events
+   - Add: Prayer Request, Chaplain Request, Donate
+
+3. **Featured** section:
+   - Consider removing (Resources already in Quick Tasks)
+   - Or change to highlight something else (e.g., featured chapter, upcoming event)
+
+**New Quick Tasks Configuration**:
+```typescript
+const quickTasks = [
+  {
+    key: 'chapters',
+    label: 'Find a Chapter',
+    description: 'Connect with local firefighters',
+    icon: '📍',
+    onPress: () => handleNavigate('Chapters'),
+    testID: 'home-quick-chapters',
+  },
+  {
+    key: 'events',
+    label: 'Upcoming Events',
+    description: 'Retreats, trainings, & more',
+    icon: '📅',
+    onPress: () => handleNavigate('Events'),
+    testID: 'home-quick-events',
+  },
+  {
+    key: 'resources',
+    label: 'Resources',
+    description: 'PDFs, videos, & links',
+    icon: '📚',
+    onPress: () => handleNavigate('Resources'),
+    testID: 'home-quick-resources',
+  },
+  {
+    key: 'getinvolved',
+    label: 'Get Involved',
+    description: 'Outreach & volunteer',
+    icon: '🤝',
+    onPress: () => handleNavigate('Get Involved'),
+    testID: 'home-quick-getinvolved',
+  },
+];
+```
+
+**New Get Connected Configuration**:
+```typescript
+const getConnected = [
+  {
+    key: 'prayer',
+    label: 'Prayer Request',
+    description: 'Submit a prayer request',
+    icon: '🙏',
+    onPress: () => handleNavigate('Prayer Request', 'https://ffci.fiveq.dev/prayer-request'),
+    testID: 'home-connected-prayer',
+  },
+  {
+    key: 'chaplain',
+    label: 'Chaplain Request',
+    description: 'Request chaplain support',
+    icon: '✝️',
+    onPress: () => handleNavigate('Chaplain Request', 'https://ffci.fiveq.dev/chaplain-request'),
+    testID: 'home-connected-chaplain',
+  },
+  {
+    key: 'donate',
+    label: 'Donate',
+    description: 'Support the ministry',
+    icon: '💝',
+    onPress: () => handleNavigate('Give', 'https://www.firefightersforchrist.org/donate'),
+    testID: 'home-connected-donate',
+  },
+];
+```
 
 ### Additional Considerations
 
-- **FFC Store**: Could be considered but needs verification that it navigates fully in-app (might link out to external store)
-- **Get Involved**: Too broad for Quick Task (better as main menu item)
-- **About**: Content page, not action-oriented enough
-- **Forms**: Keep accessible via menu but don't need Quick Task slots (forms work better in browser for v1)
+- **Featured section**: Consider removing or repurposing since Resources is now in Quick Tasks
+- **Get Involved UUID**: `3e56Ag4tc8SfnGAv` - already in main menu, navigates in-app
+- **Events UUID**: `6ffa8qmIpJHM0C3r` - calendar page, navigates in-app
+- **Maestro tests**: Will need updates since Quick Task labels/testIDs change
 
 ### Menu Structure Reference
 
