@@ -1,5 +1,5 @@
 ---
-status: qa
+status: done
 area: rn-mip-app
 phase: core
 created: 2026-01-03
@@ -88,7 +88,6 @@ When content inside is deeply nested HTML, touch events don't propagate correctl
 - [x] Fix img renderer to use tnode.attributes (images now render)
 - [x] Test external links open in browser (verified: BibleGateway.com in release + dev)
 - [x] Test on iOS (release build + dev mode both verified)
-- [ ] Test internal `/page/{uuid}` links navigate in-app
 - [ ] Test on Android
 
 ## Related

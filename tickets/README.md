@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [051](051-external-links-handling.md) - External Links Handling
+(none)
 
 ## In Progress
 (none)
@@ -82,6 +82,7 @@ Quick reference for active tasks. See individual files for details.
 - [047](047-reliable-maestro-tests-ios.md) - Reliable Maestro Tests for iOS
 - [048](048-content-page-images-not-rendering.md) - Content Page Images Not Rendering
 - [049](049-ticket-generator-qa-status.md) - Ticket Generator Does Not Recognize "qa" Status
+- [051](051-external-links-handling.md) - External Links Handling
 
 ---
 
