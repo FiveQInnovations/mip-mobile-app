@@ -103,38 +103,9 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
         />
       );
     },
-    picture: ({ TDefaultRenderer, tnode, ...props }: any) => {
-      // Find the <img> child inside <picture> (may be nested in <source> siblings)
-      const findImgNode = (node: any): any => {
-        if (!node) return null;
-        if (node.tagName === 'img') return node;
-        if (node.children) {
-          for (const child of node.children) {
-            const found = findImgNode(child);
-            if (found) return found;
-          }
-        }
-        return null;
-      };
-      
-      const imgNode = findImgNode(tnode);
-      if (imgNode) {
-        const src = imgNode.attributes?.src;
-        const alt = imgNode.attributes?.alt;
-        const resolvedSrc = resolveImageSource(src);
-        if (resolvedSrc) {
-          return (
-            <Image
-              source={{ uri: resolvedSrc }}
-              style={[styles.htmlImage, { width: imageWidth }]}
-              resizeMode="contain"
-              accessibilityLabel={alt}
-            />
-          );
-        }
-      }
-      return null;
-    },
+    // Note: <picture> elements are sanitized out and replaced with <img> before
+    // passing to RenderHTML, so no picture renderer is needed. The img renderer
+    // handles all image rendering.
     figure: ({ TDefaultRenderer, tnode, ...props }: any) => {
       // Render figure contents (will now properly handle picture inside)
       // Explicitly pass tnode to ensure it's not lost
@@ -293,7 +264,7 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
         tagsStyles={tagsStyles}
         renderers={renderers}
         renderersProps={renderersProps}
-        ignoredDomTags={['source']}
+        ignoredDomTags={['source', 'picture']}
         systemFonts={systemFonts}
         defaultTextProps={{
           style: baseStyle,

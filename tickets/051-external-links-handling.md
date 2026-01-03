@@ -86,9 +86,10 @@ When content inside is deeply nested HTML, touch events don't propagate correctl
 - [x] Implement `renderersProps.a.onPress` for link handling
 - [x] Remove custom `a` renderer TouchableOpacity wrapping
 - [x] Fix img renderer to use tnode.attributes (images now render)
-- [x] Test external links open in browser (verified: BibleGateway.com)
+- [x] Test external links open in browser (verified: BibleGateway.com in release + dev)
+- [x] Test on iOS (release build + dev mode both verified)
 - [ ] Test internal `/page/{uuid}` links navigate in-app
-- [ ] Test on iOS and Android
+- [ ] Test on Android
 
 ## Related
 
@@ -223,3 +224,43 @@ img: ({ tnode }: any) => {
 - `jest.config.js` - Jest configuration for fast unit tests
 - `__tests__/htmlSanitization.test.ts` - 10 tests covering sanitization and renderer logic
 - Tests run in ~0.2 seconds vs minutes for Maestro flows
+
+### Dev Mode vs Release Build Discrepancy (2026-01-03 Evening)
+
+**Key Finding:** Release build works perfectly, but dev mode still crashes.
+
+**Release Build (WORKING):**
+- Built with `./scripts/build-ios-release.sh`
+- Installed via `xcrun simctl install`
+- Resources tab loads with all 3 images rendering correctly
+- External links (BibleGateway.com) open in Safari
+- No crashes
+
+**Dev Mode (CRASHING):**
+- Started with `npx expo run:ios` or `npx expo start --dev-client`
+- Resources tab crashes immediately with:
+  ```
+  Error: Cannot read property 'type' of undefined
+  Location: getNativePropsForTNode.ts:52:11
+  ```
+- Same error as before the fix
+
+**Analysis:**
+- The sanitization logic and img renderer fix work correctly (verified in release build)
+- The crash in dev mode suggests either:
+  1. Metro bundler caching old code
+  2. Hot reload not applying changes properly
+  3. Some difference in how dev mode processes the HTML
+
+**Changes Made:**
+1. Fixed `img` renderer: `tnode?.attributes?.src` instead of `props.src`
+2. Removed `picture` renderer (no longer needed since `<picture>` is sanitized out)
+3. Added `picture` to `ignoredDomTags` as defensive measure
+
+**Resolution:**
+After clearing Metro cache with `npx expo start --dev-client --clear`, dev mode works correctly:
+- ✅ All 3 images on Resources page render correctly
+- ✅ External link (BibleGateway.com) opens in Safari
+- ✅ No crashes
+
+The issue was stale code cached by Metro bundler.
