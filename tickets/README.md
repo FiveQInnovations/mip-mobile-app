@@ -11,12 +11,11 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [017](017-prayer-request-form-handling.md) - Prayer Request Form Handling
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [017](017-prayer-request-form-handling.md) - Prayer Request Form Handling
 - [018](018-chaplain-request-form-handling.md) - Chaplain Request Form Handling
 - [037](037-error-offline-screen.md) - Error/Offline Screen Design
 - [051](051-external-links-handling.md) - External Links Handling
