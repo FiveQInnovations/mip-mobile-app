@@ -11,12 +11,11 @@ Quick reference for active tasks. See individual files for details.
 - [055](055-quick-tasks-in-app-alternatives.md) - Quick Tasks In-App Alternatives
 
 ## In Progress
-(none)
+- [056](056-homepage-featured-section-content.md) - Homepage Featured Section Content
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [056](056-homepage-featured-section-content.md) - Homepage Featured Section Content
 - [058](058-tab-icons.md) - Add Icons to Each Tab
 - [059](059-internal-page-visual-design.md) - Internal Page Visual Design Improvements
 
