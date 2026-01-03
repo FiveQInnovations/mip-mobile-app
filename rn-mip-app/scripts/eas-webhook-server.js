@@ -49,6 +49,56 @@ if (!WEBHOOK_SECRET) {
   process.exit(1);
 }
 
+// File logging setup
+const LOGS_DIR = path.join(__dirname, '..', 'logs');
+
+/**
+ * Get log file path for today (one file per day)
+ * @returns {string} Path to today's log file
+ */
+function getLogFilePath() {
+  const today = new Date();
+  const dateStr = today.toISOString().split('T')[0]; // YYYY-MM-DD
+  return path.join(LOGS_DIR, `eas-webhook-${dateStr}.log`);
+}
+
+/**
+ * Ensure logs directory exists
+ */
+function ensureLogsDirectory() {
+  if (!fs.existsSync(LOGS_DIR)) {
+    fs.mkdirSync(LOGS_DIR, { recursive: true });
+  }
+}
+
+/**
+ * Write log entry to file
+ * @param {object} entry - Log entry object
+ */
+function writeLogEntry(entry) {
+  try {
+    ensureLogsDirectory();
+    const logFilePath = getLogFilePath();
+    const timestamp = new Date().toISOString();
+    const logLine = JSON.stringify({
+      timestamp,
+      ...entry
+    }) + '\n';
+    
+    // Use async append to avoid blocking
+    fs.appendFile(logFilePath, logLine, (err) => {
+      if (err) {
+        console.error('[LOG] Failed to write log entry:', err.message);
+      }
+    });
+  } catch (error) {
+    console.error('[LOG] Error writing log entry:', error.message);
+  }
+}
+
+// Initialize logs directory on startup
+ensureLogsDirectory();
+
 const app = express();
 
 // Use raw body parser to get the exact request body for signature verification
@@ -104,14 +154,37 @@ async function downloadBuildArtifact(buildId, platform, artifactUrl = null) {
 
   console.log(`[DOWNLOAD] Downloading ${platform} build artifact...`);
   console.log(`[DOWNLOAD] Build ID: ${buildId}`);
+  writeLogEntry({
+    level: 'info',
+    event: 'download_started',
+    buildId,
+    platform,
+    artifactUrl: artifactUrl || null,
+    outputPath
+  });
 
   // Try direct download from artifact URL first (faster)
   if (artifactUrl && platform === 'android') {
     try {
       console.log(`[DOWNLOAD] Attempting direct download from: ${artifactUrl}`);
-      return await downloadFromUrl(artifactUrl, outputPath);
+      const result = await downloadFromUrl(artifactUrl, outputPath);
+      writeLogEntry({
+        level: 'info',
+        event: 'download_completed',
+        buildId,
+        platform,
+        method: 'direct_url',
+        outputPath: result
+      });
+      return result;
     } catch (error) {
       console.log(`[DOWNLOAD] Direct download failed, trying eas build:download: ${error.message}`);
+      writeLogEntry({
+        level: 'warn',
+        event: 'download_direct_failed',
+        buildId,
+        error: error.message
+      });
     }
   }
 
@@ -124,13 +197,30 @@ async function downloadBuildArtifact(buildId, platform, artifactUrl = null) {
     );
 
     if (fs.existsSync(outputPath)) {
+      const fileStats = fs.statSync(outputPath);
       console.log(`[DOWNLOAD] ✅ Downloaded to: ${outputPath}`);
+      writeLogEntry({
+        level: 'info',
+        event: 'download_completed',
+        buildId,
+        platform,
+        method: 'eas_cli',
+        outputPath,
+        fileSize: fileStats.size
+      });
       return outputPath;
     } else {
       throw new Error('Downloaded file not found');
     }
   } catch (error) {
     console.error(`[DOWNLOAD] ❌ Failed to download: ${error.message}`);
+    writeLogEntry({
+      level: 'error',
+      event: 'download_failed',
+      buildId,
+      platform,
+      error: error.message
+    });
     throw error;
   }
 }
@@ -181,6 +271,15 @@ async function uploadToBrowserStack(filePath, buildId) {
   console.log(`[BROWSERSTACK] Uploading to BrowserStack...`);
   console.log(`[BROWSERSTACK] File: ${path.basename(filePath)}`);
   console.log(`[BROWSERSTACK] Build ID: ${buildId}`);
+  
+  const fileStats = fs.statSync(filePath);
+  writeLogEntry({
+    level: 'info',
+    event: 'browserstack_upload_started',
+    buildId,
+    filePath: path.basename(filePath),
+    fileSize: fileStats.size
+  });
 
   try {
     const result = await uploadFile(filePath, `eas-build-${buildId}`);
@@ -191,8 +290,25 @@ async function uploadToBrowserStack(filePath, buildId) {
     if (result.app_id) {
       console.log(`[BROWSERSTACK] 🆔 App ID: ${result.app_id}`);
     }
+    
+    writeLogEntry({
+      level: 'info',
+      event: 'browserstack_upload_completed',
+      buildId,
+      appUrl: result.app_url || null,
+      appId: result.app_id || null,
+      customId: result.custom_id || null,
+      result: result
+    });
   } catch (error) {
     console.error(`[BROWSERSTACK] ❌ Upload failed: ${error.message}`);
+    writeLogEntry({
+      level: 'error',
+      event: 'browserstack_upload_failed',
+      buildId,
+      error: error.message,
+      stack: error.stack
+    });
     throw error;
   }
 }
@@ -207,13 +323,33 @@ async function processCompletedBuild(build) {
   // Only process successful Android builds for now
   if (platform !== 'android') {
     console.log(`[PROCESS] Skipping ${platform} build (only Android supported for BrowserStack)`);
+    writeLogEntry({
+      level: 'info',
+      event: 'build_skipped',
+      buildId,
+      reason: `Platform ${platform} not supported (only Android)`
+    });
     return;
   }
 
   if (status !== 'finished') {
     console.log(`[PROCESS] Skipping build with status: ${status}`);
+    writeLogEntry({
+      level: 'info',
+      event: 'build_skipped',
+      buildId,
+      reason: `Status ${status} (only processing finished builds)`
+    });
     return;
   }
+
+  writeLogEntry({
+    level: 'info',
+    event: 'build_processing_started',
+    buildId,
+    platform,
+    status
+  });
 
   try {
     // Download the build artifact
@@ -224,11 +360,24 @@ async function processCompletedBuild(build) {
     await uploadToBrowserStack(downloadedFile, buildId);
 
     console.log(`[PROCESS] ✅ Successfully processed build ${buildId}`);
+    writeLogEntry({
+      level: 'info',
+      event: 'build_processing_completed',
+      buildId,
+      downloadedFile: path.basename(downloadedFile)
+    });
     
     // Optionally clean up downloaded file after upload
     // fs.unlinkSync(downloadedFile);
   } catch (error) {
     console.error(`[PROCESS] ❌ Failed to process build ${buildId}: ${error.message}`);
+    writeLogEntry({
+      level: 'error',
+      event: 'build_processing_failed',
+      buildId,
+      error: error.message,
+      stack: error.stack
+    });
     // Don't throw - we don't want to fail the webhook response
   }
 }
@@ -239,15 +388,23 @@ app.post('/webhook', (req, res) => {
   const rawBody = req.body;
 
   console.log(`\n[WEBHOOK] Received webhook request`);
-  console.log(`[WEBHOOK] Headers:`, {
-    'expo-signature': expoSignature ? 'present' : 'missing',
-    'content-type': req.headers['content-type'],
-    'user-agent': req.headers['user-agent']
+  writeLogEntry({
+    level: 'info',
+    event: 'webhook_received',
+    headers: {
+      'expo-signature': expoSignature ? 'present' : 'missing',
+      'content-type': req.headers['content-type'],
+      'user-agent': req.headers['user-agent']
+    }
   });
 
   // Verify signature
   if (!verifySignature(expoSignature, rawBody, WEBHOOK_SECRET)) {
     console.error('[WEBHOOK] ❌ Signature verification failed');
+    writeLogEntry({
+      level: 'error',
+      event: 'signature_verification_failed'
+    });
     return res.status(401).json({ 
       error: 'Invalid signature',
       message: 'Webhook signature verification failed'
@@ -255,10 +412,18 @@ app.post('/webhook', (req, res) => {
   }
 
   console.log('[WEBHOOK] ✅ Signature verified');
+  writeLogEntry({
+    level: 'info',
+    event: 'signature_verified'
+  });
 
   // Parse payload
   const payload = parseWebhookPayload(rawBody);
   if (!payload) {
+    writeLogEntry({
+      level: 'error',
+      event: 'payload_parse_failed'
+    });
     return res.status(400).json({ 
       error: 'Invalid payload',
       message: 'Failed to parse webhook payload'
@@ -268,6 +433,12 @@ app.post('/webhook', (req, res) => {
   // Log webhook event details
   console.log('[WEBHOOK] Event type:', payload.type || 'unknown');
   console.log('[WEBHOOK] Payload:', JSON.stringify(payload, null, 2));
+  writeLogEntry({
+    level: 'info',
+    event: 'webhook_event',
+    eventType: payload.type || 'unknown',
+    payload: payload
+  });
 
   // Handle different event types
   // Note: EAS webhook payload structure is { type: "build.completed", data: { ...build info... } }
@@ -280,6 +451,16 @@ app.post('/webhook', (req, res) => {
     console.log(`  - Status: ${build.status}`);
     console.log(`  - Profile: ${build.profile || 'N/A'}`);
     
+    writeLogEntry({
+      level: 'info',
+      event: 'build_completed',
+      buildId: build.id,
+      platform: build.platform,
+      status: build.status,
+      profile: build.profile || 'N/A',
+      artifacts: build.artifacts
+    });
+    
     if (build.status === 'finished') {
       console.log(`  - ✅ Build succeeded`);
       if (build.artifacts) {
@@ -291,14 +472,32 @@ app.post('/webhook', (req, res) => {
       processCompletedBuild(build).catch((error) => {
         console.error(`[WEBHOOK] ❌ Error processing build: ${error.message}`);
         console.error(`[WEBHOOK] Stack:`, error.stack);
+        writeLogEntry({
+          level: 'error',
+          event: 'build_processing_error',
+          buildId: build.id,
+          error: error.message,
+          stack: error.stack
+        });
       });
     } else if (build.status === 'errored') {
       console.log(`  - ❌ Build failed`);
       if (build.error) {
         console.log(`  - Error:`, build.error);
       }
+      writeLogEntry({
+        level: 'error',
+        event: 'build_errored',
+        buildId: build.id,
+        error: build.error
+      });
     } else if (build.status === 'canceled') {
       console.log(`  - ⚠️  Build canceled`);
+      writeLogEntry({
+        level: 'warn',
+        event: 'build_canceled',
+        buildId: build.id
+      });
     }
   } else if (payload.type === 'build.started') {
     const build = payload.data;
@@ -306,6 +505,13 @@ app.post('/webhook', (req, res) => {
     console.log(`  - Build ID: ${build.id}`);
     console.log(`  - Platform: ${build.platform}`);
     console.log(`  - Profile: ${build.profile || 'N/A'}`);
+    writeLogEntry({
+      level: 'info',
+      event: 'build_started',
+      buildId: build.id,
+      platform: build.platform,
+      profile: build.profile || 'N/A'
+    });
   }
 
   // Respond with success

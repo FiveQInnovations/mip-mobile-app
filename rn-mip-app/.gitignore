@@ -40,3 +40,6 @@ yarn-error.*
 # Generated native folders (CNG/Prebuild) - regenerated from app.json
 ios/
 android/
+
+# Webhook server logs
+logs/
