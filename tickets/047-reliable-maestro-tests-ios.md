@@ -17,20 +17,52 @@ Building on the work from Android testing ([016](016-reliable-android-emulator-l
 - [033](033-maestro-collection-test.md) - Maestro Test: Collection Grid and Navigation
 - [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
 
-**Current iOS Tests:**
+**Current Stable iOS Tests:**
 - `maestro/flows/home-action-hub.yaml` - Comprehensive homepage test (uses iOS setup flow)
 - `maestro/flows/tab-switch-from-home.yaml` - Tab switching test (uses iOS setup flow)
-- `maestro/flows/_setup.yaml` - Shared setup flow (uses launchApp, works reliably on iOS)
+
+**Shared Setup:**
+- `maestro/flows/_setup.yaml` - Shared setup flow (uses launchApp, works reliably on iOS simulators)
+
+**Test Classification:**
+- **Stable:** Tests that use `_setup.yaml` with `launchApp`, which works reliably on iOS simulators
+- **iOS-specific:** Tests designed for iOS that leverage `launchApp` functionality
 
 **Existing Scripts:**
 - `npm run test:maestro:ios` - Currently runs only `home-action-hub.yaml`
 
 ## Tasks
-- [ ] Identify all stable iOS test flows
-- [ ] Create a script to run all stable iOS tests in sequence
-- [ ] Add npm script for easy access: `npm run test:maestro:ios:all`
-- [ ] Document which tests are considered "stable" vs "experimental"
-- [ ] Ensure proper error handling and reporting for test suite runs
+- [x] Identify all stable iOS test flows
+- [x] Create a script to run all stable iOS tests in sequence
+- [x] Add npm script for easy access: `npm run test:maestro:ios:all`
+- [x] Document which tests are considered "stable" vs "experimental"
+- [x] Ensure proper error handling and reporting for test suite runs
 - [ ] Verify the command works reliably (run 3+ times successfully)
 
 ## Notes
+
+### Test Suite Script Created (2026-01-03)
+
+**Created:** `scripts/run-maestro-ios-all.sh`
+
+**Features:**
+- Runs all 2 stable iOS tests in sequence
+- Uses Maestro's built-in `launchApp` (works reliably on iOS)
+- Provides detailed progress output
+- Tracks pass/fail counts
+- Exits with appropriate status code
+- Handles stale Maestro processes
+
+**NPM Script:** `npm run test:maestro:ios:all`
+
+**Stable Tests Included:**
+1. `home-action-hub.yaml` - Comprehensive homepage verification (checks all Quick Tasks, Get Connected section, Featured)
+2. `tab-switch-from-home.yaml` - Tests tab switching via Quick Task button
+
+**Prerequisites:**
+- iOS Simulator must be booted and available
+- App must be built for iOS (`npx expo run:ios`)
+- Dev server should be running (`npm start`)
+- Maestro will use `launchApp` to launch the app automatically
+
+**Note:** iOS tests use `_setup.yaml` which leverages `launchApp` - this works reliably on iOS simulators (unlike Android where we use `adb` launch).
