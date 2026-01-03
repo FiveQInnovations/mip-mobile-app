@@ -37,7 +37,8 @@ Building on the work from Android testing ([016](016-reliable-android-emulator-l
 - [x] Add npm script for easy access: `npm run test:maestro:ios:all`
 - [x] Document which tests are considered "stable" vs "experimental"
 - [x] Ensure proper error handling and reporting for test suite runs
-- [ ] Verify the command works reliably (run 3+ times successfully)
+- [ ] Verify each individual test passes 5 times consecutively
+- [ ] Verify the full test suite passes 3 times consecutively
 
 ## Notes
 
@@ -56,8 +57,18 @@ Building on the work from Android testing ([016](016-reliable-android-emulator-l
 **NPM Script:** `npm run test:maestro:ios:all`
 
 **Stable Tests Included:**
-1. `home-action-hub.yaml` - Comprehensive homepage verification (checks all Quick Tasks, Get Connected section, Featured)
+1. `home-action-hub.yaml` - Comprehensive homepage verification
+   - Verifies "Firefighters for Christ International" title
+   - Checks all Quick Tasks (Prayer Request, Chaplain Request, Resources, Donate)
+   - Verifies Get Connected section (Find a Chapter, Upcoming Events)
+   - Checks Featured section
+   - Takes screenshot for documentation
+   
 2. `tab-switch-from-home.yaml` - Tests tab switching via Quick Task button
+   - Taps Resources Quick Task button
+   - Verifies tab bar remains visible
+   - Verifies Resources tab is selected
+   - Verifies Resources content is displayed
 
 **Prerequisites:**
 - iOS Simulator must be booted and available
@@ -88,3 +99,21 @@ Building on the work from Android testing ([016](016-reliable-android-emulator-l
 **Test Requirements:**
 - Each individual test must pass 5 times consecutively to be marked as stable
 - Full test suite (`npm run test:maestro:ios:all`) must pass 3 times consecutively before marking suite as stable
+
+**Test Stability Criteria:**
+1. **Individual Test Stability:** A test is considered stable only after passing 5 consecutive runs
+2. **Suite Stability:** The test suite is considered stable only after the full suite passes 3 consecutive runs
+3. **Both criteria must be met:** Individual tests must be stable AND the suite must pass 3 times
+
+**Usage:**
+```bash
+# Run individual test 5 times to verify stability
+for i in {1..5}; do
+  maestro test maestro/flows/home-action-hub.yaml
+done
+
+# Run full test suite 3 times to verify suite stability
+for i in {1..3}; do
+  npm run test:maestro:ios:all
+done
+```
