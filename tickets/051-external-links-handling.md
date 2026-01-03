@@ -111,22 +111,55 @@ This is **separate** from `HTMLContentRenderer` and works independently.
 4. **Event handler not firing** - The `onPress` handler might not be triggered
 5. **Linking module issue** - React Native Linking might not be properly configured
 
-### Recommended Verification Steps
+---
 
-1. **Add console.log to confirm code path:**
+## Next Steps for Investigation
+
+### 1. Control Test: Does Linking.openURL() work at all?
+- **Test the Donate button** on HomeScreen - it uses `Linking.openURL()` via a different code path
+- If Donate works → issue is specific to HTMLContentRenderer
+- If Donate fails → issue is with Linking module or simulator configuration
+
+### 2. Inspect the API Response
+- Fetch `https://ffci.fiveq.dev/api/pages/resources` and examine the raw HTML for the button blocks
+- Confirm the `<a href="https://harvest.org/...">` tag is present and correct
+- Check if the button is wrapped in unexpected parent elements
+
+### 3. Trace the Code Path with Logging
+Add console.log statements to answer:
 ```tsx
-// In HTMLContentRenderer.tsx line 183, add:
-console.log('[HTMLContentRenderer] Opening external URL:', href);
+// At line ~120 in the renderers.a function:
+console.log('[HTMLContentRenderer] Link tapped, href:', href);
+
+// Before Linking.openURL:
+console.log('[HTMLContentRenderer] Calling Linking.openURL for:', href);
 ```
 
-2. **Check for Linking errors:**
+Key questions:
+- Is the `renderers.a` function being called at all?
+- Is the `href` value what we expect?
+- Which code path (UUID/internal/external) is being taken?
+
+### 4. Check for Silent Errors
 ```tsx
-Linking.openURL(href).catch(err => console.error('Linking error:', err));
+Linking.openURL(href)
+  .then(() => console.log('[HTMLContentRenderer] Linking.openURL succeeded'))
+  .catch(err => console.error('[HTMLContentRenderer] Linking.openURL failed:', err));
 ```
 
-3. **Test manually in simulator** - tap "Find Out How" on Resources page
+### 5. Investigate TouchableOpacity Nesting
+- Does `react-native-render-html` wrap `<a>` tags in its own touchable component?
+- Could there be competing touch handlers that prevent `onPress` from firing?
+- Check if `TDefaultRenderer` introduces nested touchables
 
-4. **Check if button renders as clickable** - the rendered HTML structure affects touch handling
+### 6. Check react-native-render-html Configuration
+- Review `customHTMLElementModels` and `renderers` configuration
+- Look for known issues with custom `a` tag renderers in the library's GitHub issues
+- Verify the library version in `package.json` and check for breaking changes
+
+### 7. Test on Physical Device vs Simulator
+- Some simulators have issues opening URLs
+- Test on a real iOS device to rule out simulator limitations
 
 ---
 
@@ -148,6 +181,17 @@ Linking.openURL(href).catch(err => console.error('Linking error:', err));
 
 ## Notes
 - External links should use `Linking.openURL()` from React Native
-- The code appears correct - verify issue before making changes
+- The code appears correct but doesn't work - need diagnostic logging to find root cause
+- **Priority debug question**: Is the `onPress` handler even being invoked?
 - Consider adding error handling wrapper around `Linking.openURL()`
 - Consider adding visual indicator (icon) for external links
+
+## Hypotheses (ranked by likelihood)
+
+1. **TouchableOpacity never receives tap** - Most likely. The `react-native-render-html` library may wrap `<a>` tags in its own pressable, or `TDefaultRenderer` may contain nested touchables that capture the event.
+
+2. **Custom renderer not being used** - The `renderers.a` configuration might not be applied correctly, so the default link behavior (which may do nothing in RN) is used instead.
+
+3. **Linking.openURL fails silently** - Less likely since the code looks correct, but possible if there's an issue with the URL format or simulator.
+
+4. **href value is wrong/empty** - The href extracted from `tnode.attributes.href` might be undefined or malformed.
