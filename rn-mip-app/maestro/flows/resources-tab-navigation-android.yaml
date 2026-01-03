@@ -21,3 +21,12 @@ appId: com.fiveq.ffci
 - assertVisible:
     text: "Resources"
     optional: false
+
+# Press Android back button
+- back
+- waitForAnimationToEnd
+
+# Verify we're back on Home screen
+- assertVisible:
+    text: "Quick Tasks"
+    optional: false

@@ -102,3 +102,9 @@ These issues need to be fixed to provide a proper Android user experience that m
 - Provides detailed logs, video, and network data for debugging
 - Reference: https://www.browserstack.com/docs/app-automate/maestro/overview
 
+### Test Notes (2026-01-02)
+- Created `resources-tab-navigation-android.yaml` test to verify Resources tab navigation and back button behavior
+- Test extends to verify Android back button navigates back to Home screen
+- **Known Issue**: Test may fail if app resumes on Resources page (app state persistence) instead of Home screen
+- Test reveals that back button currently closes the app instead of navigating within the app (expected bug behavior)
+
