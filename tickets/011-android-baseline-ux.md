@@ -16,8 +16,8 @@ These issues need to be fixed to provide a proper Android user experience that m
 
 ## Tasks
 - [ ] Create reliable Maestro test for Android baseline UX verification
-  - [ ] Research Maestro test structure for Android back button testing
-  - [ ] Create Maestro flow to test back button navigation behavior
+  - [x] Research Maestro test structure for Android back button testing
+  - [x] Create Maestro flow to test back button navigation behavior
   - [ ] Create Maestro flow to verify tab bar visibility above system navigation bar
   - [ ] Test Maestro flows locally on Android emulator
   - [ ] Set up Maestro test execution on BrowserStack App Automate (supports Maestro v1.39.13+)
@@ -85,6 +85,7 @@ These issues need to be fixed to provide a proper Android user experience that m
 - `rn-mip-app/app/_layout.tsx` - Root navigation layout
 - `rn-mip-app/app/index.tsx` - Home screen
 - `rn-mip-app/package.json` - Dependencies (react-native-safe-area-context, react-navigation)
+- `rn-mip-app/maestro/flows/android-back-button-navigation.yaml` - Maestro test for Android back button navigation
 
 ### Testing Requirements
 - Test on BrowserStack with multiple Android devices

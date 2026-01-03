@@ -1,0 +1,23 @@
+appId: com.fiveq.ffci
+---
+# Test navigating to Resources tab
+# This test verifies that tapping the Resources tab navigates correctly
+
+# Setup: launch app and dismiss developer prompts
+- runFlow: _setup.yaml
+
+# Verify we start on Home screen
+- assertVisible:
+    text: "Quick Tasks"
+    optional: false
+
+# Navigate to Resources tab
+- tapOn:
+    text: "Resources tab"
+    optional: false
+- waitForAnimationToEnd
+
+# Verify we're on Resources screen by checking for Resources title
+- assertVisible:
+    text: "Resources"
+    optional: false
