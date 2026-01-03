@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [048](048-content-page-images-not-rendering.md) - Content Page Images Not Rendering
 
 ## In Progress
-- [048](048-content-page-images-not-rendering.md) - Content Page Images Not Rendering
+(none)
 
 ## Backlog
 
