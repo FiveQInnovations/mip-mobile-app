@@ -1,0 +1,28 @@
+appId: com.fiveq.ffci
+---
+# Simple iOS homepage verification
+# No setup flow needed - simplified for iOS standalone build
+# 
+# Note: launchApp is NOT used - app is launched by script with xcrun simctl
+# App should be launched with xcrun simctl before running this test:
+#   xcrun simctl launch booted com.fiveq.ffci
+
+# Wait for app to load
+- waitForAnimationToEnd
+
+# Confirm key homepage content renders
+- assertVisible:
+    text: "Firefighters for Christ International"
+- assertVisible:
+    text: "Quick Tasks"
+- assertVisible:
+    text: "Prayer Request"
+- assertVisible:
+    text: "Resources"
+
+# Verify tab bar is visible
+- assertVisible:
+    text: "Home tab"
+
+# Capture a reference screenshot
+- takeScreenshot: homepage-loaded-ios

@@ -158,3 +158,55 @@ done
   - Much faster iteration (~seconds vs ~1:41)
 - **For native/config changes:** Full rebuild required (`npx expo run:ios`)
 - **For test verification:** Can use Metro bundler for JS changes, rebuild only for native changes
+
+### Standalone Build Approach (2026-01-03)
+
+**Problem:** Metro-based testing had cached code issues where the app would show stale JavaScript even when source code was correct (e.g., showing "Broken Text" instead of "Quick Tasks").
+
+**Solution:** Implemented standalone Release build approach (mirroring Android APK pattern) that bundles JavaScript directly into the app, eliminating Metro dependency and cached code issues.
+
+**Implementation:**
+- **Build Script:** `scripts/build-ios-release.sh` - Builds Release `.app` bundle for simulator
+  - Uses `xcodebuild` with Release configuration
+  - Targets specific booted simulator to avoid x86_64 build issues
+  - Uses `ONLY_ACTIVE_ARCH=YES` to build only for active architecture (arm64)
+  
+- **Test Runner:** `scripts/run-maestro-ios.sh` - Installs, launches, and tests standalone app
+  - Installs `.app` bundle with `xcrun simctl install booted`
+  - Launches app with `xcrun simctl launch booted com.fiveq.ffci`
+  - Runs Maestro test (app already launched, no `launchApp` needed)
+  
+- **Test Flow:** `maestro/flows/homepage-loads-ios.yaml` - Simplified test without `launchApp`
+  - No `_setup.yaml` dependency
+  - Just waits for animations and asserts visibility
+  - App is launched by script, not Maestro
+
+**NPM Scripts:**
+- `npm run build:ios:release` - Build Release .app for simulator
+- `npm run test:maestro:ios:standalone` - Run test with standalone build
+
+**Verification Results:**
+1. ✅ **Baseline Pass:** Built app, test passed - "Quick Tasks" visible
+2. ✅ **Break Detection:** Changed "Quick Tasks" → "Broken Text", rebuilt, test correctly failed
+3. ✅ **Fix Verification:** Reverted change, rebuilt, test passed again
+
+**Key Benefits:**
+- ✅ **No cached code issues** - JavaScript is bundled into app at build time
+- ✅ **Consistent behavior** - Tests always run against the exact code that was built
+- ✅ **Matches Android pattern** - Same approach for both platforms
+- ✅ **Reliable regression detection** - Verified that tests catch code changes
+
+**Build Time:**
+- Full Release build: ~2-3 minutes (includes clean)
+- Subsequent builds: Faster due to caching
+
+**Usage:**
+```bash
+# Build Release app
+npm run build:ios:release
+
+# Run test with standalone build
+npm run test:maestro:ios:standalone
+```
+
+**Note:** This approach requires a full rebuild for every code change (like Android), but eliminates Metro dependency and cached code issues. For faster iteration during development, Metro-based testing is still available, but standalone builds are recommended for reliable CI/CD and regression testing.
