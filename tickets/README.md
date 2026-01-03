@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [058](058-tab-icons.md) - Add Icons to Each Tab
 
 ## In Progress
-- [058](058-tab-icons.md) - Add Icons to Each Tab
+(none)
 
 ## Backlog
 

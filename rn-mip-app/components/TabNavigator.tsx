@@ -1,11 +1,26 @@
 import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, InteractionManager, Platform, BackHandler } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { getSiteData, SiteData, MenuItem, prefetchMainTabs } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { TabScreen } from './TabScreen';
 import { HomeScreen } from './HomeScreen';
 import { ErrorScreen } from './ErrorScreen';
+
+// Map tab labels to Ionicons names (filled and outline variants)
+const TAB_ICONS: Record<string, { filled: keyof typeof Ionicons.glyphMap; outline: keyof typeof Ionicons.glyphMap }> = {
+  'Home': { filled: 'home', outline: 'home-outline' },
+  'Resources': { filled: 'library', outline: 'library-outline' },
+  'Chapters': { filled: 'people', outline: 'people-outline' },
+  'About': { filled: 'information-circle', outline: 'information-circle-outline' },
+  'Get Involved': { filled: 'hand-left', outline: 'hand-left-outline' },
+  'Prayer Request': { filled: 'heart', outline: 'heart-outline' },
+  'Chaplain Request': { filled: 'person', outline: 'person-outline' },
+};
+
+// Fallback icon for tabs not in the mapping
+const DEFAULT_ICON = { filled: 'ellipse' as keyof typeof Ionicons.glyphMap, outline: 'ellipse-outline' as keyof typeof Ionicons.glyphMap };
 
 export function TabNavigator() {
   const [siteData, setSiteData] = React.useState<SiteData | null>(null);
@@ -83,7 +98,6 @@ export function TabNavigator() {
   // Create Home tab item
   const homeTab: MenuItem = {
     label: 'Home',
-    icon: '🏠',
     page: { uuid: '__home__', type: 'home', url: '/' }
   };
 
@@ -123,13 +137,16 @@ export function TabNavigator() {
               accessibilityRole="tab"
               accessibilityState={{ selected: isSelected }}
             >
-              {item.icon && (
-                <Text style={styles.tabIcon}>{item.icon}</Text>
-              )}
+              <Ionicons
+                name={(TAB_ICONS[item.label] || DEFAULT_ICON)[isSelected ? 'filled' : 'outline']}
+                size={22}
+                color={isSelected ? config.primaryColor : '#666'}
+                style={styles.tabIcon}
+              />
               <Text
                 style={[
                   styles.tabLabel,
-                  isSelected && styles.tabLabelSelected,
+                  isSelected && { color: config.primaryColor, fontWeight: '600' },
                 ]}
               >
                 {item.label}
@@ -178,17 +195,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   tabIcon: {
-    fontSize: 20,
-    marginBottom: 4,
+    marginBottom: 2,
   },
   tabLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#666',
     textAlign: 'center',
-  },
-  tabLabelSelected: {
-    color: '#1976d2',
-    fontWeight: '600',
+    fontWeight: '500',
   },
   loadingText: {
     marginTop: 10,
