@@ -11,11 +11,12 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-- [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
+(none)
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
+- [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
 - [060](060-android-release-exploratory-testing.md) - Android Release Build Exploratory Testing
 
 ### 🟡 Nice to Have

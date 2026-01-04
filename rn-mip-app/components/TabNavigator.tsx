@@ -29,23 +29,52 @@ export function TabNavigator() {
   const [selectedTabUuid, setSelectedTabUuid] = React.useState<string | null>(null);
   const config = getConfig();
   const insets = useSafeAreaInsets();
+  
+  // Tab navigation history for Android back button
+  // Using ref to avoid re-renders on history changes
+  const tabHistory = React.useRef<string[]>([]);
+
+  // Navigate to a tab and track history
+  const navigateToTab = React.useCallback((targetUuid: string) => {
+    // Don't do anything if navigating to the same tab
+    if (targetUuid === selectedTabUuid) return;
+    
+    // Push current tab to history before navigating (if we have a current tab)
+    if (selectedTabUuid) {
+      tabHistory.current.push(selectedTabUuid);
+      console.log(`[TabNavigator] History updated: [${tabHistory.current.join(', ')}]`);
+    }
+    
+    setSelectedTabUuid(targetUuid);
+  }, [selectedTabUuid]);
 
   React.useEffect(() => {
     loadData();
   }, []);
 
-  // Handle Android back button
+  // Handle Android back button with history support
   React.useEffect(() => {
     if (Platform.OS !== 'android') return;
 
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      // If not on Home tab, navigate to Home
-      if (selectedTabUuid !== '__home__') {
-        setSelectedTabUuid('__home__');
+      // If there's history, go back to the previous tab
+      if (tabHistory.current.length > 0) {
+        const previousTab = tabHistory.current.pop();
+        console.log(`[TabNavigator] Back pressed, navigating to: ${previousTab}`);
+        setSelectedTabUuid(previousTab!); // Use setSelectedTabUuid directly to avoid pushing to history
         return true; // Prevent default (exit app)
       }
-      // On Home tab, allow default behavior (exit app)
-      return false;
+      
+      // If on Home with no history, allow app exit
+      if (selectedTabUuid === '__home__') {
+        console.log('[TabNavigator] On Home with no history, allowing exit');
+        return false;
+      }
+      
+      // If somehow not on Home with no history, go to Home
+      console.log('[TabNavigator] No history, navigating to Home');
+      setSelectedTabUuid('__home__');
+      return true;
     });
 
     return () => backHandler.remove();
@@ -113,7 +142,7 @@ export function TabNavigator() {
         {selectedTabUuid === '__home__' ? (
           <HomeScreen 
             siteData={siteData}
-            onSwitchTab={(uuid) => setSelectedTabUuid(uuid)}
+            onSwitchTab={(uuid) => navigateToTab(uuid)}
           />
         ) : (
           selectedTabUuid && <TabScreen key={selectedTabUuid} uuid={selectedTabUuid} />
@@ -131,7 +160,7 @@ export function TabNavigator() {
               onPress={() => {
                 const tapTime = Date.now();
                 console.log(`[TabNavigator] Tab tapped: ${item.label} (UUID: ${item.page.uuid}) at ${tapTime}`);
-                setSelectedTabUuid(item.page.uuid);
+                navigateToTab(item.page.uuid);
               }}
               accessibilityLabel={`${item.label} tab`}
               accessibilityRole="tab"

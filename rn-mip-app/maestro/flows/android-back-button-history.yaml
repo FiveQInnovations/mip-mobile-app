@@ -1,0 +1,33 @@
+appId: ${APP_ID}
+---
+# Android Back Button Tab History Test
+# Tests that pressing back navigates through tab history
+
+# Launch app and wait for home screen
+- launchApp
+- waitForAnimationToEnd
+
+# Verify we're on Home tab
+- assertVisible: "Home tab"
+
+# Navigate to Resources tab
+- tapOn: "Resources tab"
+- waitForAnimationToEnd
+
+# Navigate to Chapters tab  
+- tapOn: "Chapters tab"
+- waitForAnimationToEnd
+
+# Press back - should go to Resources (not Home)
+- pressKey: back
+- waitForAnimationToEnd
+
+# Verify Resources tab is now selected (it should be highlighted)
+- assertVisible: "Resources"
+
+# Press back again - should go to Home
+- pressKey: back
+- waitForAnimationToEnd
+
+# Verify Home tab is now selected
+- assertVisible: "Home tab"

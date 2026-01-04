@@ -1,11 +1,14 @@
 ---
-status: in-progress
+status: backlog
 area: rn-mip-app
 phase: core
 created: 2026-01-02
 ---
 
 # Android Back Button Tab Navigation History
+
+## Status Note
+**Paused 2026-01-03:** Implementation complete and manually verified working (via adb screenshots). Ran out of disk space before Maestro tests could run. Resume by freeing disk space and running `./scripts/run-maestro-android-all.sh`.
 
 ## Context
 Currently, the Android back button always navigates back to the Home tab, regardless of which tabs the user has visited. While this works, it doesn't follow the expected Android navigation pattern where the back button should maintain a navigation history.
