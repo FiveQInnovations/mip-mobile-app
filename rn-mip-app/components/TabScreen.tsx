@@ -210,16 +210,37 @@ export function TabScreen({ uuid }: TabScreenProps) {
 
   // Dynamic styles that use config colors
   const dynamicStyles = {
-    headerAccent: {
-      height: 4,
-      width: '100%' as const,
+    headerContainer: {
       backgroundColor: config.primaryColor,
+      paddingTop: 50, // Status bar area
+      paddingBottom: 16,
+      paddingHorizontal: 16,
+      flexDirection: 'row' as const,
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 4,
+      zIndex: 10,
     },
-    backButtonIcon: {
-      color: config.primaryColor,
+    headerTitle: {
+      color: '#ffffff',
+      fontSize: 18,
+      fontWeight: '700' as const,
+      flex: 1,
+      marginLeft: 12,
     },
-    title: {
-      color: config.textColor || '#0f172a',
+    backButton: {
+      padding: 8,
+      marginRight: 4,
+      borderRadius: 20,
+      backgroundColor: 'rgba(255,255,255,0.2)',
+    },
+    backButtonText: {
+      color: '#ffffff',
+      fontSize: 16,
+      fontWeight: '600' as const,
     },
     sectionTitle: {
       color: config.textColor || '#0f172a',
@@ -231,20 +252,23 @@ export function TabScreen({ uuid }: TabScreenProps) {
 
   return (
     <View style={styles.container}>
-      {/* Header accent bar - subtle brand color */}
-      <View style={dynamicStyles.headerAccent} />
-      
+      {/* Modern Header */}
       {canGoBack && (
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={goBack}
-          accessibilityLabel="Go back"
-          accessibilityRole="button"
-        >
-          <Text style={[styles.backButtonIcon, dynamicStyles.backButtonIcon]}>‹</Text>
-          <Text style={styles.backButtonText}>Back</Text>
-        </TouchableOpacity>
+        <View style={dynamicStyles.headerContainer}>
+          <TouchableOpacity 
+            style={dynamicStyles.backButton} 
+            onPress={goBack}
+            accessibilityLabel="Go back"
+            accessibilityRole="button"
+          >
+            <Text style={dynamicStyles.backButtonText}>← Back</Text>
+          </TouchableOpacity>
+          <Text style={dynamicStyles.headerTitle} numberOfLines={1}>
+            {currentPageData.title}
+          </Text>
+        </View>
       )}
+
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
         {/* Cover Image */}
         {currentPageData.cover && (
@@ -255,8 +279,12 @@ export function TabScreen({ uuid }: TabScreenProps) {
           />
         )}
 
-        {/* Page Title */}
-        <Text style={[styles.title, dynamicStyles.title]}>{currentPageData.title}</Text>
+        {/* Page Title - Only show if not in header (or always show large title for context?) */}
+        {/* We keep the large title for context, header title is for navigation context when scrolled or deep */}
+        {!canGoBack && (
+           <View style={{ height: 4, backgroundColor: config.primaryColor }} />
+        )}
+        <Text style={[styles.title, { color: config.textColor || '#0f172a' }]}>{currentPageData.title}</Text>
 
         {/* Page Content - Render HTML */}
         {pageType === 'content' && currentPageData.page_content && (
@@ -370,15 +398,15 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#ffffff',
     borderRadius: 12,
-    marginBottom: 10,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: '#e5e7eb',
-    borderLeftWidth: 4,
+    // Removed borderLeftWidth to match new cleaner style
     shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
   },
   collectionItemContent: {
     flex: 1,

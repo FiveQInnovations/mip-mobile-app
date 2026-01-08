@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [061](061-visual-design-overhaul.md) - Visual Design Overhaul
 
 ## In Progress
 (none)

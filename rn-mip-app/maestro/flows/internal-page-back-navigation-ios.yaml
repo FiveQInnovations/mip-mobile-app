@@ -47,7 +47,7 @@ appId: com.fiveq.ffci
 
 # Tap the "Back" button to return to Resources page
 - tapOn:
-    text: "Back"
+    text: "← Back"
     optional: false
 - waitForAnimationToEnd
 
