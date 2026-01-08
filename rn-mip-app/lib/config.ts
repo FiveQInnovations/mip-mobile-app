@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 
 // Load config from JSON file
 const ffciConfig = require('../configs/ffci.json');
+const ffciLocalConfig = require('../configs/ffci-local.json');
 
 export interface SiteConfig {
   siteId: string;
@@ -20,9 +21,12 @@ export interface SiteConfig {
   homepageType?: 'content' | 'collection' | 'navigation' | 'action-hub';
 }
 
+// Use local DDEV API for web development
+const baseConfig = Platform.OS === 'web' ? ffciLocalConfig : ffciConfig;
+
 // Load config from JSON file
 const siteConfig: SiteConfig = {
-  ...ffciConfig,
+  ...baseConfig,
   // Runtime config additions
   iosBundle: 'com.fiveq.ffci',
   androidPackage: 'com.fiveq.ffci',

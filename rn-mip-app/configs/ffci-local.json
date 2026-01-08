@@ -1,0 +1,14 @@
+{
+  "siteId": "ffci",
+  "apiBaseUrl": "http://ws-ffci.ddev.site",
+  "apiKey": "777359235aecc10fdfb144041dfdacfc80ca0751c7bed7b14c96f935456fc4ce",
+  "appName": "Firefighters for Christ International",
+  "appSlug": "ffci-mobile",
+  "primaryColor": "#D9232A",
+  "secondaryColor": "#024D91",
+  "textColor": "#0f172a",
+  "backgroundColor": "#f8fafc",
+  "headerStyle": "dark",
+  "logo": "/favicon.svg",
+  "homepageType": "action-hub"
+}

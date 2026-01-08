@@ -50,12 +50,29 @@ If you see "Network request failed":
 
 See **[docs/ios-simulator-network-setup.md](./docs/ios-simulator-network-setup.md)** for detailed troubleshooting guide.
 
+## Web Development
+
+The app can run in a web browser for development. See **[Web Development Guide](./docs/web-development-guide.md)** for complete setup instructions.
+
+**Quick Start:**
+1. Start DDEV: `cd ../sites/ws-ffci && ddev start`
+2. Start web app: `npm run web`
+3. Opens at http://localhost:8081
+
+**Note:** When running on web platform, the app automatically uses the local DDEV API 
+(`http://ws-ffci.ddev.site`) via `configs/ffci-local.json`. HTTP is used instead of HTTPS 
+to avoid browser certificate warnings with DDEV's self-signed certificates.
+
+**Important:** Native apps (iOS/Android) continue to use the production API 
+(`https://ffci.fiveq.dev`) as configured in `configs/ffci.json`.
+
 ## Scripts
 
 ### Development
 - `npm start` - Start Metro bundler
 - `npm run ios` - Build and run on iOS
 - `npm run android` - Build and run on Android
+- `npm run web` - Run in web browser
 
 ### Testing
 - `npm run test:maestro:ios` - Run Maestro UI tests on iOS
@@ -78,6 +95,7 @@ See **[deployment-workflow.md](../docs/deployment-workflow.md)** for complete de
 
 ## Documentation
 
+- **[Web Development Guide](./docs/web-development-guide.md)** - Complete guide for running in web browser with local DDEV
 - **[Deployment Workflow](../docs/deployment-workflow.md)** - Complete guide for deploying to BrowserStack
 - **[How to Build Android](../docs/how-to-build-android.md)** - Android build reference
 - **[iOS Simulator Network Setup](./docs/ios-simulator-network-setup.md)** - Complete guide for network connectivity
