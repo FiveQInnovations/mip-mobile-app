@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { searchSite, SearchResult } from '../lib/api';
 import { getConfig } from '../lib/config';
+import { getCachedSearch, setCachedSearch } from '../lib/searchCache';
 
 export default function SearchScreen() {
   const router = useRouter();
@@ -23,6 +24,9 @@ export default function SearchScreen() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  
+  // AbortController ref to cancel previous requests
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Debounce search - wait 500ms after user stops typing
   useEffect(() => {
@@ -46,17 +50,61 @@ export default function SearchScreen() {
       return;
     }
 
+    const searchStartTime = Date.now();
+    console.log(`[Search] Starting search for: "${searchQuery}" at ${searchStartTime}`);
+
+    // Cancel previous request if it exists
+    if (abortControllerRef.current) {
+      console.log('[Search] Cancelling previous search request');
+      abortControllerRef.current.abort();
+    }
+
+    // Check cache first
+    const cachedResults = getCachedSearch(searchQuery);
+    if (cachedResults !== null) {
+      const cacheTime = Date.now() - searchStartTime;
+      console.log(`[Search] Cache hit! Returning ${cachedResults.length} results in ${cacheTime}ms`);
+      setResults(cachedResults);
+      setHasSearched(true);
+      setIsLoading(false);
+      return;
+    }
+
+    // Create new AbortController for this request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
     setIsLoading(true);
     setHasSearched(true);
     
     try {
-      const searchResults = await searchSite(searchQuery);
+      const apiStartTime = Date.now();
+      const searchResults = await searchSite(searchQuery, abortController.signal);
+      const apiEndTime = Date.now();
+      const apiDuration = apiEndTime - apiStartTime;
+      const totalDuration = apiEndTime - searchStartTime;
+      
+      console.log(`[Search] API call completed in ${apiDuration}ms, total search time: ${totalDuration}ms`);
+      console.log(`[Search] Received ${searchResults.length} results`);
+      
+      // Store in cache
+      setCachedSearch(searchQuery, searchResults);
+      
       setResults(searchResults);
     } catch (error: any) {
+      // Ignore AbortError - it's expected when cancelling requests
+      if (error.name === 'AbortError' || error.name === 'AbortedError') {
+        console.log('[Search] Search was cancelled (user continued typing)');
+        return;
+      }
+      
       console.error('[Search] Error searching:', error);
       setResults([]);
     } finally {
-      setIsLoading(false);
+      // Only clear loading state if this request wasn't cancelled
+      if (!abortController.signal.aborted) {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -142,6 +190,11 @@ export default function SearchScreen() {
             <TouchableOpacity
               style={styles.clearButton}
               onPress={() => {
+                // Cancel any pending request
+                if (abortControllerRef.current) {
+                  abortControllerRef.current.abort();
+                  abortControllerRef.current = null;
+                }
                 setQuery('');
                 setResults([]);
                 setHasSearched(false);

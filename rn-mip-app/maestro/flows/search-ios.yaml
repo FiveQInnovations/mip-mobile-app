@@ -1,0 +1,81 @@
+appId: com.fiveq.ffci
+---
+# Search functionality test for iOS
+# Tests that search works correctly and results appear in reasonable time
+# 
+# Note: launchApp is NOT used - app is launched by script with xcrun simctl
+# App should be launched with xcrun simctl before running this test:
+#   xcrun simctl launch booted com.fiveq.ffci
+
+# Wait for app to load
+- waitForAnimationToEnd
+
+# Confirm homepage is loaded
+- assertVisible:
+    text: "FFC"
+
+# Tap the search icon in the header
+- tapOn:
+    id: "search-outline"
+    index: 0
+
+# Wait for search screen to appear
+- waitForAnimationToEnd
+
+# Verify search input is visible and focused
+- assertVisible:
+    text: "Search..."
+
+# Type a search query (common term that should return results)
+- inputText: "firefighter"
+
+# Wait for search results to appear (should be fast with caching)
+# Give it up to 3 seconds for first search, but expect it faster
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# Verify search results are displayed
+# Should see at least one result with "firefighter" or related content
+- assertVisible:
+    text: "firefighter"
+    useFuzzyMatching: true
+
+# Verify we're seeing search results (not empty state)
+- assertNotVisible:
+    text: "No results found"
+
+# Test that typing another query works (should use cache if same query)
+- tapOn:
+    text: "firefighter"
+    index: 0
+
+# Clear the search input
+- pressKey: SelectAll
+- inputText: "chaplain"
+
+# Wait for new search results
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# Verify new search results appear
+- assertVisible:
+    text: "chaplain"
+    useFuzzyMatching: true
+
+# Test clearing search
+- tapOn:
+    id: "close-circle"
+    index: 0
+
+# Verify we're back to empty state
+- assertVisible:
+    text: "Start typing to search"
+
+# Go back to homepage
+- tapOn:
+    id: "arrow-back"
+    index: 0
+
+# Verify we're back on homepage
+- assertVisible:
+    text: "FFC"

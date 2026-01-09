@@ -84,7 +84,7 @@ function base64Encode(str: string): string {
   return fromByteArray(utf8Bytes);
 }
 
-async function fetchJson<T>(url: string, label: string): Promise<T> {
+async function fetchJson<T>(url: string, label: string, signal?: AbortSignal): Promise<T> {
   const requestStartTime = Date.now();
   console.log(`[API] Making request to: ${url} at ${requestStartTime}`);
   console.log('[API] Config apiBaseUrl:', config.apiBaseUrl);
@@ -112,6 +112,7 @@ async function fetchJson<T>(url: string, label: string): Promise<T> {
       },
       // Ensure credentials are included (though not needed for Basic Auth)
       credentials: 'omit',
+      signal,
     });
     const fetchEndTime = Date.now();
     const fetchDuration = fetchEndTime - fetchStartTime;
@@ -138,6 +139,13 @@ async function fetchJson<T>(url: string, label: string): Promise<T> {
   } catch (error: any) {
     const errorTime = Date.now();
     const errorDuration = errorTime - requestStartTime;
+    
+    // Handle AbortError gracefully (request was cancelled)
+    if (error.name === 'AbortError' || error.name === 'AbortedError') {
+      console.log(`[API] Request cancelled for ${label} (aborted after ${errorDuration}ms)`);
+      throw error;
+    }
+    
     console.error(`[API] Fetch error at ${errorTime} (${errorDuration}ms after start):`, error.message, error);
     console.error('[API] Error details:', JSON.stringify(error, null, 2));
     throw error;
@@ -279,8 +287,10 @@ export async function prefetchMainTabs(menuItems: MenuItem[]): Promise<void> {
 /**
  * Search the site for content matching the query
  * Returns an array of search results with uuid, title, description, and url
+ * @param query - Search query string
+ * @param signal - Optional AbortSignal to cancel the request
  */
-export async function searchSite(query: string): Promise<SearchResult[]> {
+export async function searchSite(query: string, signal?: AbortSignal): Promise<SearchResult[]> {
   if (!query || query.trim().length < 3) {
     return [];
   }
@@ -288,5 +298,5 @@ export async function searchSite(query: string): Promise<SearchResult[]> {
   const encodedQuery = encodeURIComponent(query.trim());
   const url = `${config.apiBaseUrl}/mobile-api/search?q=${encodedQuery}`;
   console.log('[API] Searching site with query:', query);
-  return fetchJson<SearchResult[]>(url, 'search results');
+  return fetchJson<SearchResult[]>(url, 'search results', signal);
 }
