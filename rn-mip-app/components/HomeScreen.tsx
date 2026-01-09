@@ -140,7 +140,7 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
   return (
     <View style={styles.container}>
       <CustomHeader 
-        onSearch={() => Alert.alert('Search', 'Search functionality coming soon')}
+        onSearch={() => router.push('/search')}
         onProfile={() => Alert.alert('Profile', 'User profile coming soon')}
       />
       

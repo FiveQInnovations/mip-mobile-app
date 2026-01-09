@@ -48,6 +48,13 @@ export interface PageData {
   has_form?: boolean;
 }
 
+export interface SearchResult {
+  uuid: string;
+  title: string;
+  description: string;
+  url: string;
+}
+
 export class ApiError extends Error {
   status: number;
   url: string;
@@ -269,3 +276,17 @@ export async function prefetchMainTabs(menuItems: MenuItem[]): Promise<void> {
     });
 }
 
+/**
+ * Search the site for content matching the query
+ * Returns an array of search results with uuid, title, description, and url
+ */
+export async function searchSite(query: string): Promise<SearchResult[]> {
+  if (!query || query.trim().length < 3) {
+    return [];
+  }
+  
+  const encodedQuery = encodeURIComponent(query.trim());
+  const url = `${config.apiBaseUrl}/mobile-api/search?q=${encodedQuery}`;
+  console.log('[API] Searching site with query:', query);
+  return fetchJson<SearchResult[]>(url, 'search results');
+}

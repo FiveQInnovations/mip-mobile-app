@@ -13,6 +13,13 @@ export default function RootLayout() {
       >
         <Stack.Screen name="index" />
         <Stack.Screen 
+          name="search"
+          options={{
+            presentation: 'modal',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen 
           name="page/[uuid]" 
           options={{ 
             headerShown: true,
