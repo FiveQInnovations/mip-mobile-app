@@ -23,8 +23,9 @@ export default function RootLayout() {
           name="page/[uuid]" 
           options={{ 
             headerShown: true,
-            headerTitle: 'Page', // Will be overridden by page title if possible, or just stay as Page
-            headerBackTitle: 'Back'
+            headerTitle: 'Page',
+            headerBackTitle: 'Back',
+            headerBackVisible: true,
           }} 
         />
       </Stack>
