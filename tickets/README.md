@@ -10,6 +10,7 @@ Quick reference for active tasks. See individual files for details.
 ## QA
 - [061](061-visual-design-overhaul.md) - Visual Design Overhaul
 - [062](062-mimic-existing-ffci-app.md) - Research and Mimic Existing FFCI App Design
+- [063](063-search-results-load-slowly.md) - Search results load slowly
 
 ## In Progress
 (none)
@@ -19,7 +20,6 @@ Quick reference for active tasks. See individual files for details.
 ### 🔴 Core Functionality (FFCI)
 - [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
 - [060](060-android-release-exploratory-testing.md) - Android Release Build Exploratory Testing
-- [063](063-search-results-load-slowly.md) - Search results load slowly
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
