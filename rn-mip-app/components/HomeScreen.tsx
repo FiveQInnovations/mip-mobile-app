@@ -1,14 +1,40 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Linking, Alert, Dimensions } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Linking, Alert, Dimensions, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SvgUri } from 'react-native-svg';
 import { getSiteData, SiteData, MenuItem } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { clearAllCache, logCacheStatus } from '../lib/pageCache';
+import { ContentCard } from './ContentCard';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 interface HomeScreenProps {
   siteData: SiteData;
   onSwitchTab: (uuid: string) => void;
+}
+
+// Custom Header Component
+function CustomHeader({ onSearch, onProfile }: { onSearch: () => void, onProfile: () => void }) {
+  return (
+    <View style={styles.header}>
+      <View style={styles.headerLeft}>
+        <Image 
+          source={require('../assets/adaptive-icon.png')} 
+          style={styles.headerLogo} 
+          resizeMode="contain"
+        />
+        <Text style={styles.headerTitle}>FFC</Text>
+      </View>
+      <View style={styles.headerRight}>
+        <TouchableOpacity onPress={onSearch} style={styles.headerButton}>
+          <Ionicons name="search-outline" size={24} color="#0f172a" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onProfile} style={styles.headerButton}>
+          <Ionicons name="person-circle-outline" size={26} color="#0f172a" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 }
 
 export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
@@ -60,367 +86,235 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
     }
   };
 
-  // Quick Tasks: All items navigate in-app (no browser)
-  // UUIDs from ticket 055: Chapters=pik8ysClOFGyllBY, Events=6ffa8qmIpJHM0C3r, 
-  // Resources=uezb3178BtP3oGuU, Get Involved=3e56Ag4tc8SfnGAv
+  // Quick Tasks mapped to card layout
+  // Using generic placeholder images (via Picsum) since direct site URLs are 404ing
   const quickTasks = [
     {
-      key: 'chapters',
-      label: 'Find a Chapter',
-      description: 'Connect with local firefighters',
-      icon: '📍',
-      onPress: () => handleNavigate('Chapters', undefined, 'pik8ysClOFGyllBY'),
-      testID: 'home-quick-chapters',
+      key: 'about-us',
+      label: 'About Us',
+      description: 'Learn about the history of the FFC Ministry!',
+      imageUrl: 'https://picsum.photos/seed/about/800/450', 
+      onPress: () => handleNavigate('About', undefined, 'about-uuid-placeholder'), // Need real UUID
+      testID: 'home-card-about',
     },
     {
-      key: 'events',
-      label: 'Upcoming Events',
-      description: 'Retreats, trainings, & more',
-      icon: '📅',
-      onPress: () => handleNavigate('Events', undefined, '6ffa8qmIpJHM0C3r'),
-      testID: 'home-quick-events',
+      key: 'believe',
+      label: 'What We Believe',
+      description: 'FFC Core Values, Doctrine, Principles, Policies, Focus & Goals...',
+      imageUrl: 'https://picsum.photos/seed/believe/800/450',
+      onPress: () => handleNavigate('What We Believe', undefined, 'believe-uuid-placeholder'), // Need real UUID
+      testID: 'home-card-believe',
     },
     {
-      key: 'resources',
-      label: 'Resources',
-      description: 'PDFs, videos, & links',
-      icon: '📚',
-      onPress: () => handleNavigate('Resources', undefined, 'uezb3178BtP3oGuU'),
-      testID: 'home-quick-resources',
-    },
-    {
-      key: 'getinvolved',
-      label: 'Get Involved',
-      description: 'Outreach & volunteer',
-      icon: '🤝',
-      onPress: () => handleNavigate('Get Involved', undefined, '3e56Ag4tc8SfnGAv'),
-      testID: 'home-quick-getinvolved',
+      key: 'peace',
+      label: 'Peace With God',
+      description: 'Do you know God? Take the steps here',
+      imageUrl: 'https://picsum.photos/seed/peace/800/450',
+      onPress: () => Linking.openURL('https://www.harvest.org/know-god'),
+      testID: 'home-card-peace',
     },
   ];
 
-  // Get Connected: Items that open in browser
-  const getConnected = [
-    {
-      key: 'prayer',
-      label: 'Prayer Request',
-      description: 'Submit a prayer request',
-      icon: '🙏',
-      onPress: () => handleNavigate('Prayer Request', 'https://ffci.fiveq.dev/prayer-request'),
-      testID: 'home-connected-prayer',
-    },
-    {
-      key: 'chaplain',
-      label: 'Chaplain Request',
-      description: 'Request chaplain support',
-      icon: '✝️',
-      onPress: () => handleNavigate('Chaplain Request', 'https://ffci.fiveq.dev/chaplain-request'),
-      testID: 'home-connected-chaplain',
-    },
-    {
-      key: 'donate',
-      label: 'Donate',
-      description: 'Support the ministry',
-      icon: '💝',
-      onPress: () => handleNavigate('Give', 'https://www.firefightersforchrist.org/donate'),
-      testID: 'home-connected-donate',
-    },
-  ];
-
-  // Featured items: Chaplain Resources (in-app) and Know God (browser)
+  // Featured items
   const featuredItems = [
     {
       key: 'chaplain-resources',
       title: 'Chaplain Resources',
       description: 'Downloadable tools and resources for chaplains',
+      imageUrl: 'https://picsum.photos/seed/chaplain/800/450',
       onPress: () => router.push('/page/PCLlwORLKbMnLPtN'),
       testID: 'home-featured-chaplain-resources',
     },
     {
-      key: 'know-god',
-      title: 'Do You Know God?',
-      description: 'You were created to know God personally',
-      onPress: () => Linking.openURL('https://www.harvest.org/know-god'),
-      testID: 'home-featured-know-god',
-    },
+      key: 'events',
+      title: 'Upcoming Events',
+      description: 'Retreats, trainings, & more',
+      imageUrl: 'https://picsum.photos/seed/events/800/450',
+      onPress: () => handleNavigate('Events', undefined, '6ffa8qmIpJHM0C3r'),
+      testID: 'home-featured-events',
+    }
   ];
 
   const isSvgLogo = logoUrl && logoUrl.endsWith('.svg');
 
   return (
-    <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
-      {/* Hero Section (kept from existing) */}
-      {logoUrl && (
+    <View style={styles.container}>
+      <CustomHeader 
+        onSearch={() => Alert.alert('Search', 'Search functionality coming soon')}
+        onProfile={() => Alert.alert('Profile', 'User profile coming soon')}
+      />
+      
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+        {/* Hero Section */}
         <View style={styles.logoSection}>
-          {isSvgLogo ? (
-            <SvgUri
-              uri={logoUrl}
-              width={logoWidth}
-              height={logoHeight}
-              style={styles.logo}
-            />
-          ) : (
-            <Image
-              source={{ uri: logoUrl }}
-              style={[styles.logo, { width: logoWidth, height: logoHeight }]}
-              resizeMode="contain"
-            />
+          {logoUrl && (
+            isSvgLogo ? (
+              <SvgUri
+                uri={logoUrl}
+                width={logoWidth}
+                height={logoHeight}
+                style={styles.logo}
+              />
+            ) : (
+              <Image
+                source={{ uri: logoUrl }}
+                style={[styles.logo, { width: logoWidth, height: logoHeight }]}
+                resizeMode="contain"
+              />
+            )
           )}
         </View>
-      )}
 
-      {/* Quick Tasks */}
-      <Text style={styles.sectionHeader} testID="home-quick-heading">
-        Quick Tasks
-      </Text>
-      <View style={styles.quickGrid}>
-        {quickTasks.map((item) => (
-          <TouchableOpacity
-            key={item.key}
-            style={styles.quickCard}
-            onPress={item.onPress}
-            accessibilityLabel={item.label}
-            testID={item.testID}
-          >
-            <Text style={styles.quickIcon}>{item.icon}</Text>
-            <Text style={styles.quickTitle}>{item.label}</Text>
-            <Text style={styles.quickDescription}>{item.description}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* Get Connected */}
-      <Text style={styles.sectionHeader} testID="home-connected-heading">
-        Get Connected
-      </Text>
-      <View style={styles.connectedList}>
-        {getConnected.map((item) => (
-          <TouchableOpacity
-            key={item.key}
-            style={styles.connectedRow}
-            onPress={item.onPress}
-            accessibilityLabel={item.label}
-            testID={item.testID}
-          >
-            <View style={styles.connectedLeft}>
-              <Text style={styles.connectedIcon}>{item.icon}</Text>
-              <View>
-                <Text style={styles.connectedTitle}>{item.label}</Text>
-                <Text style={styles.connectedDescription}>{item.description}</Text>
-              </View>
-            </View>
-            <Text style={styles.chevron}>›</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* Featured */}
-      <Text style={styles.sectionHeader} testID="home-featured-heading">
-        Featured
-      </Text>
-      <View style={styles.featuredGrid}>
-        {featuredItems.map((item) => (
-          <TouchableOpacity
-            key={item.key}
-            style={styles.featuredCard}
-            onPress={item.onPress}
-            accessibilityLabel={item.title}
-            testID={item.testID}
-          >
-            <View style={styles.featuredBadge}>
-              <Text style={styles.featuredBadgeText}>Featured</Text>
-            </View>
-            <Text style={styles.featuredTitle}>{item.title}</Text>
-            <Text style={styles.featuredDescription}>{item.description}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* Dev Tools - Temporary */}
-      <View style={styles.devSection}>
-        <Text style={styles.devSectionHeader}>🔧 Dev Tools (Temp)</Text>
-        <TouchableOpacity
-          style={styles.devButton}
-          onPress={() => {
-            clearAllCache();
-            logCacheStatus();
-            setCacheCleared(true);
-            setTimeout(() => setCacheCleared(false), 3000);
-            Alert.alert('Cache Cleared', 'All cached pages have been cleared. Reload app to test prefetching.');
-          }}
-          testID="dev-clear-cache"
+        {/* Horizontal Scroll for Main Cards */}
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          style={styles.horizontalScroll}
+          contentContainerStyle={styles.horizontalScrollContent}
         >
-          <Text style={styles.devButtonText}>
-            {cacheCleared ? '✓ Cache Cleared!' : '🗑️ Clear Cache'}
-          </Text>
-        </TouchableOpacity>
-        {cacheCleared && (
-          <Text style={styles.devMessage}>
-            Cache cleared! Reload app (Cmd+R) to test prefetching.
-          </Text>
-        )}
-      </View>
-    </ScrollView>
+          {quickTasks.map((item) => (
+            <ContentCard
+              key={item.key}
+              title={item.label}
+              description={item.description}
+              imageUrl={item.imageUrl}
+              onPress={item.onPress}
+              style={styles.carouselCard}
+              testID={item.testID}
+            />
+          ))}
+        </ScrollView>
+
+        {/* Featured Section */}
+        <Text style={styles.sectionHeader} testID="home-featured-heading">
+          Featured
+        </Text>
+        <View style={styles.verticalList}>
+          {featuredItems.map((item) => (
+            <ContentCard
+              key={item.key}
+              title={item.title}
+              description={item.description}
+              imageUrl={item.imageUrl}
+              onPress={item.onPress}
+              style={styles.fullWidthCard}
+              testID={item.testID}
+              badgeText="Featured"
+            />
+          ))}
+        </View>
+
+        {/* Dev Tools - Temporary */}
+        <View style={styles.devSection}>
+          <Text style={styles.devSectionHeader}>🔧 Dev Tools (Temp)</Text>
+          <TouchableOpacity
+            style={styles.devButton}
+            onPress={() => {
+              clearAllCache();
+              logCacheStatus();
+              setCacheCleared(true);
+              setTimeout(() => setCacheCleared(false), 3000);
+              Alert.alert('Cache Cleared', 'All cached pages have been cleared. Reload app to test prefetching.');
+            }}
+            testID="dev-clear-cache"
+          >
+            <Text style={styles.devButtonText}>
+              {cacheCleared ? '✓ Cache Cleared!' : '🗑️ Clear Cache'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#ffffff',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  headerLogo: {
+    width: 24,
+    height: 24,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#0f172a',
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  headerButton: {
+    padding: 4,
   },
   scrollView: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   content: {
-    padding: 20,
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#666',
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#d32f2f',
-    marginBottom: 10,
-  },
-  retryText: {
-    fontSize: 16,
-    color: '#1976d2',
-    textDecorationLine: 'underline',
+    paddingBottom: 40,
   },
   logoSection: {
     alignItems: 'center',
-    marginBottom: 40,
-    paddingTop: 40,
-    paddingBottom: 0,
+    paddingVertical: 30,
     paddingHorizontal: 20,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 8,
+    backgroundColor: '#f8fafc',
+    marginBottom: 20,
   },
   logo: {
     marginBottom: 0,
+  },
+  horizontalScroll: {
+    marginBottom: 24,
+  },
+  horizontalScrollContent: {
+    paddingHorizontal: 16,
+    paddingRight: 8, // extra padding for last item
+  },
+  carouselCard: {
+    width: 280,
+    marginRight: 16,
+    // Add border to distinguish from white background
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
   },
   sectionHeader: {
     fontSize: 20,
     fontWeight: '700',
     color: '#0f172a',
-    marginBottom: 12,
+    marginBottom: 16,
+    paddingHorizontal: 16,
   },
-  quickGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 24,
+  verticalList: {
+    paddingHorizontal: 16,
+    gap: 16,
   },
-  quickCard: {
-    flexBasis: '48%',
-    backgroundColor: '#ffffff',
-    borderColor: '#e5e7eb',
+  fullWidthCard: {
+    width: '100%',
+    marginBottom: 0, // Handled by gap
     borderWidth: 1,
-    borderRadius: 12,
-    padding: 14,
-    minHeight: 140,
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  quickIcon: {
-    fontSize: 26,
-    marginBottom: 10,
-  },
-  quickTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#0f172a',
-    marginBottom: 6,
-  },
-  quickDescription: {
-    fontSize: 13,
-    color: '#475569',
-  },
-  connectedList: {
-    marginBottom: 24,
-  },
-  connectedRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 14,
-    paddingHorizontal: 12,
-    borderColor: '#e5e7eb',
-    borderWidth: 1,
-    borderRadius: 12,
-    marginBottom: 12,
-    backgroundColor: '#ffffff',
-  },
-  connectedLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    flexShrink: 1,
-  },
-  connectedIcon: {
-    fontSize: 22,
-  },
-  connectedTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#0f172a',
-  },
-  connectedDescription: {
-    fontSize: 13,
-    color: '#475569',
-    marginTop: 2,
-  },
-  chevron: {
-    fontSize: 20,
-    color: '#94a3b8',
-  },
-  featuredGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 24,
-  },
-  featuredCard: {
-    flexBasis: '48%',
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: '#eff6ff',
-    borderColor: '#bfdbfe',
-    borderWidth: 1,
-  },
-  featuredBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#2563eb',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-    marginBottom: 10,
-  },
-  featuredBadgeText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  featuredTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#0f172a',
-    marginBottom: 6,
-  },
-  featuredDescription: {
-    fontSize: 14,
-    color: '#475569',
+    borderColor: '#e2e8f0',
   },
   devSection: {
-    marginTop: 24,
+    marginTop: 32,
+    marginHorizontal: 16,
     padding: 16,
     backgroundColor: '#fff7ed',
     borderColor: '#fed7aa',
@@ -453,4 +347,3 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
 });
-

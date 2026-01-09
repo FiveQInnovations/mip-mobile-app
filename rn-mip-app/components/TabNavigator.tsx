@@ -8,15 +8,22 @@ import { TabScreen } from './TabScreen';
 import { HomeScreen } from './HomeScreen';
 import { ErrorScreen } from './ErrorScreen';
 
-// Map tab labels to Ionicons names (filled and outline variants)
+// Updated Icon Map based on the screenshot
+// Home -> Star
+// Resources -> Bible (Book)
+// Connect -> Arrow/Connect icon
+// Give -> Heart
+// Others -> Appropriate fallbacks
 const TAB_ICONS: Record<string, { filled: keyof typeof Ionicons.glyphMap; outline: keyof typeof Ionicons.glyphMap }> = {
-  'Home': { filled: 'home', outline: 'home-outline' },
-  'Resources': { filled: 'library', outline: 'library-outline' },
+  'Home': { filled: 'star', outline: 'star-outline' },
+  'Resources': { filled: 'book', outline: 'book-outline' },
   'Chapters': { filled: 'people', outline: 'people-outline' },
   'About': { filled: 'information-circle', outline: 'information-circle-outline' },
   'Get Involved': { filled: 'hand-left', outline: 'hand-left-outline' },
   'Prayer Request': { filled: 'heart', outline: 'heart-outline' },
   'Chaplain Request': { filled: 'person', outline: 'person-outline' },
+  'Connect': { filled: 'git-network', outline: 'git-network-outline' },
+  'Give': { filled: 'heart', outline: 'heart-outline' },
 };
 
 // Fallback icon for tabs not in the mapping
@@ -131,6 +138,8 @@ export function TabNavigator() {
   };
 
   // Prepend Home tab to menu items
+  // Note: We might want to rename labels here to match screenshots if the API returns different names
+  // But for now we stick to API labels + our icon mapping
   const menuItems = siteData.menu;
   const allTabs = [homeTab, ...menuItems];
   const selectedTab = allTabs.find(item => item.page.uuid === selectedTabUuid) || allTabs[0];
@@ -153,6 +162,9 @@ export function TabNavigator() {
       <View style={[styles.tabBar, { paddingBottom: Platform.OS === 'android' ? insets.bottom : 0 }]}>
         {allTabs.map((item: MenuItem, index: number) => {
           const isSelected = selectedTabUuid === item.page.uuid;
+          // Clean label for icon lookup (handle potential trailing spaces or case)
+          const cleanLabel = item.label.trim();
+          
           return (
             <TouchableOpacity
               key={index}
@@ -167,7 +179,7 @@ export function TabNavigator() {
               accessibilityState={{ selected: isSelected }}
             >
               <Ionicons
-                name={(TAB_ICONS[item.label] || DEFAULT_ICON)[isSelected ? 'filled' : 'outline']}
+                name={(TAB_ICONS[cleanLabel] || DEFAULT_ICON)[isSelected ? 'filled' : 'outline']}
                 size={22}
                 color={isSelected ? config.primaryColor : '#666'}
                 style={styles.tabIcon}

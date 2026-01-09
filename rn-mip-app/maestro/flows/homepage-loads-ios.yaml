@@ -10,33 +10,28 @@ appId: com.fiveq.ffci
 # Wait for app to load
 - waitForAnimationToEnd
 
-# Confirm key homepage content renders
+# Confirm header renders
 - assertVisible:
-    text: "Quick Tasks"
-# Quick Tasks are all in-app: Chapters, Events, Resources, Get Involved
+    text: "FFC"
+
+# Confirm key homepage content renders (now in Cards)
+# Quick Tasks are now mapped to "About Us", "What We Believe", etc in the carousel
 - assertVisible:
-    text: "Find a Chapter"
+    text: "About Us"
 - assertVisible:
-    text: "Upcoming Events"
-- assertVisible:
-    text: "Resources"
-# Get Connected has browser items
-- assertVisible:
-    text: "Get Connected"
-- assertVisible:
-    text: "Prayer Request"
+    text: "What We Believe"
 
 # Scroll to see Featured section
 - scroll
 - waitForAnimationToEnd
 
-# Featured section has two items
+# Featured section
 - assertVisible:
     text: "Featured"
 - assertVisible:
     text: "Chaplain Resources"
 - assertVisible:
-    text: "Do You Know God?"
+    text: "Upcoming Events"
 
 # Verify tab bar is visible
 - assertVisible:

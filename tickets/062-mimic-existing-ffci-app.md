@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: qa
 area: general
 phase: nice-to-have
 created: 2026-01-08
@@ -21,9 +21,17 @@ Mike (Account Exec) mentioned he likes the design of the existing Firefighters f
     *   Component styling (lists, cards, headers).
 3.  **Create Tasks:** Generate follow-up tickets to implement specific design elements that improve our app.
 
+## Updates (2026-01-08)
+User specifically requested to implement the **Card-based Content Layout** observed in the existing app screenshots (e.g., `screenshot-09.png`).
+- Focus on large, image-forward cards.
+- Replace current grid/list text-heavy layouts with visual cards.
+- Update `HomeScreen` to utilize this new layout.
+
 ## Implementation Plan
 - [ ] Check if current Android emulator has Google Play Store.
 - [ ] If not, try to create a new AVD with Play Store support.
 - [ ] Alternatively, search for the APK online to sideload.
 - [ ] Check BrowserStack capabilities for installing store apps.
 - [ ] Document findings and screenshots in this ticket or a new doc.
+- [x] Implement `ContentCard` component (Image + Title + Description).
+- [ ] Update `HomeScreen` to use `ContentCard` layout.
