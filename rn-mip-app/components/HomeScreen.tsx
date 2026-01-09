@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Linking, Alert } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Linking, Alert, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SvgUri } from 'react-native-svg';
 import { getSiteData, SiteData, MenuItem } from '../lib/api';
@@ -22,6 +22,11 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
       ? site_data.logo
       : `${config.apiBaseUrl}${site_data.logo}`
     : null;
+
+  // Calculate responsive logo size (85% of screen width, max 400px, min 280px)
+  const screenWidth = Dimensions.get('window').width;
+  const logoWidth = Math.min(Math.max(screenWidth * 0.85, 280), 400);
+  const logoHeight = logoWidth * 0.6; // Maintain 5:3 aspect ratio (200:120)
 
   const findMenuItemByLabel = (label: string) =>
     menu.find((item) => item.label?.toLowerCase() === label.toLowerCase());
@@ -149,30 +154,19 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
           {isSvgLogo ? (
             <SvgUri
               uri={logoUrl}
-              width={200}
-              height={120}
+              width={logoWidth}
+              height={logoHeight}
               style={styles.logo}
             />
           ) : (
             <Image
               source={{ uri: logoUrl }}
-              style={styles.logo}
+              style={[styles.logo, { width: logoWidth, height: logoHeight }]}
               resizeMode="contain"
             />
           )}
-          {site_data.title && (
-            <Text style={styles.siteTitle}>{site_data.title}</Text>
-          )}
         </View>
       )}
-
-      <Text
-        accessibilityLabel="Firefighters for Christ International"
-        style={styles.appName}
-        testID="home-hero-app-name"
-      >
-        Firefighters for Christ International
-      </Text>
 
       {/* Quick Tasks */}
       <Text style={styles.sectionHeader} testID="home-quick-heading">
@@ -300,27 +294,15 @@ const styles = StyleSheet.create({
   },
   logoSection: {
     alignItems: 'center',
-    marginBottom: 30,
-    paddingVertical: 20,
+    marginBottom: 40,
+    paddingTop: 40,
+    paddingBottom: 0,
+    paddingHorizontal: 20,
     backgroundColor: '#f5f5f5',
     borderRadius: 8,
   },
   logo: {
-    width: 200,
-    height: 120,
-    marginBottom: 10,
-  },
-  siteTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
-  },
-  appName: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 24,
-    color: '#333',
+    marginBottom: 0,
   },
   sectionHeader: {
     fontSize: 20,

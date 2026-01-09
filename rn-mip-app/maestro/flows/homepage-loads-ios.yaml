@@ -12,8 +12,6 @@ appId: com.fiveq.ffci
 
 # Confirm key homepage content renders
 - assertVisible:
-    text: "Firefighters for Christ International"
-- assertVisible:
     text: "Quick Tasks"
 # Quick Tasks are all in-app: Chapters, Events, Resources, Get Involved
 - assertVisible:
