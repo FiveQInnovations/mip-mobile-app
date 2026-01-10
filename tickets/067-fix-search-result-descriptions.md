@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: done
 area: wsp-mobile
 phase: core
 created: 2026-01-20
