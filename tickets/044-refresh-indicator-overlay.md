@@ -126,3 +126,29 @@ The app uses a stale-while-revalidate caching pattern where cached content is sh
 4. **Future Enhancement:**
    - Consider adding pull-to-refresh (`RefreshControl`) for manual refresh
    - Could trigger refresh of `siteData` in `TabNavigator` when user pulls down on home screen
+
+## Implementation Status
+
+### Code Changes Made
+- ✅ Created `HomeScreenSkeleton` component in `HomeScreen.tsx`
+- ✅ Replaced `TabNavigator`'s `ActivityIndicator` with `HomeScreenSkeleton` during initial load
+- ✅ Added refresh indicator UI to `TabScreen`:
+  - Thin progress bar at top of screen when `refreshing === true`
+  - Small spinner in header (for pages with back navigation)
+  - Spinner near title (for pages without headers)
+- ✅ Added dev tool refresh button in TabScreen header for manual testing
+
+### Issue: Refresh Indicator Not Visible
+**Status:** Code implemented but refresh indicator is not visible during testing.
+
+**Possible Causes:**
+- Background refresh happens too quickly (< 100ms) - indicator appears/disappears before user can see it
+- Cache TTL (5 minutes) means refresh only happens when cache is stale, which may not occur during normal testing
+- The `refreshing` state may not be set correctly in all scenarios
+- Visual indicators may be too subtle or positioned where they're not noticeable
+
+**Next Steps:**
+- Investigate refresh timing and state management
+- Consider making indicator more prominent or adding animation
+- Test with slower network conditions or artificially delay refresh
+- Verify `refreshing` state is being set correctly in all code paths
