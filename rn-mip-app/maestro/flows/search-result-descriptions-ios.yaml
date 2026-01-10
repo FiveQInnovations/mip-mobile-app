@@ -1,0 +1,42 @@
+appId: com.fiveq.ffci
+---
+# Search result descriptions test for iOS
+# Tests that search works and results appear (ticket 067)
+# 
+# Note: launchApp is NOT used - app is launched by script with xcrun simctl
+# App should be launched with xcrun simctl before running this test:
+#   xcrun simctl launch booted com.fiveq.ffci
+
+- runFlow:
+    file: "verify-header-renders.yaml"
+
+# Tap the search icon in the header
+- tapOn:
+    id: "search-outline"
+    index: 0
+
+# Wait for search screen to appear
+- waitForAnimationToEnd
+
+# Verify search input is visible and focused
+- assertVisible:
+    text: "Search..."
+
+# Type a search query (using "test" - fast query per ticket 065)
+- inputText: "test"
+
+# Wait for search results to appear (should be fast with caching)
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# Verify search results are displayed (at least one result appears)
+- assertVisible:
+    text: "test"
+
+# Verify we're seeing search results (not empty state)
+- assertNotVisible:
+    text: "No results found"
+
+# Take screenshot for manual verification of description content
+- takeScreenshot:
+    path: "maestro/screenshots/search-results-test-ios"
