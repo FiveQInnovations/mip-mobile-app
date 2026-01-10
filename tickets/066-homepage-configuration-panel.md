@@ -102,6 +102,8 @@ New fields should be added after line 57 (after `mobileLogo`).
 
 ### Recommended Blueprint for Quick Tasks
 
+Admin selects a page → API pulls title/description/cover from page by default. Optional override fields allow customization.
+
 ```yaml
 mobileHomepageQuickTasks:
   label: "Homepage Quick Tasks"
@@ -110,23 +112,26 @@ mobileHomepageQuickTasks:
   fields:
     page:
       type: pages
-      label: Link to Page
+      label: Page to Feature
       multiple: false
+      required: true
     label:
       type: text
-      label: Card Label
-      required: true
+      label: Custom Label (optional)
+      help: "Leave blank to use page title"
     description:
       type: text
-      label: Card Description
+      label: Custom Description (optional)
+      help: "Leave blank to use page description"
     image:
       type: files
-      label: Card Image
+      label: Custom Image (optional)
+      help: "Leave blank to use page cover image"
       multiple: false
       search: true
     external_url:
       type: url
-      label: External URL (optional)
+      label: External URL (instead of page)
       help: "If provided, opens in browser instead of navigating to page"
 ```
 
@@ -140,18 +145,21 @@ mobileHomepageFeatured:
   fields:
     page:
       type: pages
-      label: Link to Page
+      label: Page to Feature
       multiple: false
+      required: true
     title:
       type: text
-      label: Card Title
-      required: true
+      label: Custom Title (optional)
+      help: "Leave blank to use page title"
     description:
       type: text
-      label: Card Description
+      label: Custom Description (optional)
+      help: "Leave blank to use page description"
     image:
       type: files
-      label: Card Image
+      label: Custom Image (optional)
+      help: "Leave blank to use page cover image"
       multiple: false
       search: true
     badge_text:
@@ -160,7 +168,7 @@ mobileHomepageFeatured:
       help: "E.g., 'Featured', 'New', 'Popular'"
     external_url:
       type: url
-      label: External URL (optional)
+      label: External URL (instead of page)
       help: "If provided, opens in browser instead of navigating to page"
 ```
 
@@ -176,15 +184,24 @@ private function get_homepage_quick_tasks($site) {
     }
     return $tasks->toStructure()->map(function ($item) {
         $page = $item->page()->toPages()->first();
+        
+        // Custom image, or fall back to page cover
         $imageFile = $item->image()->toFile();
+        $imageUrl = null;
+        if ($imageFile && $imageFile->exists()) {
+            $imageUrl = $imageFile->toCDNFile()->url();
+        } elseif ($page && $page->cover()->isNotEmpty()) {
+            $coverFile = $page->cover()->toFile();
+            if ($coverFile && $coverFile->exists()) {
+                $imageUrl = $coverFile->toCDNFile()->url();
+            }
+        }
         
         return [
             "uuid" => $page ? $page->uuid()->id() : null,
-            "label" => $item->label()->value(),
-            "description" => $item->description()->value(),
-            "image_url" => ($imageFile && $imageFile->exists()) 
-                ? $imageFile->toCDNFile()->url() 
-                : null,
+            "label" => $item->label()->value() ?: ($page ? $page->title()->value() : ''),
+            "description" => $item->description()->value() ?: ($page ? $page->description()->value() : ''),
+            "image_url" => $imageUrl,
             "external_url" => $item->external_url()->value() ?: null,
         ];
     })->filter(fn($item) => $item['uuid'] || $item['external_url'])->data();
@@ -197,15 +214,24 @@ private function get_homepage_featured($site) {
     }
     return $featured->toStructure()->map(function ($item) {
         $page = $item->page()->toPages()->first();
+        
+        // Custom image, or fall back to page cover
         $imageFile = $item->image()->toFile();
+        $imageUrl = null;
+        if ($imageFile && $imageFile->exists()) {
+            $imageUrl = $imageFile->toCDNFile()->url();
+        } elseif ($page && $page->cover()->isNotEmpty()) {
+            $coverFile = $page->cover()->toFile();
+            if ($coverFile && $coverFile->exists()) {
+                $imageUrl = $coverFile->toCDNFile()->url();
+            }
+        }
         
         return [
             "uuid" => $page ? $page->uuid()->id() : null,
-            "title" => $item->title()->value(),
-            "description" => $item->description()->value(),
-            "image_url" => ($imageFile && $imageFile->exists()) 
-                ? $imageFile->toCDNFile()->url() 
-                : null,
+            "title" => $item->title()->value() ?: ($page ? $page->title()->value() : ''),
+            "description" => $item->description()->value() ?: ($page ? $page->description()->value() : ''),
+            "image_url" => $imageUrl,
             "badge_text" => $item->badge_text()->value() ?: null,
             "external_url" => $item->external_url()->value() ?: null,
         ];
