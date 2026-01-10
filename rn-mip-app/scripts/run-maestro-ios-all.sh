@@ -47,6 +47,7 @@ STABLE_TESTS=(
     "maestro/flows/homepage-loads-ios.yaml"
     "maestro/flows/content-page-rendering-ios.yaml"
     "maestro/flows/internal-page-back-navigation-ios.yaml"
+    "maestro/flows/search-result-descriptions-ios.yaml"
 )
 
 # Track results

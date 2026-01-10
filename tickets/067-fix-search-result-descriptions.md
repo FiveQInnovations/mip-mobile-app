@@ -50,10 +50,10 @@ After optimizing search API performance (ticket 065), the API is now fast and re
 - [x] Fix description extraction for Kirby blocks
   - [x] Use existing `page_description` field (SEO meta description) instead of parsing blocks
   - [x] If no description exists, leave empty (clean fallback)
-- [ ] Test and verify fixes
-  - [ ] Test with queries that previously showed JSON (e.g., "bible", "firefighters")
-  - [ ] Verify descriptions are readable and user-friendly
-  - [ ] Test mobile app search UI displays descriptions correctly
+- [X] Test and verify fixes
+  - [X] Test with queries that previously showed JSON (e.g., "bible", "firefighters")
+  - [X] Verify descriptions are readable and user-friendly
+  - [X] Test mobile app search UI displays descriptions correctly
 
 ## Solution (2026-01-10)
 
