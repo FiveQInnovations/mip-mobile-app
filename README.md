@@ -202,6 +202,14 @@ Once the plugin is installed and the site is running:
 
 See [kirby-headless-cef.md](docs/kirby-headless-cef.md) for KQL query examples.
 
+
+### Deploying API changes
+- Commit changes on a feature branch in wsp-mobile.
+- When ready, merge into master locally
+- Push changes to origin master
+- Server should auto-update about every 10 minutes
+- You can manually trigger an update with: `curl "https://api.fiveq.dev/api/proxy/ffci/composer-update?api_key=$MIP_API_TOKEN$"`
+
 ### Configuring Mobile Settings
 
 1. Log into the Kirby Panel at `/panel`
