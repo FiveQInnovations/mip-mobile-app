@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: done
 area: rn-mip-app
 phase: nice-to-have
 created: 2026-01-20
@@ -25,8 +25,8 @@ Based on research from ticket 062, the existing Firefighters for Christ app uses
 - [X] Ensure Quick Tasks section uses card layout effectively
 - [X] Ensure Featured section uses card layout effectively
 - [X] Test card layout on iOS
-- [ ] Test card layout on Android
-- [ ] Update Maestro tests if needed for new card layout
+- [ ] Test card layout on Android -- deferring until later
+- [X] Update Maestro tests if needed for new card layout
 
 ## Related
 

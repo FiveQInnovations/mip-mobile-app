@@ -11,7 +11,7 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-- [064](064-implement-card-layout-homepage.md) - Implement Card Component Layout on Homepage
+(none)
 
 ## Backlog
 
@@ -92,6 +92,7 @@ Quick reference for active tasks. See individual files for details.
 - [061](061-visual-design-overhaul.md) - Visual Design Overhaul
 - [062](062-mimic-existing-ffci-app.md) - Research and Mimic Existing FFCI App Design
 - [063](063-search-results-load-slowly.md) - Search results load slowly
+- [064](064-implement-card-layout-homepage.md) - Implement Card Component Layout on Homepage
 
 ---
 
