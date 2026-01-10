@@ -2,7 +2,7 @@ appId: com.fiveq.ffci
 ---
 # Test internal page back navigation on iOS
 # This test verifies that after navigating to an internal page via a link,
-# tapping the "← Back" button returns to the previous page.
+# tapping the "Go back" button returns to the previous page.
 #
 # Ticket: 054-internal-page-back-navigation
 
@@ -13,32 +13,39 @@ appId: com.fiveq.ffci
     text: "Resources tab"
 - waitForAnimationToEnd
 
-# Verify we're on Resources screen
 - assertVisible:
     text: "Resources for Firefighters and Their Families"
+
+- waitForAnimationToEnd
+
+- scroll
+- waitForAnimationToEnd
+- scroll
+- waitForAnimationToEnd
 
 - scrollUntilVisible:
     element:
       text: "FFC Media Ministry"
     direction: DOWN
     timeout: 10000
-    centerElement: true
+    visibilityPercentage: 25
 
 - tapOn:
     text: "FFC Media Ministry"
-    index: 0
 
 - waitForAnimationToEnd
 
 # Verify we're on the FFC Media Ministry page
 - assertVisible:
-    text: "Firefighters for Christ media library"
+    text: "FFC Media Ministry"
+- assertVisible:
+    text: "Go back"
 
 - takeScreenshot:
     path: "maestro/screenshots/internal-page-back-navigation-ios"
 
 - tapOn:
-    text: "← Back"
+    text: "Go back"
 - waitForAnimationToEnd
 
 # Verify we're back on the Resources page
