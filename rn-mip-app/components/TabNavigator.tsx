@@ -5,7 +5,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { getSiteData, SiteData, MenuItem, prefetchMainTabs } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { TabScreen } from './TabScreen';
-import { HomeScreen } from './HomeScreen';
+import { HomeScreen, HomeScreenSkeleton } from './HomeScreen';
 import { ErrorScreen } from './ErrorScreen';
 
 // Updated Icon Map based on the screenshot
@@ -111,12 +111,7 @@ export function TabNavigator() {
   }
 
   if (loading) {
-    return (
-      <View style={styles.container} accessibilityLabel="Loading screen">
-        <ActivityIndicator size="large" color={config.primaryColor} />
-        <Text accessibilityLabel="Loading text" style={styles.loadingText}>Loading...</Text>
-      </View>
-    );
+    return <HomeScreenSkeleton />;
   }
 
   if (error) {

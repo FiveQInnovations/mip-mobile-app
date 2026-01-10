@@ -3,8 +3,9 @@ import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, Touchable
 import { getPageWithCache, PageData } from '../lib/api';
 import { getConfig, SiteConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
-import { hasCachedPage } from '../lib/pageCache';
+import { hasCachedPage, clearCachedPage } from '../lib/pageCache';
 import { ErrorScreen } from './ErrorScreen';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 // Skeleton loading component for visual polish
 function SkeletonLoader({ config }: { config: SiteConfig }) {
@@ -194,6 +195,12 @@ export function TabScreen({ uuid }: TabScreenProps) {
     });
   };
 
+  const handleManualRefresh = () => {
+    console.log(`[TabScreen] Manual refresh triggered for UUID: ${currentUuid}`);
+    clearCachedPage(currentUuid);
+    loadPage();
+  };
+
   if (loading) {
     return <SkeletonLoader config={config} />;
   }
@@ -252,6 +259,13 @@ export function TabScreen({ uuid }: TabScreenProps) {
 
   return (
     <View style={styles.container}>
+      {/* Refresh indicator - thin progress bar at top */}
+      {refreshing && (
+        <View style={styles.refreshIndicatorContainer}>
+          <View style={[styles.refreshIndicatorBar, { backgroundColor: config.primaryColor }]} />
+        </View>
+      )}
+
       {/* Modern Header */}
       {canGoBack && (
         <View style={dynamicStyles.headerContainer}>
@@ -266,6 +280,33 @@ export function TabScreen({ uuid }: TabScreenProps) {
           <Text style={dynamicStyles.headerTitle} numberOfLines={1}>
             {currentPageData.title}
           </Text>
+          <View style={styles.headerRightActions}>
+            {refreshing && (
+              <ActivityIndicator 
+                size="small" 
+                color="#ffffff" 
+                style={styles.headerRefreshSpinner}
+                accessibilityLabel="Refreshing content"
+              />
+            )}
+            {/* Dev tool: Manual refresh button */}
+            <TouchableOpacity
+              onPress={handleManualRefresh}
+              style={styles.devRefreshButton}
+              accessibilityLabel="Refresh page"
+              accessibilityRole="button"
+              testID="dev-refresh-button"
+            >
+              <Ionicons name="refresh" size={18} color="#ffffff" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
+      {/* Refresh indicator for non-header pages */}
+      {!canGoBack && refreshing && (
+        <View style={styles.refreshIndicatorContainer}>
+          <View style={[styles.refreshIndicatorBar, { backgroundColor: config.primaryColor }]} />
         </View>
       )}
 
@@ -282,7 +323,18 @@ export function TabScreen({ uuid }: TabScreenProps) {
         {/* Page Title - Only show if not in header (or always show large title for context?) */}
         {/* We keep the large title for context, header title is for navigation context when scrolled or deep */}
         {!canGoBack && (
-           <View style={{ height: 4, backgroundColor: config.primaryColor }} />
+          <View style={styles.titleHeaderContainer}>
+            <View style={{ height: 4, backgroundColor: config.primaryColor }} />
+            {refreshing && (
+              <View style={styles.titleRefreshIndicator}>
+                <ActivityIndicator 
+                  size="small" 
+                  color={config.primaryColor}
+                  accessibilityLabel="Refreshing content"
+                />
+              </View>
+            )}
+          </View>
         )}
         <Text style={[styles.title, { color: config.textColor || '#0f172a' }]}>{currentPageData.title}</Text>
 
@@ -434,5 +486,40 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingVertical: 32,
     fontStyle: 'italic',
+  },
+  refreshIndicatorContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 3,
+    zIndex: 1000,
+    overflow: 'hidden',
+  },
+  refreshIndicatorBar: {
+    height: '100%',
+    width: '100%',
+  },
+  headerRefreshSpinner: {
+    marginRight: 8,
+  },
+  headerRightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  devRefreshButton: {
+    padding: 6,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    marginLeft: 4,
+  },
+  titleHeaderContainer: {
+    position: 'relative',
+  },
+  titleRefreshIndicator: {
+    position: 'absolute',
+    top: 8,
+    right: 16,
+    zIndex: 10,
   },
 });

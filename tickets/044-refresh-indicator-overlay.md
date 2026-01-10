@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: in-progress
 area: rn-mip-app
 phase: nice-to-have
 created: 2026-01-02
