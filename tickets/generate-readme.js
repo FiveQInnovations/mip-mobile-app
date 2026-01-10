@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Generates README.md from ticket files by reading their frontmatter and titles.
+ * Generates TICKETS.md from ticket files by reading their frontmatter and titles.
  * Run this script whenever tickets are added, removed, or status changes.
  * 
  * Usage:
@@ -15,7 +15,7 @@ const fs = require('fs');
 const path = require('path');
 
 const TICKETS_DIR = __dirname;
-const README_PATH = path.join(TICKETS_DIR, 'README.md');
+const README_PATH = path.join(TICKETS_DIR, 'TICKETS.md');
 const DONE_DIR = path.join(TICKETS_DIR, 'done');
 
 // Status categories in order
@@ -62,7 +62,7 @@ function extractTitle(content) {
 function getTicketFiles() {
   // Get active tickets from main directory
   const activeFiles = fs.readdirSync(TICKETS_DIR)
-    .filter(file => file.endsWith('.md') && file !== 'README.md' && file !== '_template.md')
+    .filter(file => file.endsWith('.md') && file !== 'TICKETS.md' && file !== '_template.md')
     .map(file => ({
       filename: file,
       path: path.join(TICKETS_DIR, file),
@@ -74,7 +74,7 @@ function getTicketFiles() {
   // Get done tickets from done/ directory
   const doneFiles = fs.existsSync(DONE_DIR) 
     ? fs.readdirSync(DONE_DIR)
-        .filter(file => file.endsWith('.md') && file !== 'README.md')
+        .filter(file => file.endsWith('.md') && file !== 'TICKETS.md')
         .map(file => ({
           filename: `done/${file}`,
           path: path.join(DONE_DIR, file),
@@ -133,7 +133,7 @@ function generateREADME(tickets) {
 
 Quick reference for active tasks. See individual files for details.
 
-> **Note:** This README is auto-generated from ticket files. To regenerate it, run:
+> **Note:** This file is auto-generated from ticket files. To regenerate it, run:
 > \`\`\`bash
 > node tickets/generate-readme.js
 > \`\`\`
@@ -234,7 +234,7 @@ try {
   const doneCount = tickets.filter(i => i.status === 'done').length;
   const activeCount = totalTickets - doneCount;
   
-  console.log(`✅ Generated README.md with ${totalTickets} ticket(s) (${activeCount} active, ${doneCount} done)`);
+  console.log(`✅ Generated TICKETS.md with ${totalTickets} ticket(s) (${activeCount} active, ${doneCount} done)`);
   console.log(`   Status breakdown:`);
   STATUS_ORDER.forEach(status => {
     const count = tickets.filter(i => i.status === status).length;
@@ -243,7 +243,7 @@ try {
     }
   });
 } catch (error) {
-  console.error('Error generating README:', error);
+  console.error('Error generating TICKETS.md:', error);
   process.exit(1);
 }
 

@@ -261,4 +261,4 @@ See the [mobile-app-specification.md](docs/mobile-app-specification.md) for deta
 - **Target Launch**: Late February / Early March 2025
 - **Urgent Deadline**: FFCI's SubSplash app expires January 15, 2025
 
-See [tickets/README.md](tickets/README.md) for active development tickets and progress tracking.
+See [tickets/TICKETS.md](tickets/TICKETS.md) for active development tickets and progress tracking.
