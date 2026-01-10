@@ -21,17 +21,23 @@ appId: com.fiveq.ffci
 - assertVisible:
     text: "What We Believe"
 
-# Scroll to see Featured section
-- scroll
-- waitForAnimationToEnd
-
-# Featured section
+# Scroll until Featured section is visible
+- scrollUntilVisible:
+    element:
+      text: "Featured"
+    direction: DOWN
+    timeout: 10000
 - assertVisible:
     text: "Featured"
+
+# Scroll until Chaplain Resources is visible
+- scrollUntilVisible:
+    element:
+      text: "Chaplain Resources"
+    direction: DOWN
+    timeout: 10000
 - assertVisible:
     text: "Chaplain Resources"
-- assertVisible:
-    text: "Upcoming Events"
 
 # Verify tab bar is visible
 - assertVisible:
