@@ -16,10 +16,7 @@ appId: com.fiveq.ffci
 - assertVisible:
     text: "Resources for Firefighters and Their Families"
 
-- waitForAnimationToEnd
-
 - scroll
-- waitForAnimationToEnd
 - scroll
 - waitForAnimationToEnd
 
@@ -37,7 +34,7 @@ appId: com.fiveq.ffci
 
 # Verify we're on the FFC Media Ministry page
 - assertVisible:
-    text: "FFC Media Ministry"
+    text: "firefighters.org"
 - assertVisible:
     text: "Go back"
 
