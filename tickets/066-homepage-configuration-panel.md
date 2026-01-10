@@ -53,11 +53,268 @@ Currently, the homepage Quick Tasks and Featured sections are hardcoded in `Home
 
 ## Related
 
-- **Ticket 064**: Implement Card Component Layout on Homepage (prerequisite - establishes card layout)
+- **Ticket 064**: Implement Card Component Layout on Homepage (prerequisite - done)
 - `wsp-mobile/blueprints/tabs/mobile.yml` - Mobile Settings blueprint
 - `wsp-mobile/lib/site.php` - Site API implementation
 - `rn-mip-app/components/HomeScreen.tsx` - Homepage component
 - `rn-mip-app/lib/api.ts` - API client and types
+
+---
+
+## Scouting Notes (2026-01-10)
+
+### Current Blueprint Structure (`wsp-mobile/blueprints/tabs/mobile.yml`)
+
+The existing `mobileMainMenu` structure field provides the exact pattern to follow:
+
+```yaml
+mobileMainMenu:
+  label: "Mobile Main Menu"
+  type: structure
+  sortable: true
+  fields:
+    page:
+      type: pages
+      label: Main Mobile Menu
+      multiple: false
+    label:
+      type: text
+      label: Label
+    icon:
+      type: files
+      multiple: false
+      search: true
+```
+
+New fields should be added after line 57 (after `mobileLogo`).
+
+### Recommended Blueprint for Quick Tasks
+
+```yaml
+mobileHomepageQuickTasks:
+  label: "Homepage Quick Tasks"
+  type: structure
+  sortable: true
+  fields:
+    page:
+      type: pages
+      label: Link to Page
+      multiple: false
+    label:
+      type: text
+      label: Card Label
+      required: true
+    description:
+      type: text
+      label: Card Description
+    image:
+      type: files
+      label: Card Image
+      multiple: false
+      search: true
+    external_url:
+      type: url
+      label: External URL (optional)
+      help: "If provided, opens in browser instead of navigating to page"
+```
+
+### Recommended Blueprint for Featured Items
+
+```yaml
+mobileHomepageFeatured:
+  label: "Homepage Featured Items"
+  type: structure
+  sortable: true
+  fields:
+    page:
+      type: pages
+      label: Link to Page
+      multiple: false
+    title:
+      type: text
+      label: Card Title
+      required: true
+    description:
+      type: text
+      label: Card Description
+    image:
+      type: files
+      label: Card Image
+      multiple: false
+      search: true
+    badge_text:
+      type: text
+      label: Badge Text (optional)
+      help: "E.g., 'Featured', 'New', 'Popular'"
+    external_url:
+      type: url
+      label: External URL (optional)
+      help: "If provided, opens in browser instead of navigating to page"
+```
+
+### Current API Implementation (`wsp-mobile/lib/site.php`)
+
+The `site()` method (lines 22-61) returns site data. Add homepage configuration after line 59. Follow the existing pattern for structure fields:
+
+**Example from menu.php (lines 23-35):**
+```php
+$structure->map(function ($item) {
+    $page = $item->page()->toPages()->first();
+    if (!$page) {
+        return null;
+    }
+    return [
+        "label" => $item->label()->value(),
+        "page" => [
+            "uuid" => $page->uuid()->id(),
+            // ...
+        ]
+    ];
+})->filter(fn($item) => $item !== null);
+```
+
+**For images, use (from lines 11-20):**
+```php
+$file = $field->toFile();
+if ($file && $file->exists()) {
+    return $file->toCDNFile()->url();
+}
+```
+
+### Suggested API Implementation Addition
+
+Add this helper method to `SiteApi` class:
+
+```php
+private function get_homepage_quick_tasks($site) {
+    $tasks = $site->mobileHomepageQuickTasks();
+    if (!$tasks || $tasks->isEmpty()) {
+        return [];
+    }
+    return $tasks->toStructure()->map(function ($item) {
+        $page = $item->page()->toPages()->first();
+        $imageFile = $item->image()->toFile();
+        
+        return [
+            "uuid" => $page ? $page->uuid()->id() : null,
+            "label" => $item->label()->value(),
+            "description" => $item->description()->value(),
+            "image_url" => ($imageFile && $imageFile->exists()) 
+                ? $imageFile->toCDNFile()->url() 
+                : null,
+            "external_url" => $item->external_url()->value() ?: null,
+        ];
+    })->filter(fn($item) => $item['uuid'] || $item['external_url'])->data();
+}
+
+private function get_homepage_featured($site) {
+    $featured = $site->mobileHomepageFeatured();
+    if (!$featured || $featured->isEmpty()) {
+        return [];
+    }
+    return $featured->toStructure()->map(function ($item) {
+        $page = $item->page()->toPages()->first();
+        $imageFile = $item->image()->toFile();
+        
+        return [
+            "uuid" => $page ? $page->uuid()->id() : null,
+            "title" => $item->title()->value(),
+            "description" => $item->description()->value(),
+            "image_url" => ($imageFile && $imageFile->exists()) 
+                ? $imageFile->toCDNFile()->url() 
+                : null,
+            "badge_text" => $item->badge_text()->value() ?: null,
+            "external_url" => $item->external_url()->value() ?: null,
+        ];
+    })->filter(fn($item) => $item['uuid'] || $item['external_url'])->data();
+}
+```
+
+Then add to the `site()` return array:
+```php
+"homepage_quick_tasks" => $this->get_homepage_quick_tasks($site),
+"homepage_featured" => $this->get_homepage_featured($site),
+```
+
+### Current Frontend Implementation (`rn-mip-app/components/HomeScreen.tsx`)
+
+**Hardcoded data (lines 91-136):**
+- `quickTasks` array: 3 items with placeholder images (`picsum.photos`)
+- `featuredItems` array: 2 items with placeholder images
+
+**Navigation logic already exists (lines 63-87):**
+- `handleNavigate()` handles both UUID-based and URL-based navigation
+- Uses `onSwitchTab` for tab pages, `router.push` for stack pages
+- Uses `Linking.openURL()` for external URLs
+
+**ContentCard component is ready** - accepts `title`, `description`, `imageUrl`, `badgeText`, `onPress`, `testID`.
+
+### Frontend Integration Approach
+
+Update `HomeScreen.tsx` to:
+
+```typescript
+// Use API data with fallback to hardcoded defaults
+const quickTasksFromApi = site_data.homepage_quick_tasks || [];
+const featuredFromApi = site_data.homepage_featured || [];
+
+// Map API data to card format
+const quickTasks = quickTasksFromApi.length > 0 
+  ? quickTasksFromApi.map((item, idx) => ({
+      key: `api-quick-${idx}`,
+      label: item.label,
+      description: item.description,
+      imageUrl: item.image_url || 'https://picsum.photos/seed/default/800/450',
+      onPress: () => item.external_url 
+        ? Linking.openURL(item.external_url)
+        : handleNavigate('', undefined, item.uuid),
+      testID: `home-card-${item.uuid || idx}`,
+    }))
+  : DEFAULT_QUICK_TASKS; // existing hardcoded array
+
+// Similar pattern for featuredItems
+```
+
+### Test UUIDs for FFCI Site
+
+Real page UUIDs that can be used for testing:
+- **About**: `xhZj4ejQ65bRhrJg`
+- **What We Believe**: `fZdDBgMUDK3ZiRID`
+- **Our Story**: `3iwRsFPkDqGCsL6C`
+- **Mission & Vision**: `QopPbqM33cz54KdY`
+- **Chaplain Resources**: `PCLlwORLKbMnLPtN`
+- **Events**: `6ffa8qmIpJHM0C3r`
+- **FAQ**: `nsAXZbOMZEF6uAgn`
+- **Contact Us**: `5yjxqO973bK98AWP`
+
+### Content Storage Format
+
+Structure fields are stored in `site.txt` as YAML arrays. Example from existing `mobileMainMenu`:
+
+```yaml
+Mobilemainmenu:
+- 
+  page:
+    - page://uezb3178BtP3oGuU
+  label: Resources
+  icon: [ ]
+```
+
+New homepage config will be stored similarly:
+
+```yaml
+Mobilehomepagequicktasks:
+- 
+  page:
+    - page://xhZj4ejQ65bRhrJg
+  label: About Us
+  description: Learn about the history of FFC Ministry
+  image:
+    - file://someFileUUID
+  external_url: ""
+```
+
+---
 
 ## Technical Notes
 
