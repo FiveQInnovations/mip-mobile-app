@@ -17,13 +17,12 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🔴 Core Functionality (FFCI)
 - [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
-- [060](060-android-release-exploratory-testing.md) - Android Release Build Exploratory Testing
 - [065](065-improve-search-performance.md) - Improve Search Performance Further
+- [066](066-homepage-configuration-panel.md) - Homepage Configuration in Kirby Panel
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
 - [044](044-refresh-indicator-overlay.md) - Add Refresh Indicator During Background Refresh
-- [066](066-homepage-configuration-panel.md) - Homepage Configuration in Kirby Panel
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
@@ -89,6 +88,7 @@ Quick reference for active tasks. See individual files for details.
 - [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
 - [058](058-tab-icons.md) - Add Icons to Each Tab
 - [059](059-internal-page-visual-design.md) - Internal Page Visual Design Improvements
+- [060](060-android-release-exploratory-testing.md) - Android Release Build Exploratory Testing
 - [061](061-visual-design-overhaul.md) - Visual Design Overhaul
 - [062](062-mimic-existing-ffci-app.md) - Research and Mimic Existing FFCI App Design
 - [063](063-search-results-load-slowly.md) - Search results load slowly

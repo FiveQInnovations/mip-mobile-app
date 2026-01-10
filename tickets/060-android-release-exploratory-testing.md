@@ -1,11 +1,13 @@
 ---
-status: backlog
+status: done
 area: rn-mip-app
 phase: core
 created: 2026-01-03
 ---
 
 # Android Release Build Exploratory Testing
+
+Quick update: I did this manually and logged a couple issues. Nothing major. I should do this again later.
 
 ## Context
 We've completed significant development work on iOS and need to verify everything works correctly on Android. This ticket is for building a Release APK and performing exploratory testing on an Android emulator, focusing on recently completed features.
