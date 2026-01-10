@@ -11,13 +11,12 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [066](066-homepage-configuration-panel.md) - Homepage Configuration in Kirby Panel
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
 - [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
-- [066](066-homepage-configuration-panel.md) - Homepage Configuration in Kirby Panel
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
