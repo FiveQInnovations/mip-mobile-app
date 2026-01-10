@@ -9,7 +9,19 @@ created: 2026-01-20
 
 ## Context
 
-Currently, the homepage Quick Tasks and Featured sections are hardcoded in `HomeScreen.tsx` (see ticket 064). To allow clients to customize their homepage content without code changes, we need to add configuration options in the Kirby Panel via the `wsp-mobile` plugin.
+Currently, the homepage Quick Tasks and Featured sections are hardcoded in `HomeScreen.tsx` (see ticket 064). Example:
+
+```typescript
+{
+  key: 'about-us',
+  label: 'About Us',
+  description: 'Learn about the history of the FFC Ministry!',
+  imageUrl: 'https://picsum.photos/seed/about/800/450', 
+  onPress: () => handleNavigate('About', undefined, 'about-uuid-placeholder'),
+}
+```
+
+To allow clients to customize their homepage content without code changes, we need to add configuration options in the Kirby Panel via the `wsp-mobile` plugin.
 
 ## Goals
 
