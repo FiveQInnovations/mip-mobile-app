@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [065](065-improve-search-performance.md) - Optimize Search API Endpoint Performance
+(none)
 
 ## In Progress
-(none)
+- [067](067-fix-search-result-descriptions.md) - Fix Search Result Descriptions - Display User-Friendly Text
 
 ## Backlog
 
@@ -92,6 +92,7 @@ Quick reference for active tasks. See individual files for details.
 - [062](062-mimic-existing-ffci-app.md) - Research and Mimic Existing FFCI App Design
 - [063](063-search-results-load-slowly.md) - Search results load slowly
 - [064](064-implement-card-layout-homepage.md) - Implement Card Component Layout on Homepage
+- [065](065-improve-search-performance.md) - Optimize Search API Endpoint Performance
 
 ---
 
