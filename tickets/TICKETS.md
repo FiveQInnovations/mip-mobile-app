@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [065](065-improve-search-performance.md) - Optimize Search API Endpoint Performance
 
 ## In Progress
-- [065](065-improve-search-performance.md) - Optimize Search API Endpoint Performance
+(none)
 
 ## Backlog
 
