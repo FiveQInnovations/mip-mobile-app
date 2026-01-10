@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [044](044-refresh-indicator-overlay.md) - Add Refresh Indicator During Background Refresh
 
 ## In Progress
-- [044](044-refresh-indicator-overlay.md) - Add Refresh Indicator During Background Refresh
+(none)
 
 ## Backlog
 
