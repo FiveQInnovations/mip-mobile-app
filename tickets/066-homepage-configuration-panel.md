@@ -152,38 +152,9 @@ mobileHomepageFeatured:
       help: "If provided, opens in browser instead of navigating to page"
 ```
 
-### Current API Implementation (`wsp-mobile/lib/site.php`)
+### API Implementation (`wsp-mobile/lib/site.php`)
 
-The `site()` method (lines 22-61) returns site data. Add homepage configuration after line 59. Follow the existing pattern for structure fields:
-
-**Example from menu.php (lines 23-35):**
-```php
-$structure->map(function ($item) {
-    $page = $item->page()->toPages()->first();
-    if (!$page) {
-        return null;
-    }
-    return [
-        "label" => $item->label()->value(),
-        "page" => [
-            "uuid" => $page->uuid()->id(),
-            // ...
-        ]
-    ];
-})->filter(fn($item) => $item !== null);
-```
-
-**For images, use (from lines 11-20):**
-```php
-$file = $field->toFile();
-if ($file && $file->exists()) {
-    return $file->toCDNFile()->url();
-}
-```
-
-### Suggested API Implementation Addition
-
-Add this helper method to `SiteApi` class:
+Add these helper methods to `SiteApi` class (after `get_site_logo`):
 
 ```php
 private function get_homepage_quick_tasks($site) {
@@ -236,126 +207,35 @@ Then add to the `site()` return array:
 "homepage_featured" => $this->get_homepage_featured($site),
 ```
 
-### Current Frontend Implementation (`rn-mip-app/components/HomeScreen.tsx`)
+### Frontend Integration (`rn-mip-app/components/HomeScreen.tsx`)
 
-**Hardcoded data (lines 91-136):**
-- `quickTasks` array: 3 items with placeholder images (`picsum.photos`)
-- `featuredItems` array: 2 items with placeholder images
+**Current state:**
+- `quickTasks` and `featuredItems` arrays are hardcoded with placeholder images
+- `handleNavigate()` already supports UUID-based and external URL navigation
+- `ContentCard` component accepts all needed props
 
-**Navigation logic already exists (lines 63-87):**
-- `handleNavigate()` handles both UUID-based and URL-based navigation
-- Uses `onSwitchTab` for tab pages, `router.push` for stack pages
-- Uses `Linking.openURL()` for external URLs
-
-**ContentCard component is ready** - accepts `title`, `description`, `imageUrl`, `badgeText`, `onPress`, `testID`.
-
-### Frontend Integration Approach
-
-Update `HomeScreen.tsx` to:
-
+**Integration approach:**
 ```typescript
 // Use API data with fallback to hardcoded defaults
 const quickTasksFromApi = site_data.homepage_quick_tasks || [];
-const featuredFromApi = site_data.homepage_featured || [];
-
-// Map API data to card format
 const quickTasks = quickTasksFromApi.length > 0 
   ? quickTasksFromApi.map((item, idx) => ({
       key: `api-quick-${idx}`,
       label: item.label,
       description: item.description,
-      imageUrl: item.image_url || 'https://picsum.photos/seed/default/800/450',
+      imageUrl: item.image_url,
       onPress: () => item.external_url 
         ? Linking.openURL(item.external_url)
         : handleNavigate('', undefined, item.uuid),
-      testID: `home-card-${item.uuid || idx}`,
     }))
-  : DEFAULT_QUICK_TASKS; // existing hardcoded array
-
-// Similar pattern for featuredItems
+  : DEFAULT_QUICK_TASKS;
 ```
 
 ### Test UUIDs for FFCI Site
 
-Real page UUIDs that can be used for testing:
-- **About**: `xhZj4ejQ65bRhrJg`
-- **What We Believe**: `fZdDBgMUDK3ZiRID`
-- **Our Story**: `3iwRsFPkDqGCsL6C`
-- **Mission & Vision**: `QopPbqM33cz54KdY`
-- **Chaplain Resources**: `PCLlwORLKbMnLPtN`
-- **Events**: `6ffa8qmIpJHM0C3r`
-- **FAQ**: `nsAXZbOMZEF6uAgn`
-- **Contact Us**: `5yjxqO973bK98AWP`
-
-### Content Storage Format
-
-Structure fields are stored in `site.txt` as YAML arrays. Example from existing `mobileMainMenu`:
-
-```yaml
-Mobilemainmenu:
-- 
-  page:
-    - page://uezb3178BtP3oGuU
-  label: Resources
-  icon: [ ]
-```
-
-New homepage config will be stored similarly:
-
-```yaml
-Mobilehomepagequicktasks:
-- 
-  page:
-    - page://xhZj4ejQ65bRhrJg
-  label: About Us
-  description: Learn about the history of FFC Ministry
-  image:
-    - file://someFileUUID
-  external_url: ""
-```
-
----
-
-## Technical Notes
-
-### Configuration Structure
-
-The homepage configuration should support:
-- **Page-based navigation**: Link to internal pages via UUID
-- **External URLs**: Link to external websites
-- **Images**: Upload custom images for each card
-- **Metadata**: Labels, descriptions, badge text for featured items
-- **Ordering**: Sortable structure fields to control display order
-
-### API Response Format
-
-```typescript
-interface HomepageQuickTask {
-  uuid?: string;           // Page UUID if in-app navigation
-  label: string;
-  description: string;
-  image_url: string | null;
-  external_url?: string;   // If provided, navigate externally instead of UUID
-}
-
-interface HomepageFeatured {
-  uuid?: string;           // Page UUID if in-app navigation
-  title: string;
-  description: string;
-  image_url: string | null;
-  badge_text?: string;     // Optional badge (e.g., "Featured")
-  external_url?: string;   // If provided, navigate externally instead of UUID
-}
-
-interface SiteMeta {
-  // ... existing fields ...
-  homepage_quick_tasks?: HomepageQuickTask[];
-  homepage_featured?: HomepageFeatured[];
-}
-```
-
-### Navigation Logic
-
-- If `external_url` is provided, use `Linking.openURL()`
-- If `uuid` is provided, check if it's a tab (use `onSwitchTab`) or push to stack (`router.push`)
-- If neither is provided, skip the item (or show error in dev mode)
+| Page | UUID |
+|------|------|
+| About | `xhZj4ejQ65bRhrJg` |
+| What We Believe | `fZdDBgMUDK3ZiRID` |
+| Chaplain Resources | `PCLlwORLKbMnLPtN` |
+| Events | `6ffa8qmIpJHM0C3r` |
