@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Linking, Alert, Dimensions, Platform, Animated } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Linking, Alert, Dimensions, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SvgUri } from 'react-native-svg';
 import { getSiteData, SiteData, MenuItem } from '../lib/api';
@@ -12,163 +12,6 @@ interface HomeScreenProps {
   siteData: SiteData;
   onSwitchTab: (uuid: string) => void;
 }
-
-// Skeleton loader component for HomeScreen
-function HomeScreenSkeleton() {
-  const opacity = React.useRef(new Animated.Value(0.4)).current;
-
-  React.useEffect(() => {
-    const animation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0.4,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-      ])
-    );
-    animation.start();
-    return () => animation.stop();
-  }, [opacity]);
-
-  const screenWidth = Dimensions.get('window').width;
-  const logoWidth = Math.min(Math.max(screenWidth * 0.85, 280), 400);
-  const logoHeight = logoWidth * 0.6;
-
-  return (
-    <View style={skeletonStyles.container} accessibilityLabel="Loading home screen">
-      {/* Header skeleton */}
-      <View style={skeletonStyles.header}>
-        <View style={skeletonStyles.headerLeft}>
-          <Animated.View style={[skeletonStyles.headerLogoSkeleton, { opacity }]} />
-          <Animated.View style={[skeletonStyles.headerTitleSkeleton, { opacity }]} />
-        </View>
-        <Animated.View style={[skeletonStyles.headerButtonSkeleton, { opacity }]} />
-      </View>
-
-      <ScrollView style={skeletonStyles.scrollView} contentContainerStyle={skeletonStyles.content}>
-        {/* Logo section skeleton */}
-        <View style={skeletonStyles.logoSection}>
-          <Animated.View style={[skeletonStyles.logoSkeleton, { width: logoWidth, height: logoHeight, opacity }]} />
-        </View>
-
-        {/* Horizontal cards skeleton */}
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          style={skeletonStyles.horizontalScroll}
-          contentContainerStyle={skeletonStyles.horizontalScrollContent}
-        >
-          {[1, 2, 3].map((i) => (
-            <Animated.View key={i} style={[skeletonStyles.cardSkeleton, { opacity }]} />
-          ))}
-        </ScrollView>
-
-        {/* Featured section skeleton */}
-        <Animated.View style={[skeletonStyles.sectionHeaderSkeleton, { opacity }]} />
-        <View style={skeletonStyles.verticalList}>
-          {[1, 2].map((i) => (
-            <Animated.View key={i} style={[skeletonStyles.featuredCardSkeleton, { opacity }]} />
-          ))}
-        </View>
-      </ScrollView>
-    </View>
-  );
-}
-
-const skeletonStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  headerLogoSkeleton: {
-    width: 24,
-    height: 24,
-    backgroundColor: '#e2e8f0',
-    borderRadius: 4,
-  },
-  headerTitleSkeleton: {
-    width: 60,
-    height: 18,
-    backgroundColor: '#e2e8f0',
-    borderRadius: 4,
-  },
-  headerButtonSkeleton: {
-    width: 32,
-    height: 32,
-    backgroundColor: '#e2e8f0',
-    borderRadius: 16,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingBottom: 40,
-  },
-  logoSection: {
-    alignItems: 'center',
-    paddingVertical: 30,
-    paddingHorizontal: 20,
-    backgroundColor: '#f8fafc',
-    marginBottom: 20,
-  },
-  logoSkeleton: {
-    backgroundColor: '#e2e8f0',
-    borderRadius: 8,
-  },
-  horizontalScroll: {
-    marginBottom: 24,
-  },
-  horizontalScrollContent: {
-    paddingHorizontal: 16,
-    paddingRight: 8,
-  },
-  cardSkeleton: {
-    width: 280,
-    height: 200,
-    backgroundColor: '#e2e8f0',
-    borderRadius: 12,
-    marginRight: 16,
-  },
-  sectionHeaderSkeleton: {
-    width: 100,
-    height: 24,
-    backgroundColor: '#e2e8f0',
-    borderRadius: 4,
-    marginBottom: 16,
-    marginHorizontal: 16,
-  },
-  verticalList: {
-    paddingHorizontal: 16,
-    gap: 16,
-  },
-  featuredCardSkeleton: {
-    width: '100%',
-    height: 150,
-    backgroundColor: '#e2e8f0',
-    borderRadius: 12,
-  },
-});
 
 // Custom Header Component
 function CustomHeader({ onSearch }: { onSearch: () => void }) {
@@ -190,8 +33,6 @@ function CustomHeader({ onSearch }: { onSearch: () => void }) {
     </View>
   );
 }
-
-export { HomeScreenSkeleton };
 
 export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
   const config = getConfig();

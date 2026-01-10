@@ -1,88 +1,12 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { getPageWithCache, PageData } from '../lib/api';
-import { getConfig, SiteConfig } from '../lib/config';
+import { getConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
 import { hasCachedPage, clearCachedPage } from '../lib/pageCache';
 import { ErrorScreen } from './ErrorScreen';
+import { SplashScreen } from './SplashScreen';
 import Ionicons from '@expo/vector-icons/Ionicons';
-
-// Skeleton loading component for visual polish
-function SkeletonLoader({ config }: { config: SiteConfig }) {
-  const opacity = React.useRef(new Animated.Value(0.4)).current;
-
-  React.useEffect(() => {
-    const animation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0.4,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-      ])
-    );
-    animation.start();
-    return () => animation.stop();
-  }, [opacity]);
-
-  return (
-    <View style={skeletonStyles.container} accessibilityLabel="Loading content">
-      {/* Header accent bar */}
-      <View style={[skeletonStyles.headerAccent, { backgroundColor: config.primaryColor }]} />
-      
-      {/* Title skeleton */}
-      <View style={skeletonStyles.contentArea}>
-        <Animated.View style={[skeletonStyles.titleSkeleton, { opacity }]} />
-        
-        {/* Content skeletons */}
-        <Animated.View style={[skeletonStyles.lineSkeleton, { opacity, width: '100%' }]} />
-        <Animated.View style={[skeletonStyles.lineSkeleton, { opacity, width: '90%' }]} />
-        <Animated.View style={[skeletonStyles.lineSkeleton, { opacity, width: '75%' }]} />
-        
-        {/* Paragraph gap */}
-        <View style={{ height: 16 }} />
-        
-        <Animated.View style={[skeletonStyles.lineSkeleton, { opacity, width: '100%' }]} />
-        <Animated.View style={[skeletonStyles.lineSkeleton, { opacity, width: '85%' }]} />
-        <Animated.View style={[skeletonStyles.lineSkeleton, { opacity, width: '95%' }]} />
-        <Animated.View style={[skeletonStyles.lineSkeleton, { opacity, width: '60%' }]} />
-      </View>
-    </View>
-  );
-}
-
-const skeletonStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
-  headerAccent: {
-    height: 4,
-    width: '100%',
-  },
-  contentArea: {
-    padding: 16,
-    paddingTop: 24,
-  },
-  titleSkeleton: {
-    height: 28,
-    width: '60%',
-    backgroundColor: '#e2e8f0',
-    borderRadius: 6,
-    marginBottom: 24,
-  },
-  lineSkeleton: {
-    height: 16,
-    backgroundColor: '#e2e8f0',
-    borderRadius: 4,
-    marginBottom: 12,
-  },
-});
 
 interface TabScreenProps {
   uuid: string;
@@ -202,7 +126,7 @@ export function TabScreen({ uuid }: TabScreenProps) {
   };
 
   if (loading) {
-    return <SkeletonLoader config={config} />;
+    return <SplashScreen />;
   }
 
   if (error) {
