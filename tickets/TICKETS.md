@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [044](044-refresh-indicator-overlay.md) - Add Refresh Indicator During Background Refresh
+(none)
 
 ## In Progress
 (none)
@@ -72,6 +72,7 @@ Quick reference for active tasks. See individual files for details.
 - [032](done/032-maestro-content-page-test.md) - Maestro Test: Content Page Rendering
 - [037](037-error-offline-screen.md) - Error/Offline Screen Design
 - [043](043-svg-logo-support.md) - Fix SVG Logo Support
+- [044](044-refresh-indicator-overlay.md) - Add Refresh Indicator During Background Refresh
 - [046](046-reliable-maestro-tests-android.md) - Reliable Maestro Tests for Android
 - [047](047-reliable-maestro-tests-ios.md) - Reliable Maestro Tests for iOS
 - [048](048-content-page-images-not-rendering.md) - Content Page Images Not Rendering
