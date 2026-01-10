@@ -35,4 +35,5 @@ appId: com.fiveq.ffci
 - waitForAnimationToEnd
 
 # Take screenshot for documentation (shows content page with rendered HTML)
-- takeScreenshot: content-page-rendering-ios
+- takeScreenshot:
+    path: "maestro/screenshots/content-page-rendering-ios"

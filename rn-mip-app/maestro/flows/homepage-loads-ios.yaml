@@ -7,21 +7,18 @@ appId: com.fiveq.ffci
 # App should be launched with xcrun simctl before running this test:
 #   xcrun simctl launch booted com.fiveq.ffci
 
-# Wait for app to load
-- waitForAnimationToEnd
-
 # Confirm header renders
 - assertVisible:
     text: "FFC"
+- assertVisible:
+    id: "search-outline"
 
-# Confirm key homepage content renders (now in Cards)
-# Quick Tasks are now mapped to "About Us", "What We Believe", etc in the carousel
+# Confirm key homepage content renders
 - assertVisible:
     text: "About Us"
 - assertVisible:
     text: "What We Believe"
 
-# Scroll until Featured section is visible
 - scrollUntilVisible:
     element:
       text: "Featured"
@@ -30,7 +27,6 @@ appId: com.fiveq.ffci
 - assertVisible:
     text: "Featured"
 
-# Scroll until Chaplain Resources is visible
 - scrollUntilVisible:
     element:
       text: "Chaplain Resources"
@@ -39,9 +35,8 @@ appId: com.fiveq.ffci
 - assertVisible:
     text: "Chaplain Resources"
 
-# Verify tab bar is visible
 - assertVisible:
     text: "Home tab"
 
-# Capture a reference screenshot
-- takeScreenshot: homepage-loaded-ios
+- takeScreenshot:
+    path: "maestro/screenshots/homepage-loaded-ios"

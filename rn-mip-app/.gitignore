@@ -47,3 +47,9 @@ logs/
 # Build artifacts
 *.apk
 *.ipa
+
+# Maestro screenshots (gitignored but visible to Cursor)
+maestro/screenshots/
+
+# Maestro test reports
+report.xml

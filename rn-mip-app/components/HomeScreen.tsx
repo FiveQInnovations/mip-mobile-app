@@ -26,7 +26,7 @@ function CustomHeader({ onSearch, onProfile }: { onSearch: () => void, onProfile
         <Text style={styles.headerTitle}>FFC</Text>
       </View>
       <View style={styles.headerRight}>
-        <TouchableOpacity onPress={onSearch} style={styles.headerButton}>
+        <TouchableOpacity onPress={onSearch} style={styles.headerButton} testID="search-outline">
           <Ionicons name="search-outline" size={24} color="#0f172a" />
         </TouchableOpacity>
         <TouchableOpacity onPress={onProfile} style={styles.headerButton}>
