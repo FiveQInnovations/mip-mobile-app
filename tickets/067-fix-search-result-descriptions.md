@@ -67,6 +67,40 @@ After optimizing search API performance (ticket 065), the API is now fast and re
   - [ ] Verify API performance is still fast
   - [ ] Test mobile app search UI displays descriptions correctly
 
+## Findings (2026-01-20)
+
+### API Response Analysis
+
+**Investigation Results:**
+- Tested API endpoint with query "test" to examine description field content
+- Example response for "Every Man a Warrior" saved to `/tmp/every-man-warrior-api-response.json`
+
+**Key Finding:**
+- The `description` field contains **raw JSON blocks data**, not readable text
+- Description format: `[{"attrs":{"collapse":"false","section_text_style":"false","section_text_color":"#222222",...`
+- Description is truncated at 150 characters (153 with "...")
+- **There is no useful readable text in the description field** - it's entirely JSON structure/metadata
+- The JSON appears to be Kirby blocks structure with attributes, but no actual content text is extracted
+- **There is nothing useful in the description field** - it's pure JSON metadata with no extractable text content
+
+**Example API Response:**
+```json
+{
+  "uuid": "IpPXDuZKr3iawIQw",
+  "title": "Every Man a Warrior",
+  "description": "[{\"attrs\":{\"collapse\":\"false\",\"section_text_style\":\"false\",\"section_text_color\":\"#222222\",\"section_bg_style\":\"false\",\"section_bg_color\":\"#ffffff\",\"sec...",
+  "url": "https://ffci.fiveq.dev/chapters/chapter-resources/every-man-a-warrior"
+}
+```
+
+**Conclusion:**
+- The description extraction logic in `wsp-mobile/index.php` is not properly parsing Kirby blocks to extract text content
+- The API is returning raw JSON structure instead of readable text
+- **There is nothing useful in the description field** - it's pure JSON metadata with no extractable text content
+- **Next step: API change required** - Fix description extraction in `wsp-mobile/index.php` to properly extract text from Kirby blocks
+- This must be fixed server-side - mobile app cannot fix this client-side as there's no readable text to extract from the JSON structure
+- **Note:** API changes will be handled by a different agent
+
 ## Related
 
 - **Ticket 065**: Optimize Search API Endpoint Performance (performance optimization completed)
@@ -74,3 +108,4 @@ After optimizing search API performance (ticket 065), the API is now fast and re
 - `wsp-mobile/index.php` (lines 166-235) - Search API endpoint implementation
 - `rn-mip-app/app/search.tsx` - Mobile app search UI (displays descriptions)
 - `rn-mip-app/lib/api.ts` - API client (receives search results)
+- `/tmp/every-man-warrior-api-response.json` - Example API response with problematic description
