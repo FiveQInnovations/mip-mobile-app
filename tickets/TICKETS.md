@@ -11,13 +11,12 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [065](065-improve-search-performance.md) - Optimize Search API Endpoint Performance
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
 - [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
-- [065](065-improve-search-performance.md) - Improve Search Performance Further
 - [066](066-homepage-configuration-panel.md) - Homepage Configuration in Kirby Panel
 
 ### 🟡 Nice to Have

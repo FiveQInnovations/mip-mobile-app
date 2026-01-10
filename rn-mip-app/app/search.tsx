@@ -50,8 +50,10 @@ export default function SearchScreen() {
       return;
     }
 
-    const searchStartTime = Date.now();
-    console.log(`[Search] Starting search for: "${searchQuery}" at ${searchStartTime}`);
+    const searchStartTime = performance.now();
+    const searchStartTimeMs = Date.now();
+    console.log(`[Search] ===== Starting search for: "${searchQuery}" =====`);
+    console.log(`[Search] Timestamp: ${searchStartTimeMs} (${new Date(searchStartTimeMs).toISOString()})`);
 
     // Cancel previous request if it exists
     if (abortControllerRef.current) {
@@ -60,50 +62,106 @@ export default function SearchScreen() {
     }
 
     // Check cache first
+    const cacheCheckStartTime = performance.now();
     const cachedResults = getCachedSearch(searchQuery);
+    const cacheCheckEndTime = performance.now();
+    const cacheCheckDuration = cacheCheckEndTime - cacheCheckStartTime;
+    
     if (cachedResults !== null) {
-      const cacheTime = Date.now() - searchStartTime;
-      console.log(`[Search] Cache hit! Returning ${cachedResults.length} results in ${cacheTime}ms`);
+      const cacheRenderStartTime = performance.now();
       setResults(cachedResults);
       setHasSearched(true);
       setIsLoading(false);
+      const cacheRenderEndTime = performance.now();
+      const totalCacheTime = cacheRenderEndTime - searchStartTime;
+      const cacheRenderDuration = cacheRenderEndTime - cacheRenderStartTime;
+      
+      console.log(`[Search] Cache check: ${cacheCheckDuration.toFixed(2)}ms`);
+      console.log(`[Search] Cache render: ${cacheRenderDuration.toFixed(2)}ms`);
+      console.log(`[Search] Cache hit! Returning ${cachedResults.length} results`);
+      console.log(`[Search] Total cache time: ${totalCacheTime.toFixed(2)}ms`);
+      console.log(`[Search] ===== Search complete (cache) =====`);
       return;
     }
+
+    console.log(`[Search] Cache miss (check took ${cacheCheckDuration.toFixed(2)}ms)`);
 
     // Create new AbortController for this request
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
+    const setLoadingStartTime = performance.now();
     setIsLoading(true);
     setHasSearched(true);
+    const setLoadingEndTime = performance.now();
+    console.log(`[Search] Set loading state: ${(setLoadingEndTime - setLoadingStartTime).toFixed(2)}ms`);
     
     try {
-      const apiStartTime = Date.now();
-      const searchResults = await searchSite(searchQuery, abortController.signal);
-      const apiEndTime = Date.now();
-      const apiDuration = apiEndTime - apiStartTime;
-      const totalDuration = apiEndTime - searchStartTime;
+      const apiStartTime = performance.now();
+      const apiStartTimeMs = Date.now();
+      console.log(`[Search] Calling searchSite API at ${apiStartTimeMs}`);
       
-      console.log(`[Search] API call completed in ${apiDuration}ms, total search time: ${totalDuration}ms`);
+      const searchResults = await searchSite(searchQuery, abortController.signal);
+      
+      const apiEndTime = performance.now();
+      const apiEndTimeMs = Date.now();
+      const apiDuration = apiEndTime - apiStartTime;
+      
+      console.log(`[Search] API call completed at ${apiEndTimeMs}`);
+      console.log(`[Search] API duration: ${apiDuration.toFixed(2)}ms`);
       console.log(`[Search] Received ${searchResults.length} results`);
       
       // Store in cache
+      const cacheStoreStartTime = performance.now();
       setCachedSearch(searchQuery, searchResults);
+      const cacheStoreEndTime = performance.now();
+      const cacheStoreDuration = cacheStoreEndTime - cacheStoreStartTime;
+      console.log(`[Search] Cache store: ${cacheStoreDuration.toFixed(2)}ms`);
       
+      // Set results and measure rendering
+      const renderStartTime = performance.now();
+      const renderStartTimeMs = Date.now();
+      console.log(`[Search] Setting results at ${renderStartTimeMs}`);
       setResults(searchResults);
+      
+      // Use requestAnimationFrame to measure when results actually render
+      requestAnimationFrame(() => {
+        const renderEndTime = performance.now();
+        const renderEndTimeMs = Date.now();
+        const renderDuration = renderEndTime - renderStartTime;
+        const totalDuration = renderEndTime - searchStartTime;
+        
+        console.log(`[Search] Results rendered at ${renderEndTimeMs}`);
+        console.log(`[Search] Render duration: ${renderDuration.toFixed(2)}ms`);
+        console.log(`[Search] ===== Total search time: ${totalDuration.toFixed(2)}ms =====`);
+        console.log(`[Search] Breakdown:`);
+        console.log(`[Search]   - Cache check: ${cacheCheckDuration.toFixed(2)}ms`);
+        console.log(`[Search]   - Set loading: ${(setLoadingEndTime - setLoadingStartTime).toFixed(2)}ms`);
+        console.log(`[Search]   - API call: ${apiDuration.toFixed(2)}ms`);
+        console.log(`[Search]   - Cache store: ${cacheStoreDuration.toFixed(2)}ms`);
+        console.log(`[Search]   - Render: ${renderDuration.toFixed(2)}ms`);
+        console.log(`[Search]   - Total: ${totalDuration.toFixed(2)}ms`);
+      });
     } catch (error: any) {
       // Ignore AbortError - it's expected when cancelling requests
       if (error.name === 'AbortError' || error.name === 'AbortedError') {
-        console.log('[Search] Search was cancelled (user continued typing)');
+        const abortTime = performance.now();
+        const abortDuration = abortTime - searchStartTime;
+        console.log(`[Search] Search was cancelled after ${abortDuration.toFixed(2)}ms (user continued typing)`);
         return;
       }
       
-      console.error('[Search] Error searching:', error);
+      const errorTime = performance.now();
+      const errorDuration = errorTime - searchStartTime;
+      console.error(`[Search] Error searching after ${errorDuration.toFixed(2)}ms:`, error);
       setResults([]);
     } finally {
       // Only clear loading state if this request wasn't cancelled
       if (!abortController.signal.aborted) {
+        const clearLoadingStartTime = performance.now();
         setIsLoading(false);
+        const clearLoadingEndTime = performance.now();
+        console.log(`[Search] Clear loading state: ${(clearLoadingEndTime - clearLoadingStartTime).toFixed(2)}ms`);
       }
     }
   };
