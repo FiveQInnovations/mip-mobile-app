@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [066](066-homepage-configuration-panel.md) - Homepage Configuration in Kirby Panel
 
 ## In Progress
-- [066](066-homepage-configuration-panel.md) - Homepage Configuration in Kirby Panel
+(none)
 
 ## Backlog
 
