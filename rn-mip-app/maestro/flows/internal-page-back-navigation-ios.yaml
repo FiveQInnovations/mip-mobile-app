@@ -6,52 +6,41 @@ appId: com.fiveq.ffci
 #
 # Ticket: 054-internal-page-back-navigation
 
-# Verify we start on Home screen
-- assertVisible:
-    text: "Quick Tasks"
-    optional: false
+- runFlow:
+    file: "verify-header-renders.yaml"
 
-# Navigate to Resources tab
 - tapOn:
     text: "Resources tab"
-    optional: false
 - waitForAnimationToEnd
 
-# Verify we're on Resources screen and wait for content to fully load
+# Verify we're on Resources screen
 - assertVisible:
     text: "Resources for Firefighters and Their Families"
-    optional: false
-- waitForAnimationToEnd
-- waitForAnimationToEnd
 
-# Scroll down to find and tap the "FFC Media Ministry" link
 - scrollUntilVisible:
     element:
       text: "FFC Media Ministry"
     direction: DOWN
-    timeout: 20000
+    timeout: 10000
     centerElement: true
-- waitForAnimationToEnd
-- waitForAnimationToEnd
+
 - tapOn:
     text: "FFC Media Ministry"
     index: 0
-    optional: false
-- waitForAnimationToEnd
+
 - waitForAnimationToEnd
 
 # Verify we're on the FFC Media Ministry page
 - assertVisible:
-    text: "FFC Media Ministry"
-    optional: false
+    text: "Firefighters for Christ media library"
 
-# Tap the "Back" button to return to Resources page
+- takeScreenshot:
+    path: "maestro/screenshots/internal-page-back-navigation-ios"
+
 - tapOn:
     text: "← Back"
-    optional: false
 - waitForAnimationToEnd
 
 # Verify we're back on the Resources page
 - assertVisible:
     text: "Resources for Firefighters and Their Families"
-    optional: false
