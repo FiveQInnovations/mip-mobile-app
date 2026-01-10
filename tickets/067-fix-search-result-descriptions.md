@@ -43,29 +43,36 @@ After optimizing search API performance (ticket 065), the API is now fast and re
 
 ## Tasks
 
-- [ ] Investigate description extraction logic
-  - [ ] Test API endpoint with various queries to see actual description output
-  - [ ] Identify which content types produce JSON/structured data
-  - [ ] Review Kirby blocks structure and how to extract text properly
-- [ ] Fix description extraction for Kirby blocks
-  - [ ] Detect when content is Kirby blocks JSON (even if stored as string)
-  - [ ] Parse blocks JSON and extract text from text blocks
-  - [ ] Handle different block types (text, heading, list, etc.)
-  - [ ] Ensure proper text extraction without showing JSON structure
-- [ ] Improve fallback logic
-  - [ ] Ensure block processing path executes when needed
-  - [ ] Add better detection of structured vs plain text content
-  - [ ] Handle edge cases (empty content, malformed blocks, etc.)
-- [ ] Optimize text extraction
-  - [ ] Extract text efficiently without expensive operations
-  - [ ] Consider using Kirby's built-in text extraction methods
-  - [ ] Maintain performance targets (< 1s total API response)
+- [x] Investigate description extraction logic
+  - [x] Test API endpoint with various queries to see actual description output
+  - [x] Identify which content types produce JSON/structured data
+  - [x] Review Kirby blocks structure and how to extract text properly
+- [x] Fix description extraction for Kirby blocks
+  - [x] Use existing `page_description` field (SEO meta description) instead of parsing blocks
+  - [x] If no description exists, leave empty (clean fallback)
 - [ ] Test and verify fixes
   - [ ] Test with queries that previously showed JSON (e.g., "bible", "firefighters")
   - [ ] Verify descriptions are readable and user-friendly
-  - [ ] Test with various content types (pages, sections, etc.)
-  - [ ] Verify API performance is still fast
   - [ ] Test mobile app search UI displays descriptions correctly
+
+## Solution (2026-01-10)
+
+**Approach:** Use the existing `page_description` field instead of parsing Kirby blocks JSON.
+
+**Why this works:**
+- Pages already have a `Page-description` field containing human-written SEO meta descriptions
+- This field is a simple string, no JSON parsing needed
+- Zero performance impact (just reading a field value)
+- Text is already curated by content authors
+
+**Change made in `wsp-mobile/index.php`:**
+```php
+// Before: 40+ lines of complex block parsing that produced JSON gibberish
+// After: Simple field read
+$description = $page->content()->page_description()->value() ?? '';
+```
+
+**Commit:** `2b09b77` - Use page_description field for search results instead of parsing blocks
 
 ## Findings (2026-01-20)
 
