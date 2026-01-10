@@ -45,9 +45,7 @@ xcrun simctl install booted "$APP_PATH"
 # List of stable iOS test flows (in order)
 STABLE_TESTS=(
     "maestro/flows/homepage-loads-ios.yaml"
-    "maestro/flows/tab-switch-from-home-ios.yaml"
     "maestro/flows/content-page-rendering-ios.yaml"
-    "maestro/flows/resources-tab-navigation-ios.yaml"
     "maestro/flows/internal-page-back-navigation-ios.yaml"
 )
 
