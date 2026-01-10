@@ -19,12 +19,13 @@ Based on research from ticket 062, the existing Firefighters for Christ app uses
 
 ## Tasks
 
-- [ ] Review existing `ContentCard` component implementation
-- [ ] Analyze current `HomeScreen` layout and identify areas for improvement
-- [ ] Update card styling to match image-forward design (larger images, better visual hierarchy)
-- [ ] Ensure Quick Tasks section uses card layout effectively
-- [ ] Ensure Featured section uses card layout effectively
-- [ ] Test card layout on both iOS and Android
+- [X] Review existing `ContentCard` component implementation
+- [X] Analyze current `HomeScreen` layout and identify areas for improvement
+- [X] Update card styling to match image-forward design (larger images, better visual hierarchy)
+- [X] Ensure Quick Tasks section uses card layout effectively
+- [X] Ensure Featured section uses card layout effectively
+- [X] Test card layout on iOS
+- [ ] Test card layout on Android
 - [ ] Update Maestro tests if needed for new card layout
 
 ## Related
