@@ -37,10 +37,6 @@ export interface SiteMeta {
   title: string;
   social: Array<{ platform: string; url: string }>;
   logo: string | null;
-  app_name: string;
-  homepage_type?: 'content' | 'collection' | 'navigation' | 'action-hub';
-  homepage_content?: string;
-  homepage_collection?: string;
   homepage_quick_tasks?: HomepageQuickTask[];
   homepage_featured?: HomepageFeatured[];
 }
