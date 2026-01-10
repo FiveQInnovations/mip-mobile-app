@@ -1,48 +1,40 @@
 appId: com.fiveq.ffci
 ---
 # Simple Android homepage verification
-# No setup flow needed - simplified for Android
 # 
-# Note: launchApp may not work reliably - if test fails, launch app manually first:
-#   adb shell am start -n com.fiveq.ffci/.MainActivity
-# Then run the test (it will work without launchApp if app is already running)
 
+# Note: launchApp is NOT used - app is launched by script with adb
 # App should be launched with adb before running this test:
 #   adb shell am force-stop com.fiveq.ffci && adb shell am start -n com.fiveq.ffci/.MainActivity
-- waitForAnimationToEnd
+
+- runFlow:
+    file: "verify-header-renders.yaml"
 
 # Confirm key homepage content renders
 - assertVisible:
-    text: "Quick Tasks"
-# Quick Tasks are all in-app: Chapters, Events, Resources, Get Involved
+    text: "About Us"
 - assertVisible:
-    text: "Find a Chapter"
-- assertVisible:
-    text: "Upcoming Events"
-- assertVisible:
-    text: "Resources"
-# Get Connected has browser items
-- assertVisible:
-    text: "Get Connected"
-- assertVisible:
-    text: "Prayer Request"
+    text: "What We Believe"
 
-# Scroll to see Featured section
-- scroll
-- waitForAnimationToEnd
-
-# Featured section has two items
+- scrollUntilVisible:
+    element:
+      text: "Featured"
+    direction: DOWN
+    timeout: 10000
 - assertVisible:
     text: "Featured"
+
+- scrollUntilVisible:
+    element:
+      text: "Chaplain Resources"
+    direction: DOWN
+    timeout: 10000
 - assertVisible:
     text: "Chaplain Resources"
-- assertVisible:
-    text: "Do You Know God?"
 
-# Verify tab bar is visible
 - assertVisible:
-    text: "Home"
+    text: "Home tab"
 
-# Capture a reference screenshot
-- takeScreenshot: homepage-loaded-android
+- takeScreenshot:
+    path: "maestro/screenshots/homepage-loaded-android"
 
