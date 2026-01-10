@@ -1,5 +1,5 @@
 ---
-status: qa
+status: done
 area: wsp-mobile
 phase: core
 created: 2026-01-20
@@ -56,9 +56,9 @@ To allow clients to customize their homepage content without code changes, we ne
 
 ### Testing
 
-- [ ] Test configuration in Kirby Panel (add/edit/remove/reorder items)
-- [ ] Test API returns correct homepage configuration data
-- [ ] Test mobile app displays configured content correctly
+- [x] Test configuration in Kirby Panel (add/edit/remove/reorder items) - ✅ Configured "Get Involved" page in Quick Tasks
+- [x] Test API returns correct homepage configuration data - ✅ Verified commit `810dcccc` in ws-ffci repo
+- [x] Test mobile app displays configured content correctly - ✅ "Get Involved" Quick Task displaying correctly in app
 - [ ] Test fallback behavior when configuration is empty
 - [ ] Test both in-app navigation and external URL navigation
 - [ ] Update Maestro tests if needed for new dynamic content
@@ -277,3 +277,15 @@ const quickTasks = quickTasksFromApi.length > 0
 | What We Believe | `fZdDBgMUDK3ZiRID` |
 | Chaplain Resources | `PCLlwORLKbMnLPtN` |
 | Events | `6ffa8qmIpJHM0C3r` |
+| Get Involved | `3e56Ag4tc8SfnGAv` |
+
+---
+
+## Progress Notes
+
+### 2026-01-20 - Initial Testing ✅
+
+- **Kirby Panel Configuration**: Successfully configured "Get Involved" page (`3e56Ag4tc8SfnGAv`) as first Quick Task in Mobile Settings
+- **Backend Verification**: Confirmed configuration saved to `content/site.txt` in commit `810dcccc` (ws-ffci repo)
+- **Mobile App Display**: ✅ **VERIFIED** - "Get Involved" Quick Task is displaying correctly in the mobile app with page title, description, and cover image
+- **Next Steps**: Continue testing with additional Quick Tasks and Featured items

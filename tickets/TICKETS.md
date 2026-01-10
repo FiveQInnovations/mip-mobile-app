@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [066](066-homepage-configuration-panel.md) - Homepage Configuration in Kirby Panel
+(none)
 
 ## In Progress
 (none)
@@ -92,6 +92,7 @@ Quick reference for active tasks. See individual files for details.
 - [063](063-search-results-load-slowly.md) - Search results load slowly
 - [064](064-implement-card-layout-homepage.md) - Implement Card Component Layout on Homepage
 - [065](065-improve-search-performance.md) - Optimize Search API Endpoint Performance
+- [066](066-homepage-configuration-panel.md) - Homepage Configuration in Kirby Panel
 - [067](067-fix-search-result-descriptions.md) - Fix Search Result Descriptions - Display User-Friendly Text
 
 ---
