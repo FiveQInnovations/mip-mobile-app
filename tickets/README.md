@@ -23,6 +23,7 @@ Quick reference for active tasks. See individual files for details.
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
 - [044](044-refresh-indicator-overlay.md) - Add Refresh Indicator During Background Refresh
+- [066](066-homepage-configuration-panel.md) - Homepage Configuration in Kirby Panel
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
