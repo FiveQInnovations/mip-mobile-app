@@ -8,7 +8,6 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [061](061-visual-design-overhaul.md) - Visual Design Overhaul
 - [062](062-mimic-existing-ffci-app.md) - Research and Mimic Existing FFCI App Design
 - [063](063-search-results-load-slowly.md) - Search results load slowly
 
@@ -89,6 +88,7 @@ Quick reference for active tasks. See individual files for details.
 - [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
 - [058](058-tab-icons.md) - Add Icons to Each Tab
 - [059](059-internal-page-visual-design.md) - Internal Page Visual Design Improvements
+- [061](061-visual-design-overhaul.md) - Visual Design Overhaul
 
 ---
 

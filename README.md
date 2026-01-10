@@ -2,11 +2,6 @@
 
 React Native mobile app for FFCI (Firefighters for Christ International) built with Expo, pulling content from the Kirby CMS website via KQL API.
 
-## Cursor Rule
-- Commit as you work, but only in the correct project: `rn-mip-app/` for the React Native app, `astro-prototype/` for the Astro PWA, `plugins/` for the Kirby plugin, `sites/` for the Kirby site. Check the folder path before staging so changes land in the right repo.
-- For mobile app changes: Always test locally on iOS Simulator and run Maestro tests (`npm run test:maestro:ios`) before deploying.
-- For Astro PWA changes: Run Cypress specs (`npx cypress run`) and ensure all tests pass before marking a task complete.
-
 ## Project Overview
 
 This project builds a reusable mobile app template that displays content from Kirby CMS websites (MIP platform) via REST API. The app will be deployed to both iOS and Android app stores.
@@ -50,10 +45,6 @@ mip-mobile-app/
 │   └── ...
 ├── meetings/                 # Meeting notes
 ├── tickets/                  # Development tickets
-├── sites/                   # Kirby CMS sites
-│   └── ws-ffci/             # FFCI site (content source)
-└── plugins/                  # Kirby plugins
-    └── wsp-mobile/          # Mobile API plugin
 ```
 
 ## Technical Stack
@@ -109,7 +100,7 @@ For more information, see the [Expo CNG documentation](https://docs.expo.dev/wor
 
 ### Setting Up the FFCI Site Locally
 
-The FFCI site (`sites/ws-ffci/`) needs to be running locally so you can:
+The FFCI site (`ws-ffci/`) needs to be running locally so you can:
 
 1. Test KQL API queries
 2. See the content structure
@@ -269,17 +260,5 @@ See the [mobile-app-specification.md](docs/mobile-app-specification.md) for deta
 - **Technical Lead**: Anthony Elliott
 - **Target Launch**: Late February / Early March 2025
 - **Urgent Deadline**: FFCI's SubSplash app expires January 15, 2025
-
-## Development Status
-
-The React Native mobile app is in active development. Current capabilities:
-
-- ✅ Content loading from Kirby CMS via KQL API
-- ✅ Homepage with Quick Tasks and Featured sections
-- ✅ Tab navigation based on CMS menu structure
-- ✅ Page rendering with HTML content
-- ✅ Local testing with iOS Simulator and Maestro
-- ✅ Android preview builds via EAS
-- ✅ BrowserStack integration for device testing
 
 See [tickets/README.md](tickets/README.md) for active development tickets and progress tracking.

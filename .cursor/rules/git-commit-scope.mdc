@@ -5,7 +5,10 @@ alwaysApply: true
 
 - Stage and commit only within the appropriate project area:
  - `astro-prototype/` for the Astro PWA
- - `plugins/` for the Kirby plugin
- - `sites/` for the Kirby site
+ - `rn-mobile-app/` for the React Native mobile app
 - Check file paths before `git add` to avoid cross-project commits.
 - Do not stage unrelated or untracked folders unless explicitly requested.
+- Note that I have repos from different areas on my filesystem here:
+ - ws-ffci: /Users/anthony/mip/sites/ws-ffci
+ - wsp-mobile: /Users/anthony/mip/fiveq-plugins/wsp-mobile
+ - wsp-forms: /Users/anthony/mip/fiveq-plugins/wsp-forms
