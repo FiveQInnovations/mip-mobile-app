@@ -17,6 +17,7 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🔴 Core Functionality (FFCI)
 - [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
+- [068](068-remove-unused-mobile-panel-settings.md) - Remove Unused/Non-Functional Mobile Panel Settings
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
