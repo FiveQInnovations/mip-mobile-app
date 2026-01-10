@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: qa
 area: wsp-mobile
 phase: core
 created: 2026-01-20

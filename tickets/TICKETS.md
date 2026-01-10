@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [068](068-remove-unused-mobile-panel-settings.md) - Remove Unused/Non-Functional Mobile Panel Settings
 
 ## In Progress
-- [068](068-remove-unused-mobile-panel-settings.md) - Remove Unused/Non-Functional Mobile Panel Settings
+(none)
 
 ## Backlog
 
