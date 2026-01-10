@@ -1,17 +1,13 @@
 appId: com.fiveq.ffci
 ---
 # Simple iOS homepage verification
-# No setup flow needed - simplified for iOS standalone build
 # 
 # Note: launchApp is NOT used - app is launched by script with xcrun simctl
 # App should be launched with xcrun simctl before running this test:
 #   xcrun simctl launch booted com.fiveq.ffci
 
-# Confirm header renders
-- assertVisible:
-    text: "FFC"
-- assertVisible:
-    id: "search-outline"
+- runFlow:
+    file: "verify-header-renders.yaml"
 
 # Confirm key homepage content renders
 - assertVisible:

@@ -1,0 +1,8 @@
+# Reusable step: Verify that the app header renders correctly
+# Note: appId is required by Maestro even for subflows (though it's inherited at runtime)
+appId: com.fiveq.ffci
+---
+- assertVisible:
+    text: "FFC"
+- assertVisible:
+    id: "search-outline"
