@@ -21,7 +21,8 @@ export interface SiteConfig {
   homepageType?: 'content' | 'collection' | 'navigation' | 'action-hub';
 }
 
-// Use local DDEV API for web development
+// Use local DDEV API for web development only
+// iOS and Android use production API (https://ffci.fiveq.dev)
 const baseConfig = Platform.OS === 'web' ? ffciLocalConfig : ffciConfig;
 
 // Load config from JSON file
