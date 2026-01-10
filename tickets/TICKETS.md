@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [068](068-remove-unused-mobile-panel-settings.md) - Remove Unused/Non-Functional Mobile Panel Settings
+(none)
 
 ## In Progress
 (none)
@@ -94,6 +94,7 @@ Quick reference for active tasks. See individual files for details.
 - [065](065-improve-search-performance.md) - Optimize Search API Endpoint Performance
 - [066](066-homepage-configuration-panel.md) - Homepage Configuration in Kirby Panel
 - [067](067-fix-search-result-descriptions.md) - Fix Search Result Descriptions - Display User-Friendly Text
+- [068](068-remove-unused-mobile-panel-settings.md) - Remove Unused/Non-Functional Mobile Panel Settings
 
 ---
 
