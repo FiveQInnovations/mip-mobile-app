@@ -16,6 +16,23 @@ export interface MenuItem {
   page: MenuPage;
 }
 
+export interface HomepageQuickTask {
+  uuid: string | null;
+  label: string;
+  description: string;
+  image_url: string | null;
+  external_url: string | null;
+}
+
+export interface HomepageFeatured {
+  uuid: string | null;
+  title: string;
+  description: string;
+  image_url: string | null;
+  badge_text: string | null;
+  external_url: string | null;
+}
+
 export interface SiteMeta {
   title: string;
   social: Array<{ platform: string; url: string }>;
@@ -24,6 +41,8 @@ export interface SiteMeta {
   homepage_type?: 'content' | 'collection' | 'navigation' | 'action-hub';
   homepage_content?: string;
   homepage_collection?: string;
+  homepage_quick_tasks?: HomepageQuickTask[];
+  homepage_featured?: HomepageFeatured[];
 }
 
 export interface SiteData {

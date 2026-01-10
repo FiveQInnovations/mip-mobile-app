@@ -86,15 +86,14 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
     }
   };
 
-  // Quick Tasks mapped to card layout
-  // Using generic placeholder images (via Picsum) since direct site URLs are 404ing
-  const quickTasks = [
+  // Default Quick Tasks (fallback when API config is empty)
+  const DEFAULT_QUICK_TASKS = [
     {
       key: 'about-us',
       label: 'About Us',
       description: 'Learn about the history of the FFC Ministry!',
       imageUrl: 'https://picsum.photos/seed/about/800/450', 
-      onPress: () => handleNavigate('About', undefined, 'about-uuid-placeholder'), // Need real UUID
+      onPress: () => handleNavigate('About', undefined, 'xhZj4ejQ65bRhrJg'),
       testID: 'home-card-about',
     },
     {
@@ -102,7 +101,7 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
       label: 'What We Believe',
       description: 'FFC Core Values, Doctrine, Principles, Policies, Focus & Goals...',
       imageUrl: 'https://picsum.photos/seed/believe/800/450',
-      onPress: () => handleNavigate('What We Believe', undefined, 'believe-uuid-placeholder'), // Need real UUID
+      onPress: () => handleNavigate('What We Believe', undefined, 'fZdDBgMUDK3ZiRID'),
       testID: 'home-card-believe',
     },
     {
@@ -115,13 +114,14 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
     },
   ];
 
-  // Featured items
-  const featuredItems = [
+  // Default Featured Items (fallback when API config is empty)
+  const DEFAULT_FEATURED_ITEMS = [
     {
       key: 'chaplain-resources',
       title: 'Chaplain Resources',
       description: 'Downloadable tools and resources for chaplains',
       imageUrl: 'https://picsum.photos/seed/chaplain/800/450',
+      badgeText: 'Featured',
       onPress: () => router.push('/page/PCLlwORLKbMnLPtN'),
       testID: 'home-featured-chaplain-resources',
     },
@@ -130,10 +130,42 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
       title: 'Upcoming Events',
       description: 'Retreats, trainings, & more',
       imageUrl: 'https://picsum.photos/seed/events/800/450',
+      badgeText: 'Featured',
       onPress: () => handleNavigate('Events', undefined, '6ffa8qmIpJHM0C3r'),
       testID: 'home-featured-events',
     }
   ];
+
+  // Use API data with fallback to hardcoded defaults
+  const quickTasksFromApi = site_data.homepage_quick_tasks || [];
+  const quickTasks = quickTasksFromApi.length > 0 
+    ? quickTasksFromApi.map((item, idx) => ({
+        key: `api-quick-${idx}`,
+        label: item.label,
+        description: item.description,
+        imageUrl: item.image_url || 'https://picsum.photos/seed/placeholder/800/450',
+        onPress: () => item.external_url 
+          ? Linking.openURL(item.external_url)
+          : handleNavigate('', undefined, item.uuid || undefined),
+        testID: `home-card-api-${idx}`,
+      }))
+    : DEFAULT_QUICK_TASKS;
+
+  // Use API data with fallback to hardcoded defaults
+  const featuredItemsFromApi = site_data.homepage_featured || [];
+  const featuredItems = featuredItemsFromApi.length > 0
+    ? featuredItemsFromApi.map((item, idx) => ({
+        key: `api-featured-${idx}`,
+        title: item.title,
+        description: item.description,
+        imageUrl: item.image_url || 'https://picsum.photos/seed/placeholder/800/450',
+        badgeText: item.badge_text || 'Featured',
+        onPress: () => item.external_url
+          ? Linking.openURL(item.external_url)
+          : handleNavigate('', undefined, item.uuid || undefined),
+        testID: `home-featured-api-${idx}`,
+      }))
+    : DEFAULT_FEATURED_ITEMS;
 
   const isSvgLogo = logoUrl && logoUrl.endsWith('.svg');
 
@@ -199,7 +231,7 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
               onPress={item.onPress}
               style={styles.fullWidthCard}
               testID={item.testID}
-              badgeText="Featured"
+              badgeText={item.badgeText}
             />
           ))}
         </View>
