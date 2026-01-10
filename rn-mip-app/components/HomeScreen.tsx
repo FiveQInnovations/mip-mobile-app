@@ -14,7 +14,7 @@ interface HomeScreenProps {
 }
 
 // Custom Header Component
-function CustomHeader({ onSearch, onProfile }: { onSearch: () => void, onProfile: () => void }) {
+function CustomHeader({ onSearch }: { onSearch: () => void }) {
   return (
     <View style={styles.header}>
       <View style={styles.headerLeft}>
@@ -28,9 +28,6 @@ function CustomHeader({ onSearch, onProfile }: { onSearch: () => void, onProfile
       <View style={styles.headerRight}>
         <TouchableOpacity onPress={onSearch} style={styles.headerButton} testID="search-outline">
           <Ionicons name="search-outline" size={24} color="#0f172a" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={onProfile} style={styles.headerButton}>
-          <Ionicons name="person-circle-outline" size={26} color="#0f172a" />
         </TouchableOpacity>
       </View>
     </View>
@@ -173,7 +170,6 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
     <View style={styles.container}>
       <CustomHeader 
         onSearch={() => router.push('/search')}
-        onProfile={() => Alert.alert('Profile', 'User profile coming soon')}
       />
       
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
