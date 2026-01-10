@@ -208,7 +208,7 @@ See [kirby-headless-cef.md](docs/kirby-headless-cef.md) for KQL query examples.
 - When ready, merge into master locally
 - Push changes to origin master
 - Server should auto-update about every 10 minutes
-- You can manually trigger an update with: `curl "https://api.fiveq.dev/api/proxy/ffci/composer-update?api_key=$MIP_API_TOKEN$"`
+- You can manually trigger an update with: `curl "https://api.fiveq.dev/api/proxy/ffci/composer-update?api_key=$MIP_API_TOKEN"`
 
 ### Configuring Mobile Settings
 
