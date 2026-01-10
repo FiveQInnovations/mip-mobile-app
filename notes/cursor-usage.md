@@ -30,8 +30,12 @@ I also tried Codex 5.1 a couple times on that hard bug and more typical problems
 
 $430 - $288 = $142 for this weekend.
 
----
+### Jan 8
+- Start: $525 in overage
+- End: $535 in overage
+Difference = $10 for the day
 
-## Notes
-(Add observations, patterns, or cost-saving strategies here)
-
+### Jan 10
+- Start: $547 in overage
+- End:
+- Difference:
