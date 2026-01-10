@@ -2,6 +2,12 @@
 
 This directory contains Maestro end-to-end tests for the React Native app.
 
+## ⚠️ Android Testing Status
+
+**Android testing is currently paused** due to Maestro connection issues. See [ANDROID-TESTING-PAUSED.md](./ANDROID-TESTING-PAUSED.md) for details.
+
+iOS testing continues to work reliably.
+
 ## Setup
 
 1. **Install Maestro**: Follow instructions at https://maestro.dev
