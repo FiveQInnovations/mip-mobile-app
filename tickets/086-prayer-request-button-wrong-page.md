@@ -1,8 +1,9 @@
 ---
-status: qa
+status: done
 area: ws-ffci
 phase: core
 created: 2026-01-17
+completed: 2026-01-17
 ---
 
 # Prayer Request Button Should Open Form in Browser - Page Shows Text But No Form Link
