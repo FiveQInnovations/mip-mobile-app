@@ -12,12 +12,11 @@ Quick reference for active tasks. See individual files for details.
 - [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
 
 ## In Progress
-(none)
+- [071](071-homepage-logo-smaller.md) - Homepage Logo - Make Firefighters for Christ Logo Smaller
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [071](071-homepage-logo-smaller.md) - Homepage Logo - Make Firefighters for Christ Logo Smaller
 - [072](072-connect-tab-navigation.md) - Add "Connect" Tab - Replace "Get Involved"
 - [073](073-reduce-tab-bar-4-tabs.md) - Fix Tab Bar - Reduce to 4 Tabs
 
