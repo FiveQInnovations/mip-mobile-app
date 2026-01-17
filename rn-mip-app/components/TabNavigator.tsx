@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f8fafc',
     paddingBottom: 0,
     shadowColor: '#000',
     shadowOffset: {

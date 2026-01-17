@@ -1,6 +1,6 @@
 ---
 title: "TEST: Lighten tab bar background"
-status: backlog
+status: in-progress
 priority: low
 created: 2026-01-17
 labels: [test, trivial]

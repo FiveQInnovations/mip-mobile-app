@@ -15,7 +15,7 @@ Quick reference for active tasks. See individual files for details.
 - [080](080-trivial-test-search-placeholder.md) - Untitled
 
 ## In Progress
-(none)
+- [081](081-trivial-test-tabbar-background.md) - Untitled
 
 ## Backlog
 
@@ -52,9 +52,6 @@ Quick reference for active tasks. See individual files for details.
 - [033](033-maestro-collection-test.md) - Maestro Test: Collection Grid and Navigation
 - [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
 - [050](050-maestro-test-organization.md) - Research Maestro Test Organization
-
-### Unassigned
-- [081](081-trivial-test-tabbar-background.md) - Untitled
 
 ## Blocked
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
