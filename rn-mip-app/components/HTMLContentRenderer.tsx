@@ -308,6 +308,8 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
       textDecorationLine: 'none' as const,
       borderBottomWidth: 0,
       marginVertical: 8,
+      width: '100%',
+      alignSelf: 'stretch',
     },
     '_button-group': {
       display: 'flex' as const,

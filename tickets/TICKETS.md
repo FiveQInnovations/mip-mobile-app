@@ -11,7 +11,7 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [085](085-about-tab-buttons-layout.md) - About Tab Buttons Layout Issue - Side-by-Side Buttons Not Readable
 
 ## Backlog
 
@@ -19,7 +19,6 @@ Quick reference for active tasks. See individual files for details.
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
 - [083](083-audio-sermons-collection-integration.md) - Audio Sermons Collection Integration
 - [084](084-icon-management-website.md) - Icon Management in Website (No Upload Required)
-- [085](085-about-tab-buttons-layout.md) - About Tab Buttons Layout Issue - Side-by-Side Buttons Not Readable
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
