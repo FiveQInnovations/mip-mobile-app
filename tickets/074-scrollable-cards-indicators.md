@@ -226,8 +226,16 @@ The background color `#f8fafc` is technically correct but is VERY SUBTLE. The vi
 2. **Increase contrast** - Use `#f1f5f9` (slate-100) or `#e2e8f0` (slate-200) for more visible differentiation
 3. **Alternative approach** - Add a thin divider line between sections instead of background color
 
+### User Decision (2026-01-17)
+Changed background from `#f8fafc` to `#f1f5f9` (darker gray) for better visibility.
+
+**Final visual test:** PASS (9/10)
+- Hierarchy improved to 10/10
+- Clear visual distinction between Featured and Resources sections
+
 ### Commits
 - `feat(ticket-074): add spacing and background to Resources section`
+- `fix(ticket-074): use darker gray for Resources section background`
 - `fix(ticket-074): use darker gray for Resources section background`
 
 ### User Decision (2026-01-17)
