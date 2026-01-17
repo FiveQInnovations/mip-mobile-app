@@ -23,10 +23,10 @@ Quick reference for active tasks. See individual files for details.
 - [072](072-connect-tab-navigation.md) - Add "Connect" Tab - Replace "Get Involved"
 - [073](073-reduce-tab-bar-4-tabs.md) - Fix Tab Bar - Reduce to 4 Tabs
 - [074](074-scrollable-cards-indicators.md) - Scrollable Cards - Add Scroll Indicators
+- [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
-- [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
