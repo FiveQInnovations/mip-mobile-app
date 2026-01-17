@@ -273,8 +273,12 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
       color: primaryColor,
       textDecorationLine: 'none' as const,
       fontWeight: '600' as const,
-      borderBottomWidth: 1,
+      borderBottomWidth: 2,
       borderBottomColor: primaryColor,
+      backgroundColor: 'rgba(217, 35, 42, 0.08)',
+      paddingHorizontal: 4,
+      paddingVertical: 2,
+      borderRadius: 4,
     },
     blockquote: {
       borderLeftWidth: 4,
