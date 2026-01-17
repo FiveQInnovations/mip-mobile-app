@@ -151,64 +151,28 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
     // This overrides any inherited styles from parent elements like <h3>
     a: ({ tnode, TDefaultRenderer, ...props }: any) => {
       const href = tnode?.attributes?.href || '';
-      const className = tnode?.attributes?.class || '';
-      const isButton = className.includes('_button');
       
-      if (isButton) {
-        // Render as button
+      return (
+        <Pressable onPress={() => handleLinkPress(href)}>
+          <TDefaultRenderer tnode={tnode} {...props} />
+        </Pressable>
+      );
+    },
+    span: ({ tnode, TDefaultRenderer, ...props }: any) => {
+      // Check if this span is inside a button by looking at parent classes
+      const parentNode = tnode?.parent;
+      const parentClasses = parentNode?.domNode?.attribs?.class || parentNode?.attributes?.class || '';
+      const isInsideButton = parentClasses.includes('_button');
+      
+      if (isInsideButton) {
         return (
-          <Pressable 
-            onPress={() => handleLinkPress(href)}
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? 'rgba(217, 35, 42, 0.8)' : buttonStyles.backgroundColor,
-                paddingHorizontal: buttonStyles.paddingHorizontal,
-                paddingVertical: buttonStyles.paddingVertical,
-                borderRadius: buttonStyles.borderRadius,
-                alignSelf: 'stretch',
-                marginVertical: 8,
-                minWidth: buttonStyles.minWidth,
-              }
-            ]}
-          >
-            <Text style={{ 
-              color: buttonStyles.color, 
-              fontWeight: buttonStyles.fontWeight,
-              fontSize: buttonStyles.fontSize,
-              textAlign: buttonStyles.textAlign,
-            }}>
-              <TChildrenRenderer tchildren={tnode.children} />
-            </Text>
-          </Pressable>
+          <Text style={{ color: buttonTextColor }}>
+            <TChildrenRenderer tchildren={tnode.children} />
+          </Text>
         );
       }
       
-      // Render as regular link
-      return (
-        <Pressable 
-          onPress={() => handleLinkPress(href)}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? 'rgba(217, 35, 42, 0.15)' : linkStyles.backgroundColor,
-              paddingHorizontal: linkStyles.paddingHorizontal,
-              paddingVertical: linkStyles.paddingVertical,
-              borderRadius: linkStyles.borderRadius,
-              borderBottomWidth: linkStyles.borderBottomWidth,
-              borderBottomColor: linkStyles.borderBottomColor,
-              alignSelf: 'flex-start',
-              marginVertical: 4,
-            }
-          ]}
-        >
-          <Text style={{ 
-            color: linkStyles.color, 
-            fontWeight: linkStyles.fontWeight,
-            fontSize: 17,
-          }}>
-            <TChildrenRenderer tchildren={tnode.children} />
-          </Text>
-        </Pressable>
-      );
+      return <TDefaultRenderer tnode={tnode} {...props} />;
     },
     img: ({ tnode }: any) => {
       // Attributes are in tnode.attributes, not directly in props
@@ -275,6 +239,29 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
     borderRadius: 4,
     borderBottomWidth: 2,
     borderBottomColor: primaryColor,
+  };
+
+  const buttonTextColor = '#FFFFFF';
+  
+  const classesStyles = {
+    '_button': {
+      backgroundColor: primaryColor,
+      color: buttonTextColor,
+      paddingHorizontal: 20,
+      paddingVertical: 14,
+      borderRadius: 8,
+      fontWeight: '600' as const,
+      fontSize: 17,
+      textAlign: 'center' as const,
+      textDecorationLine: 'none' as const,
+      borderBottomWidth: 0,
+      marginVertical: 8,
+    },
+    '_button-group': {
+      display: 'flex' as const,
+      flexDirection: 'column' as const,
+      gap: 8,
+    },
   };
 
   const tagsStyles = {
@@ -393,6 +380,9 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
     em: {
       fontStyle: 'italic' as const,
     },
+    span: {
+      color: 'inherit' as any,
+    },
   };
 
   const systemFonts = ['System'];
@@ -403,6 +393,7 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
         contentWidth={width - 32}
         source={source}
         tagsStyles={tagsStyles}
+        classesStyles={classesStyles}
         renderers={renderers}
         renderersProps={renderersProps}
         ignoredDomTags={['source', 'picture']}
