@@ -1,6 +1,6 @@
 ---
 title: "TEST: Increase ContentCard border radius"
-status: in-progress
+status: qa
 priority: low
 created: 2026-01-17
 labels: [test, trivial]
@@ -14,8 +14,8 @@ Change the ContentCard border radius from 8px to 12px for a slightly more rounde
 
 ## Acceptance Criteria
 
-- [ ] ContentCard corners are visibly more rounded
-- [ ] Change is visible on the homepage where cards appear
+- [x] ContentCard corners are visibly more rounded
+- [x] Change is visible on the homepage where cards appear
 
 ## Technical Details
 

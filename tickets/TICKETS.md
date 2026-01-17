@@ -11,9 +11,10 @@ Quick reference for active tasks. See individual files for details.
 - [071](071-homepage-logo-smaller.md) - Homepage Logo - Make Firefighters for Christ Logo Smaller
 - [074](074-scrollable-cards-indicators.md) - Scrollable Cards - Add Scroll Indicators
 - [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
+- [079](079-trivial-test-card-radius.md) - Untitled
 
 ## In Progress
-- [079](079-trivial-test-card-radius.md) - Untitled
+(none)
 
 ## Backlog
 
