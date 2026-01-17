@@ -39,3 +39,208 @@ From the Jan 13, 2026 meeting with Mike Bell, the bottom navigation should repla
 ## References
 
 - Meeting transcript: meetings/ffci-app-build-review-jan-13.md
+
+---
+
+## Scout Findings
+
+### Current Tab Navigation Implementation
+
+**Location:** `rn-mip-app/components/TabNavigator.tsx`
+
+The tab navigation is dynamically built from the Kirby CMS mobile menu API:
+
+- **Lines 18-28:** Icon mapping for all tabs (including both "Get Involved" and "Connect")
+- **Line 23:** Get Involved currently uses `hand-left` icons (filled/outline)
+- **Line 26:** Connect already has icons defined: `git-network` icons (filled/outline)
+- **Lines 111-141:** Menu items are fetched from API and rendered dynamically
+- **Lines 158-194:** Tab bar rendering loop that maps over menu items
+
+**Data Flow:**
+1. `getSiteData()` API call fetches menu from `/mobile-api` endpoint
+2. Backend: `wsp-mobile/lib/menu.php` (lines 12-43) reads `site.mobileMainMenu()` structure field
+3. Frontend: Menu items are prepended with a Home tab and rendered in tab bar
+
+**Current Menu Structure (ws-ffci/content/site.txt, lines 111-133):**
+```
+Mobilemainmenu:
+- Resources (uuid: uezb3178BtP3oGuU)
+- Chapters (uuid: pik8ysClOFGyllBY)
+- About (uuid: xhZj4ejQ65bRhrJg)
+- Get Involved (uuid: 3e56Ag4tc8SfnGAv)
+```
+
+### Get Involved Tab Current Content
+
+**CMS Location:** `ws-ffci/content/4_get-involved/default.txt`
+**UUID:** `3e56Ag4tc8SfnGAv`
+
+The "Get Involved" page currently shows:
+- Hero section with title and background image
+- Four card sections:
+  1. **Become a Member** → Links to member form
+  2. **Mission Trips** → Links to mission opportunities
+  3. **FFC Events** → Links to events calendar
+  4. **Donate** → External link to Aplos donation form (`https://www.aplos.com/aws/give/FirefightersForChristInternational`)
+- FFC Chaplain Program section with buttons for:
+  - Chaplain Request
+  - Become a Volunteer
+
+### Connect Tab Requirements & Existing Resources
+
+**Required Links (from meeting notes, line 50-51):**
+1. **Facebook** ✅ Available in `site.social` (site.txt line 50-53)
+2. **Instagram** ✅ Available in `site.social` (site.txt line 55-57)
+3. **Website** ✅ Can use `firefightersforchrist.org`
+4. **Membership form** ✅ Exists at `content/4_get-involved/1_become-a-member/` (has embedded form)
+5. **Prayer request** ✅ Exists at `content/forms/2_prayer-request/form.txt` (UUID: iTQ9ZV8UId5Chxew)
+6. **Give** ✅ External link exists: `https://www.aplos.com/aws/give/FirefightersForChristInternational`
+
+**Additional Related Forms:**
+- **Chaplain Request:** `content/chaplain-request/default.txt` (UUID: M9GmWmqtvlpMuoLP)
+
+### Implementation Plan
+
+#### Phase 1: Create Connect Page in Kirby CMS (Backend)
+
+**Action Required:** Create new page at `ws-ffci/content/5_connect/default.txt`
+
+The Connect page should contain:
+- Hero section with title "Connect"
+- Link list with these items:
+  - Facebook (from site.social)
+  - Instagram (from site.social)
+  - Website (firefightersforchrist.org)
+  - Membership Form (internal page link)
+  - Prayer Request (form page)
+  - Give (external Aplos link)
+  - Optional: Chaplain Request (form page)
+
+**Template:** Use similar structure to "Get Involved" page - a collection of links/buttons rather than full content pages.
+
+#### Phase 2: Update Mobile Menu in Kirby (Backend)
+
+**File:** `ws-ffci/content/site.txt`
+**Lines:** 111-133 (Mobilemainmenu structure)
+
+**Change Required:**
+Replace:
+```
+- 
+  page:
+    - page://3e56Ag4tc8SfnGAv
+  label: Get Involved
+  icon: [ ]
+```
+
+With:
+```
+- 
+  page:
+    - page://[NEW_CONNECT_UUID]
+  label: Connect
+  icon: [ ]
+```
+
+#### Phase 3: App Frontend (if needed)
+
+**File:** `rn-mip-app/components/TabNavigator.tsx`
+
+**Good News:** No code changes needed! The icon for "Connect" is already defined (line 26).
+
+**However, Monitor:**
+- Tab bar rendering works dynamically from API
+- Icon mapping already handles "Connect" label
+- "Get Involved" icon mapping can remain (won't hurt anything)
+
+#### Phase 4: Test Link Handling
+
+**File:** `rn-mip-app/components/TabScreen.tsx`
+
+The TabScreen component handles rendering pages. Need to verify:
+- Internal page links work (membership form, prayer request)
+- External links open in browser (Facebook, Instagram, Give)
+- Form pages render correctly
+
+**Note from meeting (line 52-53):** Forms should open in in-app browser for security/cost reasons.
+
+### Code Locations Reference Table
+
+| File | Lines | Purpose | Changes Needed |
+|------|-------|---------|----------------|
+| `rn-mip-app/components/TabNavigator.tsx` | 18-28 | Tab icon mapping | ✅ None - Connect icon already defined |
+| `rn-mip-app/components/TabNavigator.tsx` | 111-141 | Menu data fetching & rendering | ✅ None - fully dynamic |
+| `wsp-mobile/lib/menu.php` | 12-43 | Backend menu API | ✅ None - reads from CMS |
+| `ws-ffci/content/site.txt` | 111-133 | Mobile menu structure | ✏️ **Replace "Get Involved" with "Connect"** |
+| `ws-ffci/content/5_connect/` | N/A | Connect page content | ✏️ **Create new page** |
+
+### Variables & Data Reference
+
+**Social Media Links:**
+- Stored in: `site.social` field (site.txt lines 48-62)
+- API: Available via `site_data.social` from `/mobile-api`
+- Format: Array of `{ platform: string, url: string }`
+
+**Form Page UUIDs:**
+- Prayer Request: `iTQ9ZV8UId5Chxew`
+- Chaplain Request: `M9GmWmqtvlpMuoLP`
+- Membership Form: `2E3lFqnOR6UULQfz` (from become-a-member page button)
+
+**External Links:**
+- Facebook: `https://www.facebook.com/groups/www.firefightersforchrist.org`
+- Instagram: `https://www.instagram.com/firefighters_for_christ_intl/`
+- Website: `https://firefightersforchrist.org`
+- Give: `https://www.aplos.com/aws/give/FirefightersForChristInternational`
+
+### Icon Recommendation
+
+**Current Icon:** `git-network` (already configured at TabNavigator.tsx line 26)
+- Filled: `git-network`
+- Outline: `git-network-outline`
+
+**Assessment:** This is a reasonable icon for "Connect" - it represents interconnected nodes/network. Consider alternatives if design feedback suggests:
+- `link` / `link-outline` - More direct "link" representation
+- `share-social` / `share-social-outline` - Social connection emphasis
+- `people` / `people-outline` - Community/connection emphasis
+
+**Recommendation:** Keep `git-network` unless Mike Bell or Adam Hardy provide different guidance.
+
+### Complexity Assessment
+
+**Level:** Medium
+
+**Breakdown:**
+- ✅ **Easy:** App code requires no changes (fully dynamic)
+- ✅ **Easy:** Icon already configured
+- ⚠️ **Medium:** Create Connect page in Kirby with proper link structure
+- ⚠️ **Medium:** Update mobile menu structure in Kirby
+- ⚠️ **Medium:** Test all link types (internal pages, external URLs, forms)
+- ⚠️ **Medium:** Ensure form pages render correctly in mobile app
+
+**Estimated Effort:** 
+- Kirby CMS work: 1-2 hours (create page, update menu, test)
+- App testing: 0.5-1 hour (verify links work, forms render)
+- **Total: 2-3 hours**
+
+**Dependencies:**
+- Requires Kirby CMS access to create Connect page
+- Requires decision on exact link order/presentation
+- May need coordination with Adam Hardy on page design/layout
+
+**Risk Factors:**
+- Low risk overall - mostly configuration changes
+- Main risk: Ensuring forms render properly in mobile app (in-app browser behavior)
+- Minor risk: Icon choice might need adjustment based on design feedback
+
+### Additional Notes
+
+1. **"Get Involved" Content Migration:** The existing Get Involved page has valuable content (mission trips, events, chaplain program). Consider where this content should live after the Connect tab replaces it. Options:
+   - Keep as a standalone page accessible via other navigation
+   - Distribute content to other relevant sections
+   - Include some elements in Connect page
+
+2. **Connect Page Design:** The meeting notes (line 50-51) indicate this mirrors a feature from their existing Subsplash app. May want to review that app for UX patterns.
+
+3. **Form Handling:** Per meeting notes (line 52-53), forms should open in in-app browser. Verify current implementation in TabScreen/HTMLContentRenderer handles this correctly.
+
+4. **Homepage Quick Tasks:** The homepage already has Facebook/Instagram links in the quick tasks (site.txt lines 172-189). Coordinate with homepage redesign work to avoid duplication.
