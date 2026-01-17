@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [069](069-homepage-layout-redesign.md) - Homepage Layout Redesign - Flip Featured/Evergreen Sections
+(none)
 
 ## In Progress
-(none)
+- [069](069-homepage-layout-redesign.md) - Homepage Layout Redesign - Flip Featured/Evergreen Sections
 
 ## Backlog
 
