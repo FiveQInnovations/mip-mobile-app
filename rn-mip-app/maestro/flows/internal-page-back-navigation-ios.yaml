@@ -33,11 +33,6 @@ appId: com.fiveq.ffci
 - waitForAnimationToEnd
 
 # Verify we're on the FFC Media Ministry page
-# Wait for the page content to load (HTMLContentRenderer needs time to render)
-# Use extendedWaitUntil to wait for the button to become visible, with scrolling if needed
-- extendedWaitUntil:
-    visible: "firefighters.org"
-    timeout: 15000
 - assertVisible:
     text: "firefighters.org"
 - assertVisible:
