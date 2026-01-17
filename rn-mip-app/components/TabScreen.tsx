@@ -142,9 +142,10 @@ export function TabScreen({ uuid }: TabScreenProps) {
 
   // Check if this is an audio item with audio content
   const isAudioItem = pageType === 'collection-item' && currentPageData.type === 'audio';
-  const audioUrl = currentPageData.data?.content?.audio_url || currentPageData.data?.content?.audio_file;
-  const audioTitle = currentPageData.data?.content?.audio_name || currentPageData.title;
-  const audioArtist = currentPageData.data?.content?.audio_credit;
+  const audioContent = currentPageData.data?.content;
+  const audioUrl = audioContent?.audio_url || audioContent?.audio_file || '';
+  const audioTitle = audioContent?.audio_name || currentPageData.title || '';
+  const audioArtist = audioContent?.audio_credit || '';
 
   // Dynamic styles that use config colors
   const dynamicStyles = {
@@ -275,12 +276,12 @@ export function TabScreen({ uuid }: TabScreenProps) {
         )}
 
         {/* Audio Player for audio items */}
-        {isAudioItem && audioUrl && (
+        {isAudioItem && audioUrl && audioUrl.length > 0 && (
           <View style={{ paddingHorizontal: 16 }}>
             <AudioPlayer 
               url={audioUrl}
-              title={audioTitle}
-              artist={audioArtist}
+              title={audioTitle || undefined}
+              artist={audioArtist || undefined}
             />
           </View>
         )}
