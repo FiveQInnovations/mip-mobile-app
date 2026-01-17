@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: in-progress
 area: ws-ffci
 phase: core
 created: 2026-01-17
@@ -14,6 +14,18 @@ On the Connect tab, the "Prayer Request" button navigates to a page that shows "
 **Update (2026-01-17):** The button was fixed to navigate to `https://ffci.fiveq.dev/resources#prayer-request`. However, this page only displays informational text about the prayer ministry with no link or button to open the actual form. The form needs to open directly in a browser (per ticket [017](017-prayer-request-form-handling.md)).
 
 **Update (2026-01-17):** Changed button to `link_to: "url"` with `https://ffci.fiveq.dev/prayer-request`, but it still opens as an internal page. Testing with `google.com` opens correctly in browser, confirming the URL link functionality works. The issue is that same-domain URLs are being transformed into internal links by the backend (`wsp-mobile/lib/pages.php` lines 115-126), which then get routed internally by the frontend (`HTMLContentRenderer.tsx` lines 43-53).
+
+**Update (2026-01-17):** Backend fix deployed (Option 1 - skip URL transformation for form paths). Fix was committed to `wsp-mobile` and deployed to `ffci.fiveq.dev` via composer update. **However, the fix did not work.** Maestro test created (`maestro/flows/prayer-request-opens-browser-ios.yaml`) confirms the issue: after tapping "Prayer Request", the app's "Home tab" is still visible, meaning the browser did not open.
+
+**Update (2026-01-17):** Investigation confirmed:
+1. **CMS config is correct**: Button uses `link_to: "url"` with `url: "https://ffci.fiveq.dev/prayer-request"` and `target: "true"`
+2. **Backend fix is working**: API returns correct HTML with URL NOT transformed:
+   ```html
+   <a class="_button" href="https://ffci.fiveq.dev/prayer-request" target="_blank">Prayer Request</a>
+   ```
+3. **Root cause is in FRONTEND**: `HTMLContentRenderer.tsx` uses `isInternalLink()` which checks if URL hostname matches `apiBaseUrl` (`ffci.fiveq.dev`). Since both match, the link is treated as internal and routed within the app instead of opening browser.
+
+**Next step:** Implement Option 2 - modify frontend to force browser opening for form URLs even if same domain.
 
 ## Problem
 
@@ -165,7 +177,13 @@ Add a query parameter to force external opening (requires both backend and front
 
 ## Testing
 
-**Test Steps:**
+**Automated Test:**
+- Maestro test: `maestro/flows/prayer-request-opens-browser-ios.yaml`
+- Run: `maestro test maestro/flows/prayer-request-opens-browser-ios.yaml`
+- Test verifies: Navigate to Connect tab → Scroll to Prayer Request → Tap → Assert app goes to background (browser opens)
+- **Current status: FAILING** - App's "Home tab" still visible after tap, browser not opening
+
+**Manual Test Steps:**
 1. Navigate to Connect tab in mobile app
 2. Tap "Prayer Request" button
 3. Verify external browser (Safari/Chrome) opens automatically

@@ -1,0 +1,51 @@
+appId: com.fiveq.ffci
+---
+# Test that Prayer Request button opens in external browser
+# This test verifies that tapping "Prayer Request" opens Safari instead of an internal page
+#
+# Ticket: 086-prayer-request-button-wrong-page
+#
+# Expected behavior: After tapping "Prayer Request", the app should go to background
+# and Safari should open with the prayer request form.
+
+- runFlow:
+    file: "verify-header-renders.yaml"
+
+# Navigate to Connect tab
+- tapOn:
+    text: "Connect tab"
+- waitForAnimationToEnd
+
+# Wait for page content to load
+- waitForAnimationToEnd
+
+# Scroll to find the Prayer Request button
+- scrollUntilVisible:
+    element:
+      text: "Prayer Request"
+    direction: DOWN
+    timeout: 30000
+    visibilityPercentage: 50
+    centerElement: true
+
+# Take screenshot before tapping
+- takeScreenshot:
+    path: "maestro/screenshots/prayer-request-before-tap-ios"
+
+# Tap the Prayer Request button
+- tapOn:
+    text: "Prayer Request"
+
+# Wait a moment for browser to open
+- waitForAnimationToEnd
+
+# After browser opens, the app goes to background
+# The app's UI should NOT be visible anymore
+# If we can still see the Home tab, that means we're still in the app (browser didn't open)
+- assertNotVisible:
+    text: "Home tab"
+    enabled: true
+
+# Take screenshot (will show Safari if working, or internal page if not)
+- takeScreenshot:
+    path: "maestro/screenshots/prayer-request-after-tap-ios"
