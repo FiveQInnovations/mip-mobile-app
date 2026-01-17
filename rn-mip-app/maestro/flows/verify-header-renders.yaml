@@ -2,5 +2,13 @@
 # Note: appId is required by Maestro even for subflows (though it's inherited at runtime)
 appId: com.fiveq.ffci
 ---
+# Wait for app to load
+- waitForAnimationToEnd
+# Wait for homepage to load (Featured section indicates homepage is ready)
+# This ensures we're on the homepage before checking for the search icon
+- extendedWaitUntil:
+    visible: "Featured"
+    timeout: 10000
+# Verify search icon is visible in header
 - assertVisible:
     id: "search-outline"
