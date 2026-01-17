@@ -193,26 +193,6 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
           )}
         </View>
 
-        {/* Horizontal Scroll for Main Cards */}
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          style={styles.horizontalScroll}
-          contentContainerStyle={styles.horizontalScrollContent}
-        >
-          {quickTasks.map((item) => (
-            <ContentCard
-              key={item.key}
-              title={item.label}
-              description={item.description}
-              imageUrl={item.imageUrl}
-              onPress={item.onPress}
-              style={styles.carouselCard}
-              testID={item.testID}
-            />
-          ))}
-        </ScrollView>
-
         {/* Featured Section */}
         <Text style={styles.sectionHeader} testID="home-featured-heading">
           Featured
@@ -231,6 +211,29 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
             />
           ))}
         </View>
+
+        {/* Resources Section */}
+        <Text style={styles.sectionHeader}>
+          Resources
+        </Text>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          style={styles.horizontalScroll}
+          contentContainerStyle={styles.horizontalScrollContent}
+        >
+          {quickTasks.map((item) => (
+            <ContentCard
+              key={item.key}
+              title={item.label}
+              description={item.description}
+              imageUrl={item.imageUrl}
+              onPress={item.onPress}
+              style={styles.carouselCard}
+              testID={item.testID}
+            />
+          ))}
+        </ScrollView>
 
         {/* Dev Tools - Temporary */}
         <View style={styles.devSection}>
