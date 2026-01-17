@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [069](069-homepage-layout-redesign.md) - Homepage Layout Redesign - Flip Featured/Evergreen Sections
+(none)
 
 ## In Progress
 (none)
@@ -102,6 +102,7 @@ Quick reference for active tasks. See individual files for details.
 - [066](066-homepage-configuration-panel.md) - Homepage Configuration in Kirby Panel
 - [067](067-fix-search-result-descriptions.md) - Fix Search Result Descriptions - Display User-Friendly Text
 - [068](068-remove-unused-mobile-panel-settings.md) - Remove Unused/Non-Functional Mobile Panel Settings
+- [069](069-homepage-layout-redesign.md) - Homepage Layout Redesign - Flip Featured/Evergreen Sections
 
 ---
 
