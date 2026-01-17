@@ -1,11 +1,13 @@
 ---
-status: qa
+status: blocked
 area: rn-mip-app
 phase: core
 created: 2026-01-17
 ---
 
 # Homepage Touch Handling on Real Devices
+
+Status: Blocked until testing on a real device with a finger to touch.
 
 ## Context
 

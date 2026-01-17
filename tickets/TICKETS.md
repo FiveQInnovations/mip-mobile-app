@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [077](077-homepage-touch-handling.md) - Homepage Touch Handling on Real Devices
+(none)
 
 ## In Progress
 - [071](071-homepage-logo-smaller.md) - Homepage Logo - Make Firefighters for Christ Logo Smaller
@@ -54,6 +54,7 @@ Quick reference for active tasks. See individual files for details.
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
 - [015](015-ios-browserstack-without-apple-dev-account.md) - Build and Upload iOS to BrowserStack Without Apple Developer Account
 - [075](075-integrate-audio-sermons.md) - Integrate Audio Sermons Collection
+- [077](077-homepage-touch-handling.md) - Homepage Touch Handling on Real Devices
 
 ## Maybe
 - [013](013-speed-up-eas-android-builds.md) - Speed Up EAS Android Build Time
