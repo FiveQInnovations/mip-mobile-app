@@ -9,9 +9,10 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [074](074-scrollable-cards-indicators.md) - Scrollable Cards - Add Scroll Indicators
+- [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
 
 ## In Progress
-- [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
+(none)
 
 ## Backlog
 
