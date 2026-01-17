@@ -7,6 +7,7 @@ import { hasCachedPage, clearCachedPage } from '../lib/pageCache';
 import { ErrorScreen } from './ErrorScreen';
 import { SplashScreen } from './SplashScreen';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { AudioPlayer } from './AudioPlayer';
 
 interface TabScreenProps {
   uuid: string;
@@ -139,6 +140,12 @@ export function TabScreen({ uuid }: TabScreenProps) {
 
   const pageType = currentPageData.page_type || currentPageData.type || 'content';
 
+  // Check if this is an audio item with audio content
+  const isAudioItem = pageType === 'collection-item' && currentPageData.type === 'audio';
+  const audioUrl = currentPageData.data?.content?.audio_url || currentPageData.data?.content?.audio_file;
+  const audioTitle = currentPageData.data?.content?.audio_name || currentPageData.title;
+  const audioArtist = currentPageData.data?.content?.audio_credit;
+
   // Dynamic styles that use config colors
   const dynamicStyles = {
     headerContainer: {
@@ -265,6 +272,17 @@ export function TabScreen({ uuid }: TabScreenProps) {
         {/* Page Content - Render HTML */}
         {pageType === 'content' && currentPageData.page_content && (
           <HTMLContentRenderer html={currentPageData.page_content} onNavigate={navigateToPage} />
+        )}
+
+        {/* Audio Player for audio items */}
+        {isAudioItem && audioUrl && (
+          <View style={{ paddingHorizontal: 16 }}>
+            <AudioPlayer 
+              url={audioUrl}
+              title={audioTitle}
+              artist={audioArtist}
+            />
+          </View>
         )}
 
         {/* Collection Item Type - Render HTML */}
