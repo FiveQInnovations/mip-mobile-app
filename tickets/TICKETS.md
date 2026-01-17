@@ -20,6 +20,7 @@ Quick reference for active tasks. See individual files for details.
 ### 🔴 Core Functionality (FFCI)
 - [072](072-connect-tab-navigation.md) - Add "Connect" Tab - Replace "Get Involved"
 - [073](073-reduce-tab-bar-4-tabs.md) - Fix Tab Bar - Reduce to 4 Tabs
+- [077](077-homepage-touch-handling.md) - Homepage Touch Handling on Real Devices
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access

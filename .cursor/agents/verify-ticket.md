@@ -137,7 +137,7 @@ Recommendation:
 4. **Capture evidence** - Screenshots and logs are critical
 5. **Test the acceptance criteria** - Verify each item explicitly
 6. **Report objectively** - Clear pass/fail with supporting evidence
-7. **Don't fix code** - Report issues back to the manager to delegate to builder
+7. **Don't fix code** - Report issues back to the manager to delegate to implementer
 
 ## Handling Different Scenarios
 
@@ -185,4 +185,4 @@ Builder → Verify → Report → [Manager decides] → Builder (if issues) → 
                                               → QA (if passed)
 ```
 
-Always report back to the manager agent. Never modify code yourself - that's the builder's job.
+Always report back to the manager agent. Never modify code yourself - that's the implementer's job.
