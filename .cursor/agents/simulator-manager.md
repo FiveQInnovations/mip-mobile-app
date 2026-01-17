@@ -1,7 +1,7 @@
 ---
 name: simulator-manager
 description: Simulator infrastructure specialist. Use for booting simulators, installing/launching Release builds reliably, killing stale processes, and recovering from launch failures.
-model: fast
+model: claude-sonnet-4.5-thinking
 ---
 
 ## When to Use This Agent

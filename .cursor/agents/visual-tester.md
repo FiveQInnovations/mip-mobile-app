@@ -1,7 +1,7 @@
 ---
 name: visual-tester
 description: Visual verification specialist. Use for screenshot-based testing, scrolling to UI sections, assessing visual design quality.
-model: fast
+model: claude-sonnet-4.5-thinking
 ---
 
 ## When to Use This Agent
