@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [074](074-scrollable-cards-indicators.md) - Scrollable Cards - Add Scroll Indicators
+(none)
 
 ## In Progress
 - [072](072-connect-tab-navigation.md) - Add "Connect" Tab - Replace "Get Involved"
@@ -103,6 +103,7 @@ Quick reference for active tasks. See individual files for details.
 - [069](069-homepage-layout-redesign.md) - Homepage Layout Redesign - Flip Featured/Evergreen Sections
 - [070](070-header-logo-maltese-cross.md) - Header Logo - Replace Default Logo with Maltese Cross
 - [071](071-homepage-logo-smaller.md) - Homepage Logo - Make Firefighters for Christ Logo Smaller
+- [074](074-scrollable-cards-indicators.md) - Scrollable Cards - Add Scroll Indicators
 - [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
 - [079](079-trivial-test-card-radius.md) - Untitled
 - [079](done/079-trivial-test-card-radius.md) - Untitled
