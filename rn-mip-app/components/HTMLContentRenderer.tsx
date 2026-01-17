@@ -151,7 +151,21 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
     // This overrides any inherited styles from parent elements like <h3>
     a: ({ tnode, TDefaultRenderer, ...props }: any) => {
       const href = tnode?.attributes?.href || '';
+      const classes = tnode?.attributes?.class || '';
+      const isButton = classes.includes('_button');
       
+      // Handle button links with explicit white text
+      if (isButton) {
+        return (
+          <Pressable onPress={() => handleLinkPress(href)} style={classesStyles._button}>
+            <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 17, textAlign: 'center' }}>
+              <TChildrenRenderer tchildren={tnode.children} />
+            </Text>
+          </Pressable>
+        );
+      }
+      
+      // Regular links - use default renderer
       return (
         <Pressable onPress={() => handleLinkPress(href)}>
           <TDefaultRenderer tnode={tnode} {...props} />
