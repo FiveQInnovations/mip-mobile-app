@@ -53,21 +53,47 @@ git add -A
 git commit -m "Implement ticket XXX: [summary]"
 ```
 
-### 5. Delegate to Simulator-Manager
+### 5. Build and Launch on Simulator
 
-**Always delegate** to get the app running reliably. Don't try to do this yourself—agents often forget the correct build commands, miss stale processes, or thrash around troubleshooting. This wastes significant time. The simulator-manager is a specialist that handles this reliably every time.
+**You handle this yourself.** Follow these steps exactly to get the app running with your changes.
 
+#### Standard Simulator
+**Always use iPhone 16:** `D9DE6784-CB62-4AC3-A686-4D445A0E7B57`
+
+#### Step 5a: Kill Stale Processes
+```bash
+# Kill Maestro (port 7001) - often holds stale connections
+lsof -ti :7001 | xargs kill -9 2>/dev/null || true
+
+# Kill any lingering Expo/Metro processes
+pkill -f "expo" 2>/dev/null || true
+pkill -f "metro" 2>/dev/null || true
+lsof -ti :8081 | xargs kill -9 2>/dev/null || true
+
+# Terminate any running app instance
+xcrun simctl terminate D9DE6784-CB62-4AC3-A686-4D445A0E7B57 com.fiveq.ffci 2>/dev/null || true
 ```
-Delegate to simulator-manager: "Build and launch the app on the simulator with my changes"
+
+#### Step 5b: Build Fresh (Release Mode)
+```bash
+cd rn-mip-app
+npm run build:ios:release
 ```
 
-The simulator-manager will:
-- Build the Release app
-- Kill stale processes
-- Install and launch the app
-- Confirm it's running
+This script handles: boot simulator → clean build → install → launch.
 
-Wait for simulator-manager to report success before continuing.
+**IMPORTANT:** Always build fresh. Never skip this step or reuse old builds—stale code causes false verification results.
+
+#### Step 5c: Verify App Launched
+Wait 5 seconds after build completes, then take a screenshot:
+```bash
+sleep 5
+xcrun simctl io D9DE6784-CB62-4AC3-A686-4D445A0E7B57 screenshot /tmp/app-launched.png
+```
+
+Read the screenshot to confirm the app loaded. If it didn't launch, check the build output for errors.
+
+**If build fails:** Check error messages, fix issues, and retry from step 5b.
 
 ### 6. Self-Verify on Simulator
 
@@ -88,7 +114,7 @@ If self-verification reveals issues:
 
 1. Fix the code
 2. Commit: `git commit -m "Fix ticket XXX: [what was fixed]"`
-3. Go back to step 5 (delegate to simulator-manager again)
+3. Go back to step 5 (build and launch again)
 4. Repeat until it works
 
 **Do not signal done until you've verified it yourself.**
@@ -120,7 +146,7 @@ If verify-ticket still finds issues:
 1. Read the verification report
 2. Fix the identified issues
 3. Commit the fixes
-4. Go back to step 5 (simulator-manager → self-verify → signal)
+4. Go back to step 5 (build → self-verify → signal)
 
 ## Using Scouted Findings
 
@@ -145,24 +171,29 @@ If verify-ticket still finds issues:
 ## Workflow Integration
 
 ```
-Implementer (you) → simulator-manager → self-verify → [iterate if needed]
-                                                    ↓
-                                              Signal done
-                                                    ↓
-                              Verify Agent → Manager → QA (if passed)
-                                          → Implementer (if issues)
+Implementer (you) → build & launch → self-verify → [iterate if needed]
+                                                 ↓
+                                           Signal done
+                                                 ↓
+                               Verify Agent → Manager → QA (if passed)
+                                           → Implementer (if issues)
 ```
 
 ## DO NOT
 
 - Do NOT signal done without self-verifying on the simulator
-- Do NOT skip the simulator-manager delegation—it handles infrastructure reliably
+- Do NOT skip the build step—always build fresh with `npm run build:ios:release`
 - Do NOT guess if something works—look at it yourself
 - Do NOT refactor unrelated code
+- Do NOT call subagents—you handle build/verify yourself
 
 ## YOU CAN
 
-- Delegate to simulator-manager for build/launch (required)
+- Run shell commands for build, install, launch, screenshot
 - Use MCP tools: screenshot, scroll, inspect hierarchy
 - Iterate multiple times before signaling done
 - Ask for scout findings if ticket isn't scouted
+- Run Maestro tests if relevant to verify functionality:
+  ```bash
+  npm run test:maestro:ios maestro/flows/<relevant-test>.yaml
+  ```
