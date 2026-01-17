@@ -16,23 +16,28 @@ appId: com.fiveq.ffci
 - assertVisible:
     text: "Resources for Firefighters and Their Families"
 
-- scroll
-- scroll
-- waitForAnimationToEnd
-
+# Scroll to find the FFC Media Ministry button
+# scrollUntilVisible is the deterministic way to scroll until an element is found
 - scrollUntilVisible:
     element:
       text: "FFC Media Ministry"
     direction: DOWN
-    timeout: 10000
-    visibilityPercentage: 25
+    timeout: 30000
+    visibilityPercentage: 50
+    centerElement: true
 
+# Tap the FFC Media Ministry button
 - tapOn:
     text: "FFC Media Ministry"
 
 - waitForAnimationToEnd
 
 # Verify we're on the FFC Media Ministry page
+# Wait for the page content to load (HTMLContentRenderer needs time to render)
+# Use extendedWaitUntil to wait for the button to become visible, with scrolling if needed
+- extendedWaitUntil:
+    visible: "firefighters.org"
+    timeout: 15000
 - assertVisible:
     text: "firefighters.org"
 - assertVisible:
