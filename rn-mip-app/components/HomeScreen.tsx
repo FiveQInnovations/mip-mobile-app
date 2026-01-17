@@ -54,9 +54,9 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
       : `${config.apiBaseUrl}${site_data.logo}`
     : null;
 
-  // Calculate responsive logo size (85% of screen width, max 400px, min 280px)
+  // Calculate responsive logo size (60% of screen width, max 280px, min 200px)
   const screenWidth = Dimensions.get('window').width;
-  const logoWidth = Math.min(Math.max(screenWidth * 0.85, 280), 400);
+  const logoWidth = Math.min(Math.max(screenWidth * 0.60, 200), 280);
   const logoHeight = logoWidth * 0.6; // Maintain 5:3 aspect ratio (200:120)
 
   const findMenuItemByLabel = (label: string) =>
@@ -381,10 +381,10 @@ const styles = StyleSheet.create({
   },
   logoSection: {
     alignItems: 'center',
-    paddingVertical: 30,
+    paddingVertical: 20,
     paddingHorizontal: 20,
     backgroundColor: '#f8fafc',
-    marginBottom: 20,
+    marginBottom: 12,
   },
   logo: {
     marginBottom: 0,
