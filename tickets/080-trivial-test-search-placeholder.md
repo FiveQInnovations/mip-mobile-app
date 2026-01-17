@@ -1,6 +1,6 @@
 ---
 title: "TEST: Update search placeholder text"
-status: backlog
+status: in-progress
 priority: low
 created: 2026-01-17
 labels: [test, trivial]

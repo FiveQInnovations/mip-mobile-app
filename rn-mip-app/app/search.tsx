@@ -236,7 +236,7 @@ export default function SearchScreen() {
           <Ionicons name="search" size={20} color="#64748b" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search..."
+            placeholder="Search content..."
             placeholderTextColor="#94a3b8"
             value={query}
             onChangeText={setQuery}

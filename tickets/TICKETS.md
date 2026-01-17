@@ -14,7 +14,7 @@ Quick reference for active tasks. See individual files for details.
 - [079](079-trivial-test-card-radius.md) - Untitled
 
 ## In Progress
-(none)
+- [080](080-trivial-test-search-placeholder.md) - Untitled
 
 ## Backlog
 
@@ -53,7 +53,6 @@ Quick reference for active tasks. See individual files for details.
 - [050](050-maestro-test-organization.md) - Research Maestro Test Organization
 
 ### Unassigned
-- [080](080-trivial-test-search-placeholder.md) - Untitled
 - [081](081-trivial-test-tabbar-background.md) - Untitled
 
 ## Blocked
