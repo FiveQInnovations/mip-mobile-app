@@ -59,7 +59,7 @@ export function ContentCard({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#ffffff',
-    borderRadius: 8,
+    borderRadius: 12,
     overflow: 'hidden',
     marginBottom: 16,
     // Shadow for iOS
