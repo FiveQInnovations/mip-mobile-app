@@ -13,9 +13,10 @@ Quick reference for active tasks. See individual files for details.
 - [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
 - [079](079-trivial-test-card-radius.md) - Untitled
 - [080](080-trivial-test-search-placeholder.md) - Untitled
+- [081](081-trivial-test-tabbar-background.md) - Untitled
 
 ## In Progress
-- [081](081-trivial-test-tabbar-background.md) - Untitled
+(none)
 
 ## Backlog
 
