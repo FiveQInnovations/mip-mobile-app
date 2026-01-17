@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [085](085-about-tab-buttons-layout.md) - About Tab Buttons Layout Issue - Side-by-Side Buttons Not Readable
 
 ## In Progress
-- [085](085-about-tab-buttons-layout.md) - About Tab Buttons Layout Issue - Side-by-Side Buttons Not Readable
+(none)
 
 ## Backlog
 
@@ -48,6 +48,9 @@ Quick reference for active tasks. See individual files for details.
 - [033](033-maestro-collection-test.md) - Maestro Test: Collection Grid and Navigation
 - [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
 - [050](050-maestro-test-organization.md) - Research Maestro Test Organization
+
+### Unassigned
+- [085](085-button-layout-verification-report.md) - Ticket 085: Button Layout Verification Report
 
 ## Blocked
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
