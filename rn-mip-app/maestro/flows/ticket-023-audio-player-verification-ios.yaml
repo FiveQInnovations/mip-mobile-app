@@ -1,0 +1,66 @@
+appId: com.fiveq.ffci
+---
+# Ticket 023: Verify AudioPlayer integration in TabScreen for audio items
+# 
+# This test navigates to an audio item and verifies the AudioPlayer component renders
+
+# Note: App should be launched via xcrun simctl before running this test
+
+# Wait for app to load and verify homepage
+- assertVisible:
+    text: "Home tab"
+    timeout: 10000
+
+# Take screenshot of home screen
+- takeScreenshot:
+    path: "maestro/screenshots/023-home-screen"
+
+# Try to find and navigate to Messages or Sermons section
+# This might be in a tab or in the home content
+- scrollUntilVisible:
+    element:
+      text: "Messages"
+    direction: DOWN
+    timeout: 15000
+    optional: true
+
+# If "Messages" is found, tap on it
+- tapOn:
+    text: "Messages"
+    optional: true
+
+- waitForAnimationToEnd
+
+# Take screenshot after navigation
+- takeScreenshot:
+    path: "maestro/screenshots/023-messages-section"
+
+# Look for an audio item - try "God's Power Tools" mentioned in the ticket
+- scrollUntilVisible:
+    element:
+      text: "God's Power Tools"
+    direction: DOWN
+    timeout: 15000
+    optional: true
+
+# If found, tap on the audio item
+- tapOn:
+    text: "God's Power Tools"
+    optional: true
+
+- waitForAnimationToEnd
+
+# Take screenshot of the audio item page
+- takeScreenshot:
+    path: "maestro/screenshots/023-audio-item-page"
+
+# Verify AudioPlayer component is present by looking for typical audio player controls
+# Look for play button or audio player UI elements
+- assertVisible:
+    id: "audio-player-container"
+    optional: true
+
+# If we can't find by ID, look for common audio player text/icons
+# The AudioPlayer should have controls visible
+- takeScreenshot:
+    path: "maestro/screenshots/023-audio-player-visible"

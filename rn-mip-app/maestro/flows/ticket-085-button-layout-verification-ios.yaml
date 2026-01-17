@@ -1,0 +1,97 @@
+appId: com.fiveq.ffci
+---
+# Visual verification for ticket 085: Check button layout on FFCI app
+# Goal: Take screenshots and verify buttons display full-width (not cramped side-by-side)
+#
+# Ticket: 085-button-layout-verification
+#
+# Note: launchApp is NOT used - app is launched by script with xcrun simctl
+# App should be launched with xcrun simctl before running this test:
+#   xcrun simctl launch booted com.fiveq.ffci
+
+# Wait for app to load
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# Verify we're on a tab (either Home or Connect)
+# This ensures the app has loaded
+- assertVisible:
+    text: "Home tab"
+    optional: true
+
+# Navigate to Connect tab
+- tapOn:
+    text: "Connect tab"
+- waitForAnimationToEnd
+
+# Wait for page content to load
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# Take initial screenshot of Connect tab
+- takeScreenshot:
+    path: "maestro/screenshots/085-connect-tab-initial"
+
+# Scroll to find buttons (Prayer Request, Membership Form, etc.)
+- scrollUntilVisible:
+    element:
+      text: "Prayer Request"
+    direction: DOWN
+    timeout: 30000
+    visibilityPercentage: 50
+    centerElement: true
+
+# Take screenshot of buttons area
+- takeScreenshot:
+    path: "maestro/screenshots/085-connect-buttons"
+
+# Scroll a bit more to see if there are more buttons below
+- scroll
+- waitForAnimationToEnd
+
+# Take another screenshot to capture any additional buttons
+- takeScreenshot:
+    path: "maestro/screenshots/085-connect-buttons-scrolled"
+
+# Navigate back to Home tab to access search
+- tapOn:
+    text: "Home tab"
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# Now search for "About" page
+# Tap the search icon in the header
+- tapOn:
+    id: "search-outline"
+    index: 0
+
+# Wait for search screen to appear
+- waitForAnimationToEnd
+
+# Type "About" in search
+- inputText: "About"
+
+# Wait for search results
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# Tap on the first "About" result
+- tapOn:
+    text: "About"
+    index: 0
+
+# Wait for About page to load
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# Take screenshot of About page
+- takeScreenshot:
+    path: "maestro/screenshots/085-about-page"
+
+# Scroll down on About page to see if there are any buttons
+- scroll
+- waitForAnimationToEnd
+
+# Take screenshot of About page scrolled
+- takeScreenshot:
+    path: "maestro/screenshots/085-about-page-scrolled"

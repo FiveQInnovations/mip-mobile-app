@@ -8,17 +8,18 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
+- [023](023-audio-player-component.md) - Audio Player Component
 - [078](078-content-page-design-improvements.md) - Content Page Visual Design Improvements
+- [083](083-audio-sermons-collection-integration.md) - Audio Sermons Collection Integration
 - [085](085-about-tab-buttons-layout.md) - About Tab Buttons Layout Issue - Side-by-Side Buttons Not Readable
 
 ## In Progress
-- [023](023-audio-player-component.md) - Audio Player Component
+(none)
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
-- [083](083-audio-sermons-collection-integration.md) - Audio Sermons Collection Integration
 - [084](084-icon-management-website.md) - Icon Management in Website (No Upload Required)
 
 ### 🟡 Nice to Have
