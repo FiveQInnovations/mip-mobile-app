@@ -62,6 +62,30 @@ If you get "Remote Host Identification has changed" errors:
         - `sudo -u www-data cp site/plugins/wsp-forms/assets/form.css www/media/plugins/wsp/forms/`
         - `sudo -u www-data cp site/plugins/wsp-forms/assets/form.js www/media/plugins/wsp/forms/`
 
+### Browser Connection Issues
+If browser tools or automated browsers can't connect to `https://your-site.ddev.site`:
+- **Symptom:** Browser shows `chrome-error://chromewebdata/` or connection errors, even though `curl` and `ping` work
+- **Cause:** Browser WebView may have SSL certificate handling issues or DDEV router not fully ready
+- **Solution:** 
+  1. Restart DDEV: `ddev restart`
+  2. Wait a few seconds for router to fully initialize
+  3. Try accessing via direct IP if domain still fails: `ddev describe` shows ports like `https://127.0.0.1:PORT`
+
+### Page Content Not Updating
+If you edit page content files (especially `Page-content` JSON fields) but changes don't appear:
+- **Symptom:** Page still shows old content even after editing `content/*/default.txt` files, or you see JSON validation errors
+- **Cause:** Kirby CMS caches page content and structure, OR the `Page-content:` JSON field has syntax errors
+- **Solution:**
+  1. **First, verify JSON is valid:** The `Page-content:` field contains JSON that must be valid. Validate it:
+     ```bash
+     ddev exec "php -r '\$content = file_get_contents(\"content/YOUR-PAGE/default.txt\"); preg_match(\"/Page-content: (.+?)\\\\n----/s\", \$content, \$matches); if(isset(\$matches[1])) { \$json = trim(\$matches[1]); \$decoded = json_decode(\$json, true); if(json_last_error() === JSON_ERROR_NONE) { echo \"JSON valid - \" . count(\$decoded) . \" sections\\n\"; } else { echo \"JSON Error: \" . json_last_error_msg() . \"\\n\"; exit(1); } }'"
+     ```
+  2. **If JSON is invalid:** Fix syntax errors (missing commas, quotes, brackets, etc.) in the `Page-content:` field
+  3. **If JSON is valid but content still not showing:** Clear caches:
+     - Clear Kirby cache: `ddev exec "rm -rf site/cache/*"`
+     - Clear PHP opcache: `ddev exec "php -r 'if(function_exists(\"opcache_reset\")) opcache_reset();'"`
+     - Restart DDEV: `ddev restart`
+
 ## Troubleshooting: File Sync Issues on Mac
 
 If you encounter problems with file changes not syncing between your host and the DDEV container (for example, after editing plugins or site files), this may be due to Mutagen being enabled by default on Mac. To resolve this, you can disable Mutagen by setting the DDEV performance mode to `none`:
