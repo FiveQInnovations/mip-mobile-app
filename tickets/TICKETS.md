@@ -8,7 +8,6 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
 - [077](077-homepage-touch-handling.md) - Homepage Touch Handling on Real Devices
 
 ## In Progress
@@ -103,6 +102,7 @@ Quick reference for active tasks. See individual files for details.
 - [068](068-remove-unused-mobile-panel-settings.md) - Remove Unused/Non-Functional Mobile Panel Settings
 - [069](069-homepage-layout-redesign.md) - Homepage Layout Redesign - Flip Featured/Evergreen Sections
 - [070](070-header-logo-maltese-cross.md) - Header Logo - Replace Default Logo with Maltese Cross
+- [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
 - [079](done/079-trivial-test-card-radius.md) - Untitled
 - [080](done/080-trivial-test-search-placeholder.md) - Untitled
 - [081](done/081-trivial-test-tabbar-background.md) - Untitled
