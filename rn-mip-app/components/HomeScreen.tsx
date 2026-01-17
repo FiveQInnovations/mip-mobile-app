@@ -273,11 +273,12 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
           ))}
         </View>
 
-        {/* Resources Section */}
-        <Text style={styles.sectionHeader}>
-          Resources
-        </Text>
-        <View style={styles.scrollContainer}>
+        {/* Resources Section with background */}
+        <View style={styles.resourcesSection}>
+          <Text style={styles.resourcesSectionHeader}>
+            Resources
+          </Text>
+          <View style={styles.scrollContainer}>
           <ScrollView 
             ref={scrollViewRef}
             horizontal 
@@ -335,6 +336,7 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
               <Ionicons name="chevron-forward" size={24} color="#0f172a" />
             </TouchableOpacity>
           )}
+        </View>
         </View>
 
         {/* Dev Tools - Temporary */}
@@ -410,7 +412,6 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     position: 'relative',
-    marginBottom: 24,
     minHeight: 280, // Approximate card height for arrow positioning
   },
   horizontalScroll: {
@@ -452,6 +453,20 @@ const styles = StyleSheet.create({
     right: 8,
   },
   sectionHeader: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#0f172a',
+    marginTop: 24,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+  },
+  resourcesSection: {
+    backgroundColor: '#f8fafc',
+    paddingTop: 16,
+    paddingBottom: 8,
+    marginTop: 24,
+  },
+  resourcesSectionHeader: {
     fontSize: 20,
     fontWeight: '700',
     color: '#0f172a',
