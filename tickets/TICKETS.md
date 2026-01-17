@@ -11,19 +11,15 @@ Quick reference for active tasks. See individual files for details.
 - [071](071-homepage-logo-smaller.md) - Homepage Logo - Make Firefighters for Christ Logo Smaller
 - [074](074-scrollable-cards-indicators.md) - Scrollable Cards - Add Scroll Indicators
 - [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
-- [079](079-trivial-test-card-radius.md) - Untitled
-- [080](080-trivial-test-search-placeholder.md) - Untitled
-- [081](081-trivial-test-tabbar-background.md) - Untitled
 
 ## In Progress
-- [082](082-trivial-test-card-shadow.md) - Untitled
+- [077](077-homepage-touch-handling.md) - Homepage Touch Handling on Real Devices
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
 - [072](072-connect-tab-navigation.md) - Add "Connect" Tab - Replace "Get Involved"
 - [073](073-reduce-tab-bar-4-tabs.md) - Fix Tab Bar - Reduce to 4 Tabs
-- [077](077-homepage-touch-handling.md) - Homepage Touch Handling on Real Devices
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
@@ -107,6 +103,10 @@ Quick reference for active tasks. See individual files for details.
 - [068](068-remove-unused-mobile-panel-settings.md) - Remove Unused/Non-Functional Mobile Panel Settings
 - [069](069-homepage-layout-redesign.md) - Homepage Layout Redesign - Flip Featured/Evergreen Sections
 - [070](070-header-logo-maltese-cross.md) - Header Logo - Replace Default Logo with Maltese Cross
+- [079](done/079-trivial-test-card-radius.md) - Untitled
+- [080](done/080-trivial-test-search-placeholder.md) - Untitled
+- [081](done/081-trivial-test-tabbar-background.md) - Untitled
+- [082](done/082-trivial-test-card-shadow.md) - Untitled
 
 ---
 

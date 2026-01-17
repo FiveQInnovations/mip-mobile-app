@@ -221,7 +221,12 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
         onSearch={() => router.push('/search')}
       />
       
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+      <ScrollView 
+        style={styles.scrollView} 
+        contentContainerStyle={styles.content}
+        delaysContentTouches={false}
+        canCancelContentTouches={true}
+      >
         {/* Hero Section */}
         <View style={styles.logoSection}>
           {logoUrl ? (
@@ -283,6 +288,9 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
             scrollEventThrottle={16}
             onContentSizeChange={handleContentSizeChange}
             onLayout={handleLayout}
+            delaysContentTouches={false}
+            canCancelContentTouches={true}
+            nestedScrollEnabled={true}
           >
             {quickTasks.map((item) => (
               <ContentCard

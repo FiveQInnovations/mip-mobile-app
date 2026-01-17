@@ -27,6 +27,8 @@ export function ContentCard({
       testID={testID}
       accessibilityLabel={title}
       accessibilityRole="button"
+      delayPressIn={100}
+      activeOpacity={0.7}
     >
       <View style={styles.imageContainer}>
         {imageUrl ? (
