@@ -1,8 +1,9 @@
 ---
-status: backlog
+status: in-progress
 area: rn-mip-app
 phase: core
 created: 2026-01-16
+updated: 2026-01-17
 ---
 
 # Add "Connect" Tab - Replace "Get Involved"
@@ -244,3 +245,85 @@ The TabScreen component handles rendering pages. Need to verify:
 3. **Form Handling:** Per meeting notes (line 52-53), forms should open in in-app browser. Verify current implementation in TabScreen/HTMLContentRenderer handles this correctly.
 
 4. **Homepage Quick Tasks:** The homepage already has Facebook/Instagram links in the quick tasks (site.txt lines 172-189). Coordinate with homepage redesign work to avoid duplication.
+
+---
+
+## Status Update - 2026-01-17
+
+### Connect Page Verification
+
+**Finding:** A "Connect With FFC" page already exists on the dev server at:
+- URL: `https://ffci.fiveq.dev/connect-with-ffc`
+- Screenshot: `assets/Screenshot_2026-01-17_at_11.39.44_AM-ed0985fc-036e-4857-bf0d-b74c7a1ad6ca.png`
+
+### Link Verification Against Acceptance Criteria
+
+Verified via `curl -u fiveq:demo "https://ffci.fiveq.dev/connect-with-ffc"`:
+
+| Required Link | Present | Destination URL |
+|--------------|---------|-----------------|
+| Facebook | ✅ Yes | `https://www.facebook.com/groups/www.firefightersforchrist.org` |
+| Instagram | ✅ Yes | `https://www.instagram.com/firefighters_for_christ_intl/` |
+| Website | ✅ Yes | `https://firefightersforchrist.org` |
+| Membership Form | ✅ Yes | `/get-involved/become-a-member` (internal) |
+| Prayer Request | ✅ Yes | `/forms/prayer-request` (form page) |
+| Give | ✅ Yes | `https://app.aplos.com/aws/give/FirefightersForChristInternational` |
+| Chaplain Request | ✅ Yes | `/chaplain-request` (internal, bonus) |
+
+**Page HTML Structure:**
+```html
+<div class="_button-group">
+  <a class="_button" href="...">Facebook</a>
+  <a class="_button" href="...">Instagram</a>
+  <a class="_button" href="...">Website</a>
+  <a class="_button" href="...">Membership Form</a>
+  <a class="_button" href="...">Prayer Request</a>
+  <a class="_button" href="...">Give</a>
+  <a class="_button" href="...">Chaplain Request</a>
+</div>
+```
+
+**Assessment: The existing page IS sufficient for the Connect tab.**
+
+### Backend Work Status - ✅ COMPLETE
+
+**Verified via `git pull` on 2026-01-17:**
+
+1. **Connect Page Created** ✅
+   - File: `ws-ffci/content/connect-with-ffc/default.txt`
+   - UUID: `MMd2trinapbVIQVD`
+   - Contains all 7 required links (Facebook, Instagram, Website, Membership Form, Prayer Request, Give, Chaplain Request)
+
+2. **Mobile Menu Updated** ✅
+   - File: `ws-ffci/content/site.txt` lines 113-116
+   - "Get Involved" replaced with "Connect"
+   - References correct UUID: `page://MMd2trinapbVIQVD`
+
+**Git Commit:** `8d19c3c9` (pulled from `origin/master`)
+
+### Remaining Work
+
+**Frontend Testing Required:**
+
+1. **Test in Mobile App Simulator**
+   - Verify "Connect" tab appears in bottom navigation
+   - Verify tab icon renders correctly (`git-network` icon already configured)
+   - Verify tab label displays as "Connect"
+
+2. **Test Link Functionality**
+   - Verify all link types work:
+     - External URLs (Facebook, Instagram, Website, Give) open in browser
+     - Internal pages (Membership Form, Prayer Request, Chaplain Request) navigate correctly
+   - Verify forms open in in-app browser per meeting notes (line 52-53)
+
+3. **Verify Page Rendering**
+   - Connect page content displays correctly
+   - Button group renders properly
+   - All 7 buttons are visible and clickable
+
+### Next Steps
+
+1. ✅ Backend complete - Connect page created and mobile menu updated
+2. **Test in mobile app simulator** - Verify tab appears and functions correctly
+3. **Test all links** - Ensure external/internal links work as expected
+4. **Move ticket to QA** once testing confirms everything works
