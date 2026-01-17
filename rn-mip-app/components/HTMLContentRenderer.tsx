@@ -169,7 +169,12 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
         const buttonText = extractText(tnode.children);
         
         return (
-          <Pressable onPress={() => handleLinkPress(href)} style={classesStyles._button}>
+          <Pressable 
+            onPress={() => handleLinkPress(href)} 
+            style={classesStyles._button}
+            accessibilityLabel={buttonText}
+            accessibilityRole="button"
+          >
             <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 17, textAlign: 'center' }}>
               {buttonText}
             </Text>
