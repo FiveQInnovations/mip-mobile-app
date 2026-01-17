@@ -48,11 +48,15 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
   const currentScrollX = React.useRef(0);
 
   const { site_data, menu } = siteData;
+  // Use API logo if available, otherwise fall back to bundled asset
   const logoUrl = site_data.logo
     ? site_data.logo.startsWith('http')
       ? site_data.logo
       : `${config.apiBaseUrl}${site_data.logo}`
     : null;
+  
+  // Fallback to local asset if API doesn't provide logo
+  const fallbackLogoPath = require('../assets/ffci-logo.svg');
 
   // Calculate responsive logo size (60% of screen width, max 280px, min 200px)
   const screenWidth = Dimensions.get('window').width;
@@ -220,7 +224,7 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
         {/* Hero Section */}
         <View style={styles.logoSection}>
-          {logoUrl && (
+          {logoUrl ? (
             isSvgLogo ? (
               <SvgUri
                 uri={logoUrl}
@@ -235,6 +239,13 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
                 resizeMode="contain"
               />
             )
+          ) : (
+            <Image
+              source={fallbackLogoPath}
+              style={[styles.logo, { width: logoWidth, height: logoHeight }]}
+              resizeMode="contain"
+              accessibilityLabel="Firefighters for Christ Logo"
+            />
           )}
         </View>
 
