@@ -5,39 +5,51 @@ description: Boot and manage iOS simulators. Use when needing to start a simulat
 
 # iOS Simulator Management
 
+## Standard Simulator
+
+**Always use iPhone 16:** `D9DE6784-CB62-4AC3-A686-4D445A0E7B57`
+
+This is the designated simulator for all builds and testing. Using a consistent simulator prevents issues with stale builds on wrong devices.
+
 ## When to Use
 - Before building or testing iOS apps
 - When user mentions "boot simulator" or "start simulator"
 - When checking if a simulator is running
 
-## Instructions
+## Boot the Standard Simulator
 
-### List available simulators
 ```bash
-xcrun simctl list devices available | grep -i "iphone"
-```
-
-### Check for booted simulator
-```bash
-xcrun simctl list devices | grep -i "booted"
-```
-
-### Boot a simulator
-```bash
-# Boot by device UUID
-xcrun simctl boot <DEVICE_UUID>
+# Boot iPhone 16
+xcrun simctl boot D9DE6784-CB62-4AC3-A686-4D445A0E7B57
 
 # Wait for boot to complete
 sleep 5
+
+# Open Simulator.app to see it
+open -a Simulator
 ```
 
-### Common device selection
-- Prefer iPhone 16 Pro or similar modern device
-- Extract UUID from `xcrun simctl list` output
+## Check Simulator Status
 
-### Verify boot succeeded
 ```bash
-xcrun simctl list devices | grep -i "booted"
+# Check if iPhone 16 is booted
+xcrun simctl list devices | grep D9DE6784-CB62-4AC3-A686-4D445A0E7B57
 ```
 
-If no simulator is booted after boot command, wait longer or check for errors.
+## Take Screenshot
+
+```bash
+xcrun simctl io D9DE6784-CB62-4AC3-A686-4D445A0E7B57 screenshot /tmp/screenshot.png
+```
+
+## Shutdown Simulator
+
+```bash
+xcrun simctl shutdown D9DE6784-CB62-4AC3-A686-4D445A0E7B57
+```
+
+## DO NOT
+
+- Do NOT use other simulators unless explicitly requested
+- Do NOT use `booted` as the device target - always use the explicit UDID
+- Do NOT auto-detect simulators - use the standard iPhone 16

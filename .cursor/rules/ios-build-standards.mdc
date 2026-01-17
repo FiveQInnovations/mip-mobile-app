@@ -1,0 +1,37 @@
+---
+description: Standards for building iOS apps to prevent stale code issues
+globs:
+  - "rn-mip-app/**"
+---
+
+# iOS Build Standards
+
+## Standard Simulator
+Always use iPhone 16: `D9DE6784-CB62-4AC3-A686-4D445A0E7B57`
+
+## Build Command
+Always use the build script:
+```bash
+cd rn-mip-app
+npm run build:ios:release
+```
+
+This script:
+1. Boots iPhone 16 simulator
+2. Runs clean build in Release mode
+3. Installs and launches the app
+
+## NEVER USE
+- `npx expo run:ios` - causes stale code issues and wrong simulator targeting
+- `booted` as device target - always use explicit UDID
+
+## Screenshots
+```bash
+xcrun simctl io D9DE6784-CB62-4AC3-A686-4D445A0E7B57 screenshot /tmp/screenshot.png
+```
+
+## Install/Launch (without rebuild)
+```bash
+xcrun simctl install D9DE6784-CB62-4AC3-A686-4D445A0E7B57 ios/build/Build/Products/Release-iphonesimulator/FFCIMobile.app
+xcrun simctl launch D9DE6784-CB62-4AC3-A686-4D445A0E7B57 com.fiveq.ffci
+```

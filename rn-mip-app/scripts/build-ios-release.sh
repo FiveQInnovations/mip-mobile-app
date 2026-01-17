@@ -4,6 +4,10 @@
 
 set -e
 
+# Standard iPhone 16 simulator - ALWAYS use this specific device
+# This prevents issues with stale builds on wrong simulators
+DEVICE_UDID="D9DE6784-CB62-4AC3-A686-4D445A0E7B57"
+
 # Get the directory of this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -12,14 +16,15 @@ cd "$PROJECT_ROOT"
 
 echo "🔨 Building iOS Release for Simulator..."
 echo "=========================================="
+echo "📱 Target: iPhone 16 ($DEVICE_UDID)"
 echo ""
 
-# Get booted simulator ID
-BOOTED_SIM=$(xcrun simctl list devices | grep -i "booted" | head -1 | awk -F'[()]' '{print $2}')
+# Boot the specific simulator if not already booted
+BOOTED_SIM=$(xcrun simctl list devices | grep "$DEVICE_UDID" | grep -i "booted" || true)
 if [ -z "$BOOTED_SIM" ]; then
-    echo "⚠️  No booted iOS simulator found"
-    echo "   Boot a simulator first"
-    exit 1
+    echo "🚀 Booting iPhone 16 simulator..."
+    xcrun simctl boot "$DEVICE_UDID" 2>/dev/null || true
+    sleep 3
 fi
 
 # Build Release configuration for iOS Simulator
@@ -28,7 +33,7 @@ xcodebuild -workspace ios/FFCIMobile.xcworkspace \
   -scheme FFCIMobile \
   -configuration Release \
   -sdk iphonesimulator \
-  -destination "id=$BOOTED_SIM" \
+  -destination "id=$DEVICE_UDID" \
   -derivedDataPath ios/build \
   ONLY_ACTIVE_ARCH=YES \
   clean build
@@ -39,6 +44,13 @@ if [ -d "$APP_PATH" ]; then
     echo ""
     echo "✅ Build successful!"
     echo "📱 App bundle: $APP_PATH"
+    echo ""
+    echo "📲 Installing on iPhone 16..."
+    xcrun simctl install "$DEVICE_UDID" "$APP_PATH"
+    echo "🚀 Launching app..."
+    xcrun simctl launch "$DEVICE_UDID" com.fiveq.ffci
+    echo ""
+    echo "✅ App installed and launched on iPhone 16"
     exit 0
 else
     echo ""

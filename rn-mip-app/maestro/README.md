@@ -11,8 +11,10 @@ iOS testing continues to work reliably.
 ## Setup
 
 1. **Install Maestro**: Follow instructions at https://maestro.dev
-2. **Build native apps**: Run `npx expo run:ios` (first build takes 5-10 minutes)
-3. **Start dev server**: Run `npm start` in a separate terminal
+2. **Build native apps**: Run `npm run build:ios:release` (first build takes 5-10 minutes)
+   - This uses iPhone 16 simulator (UDID: `D9DE6784-CB62-4AC3-A686-4D445A0E7B57`)
+   - **DO NOT use `npx expo run:ios`** - it causes stale code issues
+3. **Start dev server**: Not needed for Release builds (standalone app)
 
 ## Running Tests
 
@@ -39,8 +41,9 @@ For testing on BrowserStack cloud devices, see [BrowserStack Testing Guide](./BR
 
 ## Notes
 
-- Tests require `expo-dev-client` to be installed and native apps to be built
+- Tests require native apps to be built in Release mode
 - iOS tests use `launchApp` which works reliably
-- Always keep the dev server running (`npm start`) when testing
+- **Standard Simulator**: iPhone 16 (`D9DE6784-CB62-4AC3-A686-4D445A0E7B57`)
 - First native build takes 5-10 minutes, subsequent builds are faster
+- **DO NOT use `npx expo run:ios`** - always use `npm run build:ios:release`
 
