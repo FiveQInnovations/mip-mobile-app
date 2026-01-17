@@ -1,5 +1,5 @@
 ---
-status: qa
+status: in-progress
 area: rn-mip-app
 phase: core
 created: 2026-01-16
@@ -29,6 +29,7 @@ From the Jan 13, 2026 meeting with Mike Bell, the large "Firefighters for Christ
 - This is separate from the header logo change
 - Logo should still be prominent but less dominating
 - Consider responsive design across different screen sizes
+- **Feedback (2026-01-17):** The logo size is better, but there is still excessive white/gray space in the logo section. Investigate if the logo image itself has built-in whitespace at the top and bottom that should be removed.
 
 ## References
 

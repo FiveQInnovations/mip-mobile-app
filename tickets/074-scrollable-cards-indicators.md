@@ -1,5 +1,5 @@
 ---
-status: qa
+status: in-progress
 area: rn-mip-app
 phase: core
 created: 2026-01-16
@@ -32,6 +32,11 @@ From the Jan 13, 2026 meeting with Mike Bell, the horizontal scrollable cards in
 - Currently looks "awkward" with half-card showing
 - Blocked by design input from Adam Hardy
 - May involve making cards same size as featured cards
+- **Feedback (2026-01-17):**
+  - The title "Resources" does not have enough buffer on top between it and the FFC Store card.
+  - Ask a designer (Adam Hardy) about the Horizontal section:
+    - Are there other things that we could do to improve it?
+    - Should we use a different background color to make it obvious that this is a distinct row/section?
 
 ## References
 
