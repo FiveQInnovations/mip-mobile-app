@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: qa
 area: ws-ffci
 phase: core
 created: 2026-01-17
@@ -25,7 +25,9 @@ On the Connect tab, the "Prayer Request" button navigates to a page that shows "
    ```
 3. **Root cause is in FRONTEND**: `HTMLContentRenderer.tsx` uses `isInternalLink()` which checks if URL hostname matches `apiBaseUrl` (`ffci.fiveq.dev`). Since both match, the link is treated as internal and routed within the app instead of opening browser.
 
-**Next step:** Implement Option 2 - modify frontend to force browser opening for form URLs even if same domain.
+**Maestro test:** `rn-mip-app/maestro/flows/prayer-request-opens-browser-ios.yaml` - Navigates to Connect tab, scrolls to Prayer Request button, taps it, and asserts app goes to background (browser opened). **Now PASSING.**
+
+**Resolution:** Implemented Option 2 - added `isFormPage()` check in `HTMLContentRenderer.tsx` to force browser opening for form URLs (`/prayer-request`, `/chaplain-request`, `/forms/`) even when same domain. Commit: `a5420dd`.
 
 ## Problem
 
@@ -181,7 +183,7 @@ Add a query parameter to force external opening (requires both backend and front
 - Maestro test: `maestro/flows/prayer-request-opens-browser-ios.yaml`
 - Run: `maestro test maestro/flows/prayer-request-opens-browser-ios.yaml`
 - Test verifies: Navigate to Connect tab → Scroll to Prayer Request → Tap → Assert app goes to background (browser opens)
-- **Current status: FAILING** - App's "Home tab" still visible after tap, browser not opening
+- **Current status: PASSING** - App goes to background, Safari opens with form URL
 
 **Manual Test Steps:**
 1. Navigate to Connect tab in mobile app

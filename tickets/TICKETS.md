@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [086](086-prayer-request-button-wrong-page.md) - Prayer Request Button Should Open Form in Browser - Page Shows Text But No Form Link
 
 ## In Progress
-- [086](086-prayer-request-button-wrong-page.md) - Prayer Request Button Should Open Form in Browser - Page Shows Text But No Form Link
+(none)
 
 ## Backlog
 
