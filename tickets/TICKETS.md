@@ -11,7 +11,7 @@ Quick reference for active tasks. See individual files for details.
 - [085](085-about-tab-buttons-layout.md) - About Tab Buttons Layout Issue - Side-by-Side Buttons Not Readable
 
 ## In Progress
-(none)
+- [078](078-content-page-design-improvements.md) - Content Page Visual Design Improvements
 
 ## Backlog
 
@@ -23,7 +23,6 @@ Quick reference for active tasks. See individual files for details.
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
 - [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
-- [078](078-content-page-design-improvements.md) - Content Page Visual Design Improvements
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
