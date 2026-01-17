@@ -9,27 +9,26 @@ appId: com.fiveq.ffci
 - runFlow:
     file: "verify-header-renders.yaml"
 
-# Confirm key homepage content renders
+# Confirm key homepage content renders (NEW LAYOUT: Featured at top, Resources below)
+
+# Featured section is now at the top
+- assertVisible:
+    text: "Featured"
+
+# Scroll down to Resources section
+- scrollUntilVisible:
+    element:
+      text: "Resources"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    text: "Resources"
+
+# About Us is in the Resources section
 - assertVisible:
     text: "About Us"
 - assertVisible:
     text: "What We Believe"
-
-- scrollUntilVisible:
-    element:
-      text: "Featured"
-    direction: DOWN
-    timeout: 10000
-- assertVisible:
-    text: "Featured"
-
-- scrollUntilVisible:
-    element:
-      text: "Chaplain Resources"
-    direction: DOWN
-    timeout: 10000
-- assertVisible:
-    text: "Chaplain Resources"
 
 - assertVisible:
     text: "Home tab"
