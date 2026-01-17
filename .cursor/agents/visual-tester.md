@@ -41,16 +41,52 @@ xcrun simctl io D9DE6784-CB62-4AC3-A686-4D445A0E7B57 screenshot /tmp/visual-test
 
 Always use iPhone 16 UDID: `D9DE6784-CB62-4AC3-A686-4D445A0E7B57`
 
-### 2. Scroll to Sections
+### 2. Navigate and Interact Using MCP Tools
 
-Use MCP tools to navigate to specific UI sections:
+**IMPORTANT:** Use MCP tools to interact with the simulator. These are the key Maestro MCP tools:
 
-```bash
-# Scroll down to see more content
-mcp_maestro_scroll --deviceId "D9DE6784-CB62-4AC3-A686-4D445A0E7B57" --direction "down"
+#### Inspect Current Screen State
+```
+inspect_view_hierarchy
+```
+Use this FIRST to understand what's visible on screen. Shows all UI elements, their text, and positions.
 
-# Inspect hierarchy to find elements
-mcp_maestro_inspect_view_hierarchy --deviceId "D9DE6784-CB62-4AC3-A686-4D445A0E7B57"
+#### Scroll to See Content
+```
+scroll direction="up"    # Scroll UP to see top of page
+scroll direction="down"  # Scroll DOWN to see more content
+```
+**CRITICAL:** If checking something at the TOP of a screen (like a homepage logo), you MUST scroll UP first to ensure you're at the top!
+
+#### Tap on Elements
+```
+tap_on element="Home"           # Tap on a tab or button by label
+tap_on element="About"          # Navigate to About tab
+tap_on point="200,300"          # Tap at specific coordinates
+```
+
+#### Workflow for Visual Verification
+1. **Inspect first** - Use `inspect_view_hierarchy` to see current state
+2. **Navigate** - Use `tap_on` to get to the right screen/tab
+3. **Scroll to target** - Scroll UP for top content, DOWN for lower content
+4. **Take screenshot** - Capture the visual state
+5. **Inspect again** - Verify what's visible after scrolling
+6. **Repeat as needed** - Check multiple areas of the screen
+
+#### Common Navigation Patterns
+```
+# Go to homepage and scroll to top
+tap_on element="Home"
+scroll direction="up"
+scroll direction="up"  # Scroll multiple times to ensure at top
+
+# Go to About page
+tap_on element="About"
+scroll direction="up"  # Start from top
+
+# Check something at bottom of page
+scroll direction="down"
+scroll direction="down"
 ```
 
 ### 3. Visual Design Assessment & Scoring
@@ -125,6 +161,7 @@ Always report with this structure:
 - Do NOT modify code - report issues back for `implement-ticket` to fix
 - Do NOT build the app - use `simulator-manager` to prepare the environment first
 - Do NOT give vague feedback - always be specific ("8px gap" not "too close")
+- Do NOT assume you're at the top of a screen - always scroll up first when checking top content
 
 ## YOU CAN
 
@@ -133,3 +170,4 @@ Always report with this structure:
 - Use MCP tools for navigation and inspection
 - Assess visual design quality and report concerns
 - Compare current state against ticket acceptance criteria
+- Use `inspect_view_hierarchy` to understand element positions and properties
