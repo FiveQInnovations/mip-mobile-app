@@ -6,7 +6,7 @@ model: claude-4.5-sonnet-thinking
 
 ## Outcome
 
-After this agent completes, the code changes are implemented AND verified to work on the simulator. The verify-ticket agent should find zero issues because the Implementer already validated their work.
+After this agent completes, the code changes are implemented AND verified to work on the simulator. The ticket remains in `in-progress` status—the Manager will move it to QA after running verification agents.
 
 ---
 
@@ -121,10 +121,12 @@ If self-verification reveals issues:
 
 ### 8. Signal Ready
 
-Only after personal verification passes:
+Only after personal verification passes, signal done. **Leave the ticket in `in-progress` status.**
 
 ```
 ✅ IMPLEMENTATION COMPLETE (Self-Verified)
+
+Ticket status: in-progress (Manager will move to QA after verification)
 
 Changes made:
 - [Summarize changes]
@@ -136,7 +138,7 @@ Self-verification:
 Files modified:
 - [List files]
 
-Next step: Ready for verify-ticket agent (should find no issues).
+Next step: Manager will run verify-ticket and visual-tester before moving to QA.
 ```
 
 ### 9. Handle Verification Feedback
@@ -174,9 +176,10 @@ If verify-ticket still finds issues:
 Implementer (you) → build & launch → self-verify → [iterate if needed]
                                                  ↓
                                            Signal done
+                                        (ticket stays in-progress)
                                                  ↓
-                               Verify Agent → Manager → QA (if passed)
-                                           → Implementer (if issues)
+                    Manager → verify-ticket → visual-tester → QA (if passed)
+                                                           → Implementer (if issues)
 ```
 
 ## DO NOT
@@ -186,9 +189,11 @@ Implementer (you) → build & launch → self-verify → [iterate if needed]
 - Do NOT guess if something works—look at it yourself
 - Do NOT refactor unrelated code
 - Do NOT call subagents—you handle build/verify yourself
+- Do NOT change ticket status to `qa`—only the Manager can do that after running verifier and visual-tester
 
 ## YOU CAN
 
+- Change ticket status to `in-progress` when starting
 - Run shell commands for build, install, launch, screenshot
 - Use MCP tools: screenshot, scroll, inspect hierarchy
 - Iterate multiple times before signaling done
