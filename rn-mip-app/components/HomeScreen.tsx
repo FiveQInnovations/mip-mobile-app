@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   resourcesSection: {
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#f1f5f9',
     paddingTop: 16,
     paddingBottom: 8,
     marginTop: 24,

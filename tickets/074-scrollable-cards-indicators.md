@@ -228,3 +228,10 @@ The background color `#f8fafc` is technically correct but is VERY SUBTLE. The vi
 
 ### Commits
 - `feat(ticket-074): add spacing and background to Resources section`
+- `fix(ticket-074): use darker gray for Resources section background`
+
+### User Decision (2026-01-17)
+**Implemented Option 2: Increase contrast**
+- Changed background from `#f8fafc` to `#f1f5f9` (slate-100)
+- Provides more visible differentiation between sections
+- Still maintains subtle, professional appearance
