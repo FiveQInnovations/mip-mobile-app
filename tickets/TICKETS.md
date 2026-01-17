@@ -20,7 +20,7 @@ Quick reference for active tasks. See individual files for details.
 - [083](083-audio-sermons-collection-integration.md) - Audio Sermons Collection Integration
 - [084](084-icon-management-website.md) - Icon Management in Website (No Upload Required)
 - [085](085-about-tab-buttons-layout.md) - About Tab Buttons Layout Issue - Side-by-Side Buttons Not Readable
-- [086](086-prayer-request-button-wrong-page.md) - Prayer Request Button Links to Wrong Page - No Form or Content Displayed
+- [086](086-prayer-request-button-wrong-page.md) - Prayer Request Button Should Open Form in Browser - Page Shows Text But No Form Link
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access

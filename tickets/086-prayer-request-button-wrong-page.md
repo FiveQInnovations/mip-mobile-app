@@ -5,22 +5,34 @@ phase: core
 created: 2026-01-17
 ---
 
-# Prayer Request Button Links to Wrong Page - No Form or Content Displayed
+# Prayer Request Button Should Open Form in Browser - Page Shows Text But No Form Link
 
 ## Context
 
 On the Connect tab, the "Prayer Request" button navigates to a page that shows "Prayer Request" as the title but displays no form or content. The page appears empty except for the title.
 
+**Update (2026-01-17):** The button was fixed to navigate to `https://ffci.fiveq.dev/resources#prayer-request`. However, this page only displays informational text about the prayer ministry with no link or button to open the actual form. The form needs to open directly in a browser (per ticket [017](017-prayer-request-form-handling.md)).
+
+**Update (2026-01-17):** Changed button to `link_to: "url"` with `https://ffci.fiveq.dev/prayer-request`, but it still opens as an internal page. Testing with `google.com` opens correctly in browser, confirming the URL link functionality works. The issue is that same-domain URLs are being transformed into internal links by the backend (`wsp-mobile/lib/pages.php` lines 115-126), which then get routed internally by the frontend (`HTMLContentRenderer.tsx` lines 43-53).
+
 ## Problem
 
 **Current Behavior:**
 - User taps "Prayer Request" button on Connect tab
-- App navigates to a page titled "Prayer Request"
-- Page displays no form, no content, no copy - just the title
+- App navigates to `https://ffci.fiveq.dev/resources#prayer-request`
+- Page displays heading "Prayer Request" and description text about the ministry
+- **No form is visible and no link/button exists to open the form in a browser**
 - User cannot submit a prayer request
 
 **Root Cause:**
-The Connect page button is linking to the **form definition UUID** (`iTQ9ZV8UId5Chxew`) instead of the **actual page UUID** (`LP0WESdsu4tWpbGA`) that contains both the content and the form.
+1. **Initial Issue:** The button navigated to a page (`/resources#prayer-request`) that only contains informational content with no form link.
+2. **Current Issue:** When changed to `link_to: "url"` with `https://ffci.fiveq.dev/prayer-request`, the backend API (`wsp-mobile/lib/pages.php`) automatically transforms same-domain URLs into internal `/page/{uuid}` links (lines 115-126). The frontend (`HTMLContentRenderer.tsx`) then detects these as internal links (lines 43-53) and routes them internally instead of opening in browser.
+
+**Technical Details:**
+- Backend transforms same-domain URLs: `https://ffci.fiveq.dev/prayer-request` → `/page/LP0WESdsu4tWpbGA`
+- Frontend checks if URL hostname matches `apiBaseUrl` (`ffci.fiveq.dev`) and treats as internal
+- External URLs (like `google.com`) work correctly because they're not transformed
+- Forms require JavaScript/Vue.js to render and should open directly in an external browser (see ticket [017](017-prayer-request-form-handling.md))
 
 ## Current Configuration
 
@@ -47,18 +59,64 @@ The Connect page button is linking to the **form definition UUID** (`iTQ9ZV8UId5
 
 ## Solution
 
-**Update the Connect page button to link to the correct page UUID:**
+**Problem:** Same-domain URLs are automatically transformed into internal links by the backend, preventing them from opening in browser.
 
-**File:** `content/connect-with-ffc-copy/default.txt`
+**Options:**
 
-**Change:**
-```json
-{
-  "text": "Prayer Request",
-  "link_to": "page",
-  "page": ["page://LP0WESdsu4tWpbGA"]  // ✅ Use the PAGE UUID, not the form UUID
+### Option 1: Modify Backend to Skip Transformation for Form URLs (Recommended)
+Modify `wsp-mobile/lib/pages.php` to check if a URL is a form page and skip transformation:
+
+**File:** `/Users/anthony/mip/fiveq-plugins/wsp-mobile/lib/pages.php`
+
+**Change around line 123:**
+```php
+// Check if it's same domain
+$hrefHost = $parsed['host'] ?? '';
+$baseHost = parse_url($baseUrl, PHP_URL_HOST);
+if ($hrefHost !== $baseHost && $hrefHost !== '') {
+    // Different domain - external link, don't transform
+    return $matches[0];
+}
+
+// Same domain - check if it's a form page that should open in browser
+$hrefPath = $parsed['path'] ?? '';
+if (str_contains($hrefPath, '/prayer-request') || 
+    str_contains($hrefPath, '/chaplain-request') ||
+    str_contains($hrefPath, '/forms/')) {
+    // Form pages should open in browser, don't transform
+    return $matches[0];
 }
 ```
+
+### Option 2: Modify Frontend to Force Browser for Form URLs
+Modify `rn-mip-app/components/HTMLContentRenderer.tsx` to check for form URLs and force browser opening:
+
+**File:** `rn-mip-app/components/HTMLContentRenderer.tsx`
+
+**Change around line 104:**
+```typescript
+// Check if it's an internal link
+const isInternal = isInternalLink(href);
+
+// Force browser for form pages even if same domain
+const isFormPage = href.includes('/prayer-request') || 
+                   href.includes('/chaplain-request') ||
+                   href.includes('/forms/');
+const shouldOpenInBrowser = !isInternal || isFormPage;
+
+if (!shouldOpenInBrowser) {
+    // Internal link handling...
+}
+```
+
+### Option 3: Use Query Parameter Workaround
+Add a query parameter to force external opening (requires both backend and frontend changes).
+
+**Rationale:**
+- Forms require JavaScript/Vue.js to render (see ticket [017](017-prayer-request-form-handling.md))
+- Forms should open in external browser for full functionality
+- Same-domain URL transformation prevents browser opening
+- Need to bypass internal link detection for form pages
 
 ## Verification
 
@@ -77,40 +135,45 @@ The Connect page button is linking to the **form definition UUID** (`iTQ9ZV8UId5
 
 **After fix:**
 - User taps "Prayer Request" button
-- App navigates to page with UUID `LP0WESdsu4tWpbGA`
-- Page displays heading, description, and form
-- User can submit prayer request
+- App opens `https://ffci.fiveq.dev/prayer-request` in external browser (Safari/Chrome)
+- Browser displays the prayer request form page with heading, description, and form
+- User can submit prayer request directly in the browser
 
 ## Related Information
 
 **Form Handling in Mobile App:**
 - Forms require JavaScript/Vue.js to render (see ticket [017](017-prayer-request-form-handling.md))
 - Forms should open in external browser for full functionality
-- However, the page content (heading, description) should still display in the app
-- If form doesn't render in-app, user can tap to open in browser
+- The Resources page (`/resources#prayer-request`) only shows informational text, not the form
+- The form page (`/prayer-request`) contains both the content and the form
 
 **Page URLs:**
-- Prayer Request Page: `https://ffci.fiveq.dev/prayer-request`
+- Prayer Request Form Page: `https://ffci.fiveq.dev/prayer-request` ✅ (Use this - opens form directly)
+- Resources Page (info only): `https://ffci.fiveq.dev/resources#prayer-request` ❌ (No form link)
 - Page UUID: `LP0WESdsu4tWpbGA`
 - Form UUID: `iTQ9ZV8UId5Chxew` (referenced within the page, not linked directly)
 
 ## Acceptance Criteria
 
-- [ ] Prayer Request button links to page UUID `LP0WESdsu4tWpbGA` (not form UUID)
-- [ ] Page displays heading "Submit a Prayer Request"
-- [ ] Page displays description text about the prayer ministry
-- [ ] Form is visible (or at minimum, page content is visible)
-- [ ] User can interact with the page/form
-- [ ] Works correctly in mobile app navigation
+- [ ] Backend or frontend modified to prevent same-domain URL transformation for form pages
+- [ ] Prayer Request button uses `link_to: "url"` with `https://ffci.fiveq.dev/prayer-request`
+- [ ] Button opens `https://ffci.fiveq.dev/prayer-request` in external browser (not internal page)
+- [ ] Browser displays the prayer request form page with heading and description
+- [ ] Form is visible and functional in the browser
+- [ ] User can submit prayer request directly in browser
+- [ ] User can return to app after form submission
 
 ## Testing
 
 **Test Steps:**
 1. Navigate to Connect tab in mobile app
 2. Tap "Prayer Request" button
-3. Verify page shows heading and description
-4. Verify form is visible (or verify page has content)
-5. If form doesn't render in-app, verify it opens correctly in browser
+3. Verify external browser (Safari/Chrome) opens automatically
+4. Verify browser navigates to `https://ffci.fiveq.dev/prayer-request`
+5. Verify form page displays heading "Submit a Prayer Request" and description text
+6. Verify form is visible and functional in browser
+7. Verify user can submit a test prayer request
+8. Verify user can return to app after submission
 
 ## References
 
@@ -119,3 +182,5 @@ The Connect page button is linking to the **form definition UUID** (`iTQ9ZV8UId5
 - Prayer Request page: `content/prayer-request/default.txt` (UUID: `LP0WESdsu4tWpbGA`)
 - Prayer Request form: `content/forms/2_prayer-request/form.txt` (UUID: `iTQ9ZV8UId5Chxew`)
 - Connect page: `content/connect-with-ffc-copy/default.txt`
+- Backend URL transformation: `fiveq-plugins/wsp-mobile/lib/pages.php` (lines 115-126)
+- Frontend internal link detection: `rn-mip-app/components/HTMLContentRenderer.tsx` (lines 43-53)
