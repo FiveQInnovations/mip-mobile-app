@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, Linking, useWindowDimensions, Image } from 'react-native';
-import RenderHTML, { HTMLSource } from 'react-native-render-html';
+import { View, StyleSheet, Linking, useWindowDimensions, Image, Text, Pressable } from 'react-native';
+import RenderHTML, { HTMLSource, TChildrenRenderer } from 'react-native-render-html';
 import { useRouter } from 'expo-router';
 import { getConfig } from '../lib/config';
 
@@ -81,8 +81,90 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
   // Calculate image width based on content width (accounting for padding)
   const imageWidth = width - 32; // Subtract horizontal padding
 
+  // Custom renderer for anchor tags - ensures consistent styling regardless of parent context
+  // This fixes the issue where links inside headings inherit heading color instead of link color
+  const handleLinkPress = (href: string) => {
+    console.log('[HTMLContentRenderer] Link pressed:', href);
+
+    if (!href) return;
+
+    // Check if it's a /page/{uuid} link (already transformed by server)
+    const uuid = extractUuidFromUrl(href);
+    if (uuid) {
+      console.log('[HTMLContentRenderer] UUID link detected:', uuid);
+      if (onNavigate) {
+        onNavigate(uuid);
+      } else {
+        router.push(`/page/${uuid}`);
+      }
+      return;
+    }
+
+    // Check if it's an internal link
+    const isInternal = isInternalLink(href);
+    console.log('[HTMLContentRenderer] Link type check - href:', href, 'isInternal:', isInternal);
+    
+    if (isInternal) {
+      // Try to extract UUID from internal URLs
+      const internalUuid = extractUuidFromUrl(href);
+      if (internalUuid) {
+        console.log('[HTMLContentRenderer] Internal UUID link detected:', internalUuid);
+        if (onNavigate) {
+          onNavigate(internalUuid);
+        } else {
+          router.push(`/page/${internalUuid}`);
+        }
+        return;
+      }
+      // For other internal links, log for now
+      console.log('[HTMLContentRenderer] Internal link (non-UUID) detected:', href);
+      return;
+    }
+
+    // External link - open in browser
+    console.log('[HTMLContentRenderer] External link detected:', href);
+    Linking.openURL(href)
+      .then(() => {
+        console.log('[HTMLContentRenderer] Linking.openURL succeeded for:', href);
+      })
+      .catch((err) => {
+        console.error('[HTMLContentRenderer] Linking.openURL failed for:', href, 'Error:', err);
+      });
+  };
+
   // Custom renderer for image tags
   const renderers = {
+    // Custom anchor renderer - ensures link styles are ALWAYS applied
+    // This overrides any inherited styles from parent elements like <h3>
+    a: ({ tnode, TDefaultRenderer, ...props }: any) => {
+      const href = tnode?.attributes?.href || '';
+      
+      return (
+        <Pressable 
+          onPress={() => handleLinkPress(href)}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? 'rgba(217, 35, 42, 0.15)' : linkStyles.backgroundColor,
+              paddingHorizontal: linkStyles.paddingHorizontal,
+              paddingVertical: linkStyles.paddingVertical,
+              borderRadius: linkStyles.borderRadius,
+              borderBottomWidth: linkStyles.borderBottomWidth,
+              borderBottomColor: linkStyles.borderBottomColor,
+              alignSelf: 'flex-start',
+              marginVertical: 4,
+            }
+          ]}
+        >
+          <Text style={{ 
+            color: linkStyles.color, 
+            fontWeight: linkStyles.fontWeight,
+            fontSize: 17,
+          }}>
+            <TChildrenRenderer tchildren={tnode.children} />
+          </Text>
+        </Pressable>
+      );
+    },
     img: ({ tnode }: any) => {
       // Attributes are in tnode.attributes, not directly in props
       const src = tnode?.attributes?.src;
@@ -113,61 +195,8 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
     }
   };
 
-  const renderersProps = {
-    a: {
-      onPress: (event: any, href: string) => {
-        // Prevent default behavior (opening in browser via Linking.openURL)
-        event?.preventDefault?.();
-        
-        console.log('[HTMLContentRenderer] Link pressed:', href);
-
-        if (!href) return;
-
-        // Check if it's a /page/{uuid} link (already transformed by server)
-        const uuid = extractUuidFromUrl(href);
-        if (uuid) {
-          console.log('[HTMLContentRenderer] UUID link detected:', uuid);
-          if (onNavigate) {
-            onNavigate(uuid);
-          } else {
-            router.push(`/page/${uuid}`);
-          }
-          return;
-        }
-
-        // Check if it's an internal link
-        const isInternal = isInternalLink(href);
-        console.log('[HTMLContentRenderer] Link type check - href:', href, 'isInternal:', isInternal);
-        
-        if (isInternal) {
-          // Try to extract UUID from internal URLs
-          const internalUuid = extractUuidFromUrl(href);
-          if (internalUuid) {
-            console.log('[HTMLContentRenderer] Internal UUID link detected:', internalUuid);
-            if (onNavigate) {
-              onNavigate(internalUuid);
-            } else {
-              router.push(`/page/${internalUuid}`);
-            }
-            return;
-          }
-          // For other internal links, log for now
-          console.log('[HTMLContentRenderer] Internal link (non-UUID) detected:', href);
-          return;
-        }
-
-        // External link - open in browser
-        console.log('[HTMLContentRenderer] External link detected:', href);
-        Linking.openURL(href)
-          .then(() => {
-            console.log('[HTMLContentRenderer] Linking.openURL succeeded for:', href);
-          })
-          .catch((err) => {
-            console.error('[HTMLContentRenderer] Linking.openURL failed for:', href, 'Error:', err);
-          });
-      }
-    }
-  };
+  // Note: Link press handling is now done in the custom 'a' renderer above
+  const renderersProps = {};
 
   const cleanHtml = sanitizeHtml(html);
   console.log('[HTMLContentRenderer] Original HTML length:', html.length);
@@ -190,6 +219,18 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
   const textColor = config.textColor || '#0f172a';
   const secondaryColor = config.secondaryColor || '#024D91';
   const primaryColor = config.primaryColor || '#D9232A';
+
+  // Link styles - defined here so they can be used in custom renderer
+  const linkStyles = {
+    color: primaryColor,
+    fontWeight: '600' as const,
+    backgroundColor: 'rgba(217, 35, 42, 0.08)',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 4,
+    borderBottomWidth: 2,
+    borderBottomColor: primaryColor,
+  };
 
   const tagsStyles = {
     body: {
