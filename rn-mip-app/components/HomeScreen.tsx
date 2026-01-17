@@ -45,6 +45,7 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
   const scrollViewRef = React.useRef<ScrollView>(null);
   const contentWidth = React.useRef(0);
   const containerWidth = React.useRef(0);
+  const currentScrollX = React.useRef(0);
 
   const { site_data, menu } = siteData;
   const logoUrl = site_data.logo
@@ -175,6 +176,10 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
 
   // Check if scroll indicators should be visible
   const checkScrollBounds = (offsetX: number) => {
+    // Only check bounds when both dimensions are set
+    if (contentWidth.current === 0 || containerWidth.current === 0) {
+      return;
+    }
     const maxScroll = contentWidth.current - containerWidth.current;
     setCanScrollLeft(offsetX > 5); // Show left arrow if scrolled more than 5px from start
     setCanScrollRight(offsetX < maxScroll - 5); // Show right arrow if not at end
@@ -183,6 +188,7 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
   // Handle scroll event
   const handleScroll = (event: any) => {
     const offsetX = event.nativeEvent.contentOffset.x;
+    currentScrollX.current = offsetX;
     checkScrollBounds(offsetX);
   };
 
@@ -190,8 +196,9 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
   const handleContentSizeChange = (width: number) => {
     contentWidth.current = width;
     if (containerWidth.current > 0) {
-      // Initial check to see if content is scrollable
+      // Initial check - content is scrollable but we're at the start
       setCanScrollRight(width > containerWidth.current);
+      setCanScrollLeft(false); // At initial position, no left scroll
     }
   };
 
@@ -200,6 +207,7 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
     containerWidth.current = event.nativeEvent.layout.width;
     if (contentWidth.current > 0) {
       setCanScrollRight(contentWidth.current > containerWidth.current);
+      setCanScrollLeft(false); // At initial position, no left scroll
     }
   };
 
@@ -283,10 +291,9 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
             <TouchableOpacity 
               style={[styles.scrollArrow, styles.scrollArrowLeft]}
               onPress={() => {
-                scrollViewRef.current?.scrollTo({ 
-                  x: Math.max(0, contentWidth.current - containerWidth.current - 280),
-                  animated: true 
-                });
+                const cardWidth = 280 + 16; // card width + margin
+                const newX = Math.max(0, currentScrollX.current - cardWidth);
+                scrollViewRef.current?.scrollTo({ x: newX, animated: true });
               }}
               testID="scroll-arrow-left"
             >
@@ -299,10 +306,10 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
             <TouchableOpacity 
               style={[styles.scrollArrow, styles.scrollArrowRight]}
               onPress={() => {
-                scrollViewRef.current?.scrollTo({ 
-                  x: 280,
-                  animated: true 
-                });
+                const cardWidth = 280 + 16; // card width + margin
+                const maxScroll = contentWidth.current - containerWidth.current;
+                const newX = Math.min(maxScroll, currentScrollX.current + cardWidth);
+                scrollViewRef.current?.scrollTo({ x: newX, animated: true });
               }}
               testID="scroll-arrow-right"
             >
@@ -385,6 +392,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     position: 'relative',
     marginBottom: 24,
+    minHeight: 280, // Approximate card height for arrow positioning
   },
   horizontalScroll: {
     // marginBottom moved to scrollContainer
@@ -402,19 +410,20 @@ const styles = StyleSheet.create({
   },
   scrollArrow: {
     position: 'absolute',
-    top: '50%',
-    transform: [{ translateY: -20 }], // Half of button height to center
+    top: 100, // Position near the middle of the card (card image is ~158px)
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
     zIndex: 10,
   },
   scrollArrowLeft: {

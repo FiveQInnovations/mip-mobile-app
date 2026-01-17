@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [074](074-scrollable-cards-indicators.md) - Scrollable Cards - Add Scroll Indicators
 
 ## In Progress
-- [074](074-scrollable-cards-indicators.md) - Scrollable Cards - Add Scroll Indicators
+(none)
 
 ## Backlog
 
