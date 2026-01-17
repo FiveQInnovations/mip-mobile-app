@@ -81,6 +81,18 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
   // Calculate image width based on content width (accounting for padding)
   const imageWidth = width - 32; // Subtract horizontal padding
 
+  // Check if URL is a form page that requires JavaScript/Vue.js rendering
+  // These should always open in external browser, even if same domain
+  const isFormPage = (url: string): boolean => {
+    const formPaths = ['/prayer-request', '/chaplain-request', '/forms/'];
+    try {
+      const urlObj = new URL(url, apiBaseUrl);
+      return formPaths.some(path => urlObj.pathname.includes(path));
+    } catch {
+      return formPaths.some(path => url.includes(path));
+    }
+  };
+
   // Custom renderer for anchor tags - ensures consistent styling regardless of parent context
   // This fixes the issue where links inside headings inherit heading color instead of link color
   const handleLinkPress = (href: string) => {
@@ -97,6 +109,15 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
       } else {
         router.push(`/page/${uuid}`);
       }
+      return;
+    }
+
+    // Force browser for form pages even if same domain (forms require JS/Vue to render)
+    if (isFormPage(href)) {
+      console.log('[HTMLContentRenderer] Form page detected, opening in browser:', href);
+      Linking.openURL(href).catch((err) => {
+        console.error('[HTMLContentRenderer] Failed to open form URL:', href, err);
+      });
       return;
     }
 
