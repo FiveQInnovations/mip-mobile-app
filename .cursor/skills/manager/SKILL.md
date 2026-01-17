@@ -192,3 +192,20 @@ When handling multiple tickets:
 - Read and analyze tickets directly
 - Make commit messages and update ticket status
 - Create retrospective files in temp/
+
+---
+
+## Simulator Constraints
+
+**IMPORTANT:** There is only ONE iOS simulator available. Agents that use the simulator must run SEQUENTIALLY, not in parallel.
+
+**Simulator-dependent agents (run one at a time):**
+- `visual-tester` - Takes screenshots, interacts with app
+- `verify-ticket` - Runs Maestro tests on simulator
+- `simulator-manager` - Boots/manages simulator
+
+**Can run in parallel with simulator agents:**
+- `scout-ticket` - Read-only codebase research
+- `implement-ticket` - Code changes only (no simulator)
+
+**Example:** When verifying multiple tickets, run visual-tester for ticket A, wait for completion, THEN run visual-tester for ticket B.
