@@ -156,10 +156,22 @@ export function HTMLContentRenderer({ html, baseUrl, onNavigate }: HTMLContentRe
       
       // Handle button links with explicit white text
       if (isButton) {
+        // Extract text content from children
+        const extractText = (children: any[]): string => {
+          if (!children) return '';
+          return children.map(child => {
+            if (child.type === 'text') return child.data || '';
+            if (child.children) return extractText(child.children);
+            return '';
+          }).join('');
+        };
+        
+        const buttonText = extractText(tnode.children);
+        
         return (
           <Pressable onPress={() => handleLinkPress(href)} style={classesStyles._button}>
             <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 17, textAlign: 'center' }}>
-              <TChildrenRenderer tchildren={tnode.children} />
+              {buttonText}
             </Text>
           </Pressable>
         );
