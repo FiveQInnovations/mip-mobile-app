@@ -1,6 +1,6 @@
 ---
 title: "TEST: Increase ContentCard shadow opacity"
-status: in-progress
+status: done
 priority: low
 created: 2026-01-17
 labels: [test, trivial]

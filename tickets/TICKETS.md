@@ -11,9 +11,10 @@ Quick reference for active tasks. See individual files for details.
 - [071](071-homepage-logo-smaller.md) - Homepage Logo - Make Firefighters for Christ Logo Smaller
 - [074](074-scrollable-cards-indicators.md) - Scrollable Cards - Add Scroll Indicators
 - [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
+- [077](077-homepage-touch-handling.md) - Homepage Touch Handling on Real Devices
 
 ## In Progress
-- [077](077-homepage-touch-handling.md) - Homepage Touch Handling on Real Devices
+(none)
 
 ## Backlog
 

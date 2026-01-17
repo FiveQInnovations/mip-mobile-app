@@ -1,6 +1,6 @@
 ---
 title: "TEST: Update search placeholder text"
-status: qa
+status: done
 priority: low
 created: 2026-01-17
 labels: [test, trivial]
