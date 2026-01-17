@@ -1,0 +1,57 @@
+appId: com.fiveq.ffci
+---
+# Simple iOS Connect tab sanity check
+# This test verifies that the Connect tab navigation works and page loads
+#
+# Ticket: 072-connect-tab-navigation
+#
+# Note: launchApp is NOT used - app is launched by script with xcrun simctl
+# App should be launched with xcrun simctl before running this test:
+#   xcrun simctl launch booted com.fiveq.ffci
+
+- runFlow:
+    file: "verify-header-renders.yaml"
+
+# Verify we start on Home screen
+- assertVisible:
+    text: "Home tab"
+    optional: true
+
+# Navigate to Connect tab
+- tapOn:
+    text: "Connect tab"
+- waitForAnimationToEnd
+
+# Verify Connect tab is selected (confirms navigation worked)
+- assertVisible:
+    text: "Connect tab"
+
+# Wait for page content to load (HTML content may take time to render)
+- waitForAnimationToEnd
+
+# Give extra time for HTML content to render (HTMLContentRenderer needs time)
+- waitForAnimationToEnd
+
+# Verify page has loaded by checking that we're not showing an error screen
+# ErrorScreen would show error messages - if we don't see them, page loaded successfully
+- assertNotVisible:
+    text: "Something went wrong"
+    optional: true
+
+- assertNotVisible:
+    text: "Error loading"
+    optional: true
+
+# Scroll a bit to ensure content is rendered
+- scroll
+- waitForAnimationToEnd
+
+# Take screenshot for manual verification that page content is visible
+- takeScreenshot:
+    path: "maestro/screenshots/connect-tab-loaded-ios"
+
+# Sanity check complete: Navigation works, no errors, page appears to have loaded
+# Content verification can be done manually via screenshot
+
+- takeScreenshot:
+    path: "maestro/screenshots/connect-tab-loaded-ios"

@@ -18,6 +18,7 @@ Quick reference for active tasks. See individual files for details.
 ### 🔴 Core Functionality (FFCI)
 - [073](073-reduce-tab-bar-4-tabs.md) - Fix Tab Bar - Reduce to 4 Tabs
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
+- [083](083-audio-sermons-collection-integration.md) - Audio Sermons Collection Integration
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
