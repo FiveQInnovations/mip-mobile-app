@@ -12,7 +12,7 @@ Quick reference for active tasks. See individual files for details.
 - [085](085-about-tab-buttons-layout.md) - About Tab Buttons Layout Issue - Side-by-Side Buttons Not Readable
 
 ## In Progress
-(none)
+- [023](023-audio-player-component.md) - Audio Player Component
 
 ## Backlog
 
@@ -28,7 +28,6 @@ Quick reference for active tasks. See individual files for details.
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
 - [022](022-youtube-vimeo-embed.md) - YouTube/Vimeo Embed Support
-- [023](023-audio-player-component.md) - Audio Player Component
 - [024](024-collection-item-metadata.md) - Display Video/Audio Metadata on Collection Items
 - [025](025-collection-cover-images.md) - Collection Grid Cover Images
 - [030](030-firebase-media-events.md) - Firebase Media Events (video_play, video_complete, audio_play)
