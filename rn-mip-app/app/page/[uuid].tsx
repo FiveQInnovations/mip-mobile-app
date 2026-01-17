@@ -21,6 +21,9 @@ const TAB_ICONS: Record<string, { filled: keyof typeof Ionicons.glyphMap; outlin
 
 const DEFAULT_ICON = { filled: 'ellipse' as keyof typeof Ionicons.glyphMap, outline: 'ellipse-outline' as keyof typeof Ionicons.glyphMap };
 
+// Allowed tab labels for bottom navigation (4 tabs total: Home + 3 menu items)
+const ALLOWED_TAB_LABELS = ['Resources', 'Chapters', 'Connect'];
+
 export default function Page() {
   const { uuid } = useLocalSearchParams<{ uuid: string }>();
   const router = useRouter();
@@ -50,7 +53,12 @@ export default function Page() {
     page: { uuid: '__home__', type: 'home', url: '/' }
   };
 
-  const allTabs = siteData ? [homeTab, ...siteData.menu] : [];
+  // Filter menu items to only include Resources, Chapters, and Connect
+  // This ensures we have exactly 4 tabs total (Home + 3 menu items)
+  const filteredMenuItems = siteData 
+    ? siteData.menu.filter(item => ALLOWED_TAB_LABELS.includes(item.label.trim()))
+    : [];
+  const allTabs = siteData ? [homeTab, ...filteredMenuItems] : [];
 
   return (
     <View style={styles.container}>

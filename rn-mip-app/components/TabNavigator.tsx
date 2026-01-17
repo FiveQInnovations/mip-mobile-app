@@ -30,6 +30,9 @@ const TAB_ICONS: Record<string, { filled: keyof typeof Ionicons.glyphMap; outlin
 // Fallback icon for tabs not in the mapping
 const DEFAULT_ICON = { filled: 'ellipse' as keyof typeof Ionicons.glyphMap, outline: 'ellipse-outline' as keyof typeof Ionicons.glyphMap };
 
+// Allowed tab labels for bottom navigation (4 tabs total: Home + 3 menu items)
+const ALLOWED_TAB_LABELS = ['Resources', 'Chapters', 'Connect'];
+
 export function TabNavigator() {
   const [siteData, setSiteData] = React.useState<SiteData | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -97,11 +100,16 @@ export function TabNavigator() {
       // Set Home tab as selected by default
       setSelectedTabUuid('__home__');
       
+      // Filter menu items to only include allowed tabs
+      const filteredMenu = data.menu.filter(item => 
+        ALLOWED_TAB_LABELS.includes(item.label.trim())
+      );
+      
       // Prefetch all main tab content after critical path (homepage) loads
       // Use InteractionManager to run after animations/interactions complete
       InteractionManager.runAfterInteractions(() => {
         console.log('[TabNavigator] Site data loaded, starting prefetch of main tabs...');
-        prefetchMainTabs(data.menu);
+        prefetchMainTabs(filteredMenu);
       });
     } catch (err: any) {
       setError(err instanceof Error ? err : new Error(err.message || 'Failed to load data'));
@@ -133,11 +141,12 @@ export function TabNavigator() {
     page: { uuid: '__home__', type: 'home', url: '/' }
   };
 
-  // Prepend Home tab to menu items
-  // Note: We might want to rename labels here to match screenshots if the API returns different names
-  // But for now we stick to API labels + our icon mapping
-  const menuItems = siteData.menu;
-  const allTabs = [homeTab, ...menuItems];
+  // Filter menu items to only include Resources, Chapters, and Connect
+  // This ensures we have exactly 4 tabs total (Home + 3 menu items)
+  const filteredMenuItems = siteData.menu.filter(item => 
+    ALLOWED_TAB_LABELS.includes(item.label.trim())
+  );
+  const allTabs = [homeTab, ...filteredMenuItems];
   const selectedTab = allTabs.find(item => item.page.uuid === selectedTabUuid) || allTabs[0];
 
   return (

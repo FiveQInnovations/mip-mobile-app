@@ -48,6 +48,7 @@ STABLE_TESTS=(
     "maestro/flows/content-page-rendering-ios.yaml"
     "maestro/flows/internal-page-back-navigation-ios.yaml"
     "maestro/flows/search-result-descriptions-ios.yaml"
+    "maestro/flows/connect-tab-sanity-check-ios.yaml"
 )
 
 # Track results
