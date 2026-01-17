@@ -39,6 +39,13 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
   const router = useRouter();
   const [cacheCleared, setCacheCleared] = React.useState(false);
 
+  // State for scroll indicators
+  const [canScrollLeft, setCanScrollLeft] = React.useState(false);
+  const [canScrollRight, setCanScrollRight] = React.useState(false);
+  const scrollViewRef = React.useRef<ScrollView>(null);
+  const contentWidth = React.useRef(0);
+  const containerWidth = React.useRef(0);
+
   const { site_data, menu } = siteData;
   const logoUrl = site_data.logo
     ? site_data.logo.startsWith('http')
@@ -166,6 +173,36 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
 
   const isSvgLogo = logoUrl && logoUrl.endsWith('.svg');
 
+  // Check if scroll indicators should be visible
+  const checkScrollBounds = (offsetX: number) => {
+    const maxScroll = contentWidth.current - containerWidth.current;
+    setCanScrollLeft(offsetX > 5); // Show left arrow if scrolled more than 5px from start
+    setCanScrollRight(offsetX < maxScroll - 5); // Show right arrow if not at end
+  };
+
+  // Handle scroll event
+  const handleScroll = (event: any) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    checkScrollBounds(offsetX);
+  };
+
+  // Handle content size change
+  const handleContentSizeChange = (width: number) => {
+    contentWidth.current = width;
+    if (containerWidth.current > 0) {
+      // Initial check to see if content is scrollable
+      setCanScrollRight(width > containerWidth.current);
+    }
+  };
+
+  // Handle layout change
+  const handleLayout = (event: any) => {
+    containerWidth.current = event.nativeEvent.layout.width;
+    if (contentWidth.current > 0) {
+      setCanScrollRight(contentWidth.current > containerWidth.current);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <CustomHeader 
@@ -216,24 +253,63 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
         <Text style={styles.sectionHeader}>
           Resources
         </Text>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          style={styles.horizontalScroll}
-          contentContainerStyle={styles.horizontalScrollContent}
-        >
-          {quickTasks.map((item) => (
-            <ContentCard
-              key={item.key}
-              title={item.label}
-              description={item.description}
-              imageUrl={item.imageUrl}
-              onPress={item.onPress}
-              style={styles.carouselCard}
-              testID={item.testID}
-            />
-          ))}
-        </ScrollView>
+        <View style={styles.scrollContainer}>
+          <ScrollView 
+            ref={scrollViewRef}
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            style={styles.horizontalScroll}
+            contentContainerStyle={styles.horizontalScrollContent}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+            onContentSizeChange={handleContentSizeChange}
+            onLayout={handleLayout}
+          >
+            {quickTasks.map((item) => (
+              <ContentCard
+                key={item.key}
+                title={item.label}
+                description={item.description}
+                imageUrl={item.imageUrl}
+                onPress={item.onPress}
+                style={styles.carouselCard}
+                testID={item.testID}
+              />
+            ))}
+          </ScrollView>
+          
+          {/* Left Arrow */}
+          {canScrollLeft && (
+            <TouchableOpacity 
+              style={[styles.scrollArrow, styles.scrollArrowLeft]}
+              onPress={() => {
+                scrollViewRef.current?.scrollTo({ 
+                  x: Math.max(0, contentWidth.current - containerWidth.current - 280),
+                  animated: true 
+                });
+              }}
+              testID="scroll-arrow-left"
+            >
+              <Ionicons name="chevron-back" size={24} color="#0f172a" />
+            </TouchableOpacity>
+          )}
+          
+          {/* Right Arrow */}
+          {canScrollRight && (
+            <TouchableOpacity 
+              style={[styles.scrollArrow, styles.scrollArrowRight]}
+              onPress={() => {
+                scrollViewRef.current?.scrollTo({ 
+                  x: 280,
+                  animated: true 
+                });
+              }}
+              testID="scroll-arrow-right"
+            >
+              <Ionicons name="chevron-forward" size={24} color="#0f172a" />
+            </TouchableOpacity>
+          )}
+        </View>
 
         {/* Dev Tools - Temporary */}
         <View style={styles.devSection}>
@@ -306,8 +382,12 @@ const styles = StyleSheet.create({
   logo: {
     marginBottom: 0,
   },
-  horizontalScroll: {
+  scrollContainer: {
+    position: 'relative',
     marginBottom: 24,
+  },
+  horizontalScroll: {
+    // marginBottom moved to scrollContainer
   },
   horizontalScrollContent: {
     paddingHorizontal: 16,
@@ -319,6 +399,29 @@ const styles = StyleSheet.create({
     // Add border to distinguish from white background
     borderWidth: 1,
     borderColor: '#e2e8f0',
+  },
+  scrollArrow: {
+    position: 'absolute',
+    top: '50%',
+    transform: [{ translateY: -20 }], // Half of button height to center
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    zIndex: 10,
+  },
+  scrollArrowLeft: {
+    left: 8,
+  },
+  scrollArrowRight: {
+    right: 8,
   },
   sectionHeader: {
     fontSize: 20,
