@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: qa
 area: rn-mip-app
 phase: core
 created: 2026-01-16
@@ -37,6 +37,43 @@ From the Jan 13, 2026 meeting with Mike Bell, the horizontal scrollable cards in
   - Ask a designer (Adam Hardy) about the Horizontal section:
     - Are there other things that we could do to improve it?
     - Should we use a different background color to make it obvious that this is a distinct row/section?
+
+### Design Recommendations (Research-Based)
+
+Based on mobile UX best practices from Material Design guidelines, Netflix/Spotify patterns, and carousel UX research:
+
+#### 1. Fix Spacing Above "Resources" Title
+- **Issue**: `sectionHeader` has `marginBottom: 16px` but no `marginTop`
+- **Fix**: Add `marginTop: 24px` to create proper section separation (Material Design recommends 24-32dp between sections)
+
+#### 2. Differentiate the Horizontal Section
+Research strongly supports using background color differentiation:
+
+- **Add subtle background**: Use `#f8fafc` (light gray, matches logo section) for the entire Resources section
+- **Include title in background**: Wrap "Resources" header inside the colored area for visual cohesion
+- **Add vertical padding**: 16-20px top/bottom within the colored section
+- **Keep the "peek" pattern**: Netflix/Spotify intentionally show partial cards - it's a scrollability affordance. The background differentiation will make it look intentional rather than "awkward"
+- **Keep the arrows**: Already implemented, good UX per research
+
+#### Visual Structure (After Changes)
+```
+[White Background - Featured Section]
+  - Featured Title
+  - Featured Cards
+
+[24px vertical gap]
+
+[Gray Background #f8fafc - Resources Section]
+  ├─ 16px top padding
+  ├─ "Resources" Title
+  ├─ Horizontal ScrollView with cards (partial card peek at edge)
+  ├─ Arrow overlays
+  └─ 16px bottom padding
+
+[White Background - Dev Tools]
+```
+
+This follows the established pattern of alternating section backgrounds used by major apps to create clear visual hierarchy.
 
 ## References
 
@@ -152,3 +189,42 @@ From Jan 13, 2026 meeting (transcript lines 723-755):
 - No API or data structure changes needed
 
 **If card sizing changes are also requested**: Add 1-2 hours for adjusting card width calculations, testing different screen sizes, and ensuring proper snap behavior.
+
+---
+
+## QA Notes (2026-01-17)
+
+### Implementation Complete
+
+**Changes made:**
+1. Added `marginTop: 24px` to create spacing above Resources section
+2. Added `resourcesSection` wrapper with light gray background (#f8fafc)
+3. Resources title moved inside the gray background area
+4. Scroll arrows remain functional and properly styled
+
+### Verification Results
+
+| Test | Result | Score |
+|------|--------|-------|
+| Functional (Maestro) | PASS | - |
+| Visual Test | CONDITIONAL PASS | 7.5/10 |
+
+### Visual Tester Feedback
+
+**What works well:**
+- Spacing (24px gap above Resources) - 9/10
+- Alignment of cards and titles - 8/10
+- Scroll arrow styling - excellent
+- Card layout and sizing - consistent
+
+**Design concern:**
+The background color `#f8fafc` is technically correct but is VERY SUBTLE. The visual tester noted:
+> "The #f8fafc gray vs white is only ~3% difference in brightness. On iOS device screens, this difference is nearly imperceptible."
+
+**Options for user review:**
+1. **Accept as-is** - The subtle differentiation is intentional (matches logo section)
+2. **Increase contrast** - Use `#f1f5f9` (slate-100) or `#e2e8f0` (slate-200) for more visible differentiation
+3. **Alternative approach** - Add a thin divider line between sections instead of background color
+
+### Commits
+- `feat(ticket-074): add spacing and background to Resources section`
