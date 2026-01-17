@@ -8,10 +8,11 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
+- [078](078-content-page-design-improvements.md) - Content Page Visual Design Improvements
 - [085](085-about-tab-buttons-layout.md) - About Tab Buttons Layout Issue - Side-by-Side Buttons Not Readable
 
 ## In Progress
-- [078](078-content-page-design-improvements.md) - Content Page Visual Design Improvements
+(none)
 
 ## Backlog
 
@@ -49,6 +50,7 @@ Quick reference for active tasks. See individual files for details.
 - [050](050-maestro-test-organization.md) - Research Maestro Test Organization
 
 ### Unassigned
+- [078](078-verification-report.md) - Ticket 078 Verification Report
 - [085](085-button-layout-verification-report.md) - Ticket 085: Button Layout Verification Report
 
 ## Blocked
