@@ -257,6 +257,7 @@ export default function SearchScreen() {
                 setResults([]);
                 setHasSearched(false);
               }}
+              testID="close-circle"
             >
               <Ionicons name="close-circle" size={20} color="#94a3b8" />
             </TouchableOpacity>

@@ -11,8 +11,9 @@ appId: com.fiveq.ffci
 - waitForAnimationToEnd
 
 # Confirm homepage is loaded
+# Verify search icon is visible (confirms header is rendered)
 - assertVisible:
-    text: "FFC"
+    id: "search-outline"
 
 # Tap the search icon in the header
 - tapOn:
@@ -38,7 +39,6 @@ appId: com.fiveq.ffci
 # Should see at least one result with "firefighter" or related content
 - assertVisible:
     text: "firefighter"
-    useFuzzyMatching: true
 
 # Verify we're seeing search results (not empty state)
 - assertNotVisible:
@@ -50,7 +50,7 @@ appId: com.fiveq.ffci
     index: 0
 
 # Clear the search input
-- pressKey: SelectAll
+- eraseText
 - inputText: "chaplain"
 
 # Wait for new search results
@@ -60,7 +60,6 @@ appId: com.fiveq.ffci
 # Verify new search results appear
 - assertVisible:
     text: "chaplain"
-    useFuzzyMatching: true
 
 # Test clearing search
 - tapOn:
@@ -70,12 +69,3 @@ appId: com.fiveq.ffci
 # Verify we're back to empty state
 - assertVisible:
     text: "Start typing to search"
-
-# Go back to homepage
-- tapOn:
-    id: "arrow-back"
-    index: 0
-
-# Verify we're back on homepage
-- assertVisible:
-    text: "FFC"

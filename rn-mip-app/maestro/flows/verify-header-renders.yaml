@@ -3,6 +3,4 @@
 appId: com.fiveq.ffci
 ---
 - assertVisible:
-    text: "FFC"
-- assertVisible:
     id: "search-outline"

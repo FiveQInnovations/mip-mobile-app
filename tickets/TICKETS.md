@@ -11,7 +11,7 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-- [070](070-header-logo-maltese-cross.md) - Header Logo - Replace Default Logo with Maltese Cross
+(none)
 
 ## Backlog
 
@@ -102,6 +102,7 @@ Quick reference for active tasks. See individual files for details.
 - [067](067-fix-search-result-descriptions.md) - Fix Search Result Descriptions - Display User-Friendly Text
 - [068](068-remove-unused-mobile-panel-settings.md) - Remove Unused/Non-Functional Mobile Panel Settings
 - [069](069-homepage-layout-redesign.md) - Homepage Layout Redesign - Flip Featured/Evergreen Sections
+- [070](070-header-logo-maltese-cross.md) - Header Logo - Replace Default Logo with Maltese Cross
 
 ---
 

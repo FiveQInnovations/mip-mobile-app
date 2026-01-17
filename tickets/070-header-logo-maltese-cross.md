@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: done
 area: rn-mip-app
 phase: core
 created: 2026-01-16
@@ -68,33 +68,27 @@ From the Jan 13, 2026 meeting with Mike Bell, the persistent header should use t
 ### Logo Asset Status
 
 **Existing Logo Files in Kirby Site:**
+- `/Users/anthony/mip/sites/ws-ffci/content/logo-mark.svg` - **CORRECT:** Standalone Maltese Cross icon (no text) - 100x100 viewBox
 - `/Users/anthony/mip/sites/ws-ffci/www/assets/img/logo.svg` - Full logo with "COLOR LOGO" text + Maltese Cross
 - `/Users/anthony/mip/sites/ws-ffci/www/assets/img/logo-mobile.svg` - Mobile version with text
 
 **Current App Assets:**
-- `rn-mip-app/assets/adaptive-icon.png` - Currently used in header (24x24)
-- `rn-mip-app/assets/icon.png` - App icon
-- `rn-mip-app/assets/favicon.png` - Favicon
-- `rn-mip-app/assets/splash-icon.png` - Splash screen icon
+- `rn-mip-app/assets/icon.png` - **CORRECT:** App icon (Maltese Cross) - Use this for header
+- `rn-mip-app/assets/adaptive-icon.png` - **INCORRECT:** Currently used in header (24x24) - Wrong logo
+- `rn-mip-app/assets/favicon.png` - **INCORRECT:** Wrong logo
+- `rn-mip-app/assets/splash-icon.png` - **INCORRECT:** Wrong logo
 
-**Maltese Cross Extraction:**
-The existing SVG logos contain the Maltese Cross symbol (circular cross with four arms), but Michael specifically stated he wants "just that Maltese Cross logo, which is not our full logo" (meeting line 1568). This means we need a **standalone Maltese Cross icon file** without any text.
-
-**REQUIRED:** Get standalone Maltese Cross icon from Adam Hardy (as noted in ticket)
+**Maltese Cross Asset:**
+The correct Maltese Cross logo is `icon.png`. The header currently uses `adaptive-icon.png` which is the wrong logo. We need to change the header to use `icon.png` instead.
 
 ### Implementation Plan
 
-1. **Obtain Asset** (BLOCKER)
-   - Contact Adam Hardy for standalone Maltese Cross icon
-   - Preferred formats: SVG (scalable) or PNG with transparent background
-   - Recommended sizes: SVG preferred, or PNG at 2x/3x resolution (48px, 72px)
+1. **Copy Correct Logo Asset**
+   - Copy `rn-mip-app/assets/icon.png` to `rn-mip-app/assets/adaptive-icon.png` (replace existing file)
+   - This ensures the header uses the correct Maltese Cross logo without code changes
 
-2. **Add Asset to Project**
-   - Place in `rn-mip-app/assets/` directory
-   - Name suggestion: `maltese-cross.svg` or `maltese-cross.png`
-
-3. **Update HomeScreen.tsx** (lines 21-26)
-   - Replace `adaptive-icon.png` source with new Maltese Cross asset
+2. **Update HomeScreen.tsx** (lines 21-26)
+   - Keep using `adaptive-icon.png` (now contains correct logo after copy)
    - Remove the `<Text style={styles.headerTitle}>FFC</Text>` line entirely
    - Adjust image size if needed (currently 24x24, may want slightly larger without text)
 
@@ -113,7 +107,8 @@ The existing SVG logos contain the Maltese Cross symbol (circular cross with fou
 
 | File | Lines | Purpose | Changes Needed |
 |------|-------|---------|----------------|
-| `rn-mip-app/components/HomeScreen.tsx` | 21-26 | Header logo + text | Replace image source, remove Text element |
+| `rn-mip-app/assets/adaptive-icon.png` | N/A | Header logo asset | Copy `icon.png` to replace this file with correct Maltese Cross |
+| `rn-mip-app/components/HomeScreen.tsx` | 21-26 | Header logo + text | Keep `adaptive-icon.png` reference (now correct after asset copy), remove Text element |
 | `rn-mip-app/components/HomeScreen.tsx` | 279-282 | Header logo styles | Potentially increase size (24→28/32px) |
 | `rn-mip-app/components/HomeScreen.tsx` | 283-287 | Header title styles | Can be removed (unused) |
 | `rn-mip-app/components/HomeScreen.tsx` | 274-278 | Header left container | Remove gap: 8 (no text to space) |
@@ -152,17 +147,18 @@ The existing SVG logos contain the Maltese Cross symbol (circular cross with fou
 **Low-Medium Complexity**
 
 **Reasoning:**
-- Simple code change (replace 1 line, remove 1 line)
-- Main blocker is obtaining the correct asset from Adam Hardy
+- Simple asset copy (copy icon.png to adaptive-icon.png)
+- Simple code change (remove 1 line - the Text element)
 - Need to update 2-3 Maestro test files
 - Straightforward styling adjustments
 - No data flow or API changes required
 
-**Time Estimate (once asset is obtained):**
-- Code changes: 15-20 minutes
+**Time Estimate:**
+- Asset copy: 1 minute
+- Code changes: 5-10 minutes
 - Test updates: 10-15 minutes
 - Visual verification: 10 minutes
-- Total: ~35-45 minutes of development work
+- Total: ~25-35 minutes of development work
 
 **Blockers:**
-- Obtaining standalone Maltese Cross icon from Adam Hardy
+- None - the correct Maltese Cross is already available as `icon.png` in the app assets

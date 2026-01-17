@@ -22,8 +22,8 @@ function CustomHeader({ onSearch }: { onSearch: () => void }) {
           source={require('../assets/adaptive-icon.png')} 
           style={styles.headerLogo} 
           resizeMode="contain"
+          accessibilityLabel="Firefighters for Christ Logo"
         />
-        <Text style={styles.headerTitle}>FFC</Text>
       </View>
       <View style={styles.headerRight}>
         <TouchableOpacity onPress={onSearch} style={styles.headerButton} testID="search-outline">
@@ -277,16 +277,10 @@ const styles = StyleSheet.create({
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
   },
   headerLogo: {
-    width: 24,
-    height: 24,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#0f172a',
+    width: 32,
+    height: 32,
   },
   headerRight: {
     flexDirection: 'row',
