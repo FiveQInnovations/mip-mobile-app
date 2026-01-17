@@ -11,12 +11,11 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [073](073-reduce-tab-bar-4-tabs.md) - Fix Tab Bar - Reduce to 4 Tabs
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [073](073-reduce-tab-bar-4-tabs.md) - Fix Tab Bar - Reduce to 4 Tabs
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
 - [083](083-audio-sermons-collection-integration.md) - Audio Sermons Collection Integration
 - [084](084-icon-management-website.md) - Icon Management in Website (No Upload Required)
