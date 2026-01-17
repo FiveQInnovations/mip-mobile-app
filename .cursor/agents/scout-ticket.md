@@ -1,7 +1,7 @@
 ---
 name: scout-ticket
 description: Research specialist for ticket scouting. Use to investigate tickets before implementation. Analyzes code locations, identifies exact files/lines to change, maps data flow, and documents findings. Does NOT modify code.
-model: fast
+model: claude-sonnet-4.5-thinking
 readonly: true
 ---
 
