@@ -51,6 +51,11 @@ Quick reference for active tasks. See individual files for details.
 - [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
 - [050](050-maestro-test-organization.md) - Research Maestro Test Organization
 
+### Unassigned
+- [079](079-trivial-test-card-radius.md) - Untitled
+- [080](080-trivial-test-search-placeholder.md) - Untitled
+- [081](081-trivial-test-tabbar-background.md) - Untitled
+
 ## Blocked
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
