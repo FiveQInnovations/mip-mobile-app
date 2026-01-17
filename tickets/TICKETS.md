@@ -20,9 +20,13 @@ Quick reference for active tasks. See individual files for details.
 - [069](069-homepage-layout-redesign.md) - Homepage Layout Redesign - Flip Featured/Evergreen Sections
 - [070](070-header-logo-maltese-cross.md) - Header Logo - Replace Default Logo with Maltese Cross
 - [071](071-homepage-logo-smaller.md) - Homepage Logo - Make Firefighters for Christ Logo Smaller
+- [072](072-connect-tab-navigation.md) - Add "Connect" Tab - Replace "Get Involved"
+- [073](073-reduce-tab-bar-4-tabs.md) - Fix Tab Bar - Reduce to 4 Tabs
+- [074](074-scrollable-cards-indicators.md) - Scrollable Cards - Add Scroll Indicators
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
+- [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
@@ -52,6 +56,7 @@ Quick reference for active tasks. See individual files for details.
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
 - [015](015-ios-browserstack-without-apple-dev-account.md) - Build and Upload iOS to BrowserStack Without Apple Developer Account
+- [075](075-integrate-audio-sermons.md) - Integrate Audio Sermons Collection
 
 ## Maybe
 - [013](013-speed-up-eas-android-builds.md) - Speed Up EAS Android Build Time
