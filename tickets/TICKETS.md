@@ -16,7 +16,6 @@ Quick reference for active tasks. See individual files for details.
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
 - [069](069-homepage-layout-redesign.md) - Homepage Layout Redesign - Flip Featured/Evergreen Sections
 - [070](070-header-logo-maltese-cross.md) - Header Logo - Replace Default Logo with Maltese Cross
 - [071](071-homepage-logo-smaller.md) - Homepage Logo - Make Firefighters for Christ Logo Smaller
@@ -27,6 +26,7 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
+- [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
