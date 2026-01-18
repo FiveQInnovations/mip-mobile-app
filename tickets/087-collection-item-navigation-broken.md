@@ -20,17 +20,34 @@ This was discovered while testing ticket 023 (AudioPlayer testIDs). The AudioPla
 - Tapping "God's Power Tools" does NOT navigate to the item detail page
 - Screenshot evidence: `maestro/screenshots/023-audio-item-page.png` shows collection list, not item detail
 
-## Root Cause Investigation Needed
+## Investigation Findings
 
-The navigation handler in `TabScreen.tsx` line 305:
-```tsx
-onPress={() => navigateToPage(child.uuid)}
-```
+### Code Changes Attempted:
+- Replaced TouchableOpacity with Pressable
+- Added `pointerEvents="none"` to child elements
+- Added `hitSlop` for larger touch area
+- Added visual feedback (opacity changes)
+- Added console.log debugging
+- Added testID to collection items
 
-Possible issues:
-1. `child.uuid` may be undefined or null
-2. `navigateToPage()` may be silently failing
-3. API response may not include uuid for children
+### Test Results:
+1. **Maestro tap by text** - Tap "completes" but no navigation occurs
+2. **Maestro tap by testID** - testID not found in accessibility tree
+3. **Visual-tester manual tap** - Confirmed tap registers but nothing happens
+
+### Key Observation:
+The `testID` attribute on the Pressable component is NOT appearing in the iOS accessibility tree. This suggests:
+1. The Pressable may not be properly exposing accessibility attributes
+2. There may be an issue with how React Native's new architecture handles testID
+3. The ScrollView parent may be interfering with touch propagation
+
+### Verified Working:
+- API returns correct uuid for children (confirmed in code review)
+- The `navigateToPage()` function works for other navigations (HTMLContentRenderer links)
+- Collection items ARE displayed correctly
+
+### Root Cause Hypothesis:
+The touch events are being intercepted somewhere between the UI and the Pressable's onPress handler. The fact that testID doesn't appear in the accessibility tree suggests the Pressable component isn't properly registering with the accessibility system, which may be related to the touch issue.
 
 ## Goals
 
