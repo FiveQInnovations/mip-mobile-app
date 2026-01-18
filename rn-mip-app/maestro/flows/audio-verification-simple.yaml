@@ -1,0 +1,54 @@
+appId: com.fiveq.ffci
+---
+# Test Audio Sermons Collection Integration (Ticket 083)
+# This test should FAIL initially to showcase the bug where collection items don't load
+# After fixing the code, this test should PASS
+
+# Tap on Home tab to ensure we're on the home screen
+- tapOn:
+    text: "Home"
+    optional: true
+
+- waitForAnimationToEnd
+
+# Verify we're on the home screen
+- assertVisible:
+    text: "Home tab"
+
+# Take screenshot of home
+- takeScreenshot:
+    path: "maestro/screenshots/083-1-home-screen"
+
+# Scroll down to see Audio Sermons card
+- scrollUntilVisible:
+    element:
+      text: "Audio Sermons"
+
+- takeScreenshot:
+    path: "maestro/screenshots/083-2-audio-sermons-card-visible"
+
+# Tap on Audio Sermons card to navigate to collection
+- tapOn:
+    text: "Audio Sermons"
+
+- waitForAnimationToEnd
+
+# Wait for collection screen to load
+- waitForAnimationToEnd
+
+# Take screenshot of sermons collection (should show empty state initially)
+- takeScreenshot:
+    path: "maestro/screenshots/083-3-sermons-collection-screen"
+
+# ASSERTION: This should FAIL initially - collection should have items but shows empty
+# After fix, this assertion should PASS
+- scrollUntilVisible:
+    element:
+      text: "God's Power Tools"
+    timeout: 10000
+- assertVisible:
+    text: "God's Power Tools"
+
+# If we get here, items loaded successfully - take final screenshot
+- takeScreenshot:
+    path: "maestro/screenshots/083-4-sermons-loaded-success"

@@ -11,6 +11,25 @@ created: 2026-01-17
 
 An audio sermons collection has been created on the website at https://ffci.fiveq.dev/sermons with one sermon initially. This collection needs to be integrated into the mobile app so users can access and play audio sermons.
 
+## Current Issue
+
+**Bug:** Audio Sermons card appears on the home screen, but when tapped, the collection screen shows "No items in this collection" even though sermons exist on the website. The collection children are not being loaded properly from the API.
+
+**Screenshot:** See attached screenshot showing the empty collection state.
+
+**Root Cause:** The API endpoint in `wsp-mobile/lib/pages.php` was not including `title` and `description` fields in the children array, and was not filtering for published children only.
+
+**Fix Applied:**
+- Updated `collection_data()` method to include `title` and `description` fields in children array
+- Added `->published()` filter to ensure only published children are returned
+- Updated `content_data()` method with the same improvements for consistency
+
+**Testing:**
+- Maestro test created: `audio-verification-simple.yaml`
+- Test initially failed (showcasing the bug), now passes after API fix is deployed
+- ✅ Test verified: Collection children load correctly with "God's Power Tools" sermon visible
+- ✅ API changes deployed and verified working
+
 ## Goals
 
 1. Integrate the sermons collection into the mobile app
