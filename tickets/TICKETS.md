@@ -9,7 +9,6 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [023](023-audio-player-component.md) - Audio Player Component
-- [083](083-audio-sermons-collection-integration.md) - Audio Sermons Collection Integration
 
 ## In Progress
 (none)
@@ -119,6 +118,7 @@ Quick reference for active tasks. See individual files for details.
 - [081](done/081-trivial-test-tabbar-background.md) - Untitled
 - [082](082-trivial-test-card-shadow.md) - Untitled
 - [082](done/082-trivial-test-card-shadow.md) - Untitled
+- [083](083-audio-sermons-collection-integration.md) - Audio Sermons Collection Integration
 - [085](085-about-tab-buttons-layout.md) - About Tab Buttons Layout Issue - Side-by-Side Buttons Not Readable
 - [086](086-prayer-request-button-wrong-page.md) - Prayer Request Button Should Open Form in Browser - Page Shows Text But No Form Link
 
