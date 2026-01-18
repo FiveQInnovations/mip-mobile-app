@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Alert, Pressable } from 'react-native';
 import { getPageWithCache, PageData } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
@@ -314,7 +314,7 @@ export function TabScreen({ uuid }: TabScreenProps) {
                     keys: Object.keys(child)
                   });
                   return (
-                  <TouchableOpacity
+                  <Pressable
                     key={index}
                     style={[styles.collectionItem, dynamicStyles.collectionItem]}
                     onPress={() => {
@@ -344,7 +344,6 @@ export function TabScreen({ uuid }: TabScreenProps) {
                       );
                     }}
                     accessibilityRole="button"
-                    activeOpacity={0.7}
                     testID={`collection-item-${index}`}
                   >
                     <View style={styles.collectionItemContent} pointerEvents="none">
@@ -358,7 +357,7 @@ export function TabScreen({ uuid }: TabScreenProps) {
                       )}
                     </View>
                     <Text style={styles.collectionChevron} pointerEvents="none">›</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                   );
                 })}
               </View>
