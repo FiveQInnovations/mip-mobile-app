@@ -1,0 +1,96 @@
+appId: com.fiveq.ffci
+---
+# Ticket 023: Audio Player Component Test
+# 
+# This test verifies the AudioPlayer component renders with proper testIDs
+# and that playback controls work.
+#
+# REQUIREMENT: AudioPlayer must have testIDs for Maestro to verify:
+# - audio-player-container: Main player wrapper
+# - audio-play-button: Play/pause button
+# - audio-time-current: Current time display
+# - audio-time-duration: Duration display
+
+# Ensure we start from home
+- tapOn:
+    text: "Home"
+    optional: true
+
+- waitForAnimationToEnd
+
+# Verify home screen loaded
+- assertVisible:
+    text: "Home tab"
+
+# Navigate to Audio Sermons collection
+- scrollUntilVisible:
+    element:
+      text: "Audio Sermons"
+    direction: DOWN
+    timeout: 15000
+
+- tapOn:
+    text: "Audio Sermons"
+
+- waitForAnimationToEnd
+
+# Wait for collection to load and find an audio item
+- scrollUntilVisible:
+    element:
+      text: "God's Power Tools"
+    direction: DOWN
+    timeout: 15000
+
+- takeScreenshot:
+    path: "maestro/screenshots/023-audio-collection"
+
+# Tap on the audio item to open it
+- tapOn:
+    text: "God's Power Tools"
+
+- waitForAnimationToEnd
+
+- takeScreenshot:
+    path: "maestro/screenshots/023-audio-item-page"
+
+# CRITICAL ASSERTION: Audio player container must be visible with testID
+# This will FAIL if AudioPlayer component lacks testID="audio-player-container"
+- extendedWaitUntil:
+    visible:
+      id: "audio-player-container"
+    timeout: 10000
+
+- assertVisible:
+    id: "audio-player-container"
+
+# Verify play button is accessible via testID
+- assertVisible:
+    id: "audio-play-button"
+
+# Verify time displays are present
+- assertVisible:
+    id: "audio-time-current"
+
+- assertVisible:
+    id: "audio-time-duration"
+
+# Test interaction: tap play button
+- tapOn:
+    id: "audio-play-button"
+
+- waitForAnimationToEnd
+
+- takeScreenshot:
+    path: "maestro/screenshots/023-audio-playing"
+
+# Verify play button changed state (would show pause icon now)
+# The button should still be tappable
+- tapOn:
+    id: "audio-play-button"
+
+- takeScreenshot:
+    path: "maestro/screenshots/023-audio-paused"
+
+# Final verification - player still visible after interactions
+- assertVisible:
+    id: "audio-player-container"

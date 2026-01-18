@@ -118,7 +118,7 @@ export function AudioPlayer({ url, title, artist }: AudioPlayerProps) {
   }, [url, loadAudio]);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="audio-player-container">
       {/* Title and artist */}
       {(title || artist) && (
         <View style={styles.metadata}>
@@ -142,6 +142,7 @@ export function AudioPlayer({ url, title, artist }: AudioPlayerProps) {
           onPress={togglePlayback} 
           style={[styles.playButton, { backgroundColor: primaryColor }]}
           disabled={isLoading}
+          testID="audio-play-button"
         >
           {isLoading ? (
             <ActivityIndicator color="#fff" size="small" />
@@ -158,8 +159,8 @@ export function AudioPlayer({ url, title, artist }: AudioPlayerProps) {
         <View style={styles.progressSection}>
           {/* Time display */}
           <View style={styles.timeRow}>
-            <Text style={styles.timeText}>{formatTime(position)}</Text>
-            <Text style={styles.timeText}>{formatTime(duration)}</Text>
+            <Text style={styles.timeText} testID="audio-time-current">{formatTime(position)}</Text>
+            <Text style={styles.timeText} testID="audio-time-duration">{formatTime(duration)}</Text>
           </View>
           
           {/* Slider */}

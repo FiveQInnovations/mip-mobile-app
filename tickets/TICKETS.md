@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [023](023-audio-player-component.md) - Audio Player Component
+(none)
 
 ## In Progress
-(none)
+- [023](023-audio-player-component.md) - Audio Player Component
 
 ## Backlog
 
