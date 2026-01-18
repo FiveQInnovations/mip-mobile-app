@@ -347,7 +347,7 @@ export function TabScreen({ uuid }: TabScreenProps) {
                     activeOpacity={0.7}
                     testID={`collection-item-${index}`}
                   >
-                    <View style={styles.collectionItemContent}>
+                    <View style={styles.collectionItemContent} pointerEvents="none">
                       <Text style={styles.collectionItemTitle}>
                         {child.title || child.type || 'Untitled'}
                       </Text>
@@ -357,7 +357,7 @@ export function TabScreen({ uuid }: TabScreenProps) {
                         </Text>
                       )}
                     </View>
-                    <Text style={styles.collectionChevron}>›</Text>
+                    <Text style={styles.collectionChevron} pointerEvents="none">›</Text>
                   </TouchableOpacity>
                   );
                 })}
