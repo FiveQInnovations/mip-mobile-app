@@ -298,37 +298,43 @@ export function TabScreen({ uuid }: TabScreenProps) {
                 <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>
                   {currentPageData.children.length} Items
                 </Text>
-                {currentPageData.children.map((child: any, index: number) => (
+                {currentPageData.children.map((child: any, index: number) => {
+                  const handlePress = () => {
+                    console.log('[TabScreen] Item pressed:', child.title);
+                    if (child.uuid) {
+                      console.log('[TabScreen] Navigating to UUID:', child.uuid);
+                      navigateToPage(child.uuid);
+                    } else {
+                      console.error('[TabScreen] No UUID for collection item:', child.title);
+                    }
+                  };
+                  
+                  return (
                   <Pressable
                     key={child.uuid || index}
                     style={({pressed}) => [
                       styles.collectionItem,
                       dynamicStyles.collectionItem,
-                      pressed && { opacity: 0.7 }
+                      pressed && { opacity: 0.5, backgroundColor: '#f0f0f0' }
                     ]}
-                    onPress={() => {
-                      if (child.uuid) {
-                        navigateToPage(child.uuid);
-                      } else {
-                        console.error('[TabScreen] No UUID for collection item:', child.title);
-                      }
-                    }}
-                    accessibilityRole="button"
-                    testID={`collection-item-${child.title}`}
+                    onPress={handlePress}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    testID={`collection-item-${index}`}
                   >
-                    <View style={styles.collectionItemContent}>
-                      <Text style={styles.collectionItemTitle}>
+                    <View style={styles.collectionItemContent} pointerEvents="none">
+                      <Text style={styles.collectionItemTitle} pointerEvents="none">
                         {child.title || child.type || 'Untitled'}
                       </Text>
                       {child.description && (
-                        <Text style={styles.collectionItemDescription} numberOfLines={2}>
+                        <Text style={styles.collectionItemDescription} numberOfLines={2} pointerEvents="none">
                           {child.description}
                         </Text>
                       )}
                     </View>
-                    <Text style={styles.collectionChevron}>›</Text>
+                    <Text style={styles.collectionChevron} pointerEvents="none">›</Text>
                   </Pressable>
-                ))}
+                  );
+                })}
               </View>
             ) : (
               <Text style={styles.emptyText}>No items in this collection</Text>
