@@ -9,7 +9,6 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [023](023-audio-player-component.md) - Audio Player Component
-- [078](078-content-page-design-improvements.md) - Content Page Visual Design Improvements
 - [083](083-audio-sermons-collection-integration.md) - Audio Sermons Collection Integration
 
 ## In Progress
@@ -111,6 +110,7 @@ Quick reference for active tasks. See individual files for details.
 - [073](073-reduce-tab-bar-4-tabs.md) - Fix Tab Bar - Reduce to 4 Tabs
 - [074](074-scrollable-cards-indicators.md) - Scrollable Cards - Add Scroll Indicators
 - [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
+- [078](078-content-page-design-improvements.md) - Content Page Visual Design Improvements
 - [079](079-trivial-test-card-radius.md) - Untitled
 - [079](done/079-trivial-test-card-radius.md) - Untitled
 - [080](080-trivial-test-search-placeholder.md) - Untitled
