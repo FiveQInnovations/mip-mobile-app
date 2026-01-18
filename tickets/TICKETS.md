@@ -12,6 +12,7 @@ Quick reference for active tasks. See individual files for details.
 
 ## In Progress
 - [023](023-audio-player-component.md) - Audio Player Component
+- [087](087-collection-item-navigation-broken.md) - Collection Item Navigation Broken
 
 ## Backlog
 

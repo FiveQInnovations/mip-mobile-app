@@ -302,8 +302,16 @@ export function TabScreen({ uuid }: TabScreenProps) {
                   <TouchableOpacity
                     key={index}
                     style={[styles.collectionItem, dynamicStyles.collectionItem]}
-                    onPress={() => navigateToPage(child.uuid)}
+                    onPress={() => {
+                      console.log('[TabScreen] Collection item tapped:', { 
+                        title: child.title, 
+                        uuid: child.uuid,
+                        fullChild: JSON.stringify(child, null, 2)
+                      });
+                      navigateToPage(child.uuid);
+                    }}
                     accessibilityRole="button"
+                    activeOpacity={0.7}
                   >
                     <View style={styles.collectionItemContent}>
                       <Text style={styles.collectionItemTitle}>
