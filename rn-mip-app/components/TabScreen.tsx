@@ -298,7 +298,20 @@ export function TabScreen({ uuid }: TabScreenProps) {
                 <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>
                   {currentPageData.children.length} Items
                 </Text>
-                {currentPageData.children.map((child: any, index: number) => (
+                {(() => {
+                  console.log('[TabScreen] Rendering collection children:', JSON.stringify(currentPageData.children, null, 2));
+                  return null;
+                })()}
+                {currentPageData.children.map((child: any, index: number) => {
+                  const childUuid = child.uuid || child.id || null;
+                  console.log('[TabScreen] Rendering child:', { 
+                    title: child.title, 
+                    uuid: child.uuid,
+                    id: child.id,
+                    childUuid,
+                    keys: Object.keys(child)
+                  });
+                  return (
                   <TouchableOpacity
                     key={index}
                     style={[styles.collectionItem, dynamicStyles.collectionItem]}
@@ -306,12 +319,20 @@ export function TabScreen({ uuid }: TabScreenProps) {
                       console.log('[TabScreen] Collection item tapped:', { 
                         title: child.title, 
                         uuid: child.uuid,
+                        id: child.id,
+                        childUuid,
                         fullChild: JSON.stringify(child, null, 2)
                       });
-                      navigateToPage(child.uuid);
+                      if (childUuid) {
+                        console.log('[TabScreen] Navigating to:', childUuid);
+                        navigateToPage(childUuid);
+                      } else {
+                        console.error('[TabScreen] Cannot navigate - no UUID found for child:', child);
+                      }
                     }}
                     accessibilityRole="button"
                     activeOpacity={0.7}
+                    testID={`collection-item-${index}`}
                   >
                     <View style={styles.collectionItemContent}>
                       <Text style={styles.collectionItemTitle}>
@@ -325,7 +346,8 @@ export function TabScreen({ uuid }: TabScreenProps) {
                     </View>
                     <Text style={styles.collectionChevron}>›</Text>
                   </TouchableOpacity>
-                ))}
+                  );
+                })}
               </View>
             ) : (
               <Text style={styles.emptyText}>No items in this collection</Text>
