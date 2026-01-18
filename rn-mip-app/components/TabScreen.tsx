@@ -304,11 +304,13 @@ export function TabScreen({ uuid }: TabScreenProps) {
                 })()}
                 {currentPageData.children.map((child: any, index: number) => {
                   const childUuid = child.uuid || child.id || null;
+                  const isValidUuid = childUuid && childUuid.trim() !== '';
                   console.log('[TabScreen] Rendering child:', { 
                     title: child.title, 
                     uuid: child.uuid,
                     id: child.id,
                     childUuid,
+                    isValidUuid,
                     keys: Object.keys(child)
                   });
                   return (
@@ -316,24 +318,30 @@ export function TabScreen({ uuid }: TabScreenProps) {
                     key={index}
                     style={[styles.collectionItem, dynamicStyles.collectionItem]}
                     onPress={() => {
-                      console.log('[TabScreen] Collection item tapped:', { 
-                        title: child.title, 
-                        uuid: child.uuid,
-                        id: child.id,
-                        childUuid,
-                        fullChild: JSON.stringify(child, null, 2)
-                      });
-                      if (childUuid) {
-                        console.log('[TabScreen] Navigating to:', childUuid);
-                        navigateToPage(childUuid);
-                      } else {
-                        console.error('[TabScreen] Cannot navigate - no UUID found for child:', child);
-                        Alert.alert(
-                          'Debug: No UUID',
-                          `Cannot navigate - no UUID found.\nTitle: ${child.title}\nKeys: ${Object.keys(child).join(', ')}`,
-                          [{ text: 'OK' }]
-                        );
-                      }
+                      Alert.alert(
+                        'Debug: Tap Fired!',
+                        `Tap detected!\nTitle: ${child.title}\nUUID: ${child.uuid || 'undefined'}\nID: ${child.id || 'undefined'}\nchildUuid: ${childUuid || 'null'}\nValid: ${isValidUuid}\nKeys: ${Object.keys(child).join(', ')}`,
+                        [{ text: 'OK', onPress: () => {
+                          console.log('[TabScreen] Collection item tapped:', { 
+                            title: child.title, 
+                            uuid: child.uuid,
+                            id: child.id,
+                            childUuid,
+                            fullChild: JSON.stringify(child, null, 2)
+                          });
+                          if (isValidUuid) {
+                            console.log('[TabScreen] Navigating to:', childUuid);
+                            navigateToPage(childUuid);
+                          } else {
+                            console.error('[TabScreen] Cannot navigate - no valid UUID found for child:', child);
+                            Alert.alert(
+                              'Error: No Valid UUID',
+                              `Cannot navigate - no valid UUID found.\nTitle: ${child.title}`,
+                              [{ text: 'OK' }]
+                            );
+                          }
+                        }}]
+                      );
                     }}
                     accessibilityRole="button"
                     activeOpacity={0.7}
