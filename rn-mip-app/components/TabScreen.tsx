@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import { getPageWithCache, PageData } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
@@ -328,6 +328,11 @@ export function TabScreen({ uuid }: TabScreenProps) {
                         navigateToPage(childUuid);
                       } else {
                         console.error('[TabScreen] Cannot navigate - no UUID found for child:', child);
+                        Alert.alert(
+                          'Debug: No UUID',
+                          `Cannot navigate - no UUID found.\nTitle: ${child.title}\nKeys: ${Object.keys(child).join(', ')}`,
+                          [{ text: 'OK' }]
+                        );
                       }
                     }}
                     accessibilityRole="button"
