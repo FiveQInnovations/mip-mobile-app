@@ -8,8 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [087](087-collection-item-navigation-broken.md) - Collection Item Navigation Broken
-- [088](088-refactor-page-screen-components.md) - Refactor PageScreen/TabScreen Shared Logic
+(none)
 
 ## In Progress
 - [023](023-audio-player-component.md) - Audio Player Component
@@ -122,6 +121,8 @@ Quick reference for active tasks. See individual files for details.
 - [083](083-audio-sermons-collection-integration.md) - Audio Sermons Collection Integration
 - [085](085-about-tab-buttons-layout.md) - About Tab Buttons Layout Issue - Side-by-Side Buttons Not Readable
 - [086](086-prayer-request-button-wrong-page.md) - Prayer Request Button Should Open Form in Browser - Page Shows Text But No Form Link
+- [087](087-collection-item-navigation-broken.md) - Collection Item Navigation Broken
+- [088](088-refactor-page-screen-components.md) - Refactor PageScreen/TabScreen Shared Logic
 
 ---
 
