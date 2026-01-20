@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
 import { getPage, PageData } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
@@ -14,6 +15,7 @@ export function PageScreen({ uuid }: PageScreenProps) {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<Error | null>(null);
   const config = getConfig();
+  const router = useRouter();
 
   React.useEffect(() => {
     loadPage();
@@ -78,11 +80,28 @@ export function PageScreen({ uuid }: PageScreenProps) {
             <View>
               <Text style={styles.sectionTitle}>Collection Items</Text>
               {pageData.children.map((child: any, index: number) => (
-                <View key={index} style={styles.collectionItem}>
+                <Pressable
+                  key={child.uuid || index}
+                  style={({pressed}) => [
+                    styles.collectionItem,
+                    pressed && { opacity: 0.5, backgroundColor: '#f0f0f0' }
+                  ]}
+                  onPress={() => {
+                    if (child.uuid) {
+                      router.push(`/page/${child.uuid}`);
+                    }
+                  }}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  testID={`collection-item-${index}`}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel={child.title || child.type || 'Untitled'}
+                  accessibilityHint="Tap to view details"
+                >
                   <Text style={styles.collectionItemTitle}>
                     {child.title || child.type || 'Untitled'}
                   </Text>
-                </View>
+                </Pressable>
               ))}
             </View>
           ) : (
