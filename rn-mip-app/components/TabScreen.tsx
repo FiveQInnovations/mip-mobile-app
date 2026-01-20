@@ -300,23 +300,14 @@ export function TabScreen({ uuid }: TabScreenProps) {
                 </Text>
                 {currentPageData.children.map((child: any, index: number) => {
                   const handlePress = () => {
-                    console.log('===================');
-                    console.log('[TabScreen] COLLECTION ITEM PRESSED');
-                    console.log('[TabScreen] Title:', child.title);
-                    console.log('[TabScreen] UUID:', child.uuid);
-                    console.log('[TabScreen] Full child object:', JSON.stringify(child, null, 2));
-                    console.log('===================');
-                    
-                    // Show alert to confirm press is detected
-                    Alert.alert('Item Pressed', `Title: ${child.title}\nUUID: ${child.uuid || 'MISSING'}`);
+                    console.log('[TabScreen] PRESSED:', child.title, 'UUID:', child.uuid);
                     
                     if (child.uuid) {
-                      console.log('[TabScreen] Calling navigateToPage with UUID:', child.uuid);
+                      console.log('[TabScreen] Navigating to:', child.uuid);
                       navigateToPage(child.uuid);
-                      console.log('[TabScreen] navigateToPage called');
                     } else {
-                      console.error('[TabScreen] ERROR: No UUID for collection item:', child.title);
-                      Alert.alert('Navigation Error', 'This item has no UUID and cannot be opened.');
+                      console.error('[TabScreen] NO UUID for:', child.title);
+                      Alert.alert('Error', `No UUID for "${child.title}"`);
                     }
                   };
                   
@@ -345,6 +336,10 @@ export function TabScreen({ uuid }: TabScreenProps) {
                           {child.description}
                         </Text>
                       )}
+                      {/* DEBUG: Show UUID */}
+                      <Text style={{ fontSize: 10, color: child.uuid ? 'green' : 'red', marginTop: 4 }} accessible={false}>
+                        UUID: {child.uuid || 'MISSING'}
+                      </Text>
                     </View>
                     <Text style={styles.collectionChevron} accessible={false}>›</Text>
                   </Pressable>
