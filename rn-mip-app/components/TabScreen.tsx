@@ -300,12 +300,23 @@ export function TabScreen({ uuid }: TabScreenProps) {
                 </Text>
                 {currentPageData.children.map((child: any, index: number) => {
                   const handlePress = () => {
-                    console.log('[TabScreen] Item pressed:', child.title);
+                    console.log('===================');
+                    console.log('[TabScreen] COLLECTION ITEM PRESSED');
+                    console.log('[TabScreen] Title:', child.title);
+                    console.log('[TabScreen] UUID:', child.uuid);
+                    console.log('[TabScreen] Full child object:', JSON.stringify(child, null, 2));
+                    console.log('===================');
+                    
+                    // Show alert to confirm press is detected
+                    Alert.alert('Item Pressed', `Title: ${child.title}\nUUID: ${child.uuid || 'MISSING'}`);
+                    
                     if (child.uuid) {
-                      console.log('[TabScreen] Navigating to UUID:', child.uuid);
+                      console.log('[TabScreen] Calling navigateToPage with UUID:', child.uuid);
                       navigateToPage(child.uuid);
+                      console.log('[TabScreen] navigateToPage called');
                     } else {
-                      console.error('[TabScreen] No UUID for collection item:', child.title);
+                      console.error('[TabScreen] ERROR: No UUID for collection item:', child.title);
+                      Alert.alert('Navigation Error', 'This item has no UUID and cannot be opened.');
                     }
                   };
                   
