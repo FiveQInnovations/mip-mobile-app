@@ -300,7 +300,7 @@ export function TabScreen({ uuid }: TabScreenProps) {
             {currentPageData.children && currentPageData.children.length > 0 ? (
               <View>
                 <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>
-                  {currentPageData.children.length} Items
+                  🔥 BUILD PROOF: {currentPageData.children.length} Items 🔥
                 </Text>
                 {currentPageData.children.map((child: any, index: number) => {
                   const handlePress = () => {
