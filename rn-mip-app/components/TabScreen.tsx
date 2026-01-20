@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Alert, Pressable } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Pressable } from 'react-native';
 import { getPageWithCache, PageData } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
@@ -300,18 +300,12 @@ export function TabScreen({ uuid }: TabScreenProps) {
             {currentPageData.children && currentPageData.children.length > 0 ? (
               <View>
                 <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>
-                  🔥 BUILD PROOF: {currentPageData.children.length} Items 🔥
+                  {currentPageData.children.length} Items
                 </Text>
                 {currentPageData.children.map((child: any, index: number) => {
                   const handlePress = () => {
-                    console.log('[TabScreen] PRESSED:', child.title, 'UUID:', child.uuid);
-                    
                     if (child.uuid) {
-                      console.log('[TabScreen] Navigating to:', child.uuid);
                       navigateToPage(child.uuid);
-                    } else {
-                      console.error('[TabScreen] NO UUID for:', child.title);
-                      Alert.alert('Error', `No UUID for "${child.title}"`);
                     }
                   };
                   
@@ -333,16 +327,13 @@ export function TabScreen({ uuid }: TabScreenProps) {
                     >
                       <View style={styles.collectionItemContent}>
                         <Text style={styles.collectionItemTitle}>
-                          {child.title || child.type || 'Untitled'} {child.uuid ? '✅' : '❌NO UUID'}
+                          {child.title || child.type || 'Untitled'}
                         </Text>
                         {child.description && (
                           <Text style={styles.collectionItemDescription} numberOfLines={3}>
                             {child.description}
                           </Text>
                         )}
-                        <Text style={{ fontSize: 12, color: '#666', marginTop: 4 }}>
-                          UUID: {child.uuid ? child.uuid.substring(0, 30) + '...' : 'MISSING'}
-                        </Text>
                       </View>
                       <Text style={styles.collectionChevron}>›</Text>
                     </Pressable>
