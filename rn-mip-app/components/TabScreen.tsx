@@ -324,19 +324,18 @@ export function TabScreen({ uuid }: TabScreenProps) {
                     accessibilityRole="button"
                     accessibilityLabel={child.title || child.type || 'Untitled'}
                     accessibilityHint="Tap to view details"
-                    importantForAccessibility="yes"
                   >
-                    <View style={styles.collectionItemContent} importantForAccessibility="no-hide-descendants">
-                      <Text style={styles.collectionItemTitle}>
+                    <View style={styles.collectionItemContent} accessible={false}>
+                      <Text style={styles.collectionItemTitle} accessible={false}>
                         {child.title || child.type || 'Untitled'}
                       </Text>
                       {child.description && (
-                        <Text style={styles.collectionItemDescription} numberOfLines={2}>
+                        <Text style={styles.collectionItemDescription} numberOfLines={2} accessible={false}>
                           {child.description}
                         </Text>
                       )}
                     </View>
-                    <Text style={styles.collectionChevron}>›</Text>
+                    <Text style={styles.collectionChevron} accessible={false}>›</Text>
                   </Pressable>
                   );
                 })}
