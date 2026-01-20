@@ -320,6 +320,10 @@ export function TabScreen({ uuid }: TabScreenProps) {
                     onPress={handlePress}
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     testID={`collection-item-${index}`}
+                    accessible={true}
+                    accessibilityRole="button"
+                    accessibilityLabel={child.title || child.type || 'Untitled'}
+                    accessibilityHint="Tap to view details"
                   >
                     <View style={styles.collectionItemContent} pointerEvents="none">
                       <Text style={styles.collectionItemTitle} pointerEvents="none">
