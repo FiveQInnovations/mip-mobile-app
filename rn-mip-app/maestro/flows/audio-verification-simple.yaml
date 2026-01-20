@@ -67,7 +67,6 @@ appId: com.fiveq.ffci
 # The collection list view should no longer be visible
 - assertNotVisible:
     text: "Collection Items"
-    optional: true
 
 # Verify the detail page title is visible
 - assertVisible:
