@@ -1,3 +1,12 @@
+/**
+ * PageScreen - Renders page content for Expo Router navigation.
+ * 
+ * Used by: app/page/[uuid].tsx for direct URL navigation
+ * Navigation: Expo Router via router.push() - used by home cards, HTML links
+ * 
+ * Keep feature parity with TabScreen.tsx for collection/audio rendering.
+ * Shared components: CollectionItemList, AudioPlayer
+ */
 import React from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -6,6 +15,7 @@ import { getConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
 import { ErrorScreen } from './ErrorScreen';
 import { AudioPlayer } from './AudioPlayer';
+import { CollectionItemList } from './CollectionItemList';
 
 interface PageScreenProps {
   uuid: string;
@@ -94,37 +104,12 @@ export function PageScreen({ uuid }: PageScreenProps) {
       {/* Collection Type */}
       {pageType === 'collection' && (
         <View style={styles.contentSection}>
-          {pageData.children && pageData.children.length > 0 ? (
-            <View>
-              <Text style={styles.sectionTitle}>Collection Items</Text>
-              {pageData.children.map((child: any, index: number) => (
-                <Pressable
-                  key={child.uuid || index}
-                  style={({pressed}) => [
-                    styles.collectionItem,
-                    pressed && { opacity: 0.5, backgroundColor: '#f0f0f0' }
-                  ]}
-                  onPress={() => {
-                    if (child.uuid) {
-                      router.push(`/page/${child.uuid}`);
-                    }
-                  }}
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  testID={`collection-item-${index}`}
-                  accessible={true}
-                  accessibilityRole="button"
-                  accessibilityLabel={child.title || child.type || 'Untitled'}
-                  accessibilityHint="Tap to view details"
-                >
-                  <Text style={styles.collectionItemTitle}>
-                    {child.title || child.type || 'Untitled'}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-          ) : (
-            <Text style={styles.emptyText}>No items in this collection</Text>
-          )}
+          <CollectionItemList 
+            children={pageData.children || []}
+            onNavigate={(uuid) => router.push(`/page/${uuid}`)}
+            primaryColor={config.primaryColor}
+            textColor={config.textColor || '#0f172a'}
+          />
         </View>
       )}
 
@@ -186,29 +171,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: '#333',
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 16,
-    color: '#333',
-  },
-  collectionItem: {
-    padding: 16,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  collectionItemTitle: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#333',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    paddingVertical: 24,
   },
 });
 

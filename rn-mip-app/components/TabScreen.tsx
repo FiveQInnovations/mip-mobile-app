@@ -1,3 +1,12 @@
+/**
+ * TabScreen - Renders page content within TabNavigator context.
+ * 
+ * Used by: TabNavigator for main tab content
+ * Navigation: Internal stack via navigateToPage() - preserves tab context
+ * 
+ * Keep feature parity with PageScreen.tsx for collection/audio rendering.
+ * Shared components: CollectionItemList, AudioPlayer
+ */
 import React from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Pressable } from 'react-native';
 import { getPageWithCache, PageData } from '../lib/api';
@@ -8,6 +17,7 @@ import { ErrorScreen } from './ErrorScreen';
 import { SplashScreen } from './SplashScreen';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AudioPlayer } from './AudioPlayer';
+import { CollectionItemList } from './CollectionItemList';
 
 interface TabScreenProps {
   uuid: string;
@@ -180,12 +190,6 @@ export function TabScreen({ uuid }: TabScreenProps) {
       fontSize: 16,
       fontWeight: '600' as const,
     },
-    sectionTitle: {
-      color: config.textColor || '#0f172a',
-    },
-    collectionItem: {
-      borderLeftColor: config.primaryColor,
-    },
   };
 
   return (
@@ -297,52 +301,12 @@ export function TabScreen({ uuid }: TabScreenProps) {
         {/* Collection Type - Show children */}
         {pageType === 'collection' && (
           <View style={styles.contentSection}>
-            {currentPageData.children && currentPageData.children.length > 0 ? (
-              <View>
-                <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>
-                  {currentPageData.children.length} Items
-                </Text>
-                {currentPageData.children.map((child: any, index: number) => {
-                  const handlePress = () => {
-                    if (child.uuid) {
-                      navigateToPage(child.uuid);
-                    }
-                  };
-                  
-                  return (
-                    <Pressable
-                      key={child.uuid || index}
-                      style={({pressed}) => [
-                        styles.collectionItem,
-                        dynamicStyles.collectionItem,
-                        pressed && { opacity: 0.5, backgroundColor: '#f0f0f0' }
-                      ]}
-                      onPress={handlePress}
-                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                      testID={`collection-item-${index}`}
-                      accessible={true}
-                      accessibilityRole="button"
-                      accessibilityLabel={child.title || child.type || 'Untitled'}
-                      accessibilityHint="Tap to view details"
-                    >
-                      <View style={styles.collectionItemContent}>
-                        <Text style={styles.collectionItemTitle}>
-                          {child.title || child.type || 'Untitled'}
-                        </Text>
-                        {child.description && (
-                          <Text style={styles.collectionItemDescription} numberOfLines={3}>
-                            {child.description}
-                          </Text>
-                        )}
-                      </View>
-                      <Text style={styles.collectionChevron}>›</Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            ) : (
-              <Text style={styles.emptyText}>No items in this collection</Text>
-            )}
+            <CollectionItemList 
+              children={currentPageData.children || []}
+              onNavigate={navigateToPage}
+              primaryColor={config.primaryColor}
+              textColor={config.textColor || '#0f172a'}
+            />
           </View>
         )}
       </ScrollView>
@@ -398,57 +362,6 @@ const styles = StyleSheet.create({
   contentSection: {
     paddingHorizontal: 16,
     paddingTop: 16,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  collectionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    // Removed borderLeftWidth to match new cleaner style
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 3,
-  },
-  collectionItemContent: {
-    flex: 1,
-    paddingRight: 8,
-  },
-  collectionItemTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#0f172a',
-    marginBottom: 2,
-  },
-  collectionItemDescription: {
-    fontSize: 14,
-    color: '#64748b',
-    lineHeight: 20,
-  },
-  collectionChevron: {
-    fontSize: 22,
-    color: '#94a3b8',
-    fontWeight: '300',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#64748b',
-    textAlign: 'center',
-    paddingVertical: 32,
-    fontStyle: 'italic',
   },
   refreshIndicatorContainer: {
     position: 'absolute',
