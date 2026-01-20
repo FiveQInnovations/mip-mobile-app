@@ -151,8 +151,14 @@ export function TabNavigator() {
 
   return (
     <View style={styles.container}>
+      {/* BUILD PROOF BANNER - Remove after debugging */}
+      <View style={{ backgroundColor: '#ff0000', padding: 8, paddingTop: insets.top + 8 }}>
+        <Text style={{ color: '#ffffff', fontWeight: 'bold', textAlign: 'center', fontSize: 16 }}>
+          🔥 BUILD PROOF - JAN 20 2026 🔥
+        </Text>
+      </View>
       {/* Content Area - paddingTop ensures content respects status bar safe area */}
-      <View style={[styles.contentArea, { paddingTop: insets.top }]}>
+      <View style={[styles.contentArea]}>
         {selectedTabUuid === '__home__' ? (
           <HomeScreen 
             siteData={siteData}
