@@ -336,9 +336,16 @@ export function TabScreen({ uuid }: TabScreenProps) {
                           {child.description}
                         </Text>
                       )}
-                      {/* DEBUG: Show UUID */}
-                      <Text style={{ fontSize: 10, color: child.uuid ? 'green' : 'red', marginTop: 4 }} accessible={false}>
-                        UUID: {child.uuid || 'MISSING'}
+                      {/* DEBUG: Show UUID - BIG and VISIBLE */}
+                      <Text style={{ 
+                        fontSize: 14, 
+                        color: child.uuid ? '#00ff00' : '#ff0000', 
+                        marginTop: 8,
+                        fontWeight: 'bold',
+                        backgroundColor: '#000000',
+                        padding: 4
+                      }}>
+                        DEBUG UUID: {child.uuid ? child.uuid.substring(0, 20) : 'MISSING!!!'}
                       </Text>
                     </View>
                     <Text style={styles.collectionChevron} accessible={false}>›</Text>
