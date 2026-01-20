@@ -9,10 +9,10 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [087](087-collection-item-navigation-broken.md) - Collection Item Navigation Broken
+- [088](088-refactor-page-screen-components.md) - Refactor PageScreen/TabScreen Shared Logic
 
 ## In Progress
 - [023](023-audio-player-component.md) - Audio Player Component
-- [088](088-refactor-page-screen-components.md) - Refactor PageScreen/TabScreen Shared Logic
 
 ## Backlog
 
