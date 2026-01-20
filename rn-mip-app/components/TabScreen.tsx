@@ -241,7 +241,11 @@ export function TabScreen({ uuid }: TabScreenProps) {
         </View>
       )}
 
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+      <ScrollView 
+        style={styles.scrollView} 
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* Cover Image */}
         {currentPageData.cover && (
           <Image
@@ -312,36 +316,36 @@ export function TabScreen({ uuid }: TabScreenProps) {
                   };
                   
                   return (
-                  <Pressable
-                    key={child.uuid || index}
-                    style={({pressed}) => [
-                      styles.collectionItem,
-                      dynamicStyles.collectionItem,
-                      pressed && { opacity: 0.5, backgroundColor: '#f0f0f0' }
-                    ]}
-                    onPress={handlePress}
-                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                    testID={`collection-item-${index}`}
-                    accessible={true}
-                    accessibilityRole="button"
-                    accessibilityLabel={child.title || child.type || 'Untitled'}
-                    accessibilityHint="Tap to view details"
-                  >
-                    <View style={styles.collectionItemContent} accessible={false}>
-                      <Text style={styles.collectionItemTitle} accessible={false}>
-                        {child.title || child.type || 'Untitled'} {child.uuid ? '✅' : '❌NO UUID'}
-                      </Text>
-                      {child.description && (
-                        <Text style={styles.collectionItemDescription} numberOfLines={3} accessible={false}>
-                          {child.description}
+                    <Pressable
+                      key={child.uuid || index}
+                      style={({pressed}) => [
+                        styles.collectionItem,
+                        dynamicStyles.collectionItem,
+                        pressed && { opacity: 0.5, backgroundColor: '#f0f0f0' }
+                      ]}
+                      onPress={handlePress}
+                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                      testID={`collection-item-${index}`}
+                      accessible={true}
+                      accessibilityRole="button"
+                      accessibilityLabel={child.title || child.type || 'Untitled'}
+                      accessibilityHint="Tap to view details"
+                    >
+                      <View style={styles.collectionItemContent}>
+                        <Text style={styles.collectionItemTitle}>
+                          {child.title || child.type || 'Untitled'} {child.uuid ? '✅' : '❌NO UUID'}
                         </Text>
-                      )}
-                      <Text style={{ fontSize: 12, color: '#666', marginTop: 4 }}>
-                        UUID: {child.uuid ? child.uuid.substring(0, 30) + '...' : 'MISSING'}
-                      </Text>
-                    </View>
-                    <Text style={styles.collectionChevron} accessible={false}>›</Text>
-                  </Pressable>
+                        {child.description && (
+                          <Text style={styles.collectionItemDescription} numberOfLines={3}>
+                            {child.description}
+                          </Text>
+                        )}
+                        <Text style={{ fontSize: 12, color: '#666', marginTop: 4 }}>
+                          UUID: {child.uuid ? child.uuid.substring(0, 30) + '...' : 'MISSING'}
+                        </Text>
+                      </View>
+                      <Text style={styles.collectionChevron}>›</Text>
+                    </Pressable>
                   );
                 })}
               </View>
