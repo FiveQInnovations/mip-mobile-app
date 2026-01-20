@@ -5,6 +5,7 @@ import { getPage, PageData } from '../lib/api';
 import { getConfig } from '../lib/config';
 import { HTMLContentRenderer } from './HTMLContentRenderer';
 import { ErrorScreen } from './ErrorScreen';
+import { AudioPlayer } from './AudioPlayer';
 
 interface PageScreenProps {
   uuid: string;
@@ -54,6 +55,12 @@ export function PageScreen({ uuid }: PageScreenProps) {
 
   const pageType = pageData.page_type || pageData.type || 'content';
 
+  // Check if this is an audio item with audio content
+  const isAudioItem = pageType === 'collection-item' && pageData.type === 'audio';
+  const audioUrl = pageData.data?.content?.audio_url;
+  const audioTitle = pageData.data?.content?.audio_name || pageData.title;
+  const audioArtist = pageData.data?.content?.audio_credit;
+
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
       {/* Cover Image */}
@@ -67,6 +74,17 @@ export function PageScreen({ uuid }: PageScreenProps) {
 
       {/* Page Title */}
       <Text style={styles.title}>{pageData.title}</Text>
+
+      {/* Audio Player for audio items */}
+      {isAudioItem && audioUrl && (
+        <View style={{ paddingHorizontal: 16 }}>
+          <AudioPlayer 
+            url={audioUrl}
+            title={audioTitle}
+            artist={audioArtist}
+          />
+        </View>
+      )}
 
       {/* Page Content - Render HTML */}
       {pageType === 'content' && pageData.page_content && (
