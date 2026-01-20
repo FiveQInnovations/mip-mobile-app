@@ -1,0 +1,47 @@
+appId: com.fiveq.ffci
+---
+# Debug collection item tap
+
+# Navigate to Audio Sermons
+- scrollUntilVisible:
+    element:
+      text: "Audio Sermons"
+    direction: DOWN
+    timeout: 15000
+
+- tapOn:
+    text: "Audio Sermons"
+
+- waitForAnimationToEnd
+
+# Find and tap collection item
+- scrollUntilVisible:
+    element:
+      text: "God's Power Tools"
+    direction: DOWN
+    timeout: 15000
+
+- takeScreenshot:
+    path: "maestro/screenshots/before-tap"
+
+- tapOn:
+    text: "God's Power Tools"
+
+- waitForAnimationToEnd
+
+- takeScreenshot:
+    path: "maestro/screenshots/after-tap"
+
+# Wait for alert and screenshot it
+- runFlow:
+    when:
+      visible:
+        text: "Item Pressed"
+    commands:
+      - takeScreenshot:
+          path: "maestro/screenshots/alert-dialog"
+      - tapOn:
+          text: "OK"
+      - waitForAnimationToEnd
+      - takeScreenshot:
+          path: "maestro/screenshots/after-alert-dismissed"

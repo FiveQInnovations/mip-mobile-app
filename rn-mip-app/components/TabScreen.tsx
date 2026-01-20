@@ -329,23 +329,15 @@ export function TabScreen({ uuid }: TabScreenProps) {
                   >
                     <View style={styles.collectionItemContent} accessible={false}>
                       <Text style={styles.collectionItemTitle} accessible={false}>
-                        {child.title || child.type || 'Untitled'}
+                        {child.title || child.type || 'Untitled'} {child.uuid ? '✅' : '❌NO UUID'}
                       </Text>
                       {child.description && (
-                        <Text style={styles.collectionItemDescription} numberOfLines={2} accessible={false}>
+                        <Text style={styles.collectionItemDescription} numberOfLines={3} accessible={false}>
                           {child.description}
                         </Text>
                       )}
-                      {/* DEBUG: Show UUID - BIG and VISIBLE */}
-                      <Text style={{ 
-                        fontSize: 14, 
-                        color: child.uuid ? '#00ff00' : '#ff0000', 
-                        marginTop: 8,
-                        fontWeight: 'bold',
-                        backgroundColor: '#000000',
-                        padding: 4
-                      }}>
-                        DEBUG UUID: {child.uuid ? child.uuid.substring(0, 20) : 'MISSING!!!'}
+                      <Text style={{ fontSize: 12, color: '#666', marginTop: 4 }}>
+                        UUID: {child.uuid ? child.uuid.substring(0, 30) + '...' : 'MISSING'}
                       </Text>
                     </View>
                     <Text style={styles.collectionChevron} accessible={false}>›</Text>

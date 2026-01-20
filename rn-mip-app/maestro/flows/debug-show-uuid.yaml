@@ -1,0 +1,25 @@
+appId: com.fiveq.ffci
+---
+# Show collection with UUID debug info
+
+# Navigate to Audio Sermons
+- scrollUntilVisible:
+    element:
+      text: "Audio Sermons"
+    direction: DOWN
+    timeout: 15000
+
+- tapOn:
+    text: "Audio Sermons"
+
+- waitForAnimationToEnd
+
+# Find collection item
+- scrollUntilVisible:
+    element:
+      text: "God's Power Tools"
+    direction: DOWN
+    timeout: 15000
+
+- takeScreenshot:
+    path: "maestro/screenshots/debug-uuid-visible"
