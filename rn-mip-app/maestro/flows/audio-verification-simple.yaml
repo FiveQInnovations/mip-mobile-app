@@ -52,3 +52,27 @@ appId: com.fiveq.ffci
 # If we get here, items loaded successfully - take final screenshot
 - takeScreenshot:
     path: "maestro/screenshots/083-4-sermons-loaded-success"
+
+# Test navigation to detail page (Ticket 087)
+# Tap on "God's Power Tools" to navigate to detail
+- tapOn:
+    text: "God's Power Tools"
+
+- waitForAnimationToEnd
+
+# Wait for detail page to load
+- waitForAnimationToEnd
+
+# ASSERTION: Verify we're on the detail page
+# The collection list view should no longer be visible
+- assertNotVisible:
+    text: "Collection Items"
+    optional: true
+
+# Verify the detail page title is visible
+- assertVisible:
+    text: "God's Power Tools"
+
+# Take screenshot of detail page
+- takeScreenshot:
+    path: "maestro/screenshots/087-5-detail-page"
