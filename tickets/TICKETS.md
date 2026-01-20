@@ -12,6 +12,7 @@ Quick reference for active tasks. See individual files for details.
 
 ## In Progress
 - [023](023-audio-player-component.md) - Audio Player Component
+- [088](088-refactor-page-screen-components.md) - Refactor PageScreen/TabScreen Shared Logic
 
 ## Backlog
 
