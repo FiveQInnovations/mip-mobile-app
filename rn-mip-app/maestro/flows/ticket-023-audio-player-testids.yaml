@@ -42,6 +42,8 @@ appId: com.fiveq.ffci
 - takeScreenshot:
     path: "maestro/screenshots/023-audio-collection"
 
+- waitForAnimationToEnd
+
 # Tap on the audio item to open it
 - tapOn:
     text: "God's Power Tools"
