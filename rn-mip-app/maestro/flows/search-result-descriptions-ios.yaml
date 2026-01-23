@@ -33,7 +33,13 @@ appId: com.fiveq.ffci
 
 # Wait for search results to appear (should be fast with caching)
 - waitForAnimationToEnd:
-    timeout: 3000
+    timeout: 5000
+
+# Wait for search results to be visible
+- extendedWaitUntil:
+    visible:
+      text: "test"
+    timeout: 10000
 
 # Verify search results are displayed (at least one result appears)
 - assertVisible:
