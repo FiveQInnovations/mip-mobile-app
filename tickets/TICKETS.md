@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [023](023-audio-player-component.md) - Audio Player Component
 
 ## In Progress
-- [023](023-audio-player-component.md) - Audio Player Component
+- [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
 
 ## Backlog
 
@@ -90,7 +90,6 @@ Quick reference for active tasks. See individual files for details.
 - [054](054-internal-page-back-navigation.md) - Internal Page Back Navigation Not Working
 - [055](055-quick-tasks-in-app-alternatives.md) - Quick Tasks In-App Alternatives
 - [056](056-homepage-featured-section-content.md) - Homepage Featured Section Content
-- [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
 - [058](058-tab-icons.md) - Add Icons to Each Tab
 - [059](059-internal-page-visual-design.md) - Internal Page Visual Design Improvements
 - [060](060-android-release-exploratory-testing.md) - Android Release Build Exploratory Testing

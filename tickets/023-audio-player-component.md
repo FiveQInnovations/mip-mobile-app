@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: qa
 area: rn-mip-app
 phase: c4i
 created: 2026-01-02
@@ -17,8 +17,8 @@ The spec requires an audio player with controls for podcast and audio content. C
 - [x] Handle audio URLs from collection items
 - [x] Add loading states and error handling
 - [x] Add testIDs for Maestro testing
-- [ ] Test on iOS and Android devices
-- [ ] Verify via Maestro test (BLOCKED by ticket 087)
+- [x] Test on iOS and Android devices
+- [x] Verify via Maestro test (ticket 087 resolved, test passes)
 
 ## Implementation Status
 
@@ -28,9 +28,10 @@ The spec requires an audio player with controls for podcast and audio content. C
 - Includes play/pause, seek slider, time display
 - testIDs added: `audio-player-container`, `audio-play-button`, `audio-time-current`, `audio-time-duration`
 
-### Blocked:
-- **Cannot verify AudioPlayer via Maestro** - Collection item navigation is broken (ticket 087)
-- The test navigates to Audio Sermons → God's Power Tools, but tapping the collection item doesn't navigate to the detail page where AudioPlayer would render
+### Verified:
+- **Maestro test passes** - Audio player renders correctly and playback controls work
+- API fix deployed to resolve audio file URLs from Kirby CMS
+- Test: `maestro/flows/ticket-023-audio-player-testids.yaml`
 
 ### Maestro Test:
 - Test file: `maestro/flows/ticket-023-audio-player-testids.yaml`
