@@ -18,6 +18,12 @@ appId: com.fiveq.ffci
 # Wait for search screen to appear
 - waitForAnimationToEnd
 
+# Wait for search input to be visible and focused
+- extendedWaitUntil:
+    visible:
+      text: "Search..."
+    timeout: 10000
+
 # Verify search input is visible and focused
 - assertVisible:
     text: "Search..."
