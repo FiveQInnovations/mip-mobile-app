@@ -12,13 +12,12 @@ Quick reference for active tasks. See individual files for details.
 - [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
 
 ## In Progress
-(none)
+- [084](084-icon-management-website.md) - Icon Management in Website (No Upload Required)
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
-- [084](084-icon-management-website.md) - Icon Management in Website (No Upload Required)
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access

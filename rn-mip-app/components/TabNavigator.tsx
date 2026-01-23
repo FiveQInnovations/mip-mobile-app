@@ -30,6 +30,59 @@ const TAB_ICONS: Record<string, { filled: keyof typeof Ionicons.glyphMap; outlin
 // Fallback icon for tabs not in the mapping
 const DEFAULT_ICON = { filled: 'ellipse' as keyof typeof Ionicons.glyphMap, outline: 'ellipse-outline' as keyof typeof Ionicons.glyphMap };
 
+/**
+ * Get icon configuration for a menu item
+ * Priority: API icon > TAB_ICONS mapping > DEFAULT_ICON
+ */
+function getIconForMenuItem(item: MenuItem): { filled: keyof typeof Ionicons.glyphMap; outline: keyof typeof Ionicons.glyphMap } {
+  // If API provides an icon, use it
+  if (item.icon) {
+    const iconName = item.icon;
+    
+    // Check if icon name ends with -outline
+    if (iconName.endsWith('-outline')) {
+      // Use the outline version for unselected, and the base name for selected
+      const baseName = iconName.replace('-outline', '');
+      
+      // Verify both icons exist in Ionicons
+      if (baseName in Ionicons.glyphMap && iconName in Ionicons.glyphMap) {
+        return {
+          filled: baseName as keyof typeof Ionicons.glyphMap,
+          outline: iconName as keyof typeof Ionicons.glyphMap,
+        };
+      }
+    } else {
+      // Icon name doesn't have -outline, append it for unselected state
+      const outlineName = `${iconName}-outline`;
+      
+      // Verify both icons exist in Ionicons
+      if (iconName in Ionicons.glyphMap && outlineName in Ionicons.glyphMap) {
+        return {
+          filled: iconName as keyof typeof Ionicons.glyphMap,
+          outline: outlineName as keyof typeof Ionicons.glyphMap,
+        };
+      }
+      
+      // If only the base icon exists (no outline variant), use it for both states
+      if (iconName in Ionicons.glyphMap) {
+        return {
+          filled: iconName as keyof typeof Ionicons.glyphMap,
+          outline: iconName as keyof typeof Ionicons.glyphMap,
+        };
+      }
+    }
+  }
+  
+  // Fall back to hardcoded mapping
+  const cleanLabel = item.label.trim();
+  if (cleanLabel in TAB_ICONS) {
+    return TAB_ICONS[cleanLabel];
+  }
+  
+  // Final fallback
+  return DEFAULT_ICON;
+}
+
 // Allowed tab labels for bottom navigation (4 tabs total: Home + 3 menu items)
 const ALLOWED_TAB_LABELS = ['Resources', 'Chapters', 'Connect'];
 
@@ -167,8 +220,8 @@ export function TabNavigator() {
       <View style={[styles.tabBar, { paddingBottom: Platform.OS === 'android' ? insets.bottom : 0 }]}>
         {allTabs.map((item: MenuItem, index: number) => {
           const isSelected = selectedTabUuid === item.page.uuid;
-          // Clean label for icon lookup (handle potential trailing spaces or case)
-          const cleanLabel = item.label.trim();
+          // Get icon configuration (API icon > hardcoded mapping > default)
+          const iconConfig = getIconForMenuItem(item);
           
           return (
             <TouchableOpacity
@@ -184,7 +237,7 @@ export function TabNavigator() {
               accessibilityState={{ selected: isSelected }}
             >
               <Ionicons
-                name={(TAB_ICONS[cleanLabel] || DEFAULT_ICON)[isSelected ? 'filled' : 'outline']}
+                name={iconConfig[isSelected ? 'filled' : 'outline']}
                 size={22}
                 color={isSelected ? config.primaryColor : '#666'}
                 style={styles.tabIcon}
