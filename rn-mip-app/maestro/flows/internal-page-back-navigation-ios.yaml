@@ -21,7 +21,6 @@ appId: com.fiveq.ffci
 - scrollUntilVisible:
     element:
       text: "FFC Media Ministry"
-    direction: DOWN
     timeout: 30000
     visibilityPercentage: 50
     centerElement: true
