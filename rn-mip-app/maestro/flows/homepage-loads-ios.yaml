@@ -9,13 +9,22 @@ appId: com.fiveq.ffci
 - runFlow:
     file: "verify-header-renders.yaml"
 
-# Confirm key homepage content renders (NEW LAYOUT: Featured at top, Resources below)
+# Confirm key homepage content renders (NEW LAYOUT: Featured at top, Store, Audio Sermons, Resources below)
 
 # Featured section is now at the top
 - assertVisible:
     text: "Featured"
 
-# Scroll down to Resources section
+# Scroll down to Audio Sermons card (new addition, after Store, before Resources)
+- scrollUntilVisible:
+    element:
+      text: "Audio Sermons"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    text: "Audio Sermons"
+
+# Continue scrolling to Resources section
 - scrollUntilVisible:
     element:
       text: "Resources"
