@@ -26,8 +26,6 @@ appId: com.fiveq.ffci
 - scrollUntilVisible:
     element:
       text: "Audio Sermons"
-    direction: DOWN
-    timeout: 15000
 
 - tapOn:
     text: "Audio Sermons"
