@@ -7,8 +7,8 @@ appId: com.fiveq.ffci
 # Note: App should be launched via xcrun simctl before running this test
 
 # Wait for app to load and verify homepage
-- assertVisible:
-    text: "Home tab"
+- extendedWaitUntil:
+    visible: "Home tab"
     timeout: 10000
 
 # Take screenshot of home screen

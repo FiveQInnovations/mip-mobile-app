@@ -9,9 +9,10 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [023](023-audio-player-component.md) - Audio Player Component
+- [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
 
 ## In Progress
-- [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
+(none)
 
 ## Backlog
 

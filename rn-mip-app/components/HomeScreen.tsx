@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Linking, Alert, Dimensions, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgUri } from 'react-native-svg';
 import { getSiteData, SiteData, MenuItem } from '../lib/api';
 import { getConfig } from '../lib/config';
@@ -14,9 +15,9 @@ interface HomeScreenProps {
 }
 
 // Custom Header Component
-function CustomHeader({ onSearch }: { onSearch: () => void }) {
+function CustomHeader({ onSearch, topInset }: { onSearch: () => void; topInset: number }) {
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { paddingTop: topInset + 12 }]}>
       <View style={styles.headerLeft}>
         <Image 
           source={require('../assets/adaptive-icon.png')} 
@@ -37,6 +38,7 @@ function CustomHeader({ onSearch }: { onSearch: () => void }) {
 export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
   const config = getConfig();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [cacheCleared, setCacheCleared] = React.useState(false);
 
   // State for scroll indicators
@@ -219,6 +221,7 @@ export function HomeScreen({ siteData, onSwitchTab }: HomeScreenProps) {
     <View style={styles.container}>
       <CustomHeader 
         onSearch={() => router.push('/search')}
+        topInset={insets.top}
       />
       
       <ScrollView 
