@@ -94,10 +94,6 @@ export function PageScreen({ uuid }: PageScreenProps) {
             title={audioTitle}
             artist={audioArtist}
           />
-          {/* DEBUG: Show audio URL for verification - remove after testing */}
-          <Text style={{ fontSize: 10, color: '#999', padding: 8 }}>
-            URL: {audioUrl ? audioUrl.substring(0, 50) + '...' : 'NONE'}
-          </Text>
         </View>
       )}
 

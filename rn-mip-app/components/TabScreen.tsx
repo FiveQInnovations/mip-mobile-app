@@ -156,17 +156,6 @@ export function TabScreen({ uuid }: TabScreenProps) {
   const audioUrl = currentPageData.data?.audio?.audio_url || currentPageData.data?.content?.audio_url;
   const audioTitle = currentPageData.data?.audio?.audio_name || currentPageData.data?.content?.audio_name || currentPageData.title;
   const audioArtist = currentPageData.data?.audio?.audio_credit || currentPageData.data?.content?.audio_credit;
-  
-  // Debug log for audio URL
-  if (isAudioItem) {
-    console.log('[TabScreen] Audio item detected:', {
-      audioUrl,
-      audioTitle,
-      audioArtist,
-      hasStructuredAudio: !!currentPageData.data?.audio?.audio_url,
-      hasContentAudio: !!currentPageData.data?.content?.audio_url,
-    });
-  }
 
   // Dynamic styles that use config colors
   const dynamicStyles = {
@@ -302,10 +291,6 @@ export function TabScreen({ uuid }: TabScreenProps) {
               title={audioTitle}
               artist={audioArtist}
             />
-            {/* DEBUG: Show audio URL for verification - remove after testing */}
-            <Text style={{ fontSize: 10, color: '#999', padding: 8 }}>
-              URL: {audioUrl ? audioUrl.substring(0, 50) + '...' : 'NONE'}
-            </Text>
           </View>
         )}
 
