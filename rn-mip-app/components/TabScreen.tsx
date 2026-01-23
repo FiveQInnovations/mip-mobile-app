@@ -152,9 +152,10 @@ export function TabScreen({ uuid }: TabScreenProps) {
 
   // Check if this is an audio item with audio content
   const isAudioItem = pageType === 'collection-item' && currentPageData.type === 'audio';
-  const audioUrl = currentPageData.data?.content?.audio_url;
-  const audioTitle = currentPageData.data?.content?.audio_name || currentPageData.title;
-  const audioArtist = currentPageData.data?.content?.audio_credit;
+  // Read from structured audio data, fallback to content for backward compatibility
+  const audioUrl = currentPageData.data?.audio?.audio_url || currentPageData.data?.content?.audio_url;
+  const audioTitle = currentPageData.data?.audio?.audio_name || currentPageData.data?.content?.audio_name || currentPageData.title;
+  const audioArtist = currentPageData.data?.audio?.audio_credit || currentPageData.data?.content?.audio_credit;
 
   // Dynamic styles that use config colors
   const dynamicStyles = {

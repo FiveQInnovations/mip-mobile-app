@@ -67,9 +67,10 @@ export function PageScreen({ uuid }: PageScreenProps) {
 
   // Check if this is an audio item with audio content
   const isAudioItem = pageType === 'collection-item' && pageData.type === 'audio';
-  const audioUrl = pageData.data?.content?.audio_url;
-  const audioTitle = pageData.data?.content?.audio_name || pageData.title;
-  const audioArtist = pageData.data?.content?.audio_credit;
+  // Read from structured audio data, fallback to content for backward compatibility
+  const audioUrl = pageData.data?.audio?.audio_url || pageData.data?.content?.audio_url;
+  const audioTitle = pageData.data?.audio?.audio_name || pageData.data?.content?.audio_name || pageData.title;
+  const audioArtist = pageData.data?.audio?.audio_credit || pageData.data?.content?.audio_credit;
 
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>

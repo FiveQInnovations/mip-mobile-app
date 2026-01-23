@@ -36,8 +36,50 @@ The spec requires an audio player with controls for podcast and audio content. C
 - Test file: `maestro/flows/ticket-023-audio-player-testids.yaml`
 - Test is correct but fails because navigation to audio item pages is broken
 
+## Research Findings (Scouted)
+
+### Root Cause
+The wsp-mobile plugin's `audio_data()` method in `lib/pages.php` is not implemented (just a `//TODO` stub). The API returns raw CMS content but doesn't resolve Kirby file references to playable URLs.
+
+**API Response (current):**
+```json
+{
+  "audio_source": "file",
+  "audio_file": "- file://xzXoDn8ZyiZFFHgP",
+  "audio_url": ""  // Empty! AudioPlayer gets nothing to play
+}
+```
+
+**Expected:** `audio_url` should contain the resolved URL like `https://ffci.fiveq.dev/media/gods-power-tools/gods-power-tools.mp3`
+
+### Files to Modify
+
+1. **`wsp-mobile/lib/pages.php`** - Line 65-68
+   - Implement `audio_data()` method to resolve file references
+   - Pattern: `$page->audio_file()->toFile()->url()` (see wsp-collections/snippets/media/audio-player.php lines 5-10)
+
+2. **`wsp-mobile/lib/pages.php`** - Line 203-222 (`collection_item_data()`)
+   - Add audio handling similar to video handling on line 211-213
+   - Call `audio_data()` for audio-type items and include `audio_url` in response
+
+### Reference Implementation
+From `wsp-collections/snippets/media/audio-player.php`:
+```php
+if ($page->audio_source() == 'file' && $page->audio_file()->isNotEmpty()) {
+    $audio_file = $page->audio_file()->toFile();
+    $audio_url = $audio_file->url();
+} elseif ($page->audio_source() == 'url' && $page->audio_url()->isNotEmpty()) {
+    $audio_url = $page->audio_url();
+}
+```
+
+### React Native Side (Already Correct)
+- `TabScreen.tsx` line 155: `const audioUrl = currentPageData.data?.content?.audio_url;`
+- `AudioPlayer.tsx`: Correctly uses the URL with Expo AV
+- No changes needed in RN code - issue is backend-only
+
 ## Notes
 - Per spec: "Audio: Audio player with controls"
 - Background playback is nice-to-have for v1, not required
 - Related to Firebase analytics events (audio_play) in ticket 029
-- **BLOCKER**: Ticket 087 must be resolved first
+- Ticket 087 now resolved - navigation works
