@@ -19,8 +19,7 @@ appId: com.fiveq.ffci
 - scrollUntilVisible:
     element:
       text: "Do You Know God?"
-    direction: DOWN
-    timeout: 10000
+    timeout: 15000
 
 - takeScreenshot:
     path: "maestro/screenshots/content-page-rendering-ios"
