@@ -1,0 +1,80 @@
+appId: com.fiveq.ffci
+---
+# Ticket 023: Debug Audio via Connect Tab (Media Resources)
+# 
+# This test navigates via the Connect tab (which currently loads Media Resources)
+# and opens an audio item for faster debugging feedback.
+#
+# NOTE: Due to a Kirby tab sync bug (ticket 092), Media Resources is accessed
+# via the "Connect" tab label as a workaround.
+
+# Ensure we start from home
+- tapOn:
+    text: "Home"
+    optional: true
+
+- waitForAnimationToEnd
+
+# Tap the Connect tab (which loads Media Resources collection)
+- tapOn:
+    text: "Connect"
+
+- waitForAnimationToEnd
+
+# Verify we're on Media Resources (collection should show audio items)
+- takeScreenshot:
+    path: "maestro/screenshots/023-connect-media-resources"
+
+# Wait for collection items to load
+- extendedWaitUntil:
+    visible:
+      text: "God's Power Tools"
+    timeout: 15000
+
+# Verify the collection loaded
+- assertVisible:
+    text: "God's Power Tools"
+
+- takeScreenshot:
+    path: "maestro/screenshots/023-media-resources-collection"
+
+# Tap on an audio item
+- tapOn:
+    text: "God's Power Tools"
+
+- waitForAnimationToEnd
+
+- takeScreenshot:
+    path: "maestro/screenshots/023-audio-item-opened"
+
+# Verify audio player container is visible
+- extendedWaitUntil:
+    visible:
+      id: "audio-player-container"
+    timeout: 10000
+
+- assertVisible:
+    id: "audio-player-container"
+
+# Verify play button is present
+- assertVisible:
+    id: "audio-play-button"
+
+# Verify time displays
+- assertVisible:
+    id: "audio-time-current"
+
+- assertVisible:
+    id: "audio-time-duration"
+
+- takeScreenshot:
+    path: "maestro/screenshots/023-audio-player-ready"
+
+# Test play button tap
+- tapOn:
+    id: "audio-play-button"
+
+- waitForAnimationToEnd
+
+- takeScreenshot:
+    path: "maestro/screenshots/023-audio-after-play-tap"

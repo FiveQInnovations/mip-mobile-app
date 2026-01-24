@@ -48,6 +48,7 @@ Quick reference for active tasks. See individual files for details.
 ### Unassigned
 - [078](078-verification-report.md) - Ticket 078 Verification Report
 - [085](085-button-layout-verification-report.md) - Ticket 085: Button Layout Verification Report
+- [092](092-tab-bar-sync-from-kirby.md) - Ticket 092: Tab Bar Not Syncing New Tabs from Kirby
 
 ## Blocked
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
