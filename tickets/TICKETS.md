@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [093](093-android-home-screen-logo-polish.md) - Android Home Screen Logo Polish
 
 ## In Progress
 (none)
@@ -17,9 +17,6 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
-
-### 🟡 Nice to Have
-- [093](093-android-home-screen-logo-polish.md) - Android Home Screen Logo Polish
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component

@@ -54,7 +54,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalConfiguration
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
 import com.fiveq.ffci.data.api.HomepageFeatured
 import com.fiveq.ffci.data.api.HomepageQuickTask
 import com.fiveq.ffci.data.api.SiteMeta
@@ -73,7 +77,7 @@ fun HomeScreen(
             .background(MaterialTheme.colorScheme.background),
         contentPadding = PaddingValues(bottom = 16.dp)
     ) {
-        // Header with logo (iOS-style: white background, small logo top-left, search top-right)
+        // Header (iOS-style: white background, search top-right)
         item {
             Box(
                 modifier = Modifier
@@ -81,22 +85,6 @@ fun HomeScreen(
                     .background(Color.White)
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
-                // Small logo top-left
-                if (siteMeta.logo != null) {
-                    val logoUrl = if (siteMeta.logo.startsWith("http://") || siteMeta.logo.startsWith("https://")) {
-                        siteMeta.logo
-                    } else {
-                        "https://ffci.fiveq.dev${siteMeta.logo}"
-                    }
-                    AsyncImage(
-                        model = logoUrl,
-                        contentDescription = siteMeta.title,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .align(Alignment.TopStart)
-                    )
-                }
-                
                 // Search icon top-right
                 IconButton(
                     onClick = onSearchClick,
@@ -108,33 +96,73 @@ fun HomeScreen(
                         tint = Color(0xFF0F172A)
                     )
                 }
-                
-                // Main logo centered
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (siteMeta.logo != null) {
-                        val logoUrl = if (siteMeta.logo.startsWith("http://") || siteMeta.logo.startsWith("https://")) {
-                            siteMeta.logo
-                        } else {
-                            "https://ffci.fiveq.dev${siteMeta.logo}"
-                        }
-                        AsyncImage(
-                            model = logoUrl,
-                            contentDescription = siteMeta.title,
-                            modifier = Modifier.size(80.dp)
-                        )
+            }
+        }
+
+        // Logo section (iOS-style: light gray background, centered responsive logo)
+        item {
+            val configuration = LocalConfiguration.current
+            val screenWidthDp = configuration.screenWidthDp.dp
+            
+            // Responsive logo size: 60% of screen width, max 280dp, min 200dp
+            val logoWidth = remember(screenWidthDp) {
+                val calculatedWidth = screenWidthDp * 0.6f
+                calculatedWidth.coerceIn(200.dp, 280.dp)
+            }
+            // Maintain 5:3 aspect ratio (like iOS)
+            val logoHeight = logoWidth * 0.6f
+            
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFFF8FAFC)) // Light gray background matching iOS
+                    .padding(vertical = 20.dp, horizontal = 20.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                if (siteMeta.logo != null) {
+                    val logoUrl = if (siteMeta.logo.startsWith("http://") || siteMeta.logo.startsWith("https://")) {
+                        siteMeta.logo
                     } else {
-                        Text(
-                            text = siteMeta.title,
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = Color(0xFF0F172A),
-                            fontWeight = FontWeight.Bold
-                        )
+                        "https://ffci.fiveq.dev${siteMeta.logo}"
                     }
+                    
+                    // Use SubcomposeAsyncImage for better error handling
+                    SubcomposeAsyncImage(
+                        model = logoUrl,
+                        contentDescription = siteMeta.title,
+                        modifier = Modifier
+                            .width(logoWidth)
+                            .height(logoHeight),
+                        contentScale = ContentScale.Fit // Equivalent to resizeMode="contain"
+                    ) {
+                        when (painter.state) {
+                            is AsyncImagePainter.State.Loading -> {
+                                // Show nothing while loading (no placeholder to avoid red background)
+                            }
+                            is AsyncImagePainter.State.Error -> {
+                                // Fallback to site title if logo fails to load
+                                Text(
+                                    text = siteMeta.title,
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = Color(0xFF0F172A),
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                            else -> {
+                                SubcomposeAsyncImageContent()
+                            }
+                        }
+                    }
+                } else {
+                    // No logo URL - show site title
+                    Text(
+                        text = siteMeta.title,
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = Color(0xFF0F172A),
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         }
