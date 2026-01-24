@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [200](200-ios-resources-page-opens-browser.md) - iOS Resources Page Opens Browser Instead of Rendering HTML
+(none)
 
 ## In Progress
 (none)
@@ -140,6 +140,7 @@ Quick reference for active tasks. See individual files for details.
 - [098](098-android-internal-page-navigation.md) - Android Internal Page Navigation
 - [099](099-android-back-navigation-research.md) - Android Back Navigation Research
 - [100](100-android-app-icon-splash-screen.md) - Android App Icon and Splash Screen
+- [200](200-ios-resources-page-opens-browser.md) - iOS Resources Page Opens Browser Instead of Rendering HTML
 
 ---
 

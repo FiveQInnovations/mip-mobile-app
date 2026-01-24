@@ -16,6 +16,7 @@ struct TabPageView: View {
     @State private var pageData: PageData?
     @State private var isLoading = true
     @State private var error: String?
+    @State private var htmlContentHeight: CGFloat = 200
     
     var currentUuid: String {
         pageStack.isEmpty ? uuid : pageStack.last!
@@ -50,9 +51,10 @@ struct TabPageView: View {
                                     html: htmlContent,
                                     onNavigate: { childUuid in
                                         navigateToPage(uuid: childUuid)
-                                    }
+                                    },
+                                    contentHeight: $htmlContentHeight
                                 )
-                                .frame(minHeight: 200)
+                                .frame(height: htmlContentHeight)
                                 .padding(.horizontal, 0)
                                 .padding(.bottom, 8)
                             }
@@ -102,6 +104,7 @@ struct TabPageView: View {
     private func loadPage(uuid: String) {
         isLoading = true
         error = nil
+        htmlContentHeight = 200  // Reset to default before loading
         
         Task {
             do {

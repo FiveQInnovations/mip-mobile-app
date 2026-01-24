@@ -14,6 +14,13 @@ private let logger = Logger(subsystem: "com.fiveq.ffci", category: "HtmlContent"
 struct HtmlContentView: UIViewRepresentable {
     let html: String
     let onNavigate: ((String) -> Void)?
+    @Binding var contentHeight: CGFloat
+    
+    init(html: String, onNavigate: ((String) -> Void)?, contentHeight: Binding<CGFloat> = .constant(200)) {
+        self.html = html
+        self.onNavigate = onNavigate
+        self._contentHeight = contentHeight
+    }
     
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
@@ -22,6 +29,11 @@ struct HtmlContentView: UIViewRepresentable {
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
         webView.scrollView.isScrollEnabled = false
+        webView.isOpaque = false
+        webView.backgroundColor = .clear
+        
+        context.coordinator.webView = webView
+        context.coordinator.contentHeightBinding = _contentHeight
         
         let styledHtml = wrapHtml(html)
         webView.loadHTMLString(styledHtml, baseURL: URL(string: "https://ffci.fiveq.dev"))
@@ -76,9 +88,22 @@ struct HtmlContentView: UIViewRepresentable {
     
     class Coordinator: NSObject, WKNavigationDelegate {
         let onNavigate: ((String) -> Void)?
+        weak var webView: WKWebView?
+        var contentHeightBinding: Binding<CGFloat>?
         
         init(onNavigate: ((String) -> Void)?) {
             self.onNavigate = onNavigate
+        }
+        
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            // Calculate content height after page loads
+            webView.evaluateJavaScript("document.body.scrollHeight") { [weak self] result, error in
+                if let height = result as? CGFloat, height > 0 {
+                    DispatchQueue.main.async {
+                        self?.contentHeightBinding?.wrappedValue = height
+                    }
+                }
+            }
         }
         
         func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
@@ -88,6 +113,23 @@ struct HtmlContentView: UIViewRepresentable {
             }
             
             let urlString = url.absoluteString
+            let navigationType = navigationAction.navigationType
+            
+            // Allow navigation to baseURL (handles initial load from loadHTMLString)
+            let baseURLString = "https://ffci.fiveq.dev"
+            if urlString == baseURLString || 
+               urlString == "\(baseURLString)/" ||
+               (url.host == "ffci.fiveq.dev" && (url.path.isEmpty || url.path == "/")) {
+                decisionHandler(.allow)
+                return
+            }
+            
+            // Only intercept user-clicked links (.linkActivated)
+            if navigationType != .linkActivated {
+                decisionHandler(.allow)
+                return
+            }
+            
             logger.notice("Link clicked: \(urlString)")
             
             // Check for internal page links (/page/uuid format)
