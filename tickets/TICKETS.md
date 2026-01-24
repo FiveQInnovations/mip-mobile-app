@@ -11,7 +11,7 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-- [201](201-ios-audio-player.md) - iOS Audio Player
+(none)
 
 ## Backlog
 
@@ -142,6 +142,7 @@ Quick reference for active tasks. See individual files for details.
 - [099](099-android-back-navigation-research.md) - Android Back Navigation Research
 - [100](100-android-app-icon-splash-screen.md) - Android App Icon and Splash Screen
 - [200](200-ios-resources-page-opens-browser.md) - iOS Resources Page Opens Browser Instead of Rendering HTML
+- [201](201-ios-audio-player.md) - iOS Audio Player
 
 ---
 

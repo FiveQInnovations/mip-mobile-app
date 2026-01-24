@@ -481,6 +481,85 @@ ios-mip-app/
 
 ---
 
+## Adding New Swift Files
+
+**IMPORTANT:** When creating a new Swift file, you must manually add it to the Xcode project file (`FFCI.xcodeproj/project.pbxproj`) or it won't be compiled.
+
+### Symptoms of Missing File Registration
+
+- Build succeeds but new code doesn't appear in the app
+- Features don't work even though code looks correct
+- No compilation errors, but views/components don't render
+
+### How to Add a New File
+
+#### Option 1: Use Xcode (Recommended)
+
+1. Open the project in Xcode:
+   ```bash
+   open ios-mip-app/FFCI.xcodeproj
+   ```
+
+2. Right-click the `FFCI` folder in the Project Navigator
+3. Select "New File..." → "Swift File"
+4. Name your file (e.g., `AudioPlayerView.swift`)
+5. Make sure "Add to targets: FFCI" is checked
+6. Save the file
+
+#### Option 2: Manual Edit (If Xcode Not Available)
+
+If you create a file manually (e.g., via editor), you must edit `FFCI.xcodeproj/project.pbxproj`:
+
+1. **Generate unique IDs** (24 hex characters):
+   - File reference ID: `A1B2C3D4E5F6A7B8C9D0E1F2`
+   - Build file ID: `A8B9C0D1E2F3A4B5C6D7E8F9`
+
+2. **Add PBXFileReference** (around line 37):
+   ```pbxproj
+   A1B2C3D4E5F6A7B8C9D0E1F2 /* AudioPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/AudioPlayerView.swift; sourceTree = "<group>"; };
+   ```
+
+3. **Add PBXBuildFile** (around line 19):
+   ```pbxproj
+   A8B9C0D1E2F3A4B5C6D7E8F9 /* AudioPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* AudioPlayerView.swift */; };
+   ```
+
+4. **Add to Views group** (around line 83):
+   ```pbxproj
+   A1B2C3D4E5F6A7B8C9D0E1F2 /* AudioPlayerView.swift */,
+   ```
+
+5. **Add to Sources build phase** (around line 179):
+   ```pbxproj
+   A8B9C0D1E2F3A4B5C6D7E8F9 /* AudioPlayerView.swift in Sources */,
+   ```
+
+### Verify File is Registered
+
+After adding a file, verify it's included:
+
+```bash
+# Check if file appears in project
+grep -i "AudioPlayerView" ios-mip-app/FFCI.xcodeproj/project.pbxproj
+
+# Should see at least 3 matches:
+# 1. PBXFileReference
+# 2. PBXBuildFile  
+# 3. In group/Sources list
+```
+
+### Clean Build After Adding Files
+
+After manually editing `project.pbxproj`, always clean and rebuild:
+
+```bash
+cd ios-mip-app
+rm -rf ~/Library/Developer/Xcode/DerivedData/FFCI-*
+xcodebuild -project FFCI.xcodeproj -scheme FFCI clean build
+```
+
+---
+
 ## Troubleshooting
 
 ### Build Fails
@@ -519,6 +598,34 @@ open -a Simulator
 2. **Logger messages**: Use `logger.notice()` or higher for command-line visibility
 3. **Use correct predicate**: `processImagePath CONTAINS "FFCI"` catches all log types
 4. **Check time window**: Use `--last 1m` or appropriate time range
+
+### New Code Not Appearing / Features Not Working
+
+**Symptom:** Build succeeds, but new views/components don't appear or features don't work.
+
+**Cause:** New Swift file wasn't added to Xcode project.
+
+**Solution:**
+
+1. **Check if file is in project:**
+   ```bash
+   grep -i "YourFileName" ios-mip-app/FFCI.xcodeproj/project.pbxproj
+   ```
+
+2. **If missing, add it:**
+   - Open project in Xcode: `open ios-mip-app/FFCI.xcodeproj`
+   - Right-click `FFCI` folder → "Add Files to FFCI..."
+   - Select your Swift file
+   - Ensure "Add to targets: FFCI" is checked
+
+3. **Clean and rebuild:**
+   ```bash
+   cd ios-mip-app
+   rm -rf ~/Library/Developer/Xcode/DerivedData/FFCI-*
+   xcodebuild -project FFCI.xcodeproj -scheme FFCI clean build
+   ```
+
+See [Adding New Swift Files](#adding-new-swift-files) section for detailed instructions.
 
 ---
 

@@ -59,6 +59,16 @@ struct TabPageView: View {
                                 .padding(.bottom, 8)
                             }
                             
+                            // Audio player for audio items
+                            if pageData.isAudioItem, let audioUrl = pageData.audioUrl {
+                                AudioPlayerView(
+                                    url: audioUrl,
+                                    title: pageData.audioTitle,
+                                    artist: pageData.audioArtist
+                                )
+                                .padding(.horizontal, 16)
+                            }
+                            
                             // Collection children
                             if pageData.effectivePageType == "collection",
                                let children = pageData.children, !children.isEmpty {
@@ -113,6 +123,7 @@ struct TabPageView: View {
                     self.pageData = data
                     self.isLoading = false
                     logger.notice("Page loaded: \(data.title), type: \(data.effectivePageType)")
+                    logger.notice("Audio check - isAudioItem: \(data.isAudioItem), audioUrl: \(data.audioUrl ?? "nil")")
                 }
             } catch {
                 await MainActor.run {
