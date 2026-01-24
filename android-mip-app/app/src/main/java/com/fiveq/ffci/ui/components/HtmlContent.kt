@@ -1,8 +1,12 @@
 package com.fiveq.ffci.ui.components
 
+import android.util.Base64
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,6 +18,16 @@ fun HtmlContent(
     onNavigate: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    // Fix images with empty src but valid srcset - extract first URL from srcset
+    val srcsetPattern = Regex("srcset=\"(https?://[^\\s\"]+)")
+    var fixedHtml = html
+
+    srcsetPattern.find(html)?.let { match ->
+        val firstUrl = match.groupValues[1]
+        // Replace empty src="" with the found URL
+        fixedHtml = fixedHtml.replace("src=\"\"", "src=\"$firstUrl\"")
+    }
+
     // Wrap HTML with basic styling
     val styledHtml = """
         <!DOCTYPE html>
@@ -46,6 +60,35 @@ fun HtmlContent(
                     height: auto;
                     border-radius: 8px;
                 }
+                picture {
+                    display: block;
+                    width: 100%;
+                }
+                picture img {
+                    width: 100%;
+                    border-radius: 8px;
+                }
+                ._background {
+                    position: relative;
+                    width: 100%;
+                    min-height: 200px;
+                    margin-bottom: 16px;
+                    border-radius: 8px;
+                    overflow: hidden;
+                }
+                ._background picture {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                }
+                ._background picture img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 0;
+                }
                 ul, ol {
                     padding-left: 24px;
                 }
@@ -61,7 +104,7 @@ fun HtmlContent(
             </style>
         </head>
         <body>
-            $html
+            $fixedHtml
         </body>
         </html>
     """.trimIndent()
@@ -77,6 +120,39 @@ fun HtmlContent(
                 }
 
                 webViewClient = object : WebViewClient() {
+                    private val credentials = Base64.encodeToString(
+                        "fiveq:demo".toByteArray(),
+                        Base64.NO_WRAP
+                    )
+
+                    override fun shouldInterceptRequest(
+                        view: WebView?,
+                        request: WebResourceRequest?
+                    ): WebResourceResponse? {
+                        val url = request?.url?.toString() ?: return null
+
+                        // Add auth headers for ffci.fiveq.dev resources
+                        if (url.contains("ffci.fiveq.dev")) {
+                            try {
+                                val connection = URL(url).openConnection() as HttpsURLConnection
+                                connection.setRequestProperty("Authorization", "Basic $credentials")
+                                connection.connect()
+
+                                val contentType = connection.contentType ?: "image/jpeg"
+                                val mimeType = contentType.split(";")[0]
+
+                                return WebResourceResponse(
+                                    mimeType,
+                                    connection.contentEncoding ?: "UTF-8",
+                                    connection.inputStream
+                                )
+                            } catch (e: Exception) {
+                                return null
+                            }
+                        }
+                        return null
+                    }
+
                     override fun shouldOverrideUrlLoading(
                         view: WebView?,
                         request: WebResourceRequest?
