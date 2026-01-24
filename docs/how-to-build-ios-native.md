@@ -444,6 +444,13 @@ The script will:
 3. Launch the app
 4. Run the Maestro test
 
+#### Run Directly (Explicit iOS Targeting)
+
+```bash
+cd ios-mip-app
+maestro -p ios --udid D9DE6784-CB62-4AC3-A686-4D445A0E7B57 test maestro/flows/homepage-loads-ios.yaml
+```
+
 #### Available Tests
 
 - **`maestro/flows/homepage-loads-ios.yaml`** - Homepage sanity check
@@ -469,6 +476,7 @@ The `run-maestro-ios.sh` script:
 - Uses the standard iPhone 16 simulator (`D9DE6784-CB62-4AC3-A686-4D445A0E7B57`)
 - Handles app installation and launching
 - Kills stale Maestro processes on port 7001
+- Forces Maestro to run on iOS with `-p ios --udid` to avoid Android emulators
 
 ### Troubleshooting Tests
 

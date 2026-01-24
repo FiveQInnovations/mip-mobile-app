@@ -39,24 +39,24 @@ if [ -z "$APP_PATH" ]; then
     exit 1
 fi
 
-# Check if simulator is booted
-BOOTED_SIM=$(xcrun simctl list devices | grep -i "booted" | head -1)
+# Check if the standard simulator is booted
+BOOTED_SIM=$(xcrun simctl list devices | grep "$SIM_ID" | grep -i "booted" || true)
 if [ -z "$BOOTED_SIM" ]; then
-    echo "⚠️  No booted iOS simulator found"
+    echo "⚠️  iPhone 16 simulator not booted: $SIM_ID"
     echo "   Boot simulator $SIM_ID first:"
     echo "   xcrun simctl boot $SIM_ID"
     exit 1
 fi
 
 echo "📱 Installing app on simulator..."
-xcrun simctl install booted "$APP_PATH"
+xcrun simctl install "$SIM_ID" "$APP_PATH"
 
 echo "🚀 Stopping and launching app..."
-xcrun simctl terminate booted "$APP_ID" 2>/dev/null || true
-xcrun simctl launch booted "$APP_ID"
+xcrun simctl terminate "$SIM_ID" "$APP_ID" 2>/dev/null || true
+xcrun simctl launch "$SIM_ID" "$APP_ID"
 
 echo "⏳ Waiting for app to load and UIAutomation to initialize..."
 sleep 5
 
 echo "🧪 Running Maestro test: $TEST_FILE"
-maestro test "$TEST_FILE"
+maestro -p ios --udid "$SIM_ID" test "$TEST_FILE"
