@@ -17,8 +17,6 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
-- [090](090-connect-tab-routing-broken.md) - Connect Tab Routing Shows Chapters Content
-- [091](091-tab-screens-safe-area-insets.md) - Tab Screen Headers Don't Respect Safe Area Insets
 - [094](094-android-search-functionality.md) - Android Search Functionality
 - [096](096-android-prayer-request-form.md) - Android Prayer Request Form
 - [097](097-android-internal-page-styling.md) - Android Internal Page Styling
@@ -129,6 +127,8 @@ Quick reference for active tasks. See individual files for details.
 - [087](087-collection-item-navigation-broken.md) - Collection Item Navigation Broken
 - [088](088-refactor-page-screen-components.md) - Refactor PageScreen/TabScreen Shared Logic
 - [089](089-resources-tab-active-state-styling.md) - Resources Tab Active State Styling Inconsistent
+- [090](090-connect-tab-routing-broken.md) - Connect Tab Routing Shows Chapters Content
+- [091](091-tab-screens-safe-area-insets.md) - Tab Screen Headers Don't Respect Safe Area Insets
 
 ---
 
