@@ -44,12 +44,17 @@ struct TabPageView: View {
                                 .padding(.horizontal, 16)
                                 .padding(.top, 24)
                             
-                            // HTML content (simplified placeholder for now)
+                            // HTML content
                             if let htmlContent = pageData.htmlContent, !htmlContent.isEmpty {
-                                Text(htmlContent)
-                                    .font(.body)
-                                    .padding(.horizontal, 16)
-                                    .padding(.bottom, 8)
+                                HtmlContentView(
+                                    html: htmlContent,
+                                    onNavigate: { childUuid in
+                                        navigateToPage(uuid: childUuid)
+                                    }
+                                )
+                                .frame(minHeight: 200)
+                                .padding(.horizontal, 0)
+                                .padding(.bottom, 8)
                             }
                             
                             // Collection children
