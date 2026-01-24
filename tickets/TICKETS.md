@@ -21,6 +21,8 @@ Quick reference for active tasks. See individual files for details.
 - [202](202-ios-search-functionality.md) - iOS Search Functionality
 - [203](203-ios-page-caching.md) - iOS Page Caching
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
+- [207](207-android-resources-missing-buttons.md) - Resources Page Missing Buttons/Cards
+- [208](208-android-bracket-artifacts.md) - Red Bracket Artifacts in Content
 
 ### 🟡 Nice to Have
 - [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
