@@ -55,10 +55,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.Image
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
+import com.fiveq.ffci.R
 import com.fiveq.ffci.data.api.HomepageFeatured
 import com.fiveq.ffci.data.api.HomepageQuickTask
 import com.fiveq.ffci.data.api.SiteMeta
@@ -77,7 +80,7 @@ fun HomeScreen(
             .background(MaterialTheme.colorScheme.background),
         contentPadding = PaddingValues(bottom = 16.dp)
     ) {
-        // Header (iOS-style: white background, search top-right)
+        // Header (iOS-style: white background, app icon top-left, search top-right)
         item {
             Box(
                 modifier = Modifier
@@ -85,6 +88,16 @@ fun HomeScreen(
                     .background(Color.White)
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
+                // App icon (Maltese cross) top-left - matches RN assets/adaptive-icon.png
+                Image(
+                    painter = painterResource(id = R.drawable.header_logo),
+                    contentDescription = "Firefighters for Christ Logo",
+                    modifier = Modifier
+                        .size(32.dp)
+                        .align(Alignment.TopStart),
+                    contentScale = ContentScale.Fit
+                )
+                
                 // Search icon top-right
                 IconButton(
                     onClick = onSearchClick,

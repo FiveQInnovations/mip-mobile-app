@@ -17,6 +17,10 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
+- [200](200-ios-resources-page-opens-browser.md) - iOS Resources Page Opens Browser Instead of Rendering HTML
+
+### 🟡 Nice to Have
+- [100](100-android-app-icon-splash-screen.md) - Android App Icon and Splash Screen
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
