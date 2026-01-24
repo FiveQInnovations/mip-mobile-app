@@ -110,12 +110,9 @@ private fun MainContent(siteData: SiteData) {
                         onClick = {
                             selectedTabIndex = index
                             navController.navigate(item.route) {
-                                // Pop up to start to avoid building up back stack
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
-                                }
+                                // Clear entire back stack and go to this tab
+                                popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
-                                restoreState = true
                             }
                         },
                         icon = {
