@@ -8,19 +8,17 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [023](023-audio-player-component.md) - Audio Player Component
-- [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
 - [084](084-icon-management-website.md) - Icon Management in Website (No Upload Required)
-- [089](089-resources-tab-active-state-styling.md) - Resources Tab Active State Styling Inconsistent
 
 ## In Progress
-(none)
+- [023](023-audio-player-component.md) - Audio Player Component
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
 - [090](090-connect-tab-routing-broken.md) - Connect Tab Routing Shows Chapters Content
+- [091](091-tab-screens-safe-area-insets.md) - Tab Screen Headers Don't Respect Safe Area Insets
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
@@ -91,6 +89,7 @@ Quick reference for active tasks. See individual files for details.
 - [054](054-internal-page-back-navigation.md) - Internal Page Back Navigation Not Working
 - [055](055-quick-tasks-in-app-alternatives.md) - Quick Tasks In-App Alternatives
 - [056](056-homepage-featured-section-content.md) - Homepage Featured Section Content
+- [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
 - [058](058-tab-icons.md) - Add Icons to Each Tab
 - [059](059-internal-page-visual-design.md) - Internal Page Visual Design Improvements
 - [060](060-android-release-exploratory-testing.md) - Android Release Build Exploratory Testing
@@ -123,6 +122,7 @@ Quick reference for active tasks. See individual files for details.
 - [086](086-prayer-request-button-wrong-page.md) - Prayer Request Button Should Open Form in Browser - Page Shows Text But No Form Link
 - [087](087-collection-item-navigation-broken.md) - Collection Item Navigation Broken
 - [088](088-refactor-page-screen-components.md) - Refactor PageScreen/TabScreen Shared Logic
+- [089](089-resources-tab-active-state-styling.md) - Resources Tab Active State Styling Inconsistent
 
 ---
 

@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: done
 area: rn-mip-app
 phase: core
 created: 2026-01-23
@@ -180,3 +180,30 @@ To:
 
 **Alternative if `bookmarks` doesn't look good:**
 Try `library`, `albums`, `folder`, or `filing` icons - all have clear filled/outline variants in Ionicons.
+
+---
+
+## QA Notes
+
+**Implementation complete.** The icon change from `book` to `bookmarks` successfully resolved the visual distinction issue.
+
+### Commit
+- rn-mip-app: `5c70cb3` - feat(ticket-089): Use bookmarks icon for Resources tab
+
+### Verification Results
+
+| Criteria | Status |
+|----------|--------|
+| Resources shows filled icon when active | ✅ Pass |
+| Resources uses same color as other tabs | ✅ Pass |
+| All tabs have identical active state behavior | ✅ Pass |
+
+### Visual Tester Notes
+
+The visual tester observed an underline on the active Resources tab. **Important context:** This underline appears on ALL active tabs (Home, Resources, Chapters), not just Resources. This means Resources is now **consistent** with other tabs.
+
+The original issue was that Resources showed an outline icon (instead of filled) when active, making it look different from Home and Chapters. That issue is resolved - all tabs now show:
+- **Active:** Filled icon + red color + underline
+- **Inactive:** Outline icon + gray color
+
+If the underline should be removed from all tabs, that would be a separate design decision affecting the entire tab bar (new ticket).
