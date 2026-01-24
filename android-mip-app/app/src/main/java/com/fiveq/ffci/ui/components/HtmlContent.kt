@@ -32,13 +32,16 @@ fun HtmlContent(
 ) {
     // Debug: Log HTML content to check for buttons
     Log.d("HtmlContent", "Received HTML length: ${html.length}")
-    if (html.contains("_button")) {
-        val buttonIndex = html.indexOf("_button")
-        val start = (buttonIndex - 50).coerceAtLeast(0)
-        val end = (buttonIndex + 200).coerceAtMost(html.length)
-        Log.d("HtmlContent", "Found _button in HTML: ${html.substring(start, end)}")
+    val buttonMatches = Regex("class=\"[^\"]*_button[^\"]*\"").findAll(html).toList()
+    if (buttonMatches.isNotEmpty()) {
+        Log.d("HtmlContent", "Found ${buttonMatches.size} button class matches")
+        buttonMatches.take(3).forEach { match ->
+            val start = (match.range.first - 100).coerceAtLeast(0)
+            val end = (match.range.last + 200).coerceAtMost(html.length)
+            Log.d("HtmlContent", "Button HTML sample: ${html.substring(start, end)}")
+        }
     } else {
-        Log.w("HtmlContent", "No _button found in HTML! First 500 chars: ${html.take(500)}")
+        Log.w("HtmlContent", "No _button class found in HTML! First 1000 chars: ${html.take(1000)}")
     }
     
     // Fix images with empty src but valid srcset - extract first URL from srcset
@@ -202,7 +205,10 @@ fun HtmlContent(
                 a[class*="_button-secondary"],
                 a[class*="_button"] {
                     display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
                     width: 100%;
+                    min-height: 56px;
                     padding: 18px 24px;
                     border-radius: 12px;
                     text-align: center;
@@ -210,12 +216,17 @@ fun HtmlContent(
                     font-weight: 500;
                     letter-spacing: 0.5px;
                     text-decoration: none !important;
+                    border-bottom: none !important;
                     box-sizing: border-box;
+                    margin: 8px 0 !important;
+                    position: relative;
+                    z-index: 1;
                 }
                 /* Primary button - red background */
                 a[class*="_button-priority"] {
                     background-color: #D9232A !important;
                     color: white !important;
+                    border: none !important;
                 }
                 /* Secondary button - outline style */
                 a[class*="_button-secondary"] {
@@ -227,6 +238,7 @@ fun HtmlContent(
                 a[class*="_button"]:not([class*="_button-priority"]):not([class*="_button-secondary"]) {
                     background-color: #D9232A !important;
                     color: white !important;
+                    border: none !important;
                 }
                 /* Button span should inherit */
                 a[class*="_button-priority"] span,
@@ -246,10 +258,16 @@ fun HtmlContent(
         modifier = modifier.fillMaxWidth(),
         factory = { context ->
             WebView(context).apply {
+                // Clear WebView cache to ensure fresh content loads
+                clearCache(true)
+                clearHistory()
+                
                 settings.apply {
                     javaScriptEnabled = false
                     loadWithOverviewMode = true
                     useWideViewPort = true
+                    // Disable cache to prevent stale content
+                    cacheMode = android.webkit.WebSettings.LOAD_NO_CACHE
                 }
 
                 webViewClient = object : WebViewClient() {
@@ -385,6 +403,12 @@ fun HtmlContent(
             }
         },
         update = { webView ->
+            // Aggressively clear cache before each update to ensure fresh content
+            webView.clearCache(true)
+            webView.clearHistory()
+            webView.settings.cacheMode = android.webkit.WebSettings.LOAD_NO_CACHE
+            
+            // Load fresh content
             webView.loadDataWithBaseURL(
                 "https://ffci.fiveq.dev",
                 styledHtml,

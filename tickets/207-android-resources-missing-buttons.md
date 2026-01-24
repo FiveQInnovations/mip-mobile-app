@@ -237,3 +237,63 @@ Changed CSS selectors from class selectors to attribute selectors:
 - Verify app was fully rebuilt and reinstalled after CSS changes
 - Check if WebView cache needs clearing
 - Confirm CSS changes are in the installed APK
+
+### WebView Cache Clearing Fix
+
+**Issue:** WebView was caching HTML/CSS content, preventing CSS changes from taking effect.
+
+**Fix Applied:**
+1. Added aggressive cache clearing in WebView initialization:
+   - `clearCache(true)` - clears all cached content
+   - `clearHistory()` - clears navigation history
+   - `cacheMode = LOAD_NO_CACHE` - disables caching entirely
+
+2. Added cache clearing in `update` function to ensure fresh content on each render
+
+**Files Changed:**
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt` - Added cache clearing
+
+### CSS Border Fix
+
+**Issue:** Base `a` tag styles included `border-bottom: 2px solid #D9232A;` which was showing as a red line where buttons should be.
+
+**Fix Applied:**
+- Added `border-bottom: none !important;` to all button styles
+- Added `border: none !important;` to primary buttons
+- Added explicit `margin: 8px 0 !important;` for proper spacing
+
+**Files Changed:**
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt` - Updated button CSS
+
+### Visibility and Rendering Fixes
+
+**Issue:** Buttons might not be visible due to CSS specificity or rendering issues.
+
+**Fix Applied:**
+- Added `visibility: visible !important;`
+- Added `opacity: 1 !important;`
+- Added `min-height: 56px` to ensure buttons have visible area
+- Added `position: relative; z-index: 1;` to ensure proper layering
+
+**Files Changed:**
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt` - Enhanced button CSS
+
+### Improved Debug Logging
+
+**Enhancement:** Added better logging to track button detection in HTML:
+- Logs count of button class matches found
+- Logs sample HTML around each button match
+- Helps verify buttons are in HTML from API
+
+**Files Changed:**
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt` - Improved logging
+
+### Verification Status
+
+**Logs confirm:** Buttons ARE present in HTML from API with correct class attributes (`class=" _button-priority _default"`).
+
+**CSS selectors:** Using attribute selectors `a[class*="_button-priority"]` which correctly match classes with leading spaces.
+
+**All fixes applied:** Cache clearing, border removal, visibility fixes, and improved logging are all in place.
+
+**Next verification:** Take screenshot after full app restart to confirm buttons are now visible.

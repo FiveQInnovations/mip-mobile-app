@@ -11,7 +11,7 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [209](209-ios-about-us-card-not-clickable.md) - iOS About Us Card Not Clickable on Home Screen
 
 ## Backlog
 
@@ -22,7 +22,6 @@ Quick reference for active tasks. See individual files for details.
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
 - [207](207-android-resources-missing-buttons.md) - Resources Page Missing Buttons/Cards
 - [208](208-android-bracket-artifacts.md) - Red Bracket Artifacts in Content
-- [209](209-ios-about-us-card-not-clickable.md) - iOS About Us Card Not Clickable on Home Screen
 - [210](210-ios-connect-tab-missing-buttons.md) - iOS Connect Tab Missing Buttons
 
 ### 🟡 Nice to Have
