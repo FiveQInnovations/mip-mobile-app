@@ -1,3 +1,10 @@
+---
+status: maybe
+area: rn-mip-app
+phase: testing
+created: 2026-01-17
+---
+
 # Ticket 085: Button Layout Verification Report
 
 **Date:** January 17, 2026  

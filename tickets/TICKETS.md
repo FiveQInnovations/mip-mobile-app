@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [023](023-audio-player-component.md) - Audio Player Component
+(none)
 
 ## In Progress
 (none)
@@ -26,7 +26,6 @@ Quick reference for active tasks. See individual files for details.
 - [099](099-android-back-navigation-research.md) - Android Back Navigation Research
 
 ### 🟡 Nice to Have
-- [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
 - [093](093-android-home-screen-logo-polish.md) - Android Home Screen Logo Polish
 - [095](095-android-page-caching.md) - Android Page Caching
 
@@ -48,15 +47,6 @@ Quick reference for active tasks. See individual files for details.
 - [041](041-new-site-guide.md) - Document "Adding a New Site" Step-by-Step Guide
 - [042](042-remove-dev-tools.md) - Remove Dev Tools Section Before Production
 
-### 📋 Testing
-- [033](033-maestro-collection-test.md) - Maestro Test: Collection Grid and Navigation
-- [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
-
-### Unassigned
-- [078](078-verification-report.md) - Ticket 078 Verification Report
-- [085](085-button-layout-verification-report.md) - Ticket 085: Button Layout Verification Report
-- [092](092-tab-bar-sync-from-kirby.md) - Ticket 092: Tab Bar Not Syncing New Tabs from Kirby
-
 ## Blocked
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
@@ -66,6 +56,12 @@ Quick reference for active tasks. See individual files for details.
 
 ## Maybe
 - [013](013-speed-up-eas-android-builds.md) - Speed Up EAS Android Build Time
+- [033](033-maestro-collection-test.md) - Maestro Test: Collection Grid and Navigation
+- [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
+- [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
+- [078](078-verification-report.md) - Ticket 078 Verification Report
+- [085](085-button-layout-verification-report.md) - Ticket 085: Button Layout Verification Report
+- [092](092-tab-bar-sync-from-kirby.md) - Ticket 092: Tab Bar Not Syncing New Tabs from Kirby
 
 ## Done
 - [001](done/001-api-key-auth.md) - Update RN app to use X-API-Key authentication
@@ -83,6 +79,7 @@ Quick reference for active tasks. See individual files for details.
 - [016](016-reliable-android-emulator-local.md) - Prove Android Emulator Reliability with Maestro Testing
 - [017](017-prayer-request-form-handling.md) - Prayer Request Form Handling
 - [018](018-chaplain-request-form-handling.md) - Chaplain Request Form Handling
+- [023](023-audio-player-component.md) - Audio Player Component
 - [032](done/032-maestro-content-page-test.md) - Maestro Test: Content Page Rendering
 - [037](037-error-offline-screen.md) - Error/Offline Screen Design
 - [043](043-svg-logo-support.md) - Fix SVG Logo Support

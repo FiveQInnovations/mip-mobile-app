@@ -1,10 +1,11 @@
-# Ticket 092: Tab Bar Not Syncing New Tabs from Kirby
-
 ---
-status: backlog
+status: maybe
 area: wsp-mobile
-priority: medium
+phase: core
+created: 2026-01-02
 ---
+
+# Ticket 092: Tab Bar Not Syncing New Tabs from Kirby
 
 ## Problem
 
