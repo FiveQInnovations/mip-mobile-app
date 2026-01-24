@@ -78,6 +78,30 @@ fun HomeScreen(
             }
         }
 
+        // Featured section
+        if (!siteMeta.homepageFeatured.isNullOrEmpty()) {
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = "Featured",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
+            items(siteMeta.homepageFeatured!!) { featured ->
+                FeaturedCard(
+                    featured = featured,
+                    onClick = {
+                        featured.uuid?.let { onFeaturedClick(it) }
+                    },
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                )
+            }
+        }
+
         // Quick Tasks section
         if (!siteMeta.homepageQuickTasks.isNullOrEmpty()) {
             item {
@@ -105,30 +129,6 @@ fun HomeScreen(
                         )
                     }
                 }
-            }
-        }
-
-        // Featured section
-        if (!siteMeta.homepageFeatured.isNullOrEmpty()) {
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    text = "Featured",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-
-            items(siteMeta.homepageFeatured!!) { featured ->
-                FeaturedCard(
-                    featured = featured,
-                    onClick = {
-                        featured.uuid?.let { onFeaturedClick(it) }
-                    },
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
-                )
             }
         }
 
