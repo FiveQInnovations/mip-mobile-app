@@ -8,7 +8,8 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [100](100-android-app-icon-splash-screen.md) - Android App Icon and Splash Screen
+- [200](200-ios-resources-page-opens-browser.md) - iOS Resources Page Opens Browser Instead of Rendering HTML
 
 ## In Progress
 (none)
@@ -17,10 +18,10 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
-- [200](200-ios-resources-page-opens-browser.md) - iOS Resources Page Opens Browser Instead of Rendering HTML
-
-### 🟡 Nice to Have
-- [100](100-android-app-icon-splash-screen.md) - Android App Icon and Splash Screen
+- [201](201-ios-audio-player.md) - iOS Audio Player
+- [202](202-ios-search-functionality.md) - iOS Search Functionality
+- [203](203-ios-page-caching.md) - iOS Page Caching
+- [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
