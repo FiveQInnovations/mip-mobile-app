@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: in-progress
 area: wsp-mobile
 phase: core
 created: 2026-01-17
@@ -146,3 +146,18 @@ return [
 - Requires access to Kirby CMS to update blueprint
 - Requires backend API update (`wsp-mobile`)
 - Requires frontend app update (`rn-mip-app`)
+
+## QA Notes
+
+**Implementation complete.** Verified with Maestro tests (5/5 passed) and visual testing.
+
+### Commits
+- wsp-mobile: `98d229b` - feat(ticket-084): Add icon dropdown to mobile menu blueprint and API
+- rn-mip-app: `4c3a6fe` - feat(ticket-084): Use icons from API in mobile app
+
+### Pre-existing Issues Discovered (OUT OF SCOPE)
+During visual testing, the following pre-existing issues were noted:
+1. **Resources tab** uses underline+outline for active state instead of filled icon (inconsistent with Home/Chapters tabs)
+2. **Connect tab** appears to have routing issues (navigates to Chapters content)
+
+These issues existed before ticket 084 and should be tracked separately.

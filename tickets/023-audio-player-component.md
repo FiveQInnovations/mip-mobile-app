@@ -1,5 +1,5 @@
 ---
-status: qa
+status: in-progress
 area: rn-mip-app
 phase: c4i
 created: 2026-01-02
@@ -78,6 +78,10 @@ if ($page->audio_source() == 'file' && $page->audio_file()->isNotEmpty()) {
 - `TabScreen.tsx` line 155: `const audioUrl = currentPageData.data?.content?.audio_url;`
 - `AudioPlayer.tsx`: Correctly uses the URL with Expo AV
 - No changes needed in RN code - issue is backend-only
+
+## Known Issues
+
+**2026-01-23 Regression:** Audio player displays but spinner never resolves - playback not starting. Was working previously. Needs investigation.
 
 ## Notes
 - Per spec: "Audio: Audio player with controls"
