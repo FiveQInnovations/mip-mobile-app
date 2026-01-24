@@ -228,3 +228,12 @@ Changed CSS selectors from class selectors to attribute selectors:
 - `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt` - Updated button CSS selectors
 
 **Status:** Fixed and deployed. Buttons should now render correctly.
+
+### Testing Note
+
+**User report:** After fix deployment, buttons still not visible on Resources page. Possible stale build - app may need full rebuild/reinstall to pick up CSS changes.
+
+**Next steps:**
+- Verify app was fully rebuilt and reinstalled after CSS changes
+- Check if WebView cache needs clearing
+- Confirm CSS changes are in the installed APK
