@@ -157,3 +157,20 @@ The "Do You Know God?" button likely works because it's:
 4. Verify `page_content` HTML contains `<a class="_button">` or `<a class="_button-priority">` tags
 5. Test in Android app - all 6 buttons should render
 6. Test in RN app - verify no regression
+
+### Important Note
+
+**React Native worked fine WITHOUT this code change**, which suggests:
+- React Native's `react-native-render-html` may handle Blocks objects differently
+- Or React Native uses a different code path for button rendering
+- The issue may be Android WebView-specific, not just backend HTML generation
+
+**After deploying `->toHTML()` fix, Android still doesn't render buttons correctly.** This indicates:
+- Possible caching issue (app needs full restart/clear cache)
+- Android WebView may need different HTML structure or CSS
+- Or there's a different root cause specific to Android rendering
+
+**Next steps:**
+- Verify API response actually contains button HTML after fix
+- Check if Android WebView is receiving/rendering the HTML correctly
+- Compare React Native's HTML processing vs Android WebView behavior

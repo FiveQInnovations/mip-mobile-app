@@ -143,3 +143,10 @@ The React Native app expects the same HTML structure:
 **Impact:** This fix will also resolve ticket 207 (missing buttons) since the buttons aren't rendering at all - just showing bracket artifacts instead.
 
 **Testing:** Need to verify on both Android and React Native apps after backend fix is deployed.
+
+### Important Note
+
+**React Native worked fine WITHOUT this code change**, which suggests the issue may be Android WebView-specific. After deploying `->toHTML()` fix, if Android still shows bracket artifacts, investigate:
+- Android WebView's handling of Blocks objects vs React Native's renderer
+- Possible caching issues requiring app restart
+- Different HTML processing between platforms
