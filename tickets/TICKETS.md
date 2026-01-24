@@ -19,9 +19,16 @@ Quick reference for active tasks. See individual files for details.
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
 - [090](090-connect-tab-routing-broken.md) - Connect Tab Routing Shows Chapters Content
 - [091](091-tab-screens-safe-area-insets.md) - Tab Screen Headers Don't Respect Safe Area Insets
+- [094](094-android-search-functionality.md) - Android Search Functionality
+- [096](096-android-prayer-request-form.md) - Android Prayer Request Form
+- [097](097-android-internal-page-styling.md) - Android Internal Page Styling
+- [098](098-android-internal-page-navigation.md) - Android Internal Page Navigation
+- [099](099-android-back-navigation-research.md) - Android Back Navigation Research
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
+- [093](093-android-home-screen-logo-polish.md) - Android Home Screen Logo Polish
+- [095](095-android-page-caching.md) - Android Page Caching
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component

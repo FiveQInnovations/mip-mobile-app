@@ -64,7 +64,8 @@ Why this ticket exists and any relevant background.
 ### area (required)
 | Value | Meaning |
 |-------|---------|
-| `rn-mip-app` | React Native mobile app |
+| `android-mip-app` | Native Android Jetpack Compose app |
+| `rn-mip-app` | React Native mobile app (legacy) |
 | `wsp-mobile` | Kirby plugin for mobile API |
 | `ws-ffci-copy` | Kirby site configuration |
 | `astro-prototype` | Astro PWA prototype |
