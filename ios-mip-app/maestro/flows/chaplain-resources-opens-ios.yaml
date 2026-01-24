@@ -1,0 +1,30 @@
+appId: com.fiveq.ffci
+---
+# Verify Chaplain Resources card opens and shows scripture text
+
+- launchApp
+- waitForAnimationToEnd
+
+# Ensure the homepage card is visible before tapping
+- extendedWaitUntil:
+    visible:
+      text: "Chaplain Resources"
+    timeout: 15000
+
+- tapOn:
+    text: "Chaplain Resources"
+
+- waitForAnimationToEnd
+
+# Capture the page after tap for verification
+- takeScreenshot:
+    path: "maestro/screenshots/chaplain-resources-after-tap"
+
+# Expect scripture text on the destination page (partial matches are OK)
+- extendedWaitUntil:
+    visible:
+      text: "brokenhearted"
+    timeout: 8000
+
+- assertVisible:
+    text: "Psalm 34:18"
