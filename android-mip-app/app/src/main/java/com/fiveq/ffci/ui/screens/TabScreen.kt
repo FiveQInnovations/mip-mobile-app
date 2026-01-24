@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.fiveq.ffci.data.api.MipApiClient
 import com.fiveq.ffci.data.api.PageData
+import com.fiveq.ffci.data.cache.PageCache
 import com.fiveq.ffci.ui.components.AudioPlayer
 import com.fiveq.ffci.ui.components.CollectionList
 import com.fiveq.ffci.ui.components.ErrorScreen
@@ -55,26 +56,61 @@ fun TabScreen(
     val pageStack = remember { mutableStateListOf(uuid) }
     val currentUuid = pageStack.last()
 
-    var pageData by remember { mutableStateOf<PageData?>(null) }
-    var isLoading by remember { mutableStateOf(true) }
-    var error by remember { mutableStateOf<String?>(null) }
+    // Check cache SYNCHRONOUSLY before any async work (RN pattern: instant return)
+    // This happens immediately on composition, not in LaunchedEffect
+    val initialCachedData = remember(currentUuid) {
+        if (PageCache.hasCache(currentUuid)) {
+            PageCache.getAnyCache(currentUuid)
+        } else {
+            null
+        }
+    }
+
+    var pageData by remember(currentUuid) { mutableStateOf<PageData?>(initialCachedData) }
+    var isLoading by remember(currentUuid) { 
+        mutableStateOf(initialCachedData == null) // Only show loading if no cache
+    }
+    var isRefreshing by remember { mutableStateOf(false) }
+    var error by remember(currentUuid) { mutableStateOf<String?>(null) }
 
     val canGoBack = pageStack.size > 1
 
-    // Load page data when UUID changes
+    // Background refresh when UUID changes (RN pattern: stale-while-revalidate)
     LaunchedEffect(currentUuid) {
-        isLoading = true
         error = null
-        Log.d(TAG, "Loading page: $currentUuid")
+        
+        if (initialCachedData != null) {
+            // Cache exists: silent background refresh
+            Log.d(TAG, "Cache hit - showing instantly: ${initialCachedData.title}, refreshing in background")
+            isRefreshing = true
+        } else {
+            // No cache: blocking fetch
+            Log.d(TAG, "No cache - fetching: $currentUuid")
+        }
 
+        // Fetch fresh data from API
         try {
-            pageData = MipApiClient.getPage(currentUuid)
-            Log.d(TAG, "Page loaded: ${pageData?.title}, type: ${pageData?.effectivePageType}")
+            val freshData = MipApiClient.getPage(currentUuid)
+            Log.d(TAG, "Fresh data loaded: ${freshData.title}, type: ${freshData.effectivePageType}")
+            
+            // Update cache
+            PageCache.put(currentUuid, freshData)
+            
+            // Update UI with fresh data
+            pageData = freshData
+            error = null
         } catch (e: Exception) {
             Log.e(TAG, "Error loading page: ${e.message}", e)
-            error = e.message ?: "Failed to load page"
+            
+            // If we have cached data, don't show error - just log it
+            if (initialCachedData == null) {
+                error = e.message ?: "Failed to load page"
+            } else {
+                Log.d(TAG, "Using cached data due to network error")
+            }
         } finally {
             isLoading = false
+            isRefreshing = false
         }
     }
 
