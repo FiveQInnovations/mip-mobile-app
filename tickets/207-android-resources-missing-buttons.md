@@ -318,3 +318,34 @@ Changed CSS selectors from class selectors to attribute selectors:
 6. "Chaplain's Resources" → "View Resources" ✅
 
 **Ticket Status:** Ready for QA - All buttons rendering and functional.
+
+### Red Artifact Fix ✅
+
+**Issue:** Small red lines/curves appearing below and above buttons (e.g., below "Find Out How", above "Daily Verse & Bible Search").
+
+**Root Cause:** Base `a` tag CSS styles were being applied to ALL links, including buttons and image links. The base styles included:
+- `background: rgba(217, 35, 42, 0.08)` - light red background
+- `border-bottom: 2px solid #D9232A` - red bottom border
+- `border-radius: 4px` - rounded corners creating curved red edges
+
+These styles were creating red artifacts on buttons and image links that shouldn't have them.
+
+**Fix Applied:**
+Changed the base link selector from:
+```css
+a { ... red styles ... }
+```
+
+To:
+```css
+a:not([class*="_button"]):not([class*="_image-link"]):not([class*="image-link"]) { ... red styles ... }
+```
+
+This ensures base link styles (red background, red border-bottom, border-radius) only apply to actual text links, NOT buttons or image links.
+
+**Additional CSS:**
+- Added explicit overrides for image links to remove all borders/backgrounds
+- Added rules to prevent decorative elements near buttons from showing red
+- Added `isolation: isolate` and `overflow: hidden` to buttons to prevent background bleed
+
+**Status:** ✅ VERIFIED - Red artifacts are gone! Buttons render cleanly without any red lines or curves.
