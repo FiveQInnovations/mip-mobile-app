@@ -17,7 +17,7 @@ import { ErrorScreen } from './ErrorScreen';
 // Others -> Appropriate fallbacks
 const TAB_ICONS: Record<string, { filled: keyof typeof Ionicons.glyphMap; outline: keyof typeof Ionicons.glyphMap }> = {
   'Home': { filled: 'star', outline: 'star-outline' },
-  'Resources': { filled: 'book', outline: 'book-outline' },
+  'Resources': { filled: 'bookmarks', outline: 'bookmarks-outline' },
   'Chapters': { filled: 'people', outline: 'people-outline' },
   'About': { filled: 'information-circle', outline: 'information-circle-outline' },
   'Get Involved': { filled: 'hand-left', outline: 'hand-left-outline' },
