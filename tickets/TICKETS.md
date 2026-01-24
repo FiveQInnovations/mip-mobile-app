@@ -8,10 +8,11 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [084](084-icon-management-website.md) - Icon Management in Website (No Upload Required)
+(none)
 
 ## In Progress
 - [023](023-audio-player-component.md) - Audio Player Component
+- [084](084-icon-management-website.md) - Icon Management in Website (No Upload Required)
 
 ## Backlog
 

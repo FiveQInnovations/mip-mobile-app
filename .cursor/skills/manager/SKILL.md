@@ -7,7 +7,7 @@ description: Orchestrate ticket work with subagents. Use when implementing multi
 
 Orchestrate ticket implementation using specialized subagents.
 
-**Core principle:** The Manager coordinates and decides, but never writes code. Any code change goes through `implement-ticket`.
+**Core principle:** The Manager coordinates and decides, but never writes code. Route to the correct implementer based on the ticket's `area` field.
 
 ## Workflow Steps
 
@@ -28,11 +28,20 @@ Orchestrate ticket implementation using specialized subagents.
 
 ### 2. Implement
 
-**Agent:** `implement-ticket`
+**Route based on ticket `area` field:**
+
+| Ticket Area | Agent | What it does |
+|-------------|-------|--------------|
+| `area: wsp-mobile` | `implement-wsp-mobile` | PHP/API changes, deploys to server, verifies endpoints |
+| `area: ws-ffci` | `implement-ws-ffci` | Kirby CMS content/config changes, tests via DDEV, deploys to ffci.fiveq.dev |
+| `area: rn-mip-app` (or no area) | `implement-react-native` | React Native changes, builds, self-verifies on simulator |
+
+**For tickets touching MULTIPLE areas:** Run in this order:
+1. `implement-wsp-mobile` (API must be deployed before app can use it)
+2. `implement-ws-ffci` (CMS content changes)
+3. `implement-react-native` (app consumes API/CMS data)
 
 **Delegate:** "Implement ticket {number}: {brief description}"
-
-The implementer writes code changes and commits. It does NOT build or verify.
 
 ### 3. Verify (Functional)
 
@@ -46,7 +55,7 @@ Runs Maestro tests and checks the feature works.
 
 **If FAIL:**
 - Infrastructure issue → Use `simulator-manager` to fix, then retry verify
-- Code issue → Pass back to `implement-ticket` with the failure details
+- Code issue → Pass back to the appropriate implementer with failure details
 
 ### 4. Visual Check (Required)
 
@@ -64,7 +73,7 @@ The visual-tester will return:
 - Design quality score (1-10)
 - Specific issues found (if any)
 
-**If FAIL or score < 7:** Pass back to `implement-ticket` with the visual feedback:
+**If FAIL or score < 7:** Pass back to the appropriate implementer with the visual feedback:
 > "Fix ticket {number}: Visual tester found: {specific issues from report}"
 
 ### 5. Decide
@@ -74,11 +83,11 @@ Based on both verification results:
 | Verify Result | Visual Result | Action |
 |---------------|---------------|--------|
 | PASS | PASS (score ≥ 7) | → Move to QA |
-| PASS | FAIL or score < 7 | → `implement-ticket` with visual feedback |
-| FAIL - code issue | — | → `implement-ticket` with failure details |
+| PASS | FAIL or score < 7 | → appropriate implementer with visual feedback |
+| FAIL - code issue | — | → appropriate implementer with failure details |
 | FAIL - infrastructure | — | → `simulator-manager`, then re-verify |
 
-**After implement-ticket fixes:** Return to step 3 (Verify) and repeat the cycle.
+**After implementer fixes:** Return to step 3 (Verify) and repeat the cycle.
 
 **Max iterations:** 3-4 cycles. If still failing, document issues and move to QA with notes.
 
@@ -133,8 +142,10 @@ Track these metrics for each ticket:
 | Task | Agent | Notes |
 |------|-------|-------|
 | Research ticket before coding | `scout-ticket` | Creates Research Findings section |
-| Write code changes | `implement-ticket` | Commits changes |
-| Build and run tests | `verify-ticket` | Runs Maestro, reports pass/fail |
+| React Native app changes | `implement-react-native` | Builds, self-verifies on simulator |
+| API/PHP changes (wsp-mobile) | `implement-wsp-mobile` | Deploys to server, verifies endpoints |
+| Kirby CMS changes (ws-ffci) | `implement-ws-ffci` | Tests via DDEV, deploys to ffci.fiveq.dev |
+| Build and run Maestro tests | `verify-ticket` | Runs Maestro, reports pass/fail |
 | Fix simulator/app launch issues | `simulator-manager` | Ensures app is running |
 | Visual/design verification | `visual-tester` | **Required** for every ticket before QA |
 
@@ -155,7 +166,7 @@ When handling multiple tickets:
 
 ### When to iterate vs. move on
 
-**Iterate** (pass to `implement-ticket`) if:
+**Iterate** (pass to appropriate implementer) if:
 - Clear, fixable issue identified
 - Less than 3 iterations so far
 - Verify or visual check provided specific feedback
@@ -165,7 +176,7 @@ When handling multiple tickets:
 - 3+ iterations without progress
 - Infrastructure issues beyond subagent capabilities
 
-**Never** fix code issues yourself - always pass back to `implement-ticket` with details.
+**Never** fix code issues yourself - always pass back to the appropriate implementer with details.
 
 ### Visual-tester instructions
 
@@ -179,8 +190,8 @@ When handling multiple tickets:
 
 ## DO NOT
 
-- Do NOT write or modify code yourself - always delegate to `implement-ticket`
-- Do NOT fix bugs yourself - pass failure details to `implement-ticket`
+- Do NOT write or modify code yourself - always delegate to the appropriate implementer
+- Do NOT fix bugs yourself - pass failure details to the appropriate implementer
 - Do NOT move tickets to `done` status - only QA
 - Do NOT skip the visual check - every ticket needs design review
 - Do NOT skip the retrospective step
@@ -206,6 +217,7 @@ When handling multiple tickets:
 
 **Can run in parallel with simulator agents:**
 - `scout-ticket` - Read-only codebase research
-- `implement-ticket` - Code changes only (no simulator)
+- `implement-wsp-mobile` - API changes, no simulator needed
+- `implement-ws-ffci` - Kirby CMS changes, no simulator needed
 
 **Example:** When verifying multiple tickets, run visual-tester for ticket A, wait for completion, THEN run visual-tester for ticket B.
