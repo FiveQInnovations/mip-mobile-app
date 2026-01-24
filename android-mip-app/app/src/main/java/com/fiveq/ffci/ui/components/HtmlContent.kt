@@ -126,7 +126,8 @@ fun HtmlContent(
                 p {
                     margin: 16px 0;
                 }
-                a {
+                /* Base link styles - but NOT for buttons or image links */
+                a:not([class*="_button"]):not([class*="_image-link"]):not([class*="image-link"]) {
                     color: #D9232A;
                     text-decoration: none;
                     font-weight: 600;
@@ -134,6 +135,38 @@ fun HtmlContent(
                     padding: 4px 6px;
                     border-bottom: 2px solid #D9232A;
                     border-radius: 4px;
+                }
+                /* Ensure buttons NEVER get base link styles */
+                a[class*="_button"] {
+                    /* Styles are defined separately below */
+                }
+                /* Remove red styling from image links - they shouldn't have borders/backgrounds */
+                a._image-link,
+                a[class*="_image-link"],
+                a[class*="image-link"] {
+                    background: none !important;
+                    border: none !important;
+                    border-bottom: none !important;
+                    border-top: none !important;
+                    border-left: none !important;
+                    border-right: none !important;
+                    padding: 0 !important;
+                    border-radius: 0 !important;
+                    display: block;
+                }
+                /* Remove red styling from ALL links except buttons - prevent artifacts */
+                a:not([class*="_button"]) {
+                    /* Only apply red styling to text links, not decorative elements */
+                }
+                /* Specifically target any decorative elements that might show red */
+                ._button-group + a:not([class*="_button"]),
+                a:not([class*="_button"]) + ._button-group,
+                ._button-group ~ a:not([class*="_button"]) {
+                    background: none !important;
+                    border: none !important;
+                    border-bottom: none !important;
+                    padding: 0 !important;
+                    border-radius: 0 !important;
                 }
                 /* Ensure buttons completely override base link styles */
                 a[class*="_button"] {
