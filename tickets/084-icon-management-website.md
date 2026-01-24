@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: qa
 area: wsp-mobile
 phase: core
 created: 2026-01-17
@@ -149,15 +149,16 @@ return [
 
 ## QA Notes
 
-**Implementation complete.** Verified with Maestro tests (5/5 passed) and visual testing.
+**Implementation complete.** User verified all icons display correctly:
+- Icons are selectable via dropdown in Kirby Panel
+- API returns icon values
+- App displays correct icons (outlined when unselected, filled when selected)
 
 ### Commits
-- wsp-mobile: `98d229b` - feat(ticket-084): Add icon dropdown to mobile menu blueprint and API
+- wsp-mobile: `98d229b` - feat(ticket-084): Add icon dropdown to mobile menu blueprint and API (deployed 2026-01-23)
 - rn-mip-app: `4c3a6fe` - feat(ticket-084): Use icons from API in mobile app
 
-### Pre-existing Issues Discovered (OUT OF SCOPE)
-During visual testing, the following pre-existing issues were noted:
-1. **Resources tab** uses underline+outline for active state instead of filled icon (inconsistent with Home/Chapters tabs)
-2. **Connect tab** appears to have routing issues (navigates to Chapters content)
-
-These issues existed before ticket 084 and should be tracked separately.
+### Verification (2026-01-23)
+- API deployed to ffci.fiveq.dev
+- User configured icons in Kirby Panel: Resources=book, Chapters=information-circle-outline, Connect=heart
+- User manually verified all 4 tabs display correct icons with proper filled/outline states
