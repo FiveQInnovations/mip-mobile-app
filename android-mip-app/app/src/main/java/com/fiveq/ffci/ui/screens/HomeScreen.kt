@@ -1,5 +1,6 @@
 package com.fiveq.ffci.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,18 +13,36 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -102,31 +121,142 @@ fun HomeScreen(
             }
         }
 
-        // Quick Tasks section
+        // Resources section (formerly Quick Actions)
         if (!siteMeta.homepageQuickTasks.isNullOrEmpty()) {
             item {
                 Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    text = "Quick Actions",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                Spacer(modifier = Modifier.height(12.dp))
             }
-
+            
             item {
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFFF1F5F9))
+                        .padding(vertical = 16.dp)
                 ) {
-                    items(siteMeta.homepageQuickTasks!!) { task ->
-                        QuickTaskCard(
-                            task = task,
-                            onClick = {
-                                task.uuid?.let { onQuickTaskClick(it) }
+                    Text(
+                        text = "Resources",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        val scrollState = rememberLazyListState()
+                        val coroutineScope = rememberCoroutineScope()
+                        var canScrollLeft by remember { mutableStateOf(false) }
+                        var canScrollRight by remember { mutableStateOf(false) }
+                        
+                        // Update scroll indicators based on scroll state
+                        LaunchedEffect(scrollState) {
+                            snapshotFlow {
+                                scrollState.firstVisibleItemIndex to scrollState.firstVisibleItemScrollOffset
                             }
-                        )
+                            .distinctUntilChanged()
+                            .collect {
+                                val (firstVisibleIndex, firstVisibleOffset) = it
+                                val layoutInfo = scrollState.layoutInfo
+                                val totalItems = siteMeta.homepageQuickTasks!!.size
+                                
+                                canScrollLeft = firstVisibleIndex > 0 || firstVisibleOffset > 0
+                                
+                                val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+                                val canScrollMore = lastVisibleIndex < totalItems - 1
+                                val isAtEnd = lastVisibleIndex == totalItems - 1 && 
+                                    layoutInfo.visibleItemsInfo.lastOrNull()?.offset?.let { 
+                                        it + (layoutInfo.visibleItemsInfo.lastOrNull()?.size ?: 0) <= layoutInfo.viewportEndOffset
+                                    } ?: false
+                                
+                                canScrollRight = canScrollMore && !isAtEnd
+                            }
+                        }
+                        
+                        LazyRow(
+                            state = scrollState,
+                            contentPadding = PaddingValues(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            items(siteMeta.homepageQuickTasks!!) { task ->
+                                ResourcesCard(
+                                    task = task,
+                                    onClick = {
+                                        task.uuid?.let { onQuickTaskClick(it) }
+                                    }
+                                )
+                            }
+                        }
+                        
+                        // Left scroll arrow
+                        if (canScrollLeft) {
+                            IconButton(
+                                onClick = {
+                                    coroutineScope.launch {
+                                        val cardWidth = 280 + 16 // card width + spacing
+                                        val currentOffset = scrollState.firstVisibleItemScrollOffset
+                                        val targetIndex = scrollState.firstVisibleItemIndex
+                                        val targetOffset = (currentOffset - cardWidth).coerceAtLeast(0)
+                                        
+                                        if (targetOffset == 0 && targetIndex > 0) {
+                                            scrollState.animateScrollToItem(targetIndex - 1)
+                                        } else {
+                                            scrollState.animateScrollToItem(targetIndex, targetOffset)
+                                        }
+                                    }
+                                },
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .offset(x = 8.dp)
+                            ) {
+                                Surface(
+                                    shape = CircleShape,
+                                    color = Color.White.copy(alpha = 0.95f),
+                                    modifier = Modifier.size(40.dp),
+                                    shadowElevation = 4.dp
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.ChevronLeft,
+                                        contentDescription = "Scroll left",
+                                        modifier = Modifier.padding(8.dp)
+                                    )
+                                }
+                            }
+                        }
+                        
+                        // Right scroll arrow
+                        if (canScrollRight) {
+                            IconButton(
+                                onClick = {
+                                    coroutineScope.launch {
+                                        val cardWidth = 280 + 16 // card width + spacing
+                                        val currentIndex = scrollState.firstVisibleItemIndex
+                                        val currentOffset = scrollState.firstVisibleItemScrollOffset
+                                        
+                                        scrollState.animateScrollToItem(
+                                            (currentIndex + 1).coerceAtMost(siteMeta.homepageQuickTasks!!.size - 1),
+                                            currentOffset + cardWidth
+                                        )
+                                    }
+                                },
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .offset(x = (-8).dp)
+                            ) {
+                                Surface(
+                                    shape = CircleShape,
+                                    color = Color.White.copy(alpha = 0.95f),
+                                    modifier = Modifier.size(40.dp),
+                                    shadowElevation = 4.dp
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.ChevronRight,
+                                        contentDescription = "Scroll right",
+                                        modifier = Modifier.padding(8.dp)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -166,59 +296,60 @@ fun HomeScreen(
 }
 
 @Composable
-private fun QuickTaskCard(
+private fun ResourcesCard(
     task: HomepageQuickTask,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
-            .size(width = 140.dp, height = 160.dp)
+            .width(280.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        border = BorderStroke(1.dp, Color(0xFFE2E8F0))
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier.fillMaxWidth()
         ) {
             if (task.imageUrl != null) {
                 AsyncImage(
                     model = task.imageUrl,
                     contentDescription = null,
                     modifier = Modifier
-                        .size(56.dp)
-                        .clip(RoundedCornerShape(8.dp)),
+                        .fillMaxWidth()
+                        .height(158.dp)
+                        .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
                     contentScale = ContentScale.Crop
                 )
-                Spacer(modifier = Modifier.height(8.dp))
             }
-
-            Text(
-                text = task.label ?: "",
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.SemiBold,
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            if (!task.description.isNullOrEmpty()) {
-                Spacer(modifier = Modifier.height(4.dp))
+            
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
                 Text(
-                    text = task.description!!,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
+                    text = task.label ?: "",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
+
+                if (!task.description.isNullOrEmpty()) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = task.description!!,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
     }
