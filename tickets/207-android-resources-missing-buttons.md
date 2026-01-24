@@ -174,3 +174,34 @@ The "Do You Know God?" button likely works because it's:
 - Verify API response actually contains button HTML after fix
 - Check if Android WebView is receiving/rendering the HTML correctly
 - Compare React Native's HTML processing vs Android WebView behavior
+
+### Debugging Added
+
+Added debug logging to `HtmlContent.kt` to log:
+- HTML content length
+- Whether `_button` class is found in HTML
+- Sample HTML around button elements if found
+
+**To test:**
+1. Navigate to Resources tab in Android app
+2. Check logcat: `adb logcat -d | grep HtmlContent`
+3. Verify if buttons are in the HTML or missing
+
+### React Native vs Android Difference
+
+**React Native (`react-native-render-html`):**
+- Uses custom renderer that intercepts `<a class="_button">` tags
+- Converts them to React Native `Pressable` components
+- May be more forgiving with malformed HTML or Blocks objects
+
+**Android (WebView):**
+- Renders HTML directly with CSS styling
+- Requires proper HTML structure
+- Less forgiving - needs complete, valid HTML
+
+**Hypothesis:** If React Native worked without `->toHTML()`, it might be because:
+1. `react-native-render-html` handles Blocks objects differently
+2. React Native uses a different code path
+3. Or there's caching/API differences between platforms
+
+**Action needed:** Verify what HTML the API is actually returning after the fix.

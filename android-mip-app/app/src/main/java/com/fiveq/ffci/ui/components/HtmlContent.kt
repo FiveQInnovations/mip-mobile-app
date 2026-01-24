@@ -30,6 +30,17 @@ fun HtmlContent(
     onNavigate: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    // Debug: Log HTML content to check for buttons
+    Log.d("HtmlContent", "Received HTML length: ${html.length}")
+    if (html.contains("_button")) {
+        val buttonIndex = html.indexOf("_button")
+        val start = (buttonIndex - 50).coerceAtLeast(0)
+        val end = (buttonIndex + 200).coerceAtMost(html.length)
+        Log.d("HtmlContent", "Found _button in HTML: ${html.substring(start, end)}")
+    } else {
+        Log.w("HtmlContent", "No _button found in HTML! First 500 chars: ${html.take(500)}")
+    }
+    
     // Fix images with empty src but valid srcset - extract first URL from srcset
     val srcsetPattern = Regex("srcset=\"(https?://[^\\s\"]+)")
     var fixedHtml = html
