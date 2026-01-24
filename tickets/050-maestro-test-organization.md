@@ -1,11 +1,13 @@
 ---
-status: backlog
+status: cancelled
 area: rn-mip-app
 phase: testing
 created: 2026-01-03
 ---
 
 # Research Maestro Test Organization
+
+**Cancelled:** Research about iOS/Android test organization is no longer needed - Android testing has been abandoned.
 
 ## Context
 Currently we have duplicated test files for iOS and Android:

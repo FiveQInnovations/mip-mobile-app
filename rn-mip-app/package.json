@@ -12,8 +12,6 @@
     "test:watch": "jest --watch",
     "test:maestro:ios": "./scripts/run-maestro-ios.sh",
     "test:maestro:ios:all": "./scripts/run-maestro-ios-all.sh",
-    "test:maestro:android": "./scripts/run-maestro-android.sh",
-    "test:maestro:android:all": "./scripts/run-maestro-android-all.sh",
     "webhook:server": "node scripts/eas-webhook-server.js"
   },
   "dependencies": {

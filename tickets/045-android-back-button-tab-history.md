@@ -1,11 +1,13 @@
 ---
-status: backlog
+status: cancelled
 area: rn-mip-app
 phase: nice-to-have
 created: 2026-01-02
 ---
 
 # Android Back Button Tab Navigation History
+
+**Cancelled:** Android testing has been abandoned, focusing on iOS only.
 
 ## Status Note
 **Paused 2026-01-03:** Implementation complete and manually verified working (via adb screenshots). Ran out of disk space before Maestro tests could run. Resume by freeing disk space and running `./scripts/run-maestro-android-all.sh`.

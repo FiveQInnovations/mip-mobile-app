@@ -11,9 +11,10 @@ Quick reference for active tasks. See individual files for details.
 - [023](023-audio-player-component.md) - Audio Player Component
 - [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
 - [084](084-icon-management-website.md) - Icon Management in Website (No Upload Required)
+- [089](089-resources-tab-active-state-styling.md) - Resources Tab Active State Styling Inconsistent
 
 ## In Progress
-- [089](089-resources-tab-active-state-styling.md) - Resources Tab Active State Styling Inconsistent
+(none)
 
 ## Backlog
 
@@ -23,7 +24,6 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
-- [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
@@ -46,7 +46,6 @@ Quick reference for active tasks. See individual files for details.
 ### 📋 Testing
 - [033](033-maestro-collection-test.md) - Maestro Test: Collection Grid and Navigation
 - [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
-- [050](050-maestro-test-organization.md) - Research Maestro Test Organization
 
 ### Unassigned
 - [078](078-verification-report.md) - Ticket 078 Verification Report
