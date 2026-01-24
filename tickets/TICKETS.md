@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [095](095-android-page-caching.md) - Android Page Caching
+(none)
 
 ## In Progress
 (none)
@@ -128,6 +128,7 @@ Quick reference for active tasks. See individual files for details.
 - [089](089-resources-tab-active-state-styling.md) - Resources Tab Active State Styling Inconsistent
 - [090](090-connect-tab-routing-broken.md) - Connect Tab Routing Shows Chapters Content
 - [091](091-tab-screens-safe-area-insets.md) - Tab Screen Headers Don't Respect Safe Area Insets
+- [095](095-android-page-caching.md) - Android Page Caching
 
 ---
 
