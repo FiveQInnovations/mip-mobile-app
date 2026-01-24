@@ -3,8 +3,10 @@ package com.fiveq.ffci.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.fiveq.ffci.data.api.MenuItem
 import com.fiveq.ffci.data.api.SiteMeta
 import com.fiveq.ffci.ui.screens.HomeScreen
@@ -13,6 +15,9 @@ import com.fiveq.ffci.ui.screens.TabScreen
 sealed class Screen(val route: String) {
     data object Home : Screen("home")
     data class Tab(val index: Int) : Screen("tab/$index")
+    data object Page : Screen("page/{uuid}") {
+        fun createRoute(uuid: String) = "page/$uuid"
+    }
 
     companion object {
         fun tabRoute(index: Int) = "tab/$index"
@@ -36,10 +41,10 @@ fun NavGraph(
             HomeScreen(
                 siteMeta = siteMeta,
                 onQuickTaskClick = { uuid ->
-                    // Could navigate to a specific page - for now just log
+                    navController.navigate(Screen.Page.createRoute(uuid))
                 },
                 onFeaturedClick = { uuid ->
-                    // Could navigate to a specific page - for now just log
+                    navController.navigate(Screen.Page.createRoute(uuid))
                 }
             )
         }
@@ -49,6 +54,15 @@ fun NavGraph(
             composable(Screen.tabRoute(index)) {
                 TabScreen(uuid = menuItem.page.uuid)
             }
+        }
+
+        // Page screen for direct navigation (Quick Actions, Featured)
+        composable(
+            route = Screen.Page.route,
+            arguments = listOf(navArgument("uuid") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val uuid = backStackEntry.arguments?.getString("uuid") ?: return@composable
+            TabScreen(uuid = uuid)
         }
     }
 }
