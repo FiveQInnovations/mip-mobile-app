@@ -56,7 +56,7 @@ private fun CollectionListItem(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(vertical = 12.dp, horizontal = 16.dp),
+            .padding(vertical = 18.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Cover image (if available)
@@ -75,7 +75,7 @@ private fun CollectionListItem(
         // Title
         Text(
             text = item.title,
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1f)
         )
