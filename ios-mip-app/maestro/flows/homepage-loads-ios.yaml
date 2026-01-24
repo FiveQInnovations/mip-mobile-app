@@ -1,0 +1,46 @@
+appId: com.fiveq.ffci
+---
+# Simple iOS homepage verification for native iOS app
+# 
+# Note: launchApp is NOT used - app is launched by script
+# App should be built and launched before running this test
+
+# Wait for app to load
+- waitForAnimationToEnd
+
+# Confirm key homepage content renders (NEW LAYOUT: Featured at top, Store, Audio Sermons, Resources below)
+
+# Featured section is now at the top
+- assertVisible:
+    text: "Featured"
+
+# Scroll down to Audio Sermons card (new addition, after Store, before Resources)
+- scrollUntilVisible:
+    element:
+      text: "Audio Sermons"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    text: "Audio Sermons"
+
+# Continue scrolling to Resources section
+- scrollUntilVisible:
+    element:
+      text: "Resources"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    text: "Resources"
+
+# About Us and What We Believe are in the Resources section (horizontal scroll)
+# These may not be immediately visible if we're scrolled to a different card
+# Since we've verified Resources section exists, these are optional for sanity check
+- assertVisible:
+    text: "About Us"
+    optional: true
+- assertVisible:
+    text: "What We Believe"
+    optional: true
+
+- takeScreenshot:
+    path: "maestro/screenshots/homepage-loaded-ios-native"

@@ -420,6 +420,80 @@ xcrun simctl io D9DE6784-CB62-4AC3-A686-4D445A0E7B57 screenshot /tmp/screenshot.
 
 ---
 
+## Maestro UI Testing
+
+The native iOS app includes Maestro UI tests for automated verification of app functionality.
+
+### Prerequisites
+
+- [Maestro CLI](https://maestro.mobile.dev/getting-started/installing-maestro) installed
+- App built and simulator booted (see [Build Commands](#build-commands) and [Simulator Management](#simulator-management))
+
+### Running Tests
+
+#### Run Single Test
+
+```bash
+cd ios-mip-app
+./scripts/run-maestro-ios.sh maestro/flows/homepage-loads-ios.yaml
+```
+
+The script will:
+1. Find the built app in Xcode DerivedData
+2. Install it on the booted simulator
+3. Launch the app
+4. Run the Maestro test
+
+#### Available Tests
+
+- **`maestro/flows/homepage-loads-ios.yaml`** - Homepage sanity check
+  - Verifies Featured, Audio Sermons, and Resources sections render correctly
+  - Takes screenshot for manual verification
+
+### Test Structure
+
+```
+ios-mip-app/
+├── maestro/
+│   ├── flows/
+│   │   └── homepage-loads-ios.yaml    # Test flows
+│   └── screenshots/                    # Screenshot output
+└── scripts/
+    └── run-maestro-ios.sh              # Test runner script
+```
+
+### Test Script Details
+
+The `run-maestro-ios.sh` script:
+- Automatically finds the app bundle in `~/Library/Developer/Xcode/DerivedData`
+- Uses the standard iPhone 16 simulator (`D9DE6784-CB62-4AC3-A686-4D445A0E7B57`)
+- Handles app installation and launching
+- Kills stale Maestro processes on port 7001
+
+### Troubleshooting Tests
+
+**Test fails with "App bundle not found":**
+```bash
+# Build the app first
+cd ios-mip-app
+xcodebuild -project FFCI.xcodeproj -scheme FFCI -destination 'id=D9DE6784-CB62-4AC3-A686-4D445A0E7B57' -configuration Debug build
+```
+
+**Test fails with "No booted iOS simulator found":**
+```bash
+# Boot the simulator
+xcrun simctl boot D9DE6784-CB62-4AC3-A686-4D445A0E7B57
+open -a Simulator
+```
+
+**Port 7001 already in use:**
+The script automatically kills stale Maestro processes, but if issues persist:
+```bash
+lsof -ti :7001 | xargs kill -9
+```
+
+---
+
 ## Opening in Xcode
 
 ### Open Project in Xcode
