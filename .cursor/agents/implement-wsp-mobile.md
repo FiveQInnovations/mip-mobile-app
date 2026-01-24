@@ -126,26 +126,40 @@ cd /Users/anthony/mip/fiveq-plugins/wsp-mobile/scripts/curl
 
 ### 7. Signal Ready
 
-After verification passes:
+After verification passes, report with this **mandatory checklist**:
 
 ```
 ✅ API IMPLEMENTATION COMPLETE
 
 Ticket: XXX
-Branch: feature/ticket-XXX merged to master
-Commit: [commit hash]
-Pushed: origin/master
-Server deploy: Triggered
-
-Verification:
-- ✅ [Specific endpoint] - Returns expected data
-- ✅ Smoke tests - All passing
-
 Files modified:
 - [List files]
 
+## Deployment Checklist (ALL must be checked)
+- [ ] Code committed: [commit hash]
+- [ ] Pushed to origin: `git status` shows NOT "ahead of origin"
+- [ ] Server deploy triggered: curl composer-update returned success
+- [ ] API response verified: curl shows expected data
+
+## Verification Evidence
+Endpoint tested: [endpoint URL]
+Response excerpt:
+```json
+[Show relevant portion of API response proving the change worked]
+```
+
+Smoke tests: [Passed/Failed]
+
 Next step: Manager can now run implement-react-native if app changes needed.
 ```
+
+**CRITICAL:** If any checklist item is NOT complete, do NOT report success. Complete the missing steps first.
+
+Common failure modes to avoid:
+- Committing but not pushing (local commits don't deploy)
+- Pushing but not triggering deploy (curl composer-update)
+- Triggering deploy but not verifying API response
+- Verifying wrong endpoint or stale cached response
 
 ## API Endpoints Reference
 

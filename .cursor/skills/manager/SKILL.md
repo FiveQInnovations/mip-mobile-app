@@ -43,6 +43,20 @@ Orchestrate ticket implementation using specialized subagents.
 
 **Delegate:** "Implement ticket {number}: {brief description}"
 
+### 2b. Verify Deployment (After wsp-mobile)
+
+**CRITICAL:** After `implement-wsp-mobile` completes, verify the deployment actually happened:
+
+1. **Check git was pushed** - Run `git status` in wsp-mobile repo. It should NOT say "ahead of origin"
+2. **Check API response** - Curl the live endpoint and verify expected data is present:
+   ```bash
+   curl -s -H "X-API-Key: $MIP_API_KEY" -u "fiveq:demo" \
+     "https://ffci.fiveq.dev/mobile-api/menu" | jq '.'
+   ```
+3. **If deployment failed** - Re-delegate to `implement-wsp-mobile` with explicit push/deploy instructions
+
+**Never trust "deployment complete" without verification.** Local commits don't count.
+
 ### 3. Verify (Functional)
 
 **Agent:** `verify-ticket`
@@ -52,6 +66,26 @@ Orchestrate ticket implementation using specialized subagents.
 **Delegate:** "Verify ticket {number}: {what to check}"
 
 Runs Maestro tests and checks the feature works.
+
+#### Verification Scope
+
+Choose the appropriate verification level based on what changed:
+
+| Ticket Area | Verification Level | What to Do |
+|-------------|-------------------|------------|
+| `wsp-mobile` only | **Lightweight** | Verify API response via curl, skip full app build if no RN changes |
+| `rn-mip-app` | **Full** | Build app, run Maestro tests, visual-tester |
+| Both areas | **Full** | Deploy API first, then full app verification |
+
+**Lightweight verification** (API-only tickets):
+- Curl the live API endpoint
+- Check expected data is present in response
+- If app is already running, manually check it displays new data
+- Skip `verify-ticket` full build cycle
+
+**Full verification** (app changes):
+- Use `verify-ticket` agent for build + Maestro tests
+- Use `visual-tester` for design review
 
 **If FAIL:**
 - Infrastructure issue → Use `simulator-manager` to fix, then retry verify

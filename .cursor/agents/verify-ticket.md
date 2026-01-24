@@ -20,7 +20,46 @@ This is a multi-repo workspace:
 
 This prevents issues with stale builds on wrong simulators.
 
-## Verification Process
+## Verification Modes
+
+This agent supports two verification modes based on what changed:
+
+### Lightweight Mode (API-only tickets)
+
+Use when: Ticket only touched `wsp-mobile` (API/backend) with no React Native changes.
+
+**Skip the full build cycle.** Instead:
+1. Verify the live API endpoint returns expected data
+2. If app is already running, check it displays the new data
+3. Take a screenshot showing the data if visible in app
+
+```bash
+# Verify API response
+curl -s -H "X-API-Key: 777359235aecc10fdfb144041dfdacfc80ca0751c7bed7b14c96f935456fc4ce" \
+  -u "fiveq:demo" \
+  "https://ffci.fiveq.dev/mobile-api/menu" | jq '.'
+```
+
+Report format for lightweight verification:
+```
+✅ LIGHTWEIGHT VERIFICATION PASSED
+
+API Endpoint: [endpoint tested]
+Response: Contains expected [field/data]
+App Display: [Confirmed in running app / Not tested - no app changes]
+
+Ready to move ticket to QA status.
+```
+
+### Full Mode (App changes)
+
+Use when: Ticket touched `rn-mip-app` or both areas.
+
+Follow the full process below.
+
+---
+
+## Full Verification Process
 
 ### 1. Understand What Changed
 
