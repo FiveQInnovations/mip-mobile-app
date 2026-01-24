@@ -8,7 +8,7 @@
 import SwiftUI
 import os.log
 
-// Logger for the app
+// Logger for the app - using notice level for visibility in log stream
 private let logger = Logger(subsystem: "com.fiveq.ffci", category: "UI")
 
 struct ContentView: View {
@@ -32,7 +32,8 @@ struct ContentView: View {
                 Spacer().frame(height: 40)
                 
                 Button(action: {
-                    logger.info("🔥 Hello World button tapped!")
+                    logger.notice("🎯 Hello World button tapped - PROOF TEST! Logging works!")
+                    NSLog("📱 [FFCI] Hello World button tapped - navigating to detail screen")
                     print("📱 [FFCI] Hello World button was tapped - navigating to detail screen")
                     showingDetail = true
                 }) {
@@ -79,7 +80,8 @@ struct DetailView: View {
             Spacer().frame(height: 40)
             
             Button(action: {
-                logger.info("🔙 Back button tapped on detail screen")
+                logger.notice("🔙 Back button tapped on detail screen")
+                NSLog("📱 [FFCI] Back button tapped - dismissing detail screen")
                 print("📱 [FFCI] Back button tapped - dismissing detail screen")
                 dismiss()
             }) {
@@ -96,7 +98,8 @@ struct DetailView: View {
         .navigationTitle("Detail")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            logger.info("📄 Detail screen appeared")
+            logger.notice("📄 Detail screen appeared")
+            NSLog("📱 [FFCI] Detail screen is now visible")
             print("📱 [FFCI] Detail screen is now visible")
         }
     }

@@ -55,22 +55,36 @@ private let logger = Logger(subsystem: "com.fiveq.ffci", category: "UI")
 // Usage in your code
 logger.debug("Debug message - verbose, filtered by default")
 logger.info("Info message - standard logging")
-logger.notice("Notice - more prominent than info")
+logger.notice("Notice - more prominent than info")  // ✅ Visible in log show
 logger.error("Error message - problems")
 logger.fault("Fault - serious failures")
 ```
 
+**Important:** Use `logger.notice()` or higher for logs that need to be visible from command line tools. `info` and `debug` levels are often filtered.
+
 ### Log Levels
 
-| Level | Use Case | Persisted |
-|-------|----------|-----------|
-| `debug` | Verbose debugging, filtered by default | No |
-| `info` | General information | No |
-| `notice` | Important milestones (default level) | Yes |
-| `error` | Errors that don't stop execution | Yes |
-| `fault` | Critical failures | Yes |
+| Level | Use Case | Persisted | Visible in log show? |
+|-------|----------|-----------|---------------------|
+| `debug` | Verbose debugging, filtered by default | No | No |
+| `info` | General information | No | Sometimes |
+| `notice` | Important milestones (default level) | Yes | ✅ Yes |
+| `error` | Errors that don't stop execution | Yes | ✅ Yes |
+| `fault` | Critical failures | Yes | ✅ Yes |
 
-### Using print() (Simple but Limited)
+### Using NSLog() (Legacy but Reliable)
+
+`NSLog()` is the older logging API that reliably appears in system logs:
+
+```swift
+import Foundation
+
+NSLog("📱 [FFCI] Something happened")
+```
+
+NSLog messages appear in `log show` with the process name filter.
+
+### Using print() (Xcode Console Only)
 
 `print()` statements go to stdout and are visible in Xcode console but **NOT** in system logs.
 
@@ -80,31 +94,49 @@ print("📱 [FFCI] Something happened")
 
 ### Viewing Logs
 
-#### In Xcode
+#### In Xcode (Easiest)
 - Build and run with Cmd+R
 - Logs appear in the Debug Console (Cmd+Shift+C)
+- Shows all `print()`, `NSLog()`, and `Logger` output
 
 #### From Command Line (System Logs)
-```bash
-# Stream logs for the app (notice level and above)
-xcrun simctl spawn D9DE6784-CB62-4AC3-A686-4D445A0E7B57 log stream \
-  --predicate 'subsystem == "com.fiveq.ffci"' \
-  --level info
 
-# Show recent logs
+**Show recent logs:**
+```bash
+# Filter by subsystem (Logger API)
 xcrun simctl spawn D9DE6784-CB62-4AC3-A686-4D445A0E7B57 log show \
   --predicate 'subsystem == "com.fiveq.ffci"' \
   --last 5m
 
-# Filter by category
+# Filter by process name (catches Logger, NSLog, print)
+xcrun simctl spawn D9DE6784-CB62-4AC3-A686-4D445A0E7B57 log show \
+  --predicate 'processImagePath CONTAINS "FFCI"' \
+  --last 5m
+
+# Search for specific text
+xcrun simctl spawn D9DE6784-CB62-4AC3-A686-4D445A0E7B57 log show \
+  --predicate 'processImagePath CONTAINS "FFCI"' \
+  --last 5m | grep "PROOF TEST"
+```
+
+**Stream logs in real-time:**
+```bash
+# Stream with subsystem filter
 xcrun simctl spawn D9DE6784-CB62-4AC3-A686-4D445A0E7B57 log stream \
-  --predicate 'subsystem == "com.fiveq.ffci" AND category == "Network"'
+  --predicate 'subsystem == "com.fiveq.ffci"' \
+  --level debug
+
+# Stream with process filter (catches everything)
+xcrun simctl spawn D9DE6784-CB62-4AC3-A686-4D445A0E7B57 log stream \
+  --predicate 'processImagePath CONTAINS "FFCI"' \
+  --level debug
 ```
 
 #### Using Console.app
 1. Open Console.app
-2. Select the simulator from the sidebar
-3. Filter by `com.fiveq.ffci` in the search bar
+2. Select the simulator from the sidebar (or "All Simulators")
+3. Filter by `com.fiveq.ffci` or `FFCI` in the search bar
+4. Shows all log levels including debug/info
 
 ### Logging Best Practices
 
@@ -114,12 +146,32 @@ private let networkLogger = Logger(subsystem: "com.fiveq.ffci", category: "Netwo
 private let uiLogger = Logger(subsystem: "com.fiveq.ffci", category: "UI")
 private let dataLogger = Logger(subsystem: "com.fiveq.ffci", category: "Data")
 
+// Use notice level for important events (visible in log show)
+uiLogger.notice("Button tapped: \(buttonName)")
+networkLogger.notice("API request: \(url)")
+
 // Include context in messages
-logger.info("Loading page: \(pageId)")
+logger.notice("Loading page: \(pageId)")
 logger.error("API request failed: \(error.localizedDescription)")
 
 // Use privacy for sensitive data
-logger.info("User email: \(email, privacy: .private)")
+logger.notice("User email: \(email, privacy: .private)")
+```
+
+### Verified Working Example
+
+The app includes logging that has been verified to work:
+
+```swift
+logger.notice("🎯 Hello World button tapped - PROOF TEST! Logging works!")
+NSLog("📱 [FFCI] Hello World button tapped - navigating to detail screen")
+```
+
+Both appear in logs when using:
+```bash
+xcrun simctl spawn D9DE6784-CB62-4AC3-A686-4D445A0E7B57 log show \
+  --predicate 'processImagePath CONTAINS "FFCI"' \
+  --last 1m
 ```
 
 ---
@@ -464,8 +516,9 @@ open -a Simulator
 ### Logs Not Appearing
 
 1. **print() statements**: Only visible in Xcode console (Cmd+R to run)
-2. **Logger messages**: Use `log stream` command or Console.app
-3. Ensure log level is `info` or higher for command-line visibility
+2. **Logger messages**: Use `logger.notice()` or higher for command-line visibility
+3. **Use correct predicate**: `processImagePath CONTAINS "FFCI"` catches all log types
+4. **Check time window**: Use `--last 1m` or appropriate time range
 
 ---
 
@@ -477,7 +530,7 @@ open -a Simulator
 | Entry Point | `@main struct App` | `MainActivity` |
 | State | `@State`, `@StateObject` | `remember`, `mutableStateOf` |
 | Navigation | `NavigationStack` | `NavHost` |
-| Logging | `Logger` (os.log) | `Log.d()`, `Log.e()` |
+| Logging | `Logger.notice()`, `NSLog()` | `Log.d()`, `Log.e()` |
 | Networking | `URLSession` | `OkHttp` |
 | JSON | `Codable` | `Moshi`, `Gson` |
 | Async | `async/await` | Coroutines |
