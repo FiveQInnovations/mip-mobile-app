@@ -64,6 +64,7 @@ fun HomeScreen(
     siteMeta: SiteMeta,
     onQuickTaskClick: (String) -> Unit,
     onFeaturedClick: (String) -> Unit,
+    onSearchClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -98,7 +99,7 @@ fun HomeScreen(
                 
                 // Search icon top-right
                 IconButton(
-                    onClick = { /* TODO: Navigate to search */ },
+                    onClick = onSearchClick,
                     modifier = Modifier.align(Alignment.TopEnd)
                 ) {
                     Icon(

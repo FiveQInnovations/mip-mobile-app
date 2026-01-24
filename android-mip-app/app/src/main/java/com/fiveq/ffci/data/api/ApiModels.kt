@@ -120,3 +120,11 @@ data class PageData(
             else -> null
         }
 }
+
+@JsonClass(generateAdapter = true)
+data class SearchResult(
+    val uuid: String,
+    val title: String,
+    val description: String?,
+    val url: String
+)

@@ -6,10 +6,13 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.isActive
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Call
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
+import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 
 class ApiException(message: String, val statusCode: Int, val url: String) : Exception(message)
@@ -92,5 +95,16 @@ object MipApiClient {
     suspend fun getPage(uuid: String): PageData {
         val adapter = moshi.adapter(PageData::class.java)
         return fetchJson("$BASE_URL/mobile-api/page/$uuid", adapter)
+    }
+
+    suspend fun searchSite(query: String): List<SearchResult> {
+        val encodedQuery = URLEncoder.encode(query.trim(), "UTF-8")
+        val adapter = moshi.adapter<List<SearchResult>>(
+            com.squareup.moshi.Types.newParameterizedType(
+                List::class.java,
+                SearchResult::class.java
+            )
+        )
+        return fetchJson("$BASE_URL/mobile-api/search?q=$encodedQuery", adapter)
     }
 }

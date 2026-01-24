@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.fiveq.ffci.data.api.MenuItem
 import com.fiveq.ffci.data.api.SiteMeta
 import com.fiveq.ffci.ui.screens.HomeScreen
+import com.fiveq.ffci.ui.screens.SearchScreen
 import com.fiveq.ffci.ui.screens.TabScreen
 
 sealed class Screen(val route: String) {
@@ -18,6 +19,7 @@ sealed class Screen(val route: String) {
     data object Page : Screen("page/{uuid}") {
         fun createRoute(uuid: String) = "page/$uuid"
     }
+    data object Search : Screen("search")
 
     companion object {
         fun tabRoute(index: Int) = "tab/$index"
@@ -45,6 +47,9 @@ fun NavGraph(
                 },
                 onFeaturedClick = { uuid ->
                     navController.navigate(Screen.Page.createRoute(uuid))
+                },
+                onSearchClick = {
+                    navController.navigate(Screen.Search.route)
                 }
             )
         }
@@ -63,6 +68,18 @@ fun NavGraph(
         ) { backStackEntry ->
             val uuid = backStackEntry.arguments?.getString("uuid") ?: return@composable
             TabScreen(uuid = uuid)
+        }
+
+        // Search screen
+        composable(Screen.Search.route) {
+            SearchScreen(
+                onResultClick = { uuid ->
+                    navController.navigate(Screen.Page.createRoute(uuid))
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

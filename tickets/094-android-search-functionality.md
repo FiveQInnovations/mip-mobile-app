@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: done
 area: android-mip-app
 phase: core
 created: 2026-01-24
@@ -112,6 +112,45 @@ The RN app has a working search implementation with Maestro test coverage. Use t
 - Client-side caching recommended for instant repeated searches
 - Debouncing is critical to avoid spamming API during typing
 - Consider using `rememberSaveable` to preserve search state across config changes
+
+## Implementation
+
+### Completed Changes
+
+1. **ApiModels.kt** - Added `SearchResult` data class with uuid, title, description (nullable), and url fields
+2. **MipApiClient.kt** - Added `searchSite()` function that encodes query and fetches from `/mobile-api/search?q=...` endpoint
+3. **SearchCache.kt** (new file) - Implemented client-side cache with:
+   - 2 minute TTL (shorter than page cache)
+   - Max 20 cached queries with LRU eviction
+   - Query normalization (lowercase + trim)
+   - Thread-safe ConcurrentHashMap implementation
+4. **NavGraph.kt** - Added `Screen.Search` route and composable that navigates to SearchScreen
+5. **SearchScreen.kt** (new file) - Full Compose UI implementation with:
+   - Header: back button, search TextField, clear button
+   - 500ms debounce using LaunchedEffect and delay
+   - Minimum 3 character query length requirement
+   - LazyColumn for results rendering
+   - Three states: initial, loading (spinner + "Searching..."), no results
+   - Results show title (bold), description (2 lines max), chevron icon
+   - Coroutine job cancellation for request cancellation
+   - Cache integration (check before API call, store after)
+6. **HomeScreen.kt** - Wired up search icon onClick to navigate to Search route
+
+### Testing
+
+- Build successful: `./gradlew installDebug` completed without errors
+- App launches successfully on emulator
+- No critical errors in logcat
+
+### Ready for QA
+
+The implementation follows the React Native reference implementation and includes all performance optimizations:
+- ✅ 500ms debounce
+- ✅ Minimum 3 character query length
+- ✅ Client-side caching (2min TTL, max 20 entries, LRU eviction)
+- ✅ Request cancellation via coroutine job cancellation
+- ✅ Proper loading and empty states
+- ✅ Results navigation to content pages
 
 ## References
 
