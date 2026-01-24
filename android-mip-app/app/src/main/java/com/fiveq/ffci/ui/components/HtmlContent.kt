@@ -3,6 +3,7 @@ package com.fiveq.ffci.ui.components
 import android.content.Intent
 import android.net.Uri
 import android.util.Base64
+import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -274,23 +275,86 @@ fun HtmlContent(
                         request: WebResourceRequest?
                     ): Boolean {
                         val url = request?.url?.toString() ?: return false
+                        Log.d("HtmlContent", "Link clicked: $url")
 
                         // Check for internal page links (e.g., /page/uuid format)
-                        val pageMatch = Regex("/page/([a-f0-9-]+)").find(url)
+                        // Kirby 4 uses 16-character Base62 alphanumeric UUIDs (e.g., xhZj4ejQ65bRhrJg)
+                        val pageMatch = Regex("/page/([a-zA-Z0-9-]+)").find(url)
                         if (pageMatch != null) {
                             val uuid = pageMatch.groupValues[1]
-                            onNavigate?.invoke(uuid)
-                            return true
+                            Log.d("HtmlContent", "Extracted UUID from /page/ link: $uuid")
+                            // Validate it looks like a Kirby UUID (8+ alphanumeric chars, not purely numeric)
+                            // Short numeric IDs like "3" indicate server-side transformation failed
+                            val isValidUuid = uuid.length >= 8 && !uuid.all { it.isDigit() }
+                            if (isValidUuid) {
+                                Log.d("HtmlContent", "Valid UUID, navigating in-app: $uuid")
+                                onNavigate?.invoke(uuid)
+                                return true
+                            } else {
+                                // Looks like a numeric ID or slug, not a UUID - server transformation failed
+                                // This shouldn't happen - pages should have proper UUIDs
+                                Log.w("HtmlContent", "Invalid UUID format '/page/$uuid' - server should transform to proper UUID. Opening in browser.")
+                                try {
+                                    // Resolve relative URL to full URL for browser
+                                    val fullUrl = if (url.startsWith("/")) {
+                                        "https://ffci.fiveq.dev$url"
+                                    } else {
+                                        url
+                                    }
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(fullUrl))
+                                    view?.context?.startActivity(intent)
+                                } catch (e: Exception) {
+                                    Log.e("HtmlContent", "Failed to open /page/ link in browser: $url", e)
+                                }
+                                return true
+                            }
                         }
 
                         // Form pages - open in external browser (matches RN behavior)
                         if (isFormPage(url)) {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                            view?.context?.startActivity(intent)
+                            try {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                view?.context?.startActivity(intent)
+                            } catch (e: Exception) {
+                                Log.e("HtmlContent", "Failed to open form page: $url", e)
+                            }
                             return true
                         }
 
-                        // Other external links - still block for now
+                        // Check if internal link (same domain or relative)
+                        val baseHost = "ffci.fiveq.dev"
+                        val isInternal = try {
+                            val uri = Uri.parse(url)
+                            uri.host == null || uri.host == baseHost || url.startsWith("/")
+                        } catch (e: Exception) {
+                            false
+                        }
+
+                        if (!isInternal) {
+                            // External link - open in browser
+                            try {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                view?.context?.startActivity(intent)
+                            } catch (e: Exception) {
+                                Log.e("HtmlContent", "Failed to open external link: $url", e)
+                            }
+                            return true
+                        }
+
+                        // Internal non-UUID link - open in browser
+                        // These should ideally be transformed to /page/{uuid} format by the server
+                        Log.d("HtmlContent", "Opening internal link in browser: $url")
+                        try {
+                            val fullUrl = if (url.startsWith("/")) {
+                                "https://ffci.fiveq.dev$url"
+                            } else {
+                                url
+                            }
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(fullUrl))
+                            view?.context?.startActivity(intent)
+                        } catch (e: Exception) {
+                            Log.e("HtmlContent", "Failed to open internal link in browser: $url", e)
+                        }
                         return true
                     }
                 }
