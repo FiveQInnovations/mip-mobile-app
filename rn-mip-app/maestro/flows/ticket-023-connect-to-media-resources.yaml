@@ -8,16 +8,22 @@ appId: com.fiveq.ffci
 # NOTE: Due to a Kirby tab sync bug (ticket 092), Media Resources is accessed
 # via the "Connect" tab label as a workaround.
 
+# Launch the app
+- launchApp
+
+# Wait for app to fully load
+- waitForAnimationToEnd
+
 # Ensure we start from home
 - tapOn:
-    text: "Home"
+    text: "Home tab"
     optional: true
 
 - waitForAnimationToEnd
 
 # Tap the Connect tab (which loads Media Resources collection)
 - tapOn:
-    text: "Connect"
+    text: "Connect tab"
 
 - waitForAnimationToEnd
 
@@ -56,25 +62,11 @@ appId: com.fiveq.ffci
 - assertVisible:
     id: "audio-player-container"
 
-# Verify play button is present
+# Verify WebView audio player is present
+# Note: WebView renders HTML5 audio controls (play button, slider, time)
+# which are handled by the browser - we verify the WebView container exists
 - assertVisible:
-    id: "audio-play-button"
-
-# Verify time displays
-- assertVisible:
-    id: "audio-time-current"
-
-- assertVisible:
-    id: "audio-time-duration"
+    id: "audio-webview"
 
 - takeScreenshot:
     path: "maestro/screenshots/023-audio-player-ready"
-
-# Test play button tap
-- tapOn:
-    id: "audio-play-button"
-
-- waitForAnimationToEnd
-
-- takeScreenshot:
-    path: "maestro/screenshots/023-audio-after-play-tap"

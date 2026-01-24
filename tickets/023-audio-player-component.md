@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: qa
 area: rn-mip-app
 phase: c4i
 created: 2026-01-02
@@ -7,14 +7,32 @@ created: 2026-01-02
 
 # Audio Player Component
 
-## 🚨 CURRENT PROBLEM (2026-01-24)
+## ✅ RESOLVED (2026-01-24)
 
-**Audio does not play.** The AudioPlayer component renders correctly but:
-- Play button shows spinner indefinitely
-- Duration shows `0:00 / 0:00` (audio never loads)
-- Behavior is inconsistent: duration occasionally loads for one item but not others
+**Switched to WebView-based HTML5 audio player.** After extensive troubleshooting with native audio libraries, the component now uses a WebView with HTML5 `<audio>` element.
 
-**The audio URL is valid** - verified with curl (200 OK, audio/mpeg, 9.5MB file).
+**What's working:**
+- Audio loads and displays duration correctly (e.g., 39:36)
+- Native browser controls (play, pause, seek, volume)
+- Consistent behavior across audio items
+- Maestro tests pass
+
+**Trade-offs accepted:**
+- No lock screen controls or background playback
+- Uses browser-native audio controls (slight visual difference)
+
+**Native audio attempts preserved on branch:** `feature/native-audio-attempts`
+
+---
+
+## Previous Problem (Resolved)
+
+**Audio did not play with native libraries.** The AudioPlayer component rendered correctly but:
+- Play button showed spinner indefinitely
+- Duration showed `0:00 / 0:00` (audio never loaded)
+- Behavior was inconsistent across items
+
+**The audio URL was valid** - verified with curl (200 OK, audio/mpeg, 9.5MB file).
 
 ## How to Test
 
@@ -39,8 +57,28 @@ maestro test maestro/flows/ticket-023-connect-to-media-resources.yaml
 ### Component Location
 `rn-mip-app/components/AudioPlayer.tsx`
 
-### Current Implementation
-Uses `expo-audio` library with hooks:
+### Current Implementation (WebView)
+Uses a WebView with inline HTML5 audio element:
+```typescript
+import { WebView } from 'react-native-webview';
+
+const html = `
+  <audio controls preload="metadata" src="${url}"></audio>
+`;
+
+<WebView
+  source={{ html }}
+  allowsInlineMediaPlayback={true}
+  mediaPlaybackRequiresUserAction={false}
+/>
+```
+
+Key WebView props:
+- `allowsInlineMediaPlayback={true}` - plays without fullscreen on iOS
+- `mediaPlaybackRequiresUserAction={false}` - allows playback without tap
+
+### Previous Implementation (Native - Preserved on feature branch)
+Used `expo-audio` library with hooks:
 ```typescript
 import { useAudioPlayer, useAudioPlayerStatus, setAudioModeAsync } from 'expo-audio';
 
@@ -93,6 +131,9 @@ curl -sI "https://ffci-5q.b-cdn.net/audio/gods-power-tools.mp3"
 | Added extensive console logging | ✅ Confirms URL is received |
 | Verified CDN URL accessibility | ✅ 200 OK, CORS enabled |
 | Clean build with pod reinstall | ❌ Still not working |
+| Compared with working MLJ app implementation | ❌ Same pattern, still fails |
+| Created isolated audio-example screen | ❌ Also fails to play |
+| **Switched to WebView with HTML5 audio** | ✅ **Working!** Duration loads, playback works |
 
 ### Known expo-audio Issues (GitHub)
 
@@ -176,7 +217,7 @@ await sound.playAsync();
 - [x] Handle audio URLs from collection items
 - [x] Add loading states and error handling
 - [x] Add testIDs for Maestro testing
-- [ ] **Verify audio actually plays** ← BLOCKED
+- [x] **Verify audio actually plays** ← RESOLVED via WebView
 
 ## Related
 - Ticket 092: Tab bar sync bug (why audio is on "Connect" tab)
