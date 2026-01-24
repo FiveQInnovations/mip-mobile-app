@@ -63,3 +63,97 @@ The Resources tab should display 6 resource cards with action buttons, but only 
 - API plugin: `/Users/anthony/mip/fiveq-plugins/wsp-mobile/lib/pages.php`
 - Android renderer: `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt`
 - Related: React Native `HTMLContentRenderer.tsx` handles `._button` class
+
+---
+
+## Research Findings (Scouted)
+
+### Root Cause Identified
+
+**The buttongroup snippet is NOT converting buttons to HTML.**
+
+**Location:** `/Users/anthony/mip/fiveq-plugins/wsp-button-group/snippet.php` (line 11)
+
+```php
+<div class="_button-group <?= $css['classes'] ?>">
+    <?= $block->buttons()->toBlocks() ?>  <!-- ❌ PROBLEM: toBlocks() returns objects, not HTML -->
+</div>
+```
+
+**Expected:**
+```php
+<div class="_button-group <?= $css['classes'] ?>">
+    <?= $block->buttons()->toBlocks()->toHTML() ?>  <!-- ✅ FIX: Add ->toHTML() -->
+</div>
+```
+
+### Evidence
+
+1. **Content Structure** (`3_resources/default.txt`):
+   - All 6 resource cards have proper button/buttongroup blocks in JSON
+   - Each button has `"type":"button"` and buttongroup has `"type":"buttongroup"`
+   - Button data includes: `"text"`, `"kind"` (`_button` or `_button-priority`), `"link_to"`, `"url"` or `"page"`
+
+2. **Button Rendering Chain**:
+   ```
+   Page Content → toBlocks()->toHTML() 
+   → Buttongroup snippet executes 
+   → Calls buttons()->toBlocks() (missing .toHTML()) 
+   → Returns block objects instead of <a> tags
+   → Objects converted to string = "{" or "}"
+   ```
+
+3. **Button Plugin** (`/Users/anthony/mip/fiveq-plugins/wsp-button/`):
+   - Has proper snippet that renders: `<a class="<?= $css['classes'] ?>" href="<?= $href ?>"><span><?= $block->text() ?></span></a>`
+   - CSS classes come from `H::block_css($block)` which reads the `kind` field
+   - Plugin is registered at `blocks/button`
+
+4. **React Native Reference**:
+   - RN app expects `<a class="_button">` or `<a class="_button-priority">` 
+   - Android `HtmlContent.kt` has CSS styling for `._button` and `._button-priority` classes
+   - Both apps are designed to handle the button HTML correctly
+
+### Why One Button Works
+
+The "Do You Know God?" button likely works because it's:
+- Either a standalone button (not in a buttongroup), OR
+- The buttongroup itself is being rendered but the nested `toBlocks()` is producing the bracket artifacts
+
+### Implementation Plan
+
+**Backend Fix (wsp-button-group plugin):**
+
+1. Edit `/Users/anthony/mip/fiveq-plugins/wsp-button-group/snippet.php`
+2. Change line 11 from:
+   ```php
+   <?= $block->buttons()->toBlocks() ?>
+   ```
+   To:
+   ```php
+   <?= $block->buttons()->toBlocks()->toHTML() ?>
+   ```
+
+3. Test the Resources page API response to verify buttons render as HTML
+
+**No Android changes needed** - the renderer already handles `._button` classes correctly.
+
+### Code Locations
+
+| File | Lines | Purpose | Changes Needed |
+|------|-------|---------|---------------|
+| `/Users/anthony/mip/fiveq-plugins/wsp-button-group/snippet.php` | 11 | Button group rendering | Add `->toHTML()` to line 11 |
+| `/Users/anthony/mip/fiveq-plugins/wsp-mobile/lib/pages.php` | 235, 258 | API HTML generation | No changes (working correctly) |
+| `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt` | 189-220 | Button CSS styling | No changes (already supports buttons) |
+
+### Estimated Complexity
+
+**Low** - Single line fix in the buttongroup snippet. The button rendering infrastructure is already in place and working. The issue is simply that nested blocks aren't being converted to HTML.
+
+### Testing Steps
+
+1. Apply fix to buttongroup snippet
+2. Restart PHP/Kirby (if needed for plugin reload)
+3. Fetch Resources page from mobile API: `curl -u "fiveq:demo" "https://ffci.fiveq.dev/mobile-api/page/uezb3178BtP3oGuU"`
+4. Verify `page_content` HTML contains `<a class="_button">` or `<a class="_button-priority">` tags
+5. Test in Android app - all 6 buttons should render
+6. Test in RN app - verify no regression
