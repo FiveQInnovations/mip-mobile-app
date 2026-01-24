@@ -101,6 +101,45 @@ fun HtmlContent(
                     padding-left: 16px;
                     color: #475569;
                 }
+                /* Button group - stack buttons vertically */
+                ._button-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                    margin: 16px 0;
+                }
+                /* Base button styles */
+                ._button-priority,
+                ._button-secondary,
+                [class*="_button"] a,
+                a[class*="_button"] {
+                    display: block;
+                    width: 100%;
+                    padding: 18px 24px;
+                    border-radius: 12px;
+                    text-align: center;
+                    font-size: 20px;
+                    font-weight: 500;
+                    letter-spacing: 0.5px;
+                    text-decoration: none;
+                    box-sizing: border-box;
+                }
+                /* Primary button - red background */
+                ._button-priority {
+                    background-color: #D9232A;
+                    color: white !important;
+                }
+                /* Secondary button - outline style */
+                ._button-secondary {
+                    background-color: transparent;
+                    color: #D9232A !important;
+                    border: 2px solid #D9232A;
+                }
+                /* Button span should inherit */
+                ._button-priority span,
+                ._button-secondary span {
+                    color: inherit;
+                }
             </style>
         </head>
         <body>
