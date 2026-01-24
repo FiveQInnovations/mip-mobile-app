@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [095](095-android-page-caching.md) - Android Page Caching
 
 ## In Progress
 (none)
@@ -25,7 +25,6 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🟡 Nice to Have
 - [093](093-android-home-screen-logo-polish.md) - Android Home Screen Logo Polish
-- [095](095-android-page-caching.md) - Android Page Caching
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
