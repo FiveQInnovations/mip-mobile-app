@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [094](094-android-search-functionality.md) - Android Search Functionality
 
 ## In Progress
 (none)
@@ -17,7 +17,6 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
-- [094](094-android-search-functionality.md) - Android Search Functionality
 - [096](096-android-prayer-request-form.md) - Android Prayer Request Form
 - [097](097-android-internal-page-styling.md) - Android Internal Page Styling
 - [098](098-android-internal-page-navigation.md) - Android Internal Page Navigation
