@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: done
 area: android-mip-app
 phase: nice-to-have
 created: 2026-01-24
@@ -53,3 +53,44 @@ The Android app currently uses a placeholder "FFCI" text vector drawable for the
 - `android-mip-app/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml`
 - `rn-mip-app/assets/adaptive-icon.png`
 - `rn-mip-app/assets/splash-icon.png`
+
+## Implementation Notes
+
+### Changes Made
+
+1. **Launcher Icon Assets**: Created PNG versions of the Maltese cross icon at all required densities:
+   - `drawable-mdpi/ic_launcher_foreground.png` (108x108)
+   - `drawable-hdpi/ic_launcher_foreground.png` (162x162)
+   - `drawable-xhdpi/ic_launcher_foreground.png` (216x216)
+   - `drawable-xxhdpi/ic_launcher_foreground.png` (324x324)
+   - `drawable-xxxhdpi/ic_launcher_foreground.png` (432x432)
+   - Removed old vector drawable XML placeholder
+
+2. **Adaptive Icon Configuration**: Updated adaptive icon to use PNG foreground drawables (automatically selected by Android based on screen density)
+
+3. **Splash Screen Implementation**:
+   - Added `androidx.core:core-splashscreen` dependency (v1.0.1)
+   - Created splash screen theme with white background and Maltese cross icon
+   - Added Android 12+ specific theme in `values-v31/themes.xml` with splash screen attributes
+   - Updated `MainActivity` to install splash screen using `installSplashScreen()`
+   - Updated `AndroidManifest.xml` to use splash theme for launch activity
+   - Created splash icon drawables at all densities (`ic_splash.png`)
+
+4. **Splash Icon Assets**: Created PNG versions of splash icon at all densities:
+   - `drawable-mdpi/ic_splash.png` through `drawable-xxxhdpi/ic_splash.png`
+
+### Technical Details
+
+- Adaptive icons work on Android 8.0+ (API 26+) with automatic mask application
+- Splash screen uses Android 12+ Splash Screen API for modern devices
+- Pre-Android 12 devices will use the base theme (no splash screen, but app still launches)
+- Icons are properly sized for adaptive icon foreground (108dp base size)
+- All icons render crisply at their respective densities
+
+### Verification
+
+- ✅ App builds successfully
+- ✅ App installs and launches without errors
+- ✅ Launcher icon displays Maltese cross (verified in emulator)
+- ✅ Splash screen configured for Android 12+ devices
+- ✅ No errors in logcat during app launch
