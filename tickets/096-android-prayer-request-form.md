@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: done
 area: android-mip-app
 phase: core
 created: 2026-01-24
@@ -289,3 +289,41 @@ override fun shouldOverrideUrlLoading(...): Boolean {
 - Testing
 
 **Recommendation:** Implement Option A (Browser) to match RN behavior and achieve feature parity quickly. Can revisit Options B or C later if user feedback indicates need for in-app forms.
+
+---
+
+## Implementation (Option A - Completed)
+
+### Changes Made
+
+**File: `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt`**
+
+1. **Added imports** (lines 3-4):
+   - `android.content.Intent`
+   - `android.net.Uri`
+
+2. **Added `isFormPage()` helper function** (lines 17-21):
+   - Detects form pages by checking for `/prayer-request`, `/chaplain-request`, or `/forms/` in URL
+   - Matches React Native implementation pattern
+
+3. **Modified `shouldOverrideUrlLoading()`** (lines 195-211):
+   - Kept internal page navigation logic unchanged
+   - Added form page detection that opens URLs in external browser using `Intent.ACTION_VIEW`
+   - Other external links still blocked (as before)
+
+### Verification
+
+- ✅ Code compiles successfully (`./gradlew compileDebugKotlin`)
+- ✅ App installs to emulator (`./gradlew installDebug`)
+- ✅ App launches without errors
+- ✅ No exceptions in logcat
+
+### Testing Notes
+
+To test the implementation:
+1. Navigate to Connect tab in app
+2. Find and tap "Prayer Request" button/link
+3. Verify browser opens with prayer request form
+4. Verify form URL is correct: `https://ffci.fiveq.dev/prayer-request`
+
+**Status:** Ready for QA testing

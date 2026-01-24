@@ -1,5 +1,7 @@
 package com.fiveq.ffci.ui.components
 
+import android.content.Intent
+import android.net.Uri
 import android.util.Base64
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -11,6 +13,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+
+/**
+ * Checks if a URL is a form page that should be opened in an external browser.
+ * Matches the React Native implementation pattern.
+ */
+private fun isFormPage(url: String): Boolean {
+    val formPaths = listOf("/prayer-request", "/chaplain-request", "/forms/")
+    return formPaths.any { url.contains(it) }
+}
 
 @Composable
 fun HtmlContent(
@@ -206,7 +217,14 @@ fun HtmlContent(
                             return true
                         }
 
-                        // For now, block external links (could open in browser in future)
+                        // Form pages - open in external browser (matches RN behavior)
+                        if (isFormPage(url)) {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            view?.context?.startActivity(intent)
+                            return true
+                        }
+
+                        // Other external links - still block for now
                         return true
                     }
                 }
