@@ -14,10 +14,13 @@ Research the ticket thoroughly and add findings directly to the ticket file. **D
 ## Workspace Context
 
 This is a multi-repo workspace:
+- `android-mip-app/` - Native Android app (Kotlin/Jetpack Compose)
 - `rn-mip-app/` - React Native mobile app (Expo)
 - `ws-ffci/` - Kirby CMS site with content
 - `wsp-mobile/` - Kirby plugin for mobile API
 - `wsp-forms/` - Kirby plugin for forms
+
+**Note:** The Android app is being built to match the React Native app's functionality. When scouting Android tickets, always check if the feature exists in the React Native app first.
 
 ## Scouting Process
 
@@ -30,7 +33,27 @@ This is a multi-repo workspace:
 - Read the ticket's Context, Goals, and Acceptance Criteria
 - Check referenced meeting notes or related tickets
 
-### 3. Research the Codebase
+### 3. Check React Native Reference (Android tickets)
+If scouting an Android ticket, check if the feature exists in `rn-mip-app/`:
+
+**Find the RN implementation:**
+- Search for similar components/screens in `rn-mip-app/app/`
+- Check for related utilities in `rn-mip-app/lib/`
+- Look for Maestro tests in `rn-mip-app/maestro/flows/`
+
+**Document the RN strategy:**
+- UI patterns used (debouncing, caching, state management)
+- API integration approach
+- Performance optimizations
+- Test coverage
+
+**Note Android equivalents:**
+- FlatList → LazyColumn
+- AbortController → OkHttp Call.cancel() / coroutine cancellation
+- useState/useEffect → remember/LaunchedEffect
+- In-memory cache Map → Kotlin equivalent
+
+### 4. Research the Codebase
 For each requirement, identify:
 
 **Exact Locations:**
@@ -48,7 +71,7 @@ For each requirement, identify:
 - Which files DON'T need changes (equally important!)
 - Any backend vs frontend separation
 
-### 4. Document Findings
+### 5. Document Findings
 
 Add a "Research Findings (Scouted)" section to the ticket with:
 
@@ -56,6 +79,9 @@ Add a "Research Findings (Scouted)" section to the ticket with:
 ---
 
 ## Research Findings (Scouted)
+
+### React Native Reference (Android tickets only)
+[Document how RN app implements this feature - UI patterns, caching, API calls, tests]
 
 ### Current Implementation Analysis
 [Describe what exists today with specific file:line references]
@@ -77,7 +103,7 @@ Add a "Research Findings (Scouted)" section to the ticket with:
 [Low/Medium/High with brief justification]
 ```
 
-### 5. Commit the Ticket
+### 6. Commit the Ticket
 After adding findings, commit only the ticket file:
 ```
 git add tickets/XXX-ticket-name.md
