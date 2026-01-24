@@ -10,14 +10,16 @@ Quick reference for active tasks. See individual files for details.
 ## QA
 - [023](023-audio-player-component.md) - Audio Player Component
 - [057](057-header-safe-area-insets.md) - Header Should Respect Safe Area Insets
+- [084](084-icon-management-website.md) - Icon Management in Website (No Upload Required)
 
 ## In Progress
-- [084](084-icon-management-website.md) - Icon Management in Website (No Upload Required)
+- [089](089-resources-tab-active-state-styling.md) - Resources Tab Active State Styling Inconsistent
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
+- [090](090-connect-tab-routing-broken.md) - Connect Tab Routing Shows Chapters Content
 
 ### 🟡 Nice to Have
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
