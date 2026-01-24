@@ -124,6 +124,7 @@ private fun MainContent(siteData: SiteData) {
                         label = {
                             Text(
                                 text = item.label,
+                                style = MaterialTheme.typography.labelLarge,
                                 maxLines = 1
                             )
                         },
