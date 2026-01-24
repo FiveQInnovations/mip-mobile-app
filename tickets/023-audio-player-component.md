@@ -16,8 +16,11 @@ created: 2026-01-02
 - Native browser controls (play, pause, seek, volume)
 - Consistent behavior across audio items
 - Maestro tests pass
+- **Decode error handling:** Detects unsupported audio formats (e.g., MPEG v2.5) and shows helpful error message with "Open in Safari" fallback
 
-**Trade-offs accepted:**
+**Known limitations:**
+- iOS WebView does not support MPEG v2.5 audio format (some files like "Husbands" use this format)
+- Files using MPEG v2.5 will show a decode error - these need to be re-encoded to MP3 (MPEG Layer III), AAC, or WAV
 - No lock screen controls or background playback
 - Uses browser-native audio controls (slight visual difference)
 
@@ -33,6 +36,23 @@ created: 2026-01-02
 - Behavior was inconsistent across items
 
 **The audio URL was valid** - verified with curl (200 OK, audio/mpeg, 9.5MB file).
+
+## Decode Error Issue (2026-01-24)
+
+**Problem:** Some audio files (e.g., "Husbands") show "Decode error" when attempting playback.
+
+**Root Cause:** iOS WebView/Safari does not support MPEG v2.5 audio format. The "Husbands" file uses MPEG v2.5 Layer III (11.025 kHz, 32 kbps), while working files like "God's Power Tools" use MPEG v2 Layer III (22.05 kHz, 32 kbps).
+
+**Solution:** Added error handling that:
+- Detects decode/format errors specifically
+- Shows a user-friendly error message explaining the format issue
+- Provides "Open in Safari" button as fallback (though Safari also won't support MPEG v2.5)
+- Logs the error with URL for content team to identify files needing re-encoding
+
+**Action Required:** Audio files using MPEG v2.5 need to be re-encoded to a compatible format:
+- MP3 (MPEG Layer III, not v2.5)
+- AAC-LC or HE-AAC
+- WAV or AIF (uncompressed)
 
 ## How to Test
 
