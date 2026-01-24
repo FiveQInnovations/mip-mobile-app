@@ -135,6 +135,15 @@ fun HtmlContent(
                     border-bottom: 2px solid #D9232A;
                     border-radius: 4px;
                 }
+                /* Ensure buttons completely override base link styles */
+                a[class*="_button"] {
+                    /* Reset all inherited styles that might cause red artifacts */
+                    background-image: none !important;
+                    background-position: initial !important;
+                    background-repeat: initial !important;
+                    background-attachment: initial !important;
+                    background-size: initial !important;
+                }
                 img {
                     max-width: 100%;
                     height: auto;
@@ -193,6 +202,27 @@ fun HtmlContent(
                     border: none;
                     border-top: 1px solid #cbd5e1;
                 }
+                /* Hide any hr tags near buttons that might create red artifacts */
+                ._button-group + hr,
+                hr + ._button-group,
+                ._button-group hr {
+                    display: none !important;
+                }
+                /* Hide any decorative divs or spans with red borders/backgrounds near buttons */
+                div[style*="border"],
+                div[style*="background"],
+                span[style*="border"],
+                span[style*="background"] {
+                    border: none !important;
+                    background: none !important;
+                }
+                /* Specifically target any elements with red colors that might be decorative */
+                div[style*="#D9232A"],
+                div[style*="217, 35, 42"],
+                span[style*="#D9232A"],
+                span[style*="217, 35, 42"] {
+                    display: none !important;
+                }
                 /* Button group - stack buttons vertically */
                 ._button-group {
                     display: flex;
@@ -202,6 +232,7 @@ fun HtmlContent(
                     border: none !important;
                     background: none !important;
                     padding: 0 !important;
+                    position: relative;
                 }
                 /* Remove any pseudo-elements that might create decorative lines */
                 ._button-group::before,
@@ -210,6 +241,16 @@ fun HtmlContent(
                 a[class*="_button"]::after {
                     display: none !important;
                     content: none !important;
+                }
+                /* Hide any decorative elements that might appear between buttons */
+                ._button-group > *:not(a[class*="_button"]) {
+                    display: none !important;
+                }
+                /* Ensure no red artifacts from border-radius curves */
+                ._button-group a[class*="_button"] {
+                    overflow: hidden;
+                    outline: none !important;
+                    box-shadow: none !important;
                 }
                 /* Base button styles - use attribute selector to handle leading spaces in class */
                 /* Override ALL base 'a' tag styles to prevent artifacts */
@@ -243,12 +284,15 @@ fun HtmlContent(
                 a[class*="_button-priority"] {
                     background-color: #D9232A !important;
                     background: #D9232A !important;
+                    background-clip: padding-box !important;
                     color: white !important;
                     border: none !important;
                     border-bottom: none !important;
                     border-top: none !important;
                     border-left: none !important;
                     border-right: none !important;
+                    /* Ensure no red shows outside the button */
+                    clip-path: inset(0);
                 }
                 /* Secondary button - outline style */
                 a[class*="_button-secondary"] {
