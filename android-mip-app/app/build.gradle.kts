@@ -65,6 +65,7 @@ dependencies {
 
     // Image loading
     implementation(libs.coil.compose)
+    implementation(libs.coil.svg)
 
     // Debug
     debugImplementation(libs.androidx.ui.tooling)

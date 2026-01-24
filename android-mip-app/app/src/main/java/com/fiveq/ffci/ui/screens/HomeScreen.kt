@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -71,28 +72,68 @@ fun HomeScreen(
             .background(MaterialTheme.colorScheme.background),
         contentPadding = PaddingValues(bottom = 16.dp)
     ) {
-        // Header with logo
+        // Header with logo (iOS-style: white background, small logo top-left, search top-right)
         item {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primary)
-                    .padding(vertical = 32.dp),
-                contentAlignment = Alignment.Center
+                    .background(Color.White)
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
+                // Small logo top-left
                 if (siteMeta.logo != null) {
+                    val logoUrl = if (siteMeta.logo.startsWith("http://") || siteMeta.logo.startsWith("https://")) {
+                        siteMeta.logo
+                    } else {
+                        "https://ffci.fiveq.dev${siteMeta.logo}"
+                    }
                     AsyncImage(
-                        model = "https://ffci.fiveq.dev${siteMeta.logo}",
+                        model = logoUrl,
                         contentDescription = siteMeta.title,
-                        modifier = Modifier.size(80.dp)
+                        modifier = Modifier
+                            .size(32.dp)
+                            .align(Alignment.TopStart)
                     )
-                } else {
-                    Text(
-                        text = siteMeta.title,
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        fontWeight = FontWeight.Bold
+                }
+                
+                // Search icon top-right
+                IconButton(
+                    onClick = { /* TODO: Navigate to search */ },
+                    modifier = Modifier.align(Alignment.TopEnd)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search",
+                        tint = Color(0xFF0F172A)
                     )
+                }
+                
+                // Main logo centered
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (siteMeta.logo != null) {
+                        val logoUrl = if (siteMeta.logo.startsWith("http://") || siteMeta.logo.startsWith("https://")) {
+                            siteMeta.logo
+                        } else {
+                            "https://ffci.fiveq.dev${siteMeta.logo}"
+                        }
+                        AsyncImage(
+                            model = logoUrl,
+                            contentDescription = siteMeta.title,
+                            modifier = Modifier.size(80.dp)
+                        )
+                    } else {
+                        Text(
+                            text = siteMeta.title,
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = Color(0xFF0F172A),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
         }
@@ -403,12 +444,12 @@ private fun FeaturedCard(
                     if (featured.badgeText != null) {
                         Surface(
                             shape = RoundedCornerShape(4.dp),
-                            color = MaterialTheme.colorScheme.primary
+                            color = Color(0xFF2563EB) // Blue badge like iOS
                         ) {
                             Text(
-                                text = featured.badgeText,
+                                text = featured.badgeText.uppercase(),
                                 style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = Color.White,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                             )
                         }
@@ -445,12 +486,12 @@ private fun FeaturedCard(
                         if (featured.badgeText != null) {
                             Surface(
                                 shape = RoundedCornerShape(4.dp),
-                                color = MaterialTheme.colorScheme.primary
+                                color = Color(0xFF2563EB) // Blue badge like iOS
                             ) {
                                 Text(
-                                    text = featured.badgeText,
+                                    text = featured.badgeText.uppercase(),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    color = Color.White,
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                                 )
                             }
