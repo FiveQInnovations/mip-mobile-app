@@ -22,6 +22,9 @@ Quick reference for active tasks. See individual files for details.
 - [203](203-ios-page-caching.md) - iOS Page Caching
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
 
+### 🟡 Nice to Have
+- [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
+
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
 - [022](022-youtube-vimeo-embed.md) - YouTube/Vimeo Embed Support
@@ -39,6 +42,9 @@ Quick reference for active tasks. See individual files for details.
 - [040](040-eas-build-profiles.md) - Set Up EAS Build Profiles for Multiple Sites
 - [041](041-new-site-guide.md) - Document "Adding a New Site" Step-by-Step Guide
 - [042](042-remove-dev-tools.md) - Remove Dev Tools Section Before Production
+
+### Unassigned
+- [205](205-ios-resources-scroll-arrows.md) - iOS Resources Section Scroll Arrows
 
 ## Blocked
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
