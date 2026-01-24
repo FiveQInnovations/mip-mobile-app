@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -29,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -87,54 +89,107 @@ fun TabScreen(
         }
     }
 
-    Column(modifier = modifier.fillMaxSize()) {
-        // Top App Bar with back button when navigated deep
-        if (canGoBack) {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = pageData?.title ?: "",
-                        maxLines = 1
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { goBack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            if (canGoBack) {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = pageData?.title ?: "",
+                            maxLines = 1
                         )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { goBack() }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back"
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    )
                 )
-            )
+            }
         }
-
+    ) { innerPadding ->
         // Content area
+        Log.d(TAG, "Rendering content area: isLoading=$isLoading, error=$error, pageData=${pageData?.title}")
+
         when {
             isLoading -> {
-                LoadingScreen()
+                LoadingScreen(modifier = Modifier.fillMaxSize().padding(innerPadding))
             }
             error != null -> {
                 ErrorScreen(
                     message = error!!,
                     onRetry = {
-                        // Trigger reload
                         val temp = pageStack.last()
                         pageStack.removeAt(pageStack.lastIndex)
                         pageStack.add(temp)
-                    }
+                    },
+                    modifier = Modifier.fillMaxSize().padding(innerPadding)
                 )
             }
             pageData != null -> {
-                PageContent(
-                    pageData = pageData!!,
-                    onNavigate = { navigateToPage(it) },
-                    showTitle = !canGoBack
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
+                    // Title (only show if no TopAppBar)
+                    if (!canGoBack) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(4.dp)
+                                .background(MaterialTheme.colorScheme.primary)
+                        )
+                    }
+
+                    Text(
+                        text = pageData!!.title,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(16.dp)
+                    )
+
+                    // Audio player for audio items
+                    if (pageData!!.isAudioItem && pageData!!.audioUrl != null) {
+                        AudioPlayer(
+                            url = pageData!!.audioUrl!!,
+                            title = pageData!!.audioTitle,
+                            artist = pageData!!.audioArtist,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                    }
+
+                    // HTML content
+                    val htmlContent = pageData!!.htmlContent
+                    if (!htmlContent.isNullOrBlank()) {
+                        HtmlContent(
+                            html = htmlContent,
+                            onNavigate = { navigateToPage(it) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
+                    // Collection children
+                    if (pageData!!.effectivePageType == "collection" && !pageData!!.children.isNullOrEmpty()) {
+                        CollectionList(
+                            items = pageData!!.children!!,
+                            onItemClick = { navigateToPage(it) }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
             }
         }
     }
@@ -154,8 +209,7 @@ private fun PageContent(
 
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .fillMaxWidth()
             .verticalScroll(scrollState)
     ) {
         // Cover image
