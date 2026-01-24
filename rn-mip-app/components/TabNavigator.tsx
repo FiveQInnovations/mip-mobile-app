@@ -33,47 +33,37 @@ const DEFAULT_ICON = { filled: 'ellipse' as keyof typeof Ionicons.glyphMap, outl
 /**
  * Get icon configuration for a menu item
  * Priority: API icon > TAB_ICONS mapping > DEFAULT_ICON
+ * 
+ * Note: We trust API icon names directly without validating against Ionicons.glyphMap
+ * because the `in` operator check fails in React Native's runtime environment,
+ * causing valid icons like "information-circle-outline" to fall through to fallbacks.
+ * The CMS provides a controlled list of valid icon names, so validation is unnecessary.
  */
 function getIconForMenuItem(item: MenuItem): { filled: keyof typeof Ionicons.glyphMap; outline: keyof typeof Ionicons.glyphMap } {
-  // If API provides an icon, use it
-  if (item.icon) {
-    const iconName = item.icon;
+  // If API provides an icon, use it directly (trust CMS provides valid icon names)
+  // Use trim() to handle any whitespace issues from API
+  if (item.icon && item.icon.trim()) {
+    const iconName = item.icon.trim();
     
     // Check if icon name ends with -outline
     if (iconName.endsWith('-outline')) {
       // Use the outline version for unselected, and the base name for selected
       const baseName = iconName.replace('-outline', '');
-      
-      // Verify both icons exist in Ionicons
-      if (baseName in Ionicons.glyphMap && iconName in Ionicons.glyphMap) {
-        return {
-          filled: baseName as keyof typeof Ionicons.glyphMap,
-          outline: iconName as keyof typeof Ionicons.glyphMap,
-        };
-      }
+      return {
+        filled: baseName as keyof typeof Ionicons.glyphMap,
+        outline: iconName as keyof typeof Ionicons.glyphMap,
+      };
     } else {
       // Icon name doesn't have -outline, append it for unselected state
       const outlineName = `${iconName}-outline`;
-      
-      // Verify both icons exist in Ionicons
-      if (iconName in Ionicons.glyphMap && outlineName in Ionicons.glyphMap) {
-        return {
-          filled: iconName as keyof typeof Ionicons.glyphMap,
-          outline: outlineName as keyof typeof Ionicons.glyphMap,
-        };
-      }
-      
-      // If only the base icon exists (no outline variant), use it for both states
-      if (iconName in Ionicons.glyphMap) {
-        return {
-          filled: iconName as keyof typeof Ionicons.glyphMap,
-          outline: iconName as keyof typeof Ionicons.glyphMap,
-        };
-      }
+      return {
+        filled: iconName as keyof typeof Ionicons.glyphMap,
+        outline: outlineName as keyof typeof Ionicons.glyphMap,
+      };
     }
   }
   
-  // Fall back to hardcoded mapping
+  // Fall back to hardcoded mapping (for tabs without API icon configured)
   const cleanLabel = item.label.trim();
   if (cleanLabel in TAB_ICONS) {
     return TAB_ICONS[cleanLabel];
