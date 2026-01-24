@@ -17,7 +17,6 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
-- [097](097-android-internal-page-styling.md) - Android Internal Page Styling
 - [098](098-android-internal-page-navigation.md) - Android Internal Page Navigation
 - [099](099-android-back-navigation-research.md) - Android Back Navigation Research
 
@@ -129,6 +128,7 @@ Quick reference for active tasks. See individual files for details.
 - [094](094-android-search-functionality.md) - Android Search Functionality
 - [095](095-android-page-caching.md) - Android Page Caching
 - [096](096-android-prayer-request-form.md) - Android Prayer Request Form
+- [097](097-android-internal-page-styling.md) - Android Internal Page Styling
 
 ---
 

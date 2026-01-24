@@ -48,28 +48,83 @@ fun HtmlContent(
             <style>
                 body {
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                    font-size: 16px;
-                    line-height: 1.6;
-                    color: #0f172a;
+                    font-size: 17px;
+                    line-height: 28px;
+                    color: #334155;
                     padding: 0 16px;
                     margin: 0;
                 }
-                h1, h2, h3, h4, h5, h6 {
+                h1 {
+                    font-size: 34px;
+                    font-weight: 700;
+                    margin-top: 36px;
+                    margin-bottom: 20px;
                     color: #0f172a;
-                    margin-top: 1.5em;
-                    margin-bottom: 0.5em;
+                    letter-spacing: -1px;
+                    line-height: 40px;
+                }
+                h2 {
+                    font-size: 28px;
+                    font-weight: 700;
+                    margin-top: 32px;
+                    margin-bottom: 16px;
+                    color: #0f172a;
+                    letter-spacing: -0.6px;
+                    line-height: 34px;
+                }
+                h3 {
+                    font-size: 23px;
+                    font-weight: 700;
+                    margin-top: 28px;
+                    margin-bottom: 12px;
+                    color: #024D91;
+                    line-height: 30px;
+                    padding-left: 12px;
+                    border-left: 3px solid #D9232A;
+                }
+                h4 {
+                    font-size: 20px;
+                    font-weight: 600;
+                    margin-top: 24px;
+                    margin-bottom: 12px;
+                    color: #0f172a;
+                    line-height: 26px;
+                }
+                h5 {
+                    font-size: 18px;
+                    font-weight: 700;
+                    margin-top: 20px;
+                    margin-bottom: 10px;
+                    color: #024D91;
+                    line-height: 24px;
+                }
+                h6 {
+                    font-size: 15px;
+                    font-weight: 700;
+                    margin-top: 18px;
+                    margin-bottom: 8px;
+                    color: #64748b;
+                    line-height: 20px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
                 }
                 p {
-                    margin: 1em 0;
+                    margin: 16px 0;
                 }
                 a {
                     color: #D9232A;
                     text-decoration: none;
+                    font-weight: 600;
+                    background: rgba(217, 35, 42, 0.08);
+                    padding: 4px 6px;
+                    border-bottom: 2px solid #D9232A;
+                    border-radius: 4px;
                 }
                 img {
                     max-width: 100%;
                     height: auto;
                     border-radius: 8px;
+                    margin: 24px 0;
                 }
                 picture {
                     display: block;
@@ -78,6 +133,7 @@ fun HtmlContent(
                 picture img {
                     width: 100%;
                     border-radius: 8px;
+                    margin: 24px 0;
                 }
                 ._background {
                     position: relative;
@@ -99,18 +155,28 @@ fun HtmlContent(
                     height: 100%;
                     object-fit: cover;
                     border-radius: 0;
+                    margin: 0;
                 }
                 ul, ol {
                     padding-left: 24px;
+                    margin: 16px 0;
                 }
                 li {
-                    margin: 0.5em 0;
+                    margin-bottom: 8px;
                 }
                 blockquote {
                     border-left: 4px solid #D9232A;
-                    margin: 1em 0;
-                    padding-left: 16px;
+                    margin: 24px 0;
+                    padding: 12px 0 12px 20px;
+                    background: #f1f5f9;
+                    font-style: italic;
+                    font-size: 18px;
                     color: #475569;
+                }
+                hr {
+                    margin: 32px 0;
+                    border: none;
+                    border-top: 1px solid #cbd5e1;
                 }
                 /* Button group - stack buttons vertically */
                 ._button-group {
