@@ -2,105 +2,132 @@
 //  ContentView.swift
 //  FFCI
 //
-//  Firefighters for Christ International
+//  Main content view with tab navigation
 //
 
 import SwiftUI
 import os.log
 
-// Logger for the app - using notice level for visibility in log stream
 private let logger = Logger(subsystem: "com.fiveq.ffci", category: "UI")
 
 struct ContentView: View {
-    @State private var showingDetail = false
+    @StateObject private var appState = AppState()
     
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 16) {
-                Image(systemName: "flame.fill")
-                    .font(.system(size: 80))
-                    .foregroundColor(Color("PrimaryColor"))
-                
-                Text("FFCI")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                
-                Text("Firefighters for Christ")
-                    .font(.title3)
-                    .foregroundColor(.secondary)
-                
-                Spacer().frame(height: 40)
-                
-                Button(action: {
-                    logger.notice("🎯 Hello World button tapped - PROOF TEST! Logging works!")
-                    NSLog("📱 [FFCI] Hello World button tapped - navigating to detail screen")
-                    print("📱 [FFCI] Hello World button was tapped - navigating to detail screen")
-                    showingDetail = true
-                }) {
-                    Text("Hello World!")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 12)
-                        .background(Color("SecondaryColor"))
-                        .cornerRadius(8)
+        Group {
+            if appState.isLoading {
+                LoadingView()
+            } else if let error = appState.error {
+                ErrorView(message: error) {
+                    appState.loadSiteData()
                 }
-                .navigationDestination(isPresented: $showingDetail) {
-                    DetailView()
-                }
+            } else if let siteData = appState.siteData {
+                MainTabView(siteData: siteData)
             }
-            .padding()
-            .navigationTitle("Home")
-            .navigationBarTitleDisplayMode(.inline)
+        }
+        .task {
+            appState.loadSiteData()
         }
     }
 }
 
-struct DetailView: View {
-    @Environment(\.dismiss) private var dismiss
+class AppState: ObservableObject {
+    @Published var siteData: SiteData?
+    @Published var isLoading = true
+    @Published var error: String?
     
-    var body: some View {
-        VStack(spacing: 24) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 80))
-                .foregroundColor(.green)
-            
-            Text("You Made It!")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-            
-            Text("This is the detail screen.")
-                .font(.title3)
-                .foregroundColor(.secondary)
-            
-            Text("Navigation is working!")
-                .font(.body)
-                .foregroundColor(.secondary)
-            
-            Spacer().frame(height: 40)
-            
-            Button(action: {
-                logger.notice("🔙 Back button tapped on detail screen")
-                NSLog("📱 [FFCI] Back button tapped - dismissing detail screen")
-                print("📱 [FFCI] Back button tapped - dismissing detail screen")
-                dismiss()
-            }) {
-                Text("Go Back")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 12)
-                    .background(Color("PrimaryColor"))
-                    .cornerRadius(8)
+    func loadSiteData() {
+        isLoading = true
+        error = nil
+        
+        Task {
+            do {
+                let data = try await MipApiClient.shared.getSiteData()
+                await MainActor.run {
+                    self.siteData = data
+                    self.isLoading = false
+                    logger.notice("Site data loaded: \(data.menu.count) menu items")
+                }
+            } catch {
+                await MainActor.run {
+                    self.error = error.localizedDescription
+                    self.isLoading = false
+                    logger.error("Failed to load site data: \(error.localizedDescription)")
+                }
             }
         }
-        .padding()
-        .navigationTitle("Detail")
-        .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            logger.notice("📄 Detail screen appeared")
-            NSLog("📱 [FFCI] Detail screen is now visible")
-            print("📱 [FFCI] Detail screen is now visible")
+    }
+}
+
+struct MainTabView: View {
+    let siteData: SiteData
+    @State private var selectedTab = 0
+    
+    // Filter menu to non-home tabs
+    var menuItems: [MenuItem] {
+        siteData.menu.filter { $0.page.uuid != "__home__" }
+    }
+    
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            // Home tab
+            HomeView(
+                siteMeta: siteData.siteData,
+                onQuickTaskClick: { uuid in
+                    logger.notice("Quick task clicked: \(uuid)")
+                    // Navigate to page - for now just log
+                },
+                onFeaturedClick: { uuid in
+                    logger.notice("Featured clicked: \(uuid)")
+                    // Navigate to page - for now just log
+                }
+            )
+            .tabItem {
+                Label("Home", systemImage: "house.fill")
+            }
+            .tag(0)
+            
+            // Dynamic tabs from menu
+            ForEach(Array(menuItems.enumerated()), id: \.element.page.uuid) { index, item in
+                TabPageView(uuid: item.page.uuid)
+                    .tabItem {
+                        Label(item.label, systemImage: iconForTab(item.icon, index))
+                    }
+                    .tag(index + 1)
+            }
+        }
+        .accentColor(Color("PrimaryColor"))
+    }
+    
+    private func iconForTab(_ iconName: String?, _ index: Int) -> String {
+        // Map icon names from API to SF Symbols
+        if let iconName = iconName?.lowercased() {
+            switch iconName {
+            case "book-outline", "book":
+                return "book.fill"
+            case "library-outline", "library":
+                return "book.fill"
+            case "information-circle-outline", "info":
+                return "info.circle.fill"
+            case "heart-outline", "heart":
+                return "heart.fill"
+            case "menu-outline", "menu":
+                return "line.3.horizontal"
+            default:
+                break
+            }
+        }
+        
+        // Default icons by position
+        switch index {
+        case 0:
+            return "book.fill"
+        case 1:
+            return "info.circle.fill"
+        case 2:
+            return "heart.fill"
+        default:
+            return "line.3.horizontal"
         }
     }
 }
