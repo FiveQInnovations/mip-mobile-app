@@ -205,3 +205,26 @@ Added debug logging to `HtmlContent.kt` to log:
 3. Or there's caching/API differences between platforms
 
 **Action needed:** Verify what HTML the API is actually returning after the fix.
+
+### Root Cause Found (Android CSS Issue)
+
+**Debug logs confirmed:** Buttons ARE in the HTML from the API! The backend fix worked.
+
+**The real issue:** CSS selectors weren't matching because of leading spaces in class attributes.
+
+**HTML from API:**
+```html
+<a class=" _button-priority _default" href="...">
+```
+
+Notice the leading space: `class=" _button-priority"`. The CSS selector `._button-priority` doesn't match when there's a leading space.
+
+**Fix Applied:**
+Changed CSS selectors from class selectors to attribute selectors:
+- Before: `._button-priority` (doesn't match `class=" _button-priority"`)
+- After: `a[class*="_button-priority"]` (matches regardless of spaces)
+
+**Files Changed:**
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt` - Updated button CSS selectors
+
+**Status:** Fixed and deployed. Buttons should now render correctly.

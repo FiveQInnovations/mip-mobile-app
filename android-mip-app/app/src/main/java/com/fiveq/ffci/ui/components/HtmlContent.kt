@@ -197,12 +197,11 @@ fun HtmlContent(
                     gap: 12px;
                     margin: 16px 0;
                 }
-                /* Base button styles */
-                ._button-priority,
-                ._button-secondary,
-                [class*="_button"] a,
+                /* Base button styles - use attribute selector to handle leading spaces in class */
+                a[class*="_button-priority"],
+                a[class*="_button-secondary"],
                 a[class*="_button"] {
-                    display: block;
+                    display: block !important;
                     width: 100%;
                     padding: 18px 24px;
                     border-radius: 12px;
@@ -210,23 +209,29 @@ fun HtmlContent(
                     font-size: 20px;
                     font-weight: 500;
                     letter-spacing: 0.5px;
-                    text-decoration: none;
+                    text-decoration: none !important;
                     box-sizing: border-box;
                 }
                 /* Primary button - red background */
-                ._button-priority {
-                    background-color: #D9232A;
+                a[class*="_button-priority"] {
+                    background-color: #D9232A !important;
                     color: white !important;
                 }
                 /* Secondary button - outline style */
-                ._button-secondary {
-                    background-color: transparent;
+                a[class*="_button-secondary"] {
+                    background-color: transparent !important;
                     color: #D9232A !important;
                     border: 2px solid #D9232A;
                 }
+                /* Regular button (non-priority) */
+                a[class*="_button"]:not([class*="_button-priority"]):not([class*="_button-secondary"]) {
+                    background-color: #D9232A !important;
+                    color: white !important;
+                }
                 /* Button span should inherit */
-                ._button-priority span,
-                ._button-secondary span {
+                a[class*="_button-priority"] span,
+                a[class*="_button-secondary"] span,
+                a[class*="_button"] span {
                     color: inherit;
                 }
             </style>
