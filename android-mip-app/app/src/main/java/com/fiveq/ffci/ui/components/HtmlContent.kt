@@ -199,8 +199,20 @@ fun HtmlContent(
                     flex-direction: column;
                     gap: 12px;
                     margin: 16px 0;
+                    border: none !important;
+                    background: none !important;
+                    padding: 0 !important;
+                }
+                /* Remove any pseudo-elements that might create decorative lines */
+                ._button-group::before,
+                ._button-group::after,
+                a[class*="_button"]::before,
+                a[class*="_button"]::after {
+                    display: none !important;
+                    content: none !important;
                 }
                 /* Base button styles - use attribute selector to handle leading spaces in class */
+                /* Override ALL base 'a' tag styles to prevent artifacts */
                 a[class*="_button-priority"],
                 a[class*="_button-secondary"],
                 a[class*="_button"] {
@@ -209,14 +221,19 @@ fun HtmlContent(
                     opacity: 1 !important;
                     width: 100%;
                     min-height: 56px;
-                    padding: 18px 24px;
-                    border-radius: 12px;
+                    padding: 18px 24px !important;
+                    border-radius: 12px !important;
                     text-align: center;
                     font-size: 20px;
                     font-weight: 500;
                     letter-spacing: 0.5px;
                     text-decoration: none !important;
+                    border: none !important;
                     border-bottom: none !important;
+                    border-top: none !important;
+                    border-left: none !important;
+                    border-right: none !important;
+                    background: none !important;
                     box-sizing: border-box;
                     margin: 8px 0 !important;
                     position: relative;
@@ -225,8 +242,13 @@ fun HtmlContent(
                 /* Primary button - red background */
                 a[class*="_button-priority"] {
                     background-color: #D9232A !important;
+                    background: #D9232A !important;
                     color: white !important;
                     border: none !important;
+                    border-bottom: none !important;
+                    border-top: none !important;
+                    border-left: none !important;
+                    border-right: none !important;
                 }
                 /* Secondary button - outline style */
                 a[class*="_button-secondary"] {
@@ -237,8 +259,13 @@ fun HtmlContent(
                 /* Regular button (non-priority) */
                 a[class*="_button"]:not([class*="_button-priority"]):not([class*="_button-secondary"]) {
                     background-color: #D9232A !important;
+                    background: #D9232A !important;
                     color: white !important;
                     border: none !important;
+                    border-bottom: none !important;
+                    border-top: none !important;
+                    border-left: none !important;
+                    border-right: none !important;
                 }
                 /* Button span should inherit */
                 a[class*="_button-priority"] span,
