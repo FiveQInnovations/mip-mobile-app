@@ -1,5 +1,5 @@
 ---
-status: qa
+status: done
 area: android-mip-app
 phase: nice-to-have
 created: 2026-01-24

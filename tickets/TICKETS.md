@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [093](093-android-home-screen-logo-polish.md) - Android Home Screen Logo Polish
+(none)
 
 ## In Progress
 (none)
@@ -124,6 +124,7 @@ Quick reference for active tasks. See individual files for details.
 - [089](089-resources-tab-active-state-styling.md) - Resources Tab Active State Styling Inconsistent
 - [090](090-connect-tab-routing-broken.md) - Connect Tab Routing Shows Chapters Content
 - [091](091-tab-screens-safe-area-insets.md) - Tab Screen Headers Don't Respect Safe Area Insets
+- [093](093-android-home-screen-logo-polish.md) - Android Home Screen Logo Polish
 - [094](094-android-search-functionality.md) - Android Search Functionality
 - [095](095-android-page-caching.md) - Android Page Caching
 - [096](096-android-prayer-request-form.md) - Android Prayer Request Form
