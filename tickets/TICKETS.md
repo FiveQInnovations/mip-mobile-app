@@ -11,18 +11,19 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [201](201-ios-audio-player.md) - iOS Audio Player
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
-- [201](201-ios-audio-player.md) - iOS Audio Player
 - [202](202-ios-search-functionality.md) - iOS Search Functionality
 - [203](203-ios-page-caching.md) - iOS Page Caching
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
 - [207](207-android-resources-missing-buttons.md) - Resources Page Missing Buttons/Cards
 - [208](208-android-bracket-artifacts.md) - Red Bracket Artifacts in Content
+- [209](209-ios-about-us-card-not-clickable.md) - iOS About Us Card Not Clickable on Home Screen
+- [210](210-ios-connect-tab-missing-buttons.md) - iOS Connect Tab Missing Buttons
 
 ### 🟡 Nice to Have
 - [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
