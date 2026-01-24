@@ -49,6 +49,7 @@ STABLE_TESTS=(
     "maestro/flows/internal-page-back-navigation-ios.yaml"
     "maestro/flows/search-result-descriptions-ios.yaml"
     "maestro/flows/connect-tab-sanity-check-ios.yaml"
+    "maestro/flows/ticket-023-audio-player-testids.yaml"
 )
 
 # Track results
