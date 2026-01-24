@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { getConfig } from '../lib/config';
 
@@ -39,6 +39,7 @@ export function AudioPlayer({ url, title, artist }: AudioPlayerProps) {
       
       if (data.type === 'error') {
         console.error('[AudioPlayer] Audio error:', data.error, 'URL:', data.url);
+        // Store the full error message for display
         setError(data.error || 'Failed to load audio');
       } else if (data.type === 'loaded') {
         // Clear error on successful load
@@ -48,6 +49,23 @@ export function AudioPlayer({ url, title, artist }: AudioPlayerProps) {
       console.warn('[AudioPlayer] Failed to parse WebView message:', e);
     }
   };
+
+  // Handle opening audio in Safari as fallback
+  const handleOpenInSafari = async () => {
+    try {
+      const canOpen = await Linking.canOpenURL(url);
+      if (canOpen) {
+        await Linking.openURL(url);
+      } else {
+        console.error('[AudioPlayer] Cannot open URL:', url);
+      }
+    } catch (err) {
+      console.error('[AudioPlayer] Failed to open URL in Safari:', err);
+    }
+  };
+
+  // Check if error is a decode/format error
+  const isDecodeError = error?.toLowerCase().includes('decode') || error?.toLowerCase().includes('not supported');
 
   // Handle WebView errors
   const handleWebViewError = (syntheticEvent: any) => {
@@ -141,6 +159,19 @@ export function AudioPlayer({ url, title, artist }: AudioPlayerProps) {
       {error ? (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Error: {error}</Text>
+          {isDecodeError && (
+            <Text style={styles.errorHelpText}>
+              This audio format is not supported by iOS. The file may need to be re-encoded to a compatible format (MP3, AAC, or WAV).
+            </Text>
+          )}
+          <TouchableOpacity 
+            style={styles.openButton} 
+            onPress={handleOpenInSafari}
+            accessibilityLabel="Open audio in Safari"
+            accessibilityRole="button"
+          >
+            <Text style={styles.openButtonText}>Open in Safari</Text>
+          </TouchableOpacity>
           <Text style={styles.errorUrl} numberOfLines={1}>URL: {url}</Text>
         </View>
       ) : (
@@ -207,5 +238,26 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#991b1b',
     fontFamily: 'monospace',
+    marginTop: 8,
+  },
+  errorHelpText: {
+    fontSize: 13,
+    color: '#991b1b',
+    marginTop: 8,
+    marginBottom: 12,
+    lineHeight: 18,
+  },
+  openButton: {
+    backgroundColor: '#dc2626',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+  openButtonText: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
