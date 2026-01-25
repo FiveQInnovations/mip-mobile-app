@@ -30,6 +30,7 @@ struct ResourcesScrollView: View {
                 .fontWeight(.bold)
                 .padding(.horizontal, 16)
                 .padding(.top, 24)
+                .accessibilityIdentifier("resources-section-title")
             
             ScrollViewReader { scrollProxy in
                 ZStack {
@@ -74,18 +75,6 @@ struct ResourcesScrollView: View {
                     .onPreferenceChange(ContentWidthPreferenceKey.self) { value in
                         scrollTracker.contentWidth = max(value, estimatedContentWidth)
                     }
-                    .background(
-                        GeometryReader { geo in
-                            Color.clear
-                                .onAppear {
-                                    scrollTracker.containerWidth = geo.size.width
-                                    scrollTracker.contentWidth = max(scrollTracker.contentWidth, estimatedContentWidth)
-                                }
-                                .onChange(of: geo.size.width) { newValue in
-                                    scrollTracker.containerWidth = newValue
-                                }
-                        }
-                    )
                     
                     // Left scroll arrow
                     if scrollTracker.canScrollLeft {
@@ -122,6 +111,18 @@ struct ResourcesScrollView: View {
                         }
                     }
                 }
+                .background(
+                    GeometryReader { geo in
+                        Color.clear
+                            .onAppear {
+                                scrollTracker.containerWidth = geo.size.width
+                                scrollTracker.contentWidth = max(scrollTracker.contentWidth, estimatedContentWidth)
+                            }
+                            .onChange(of: geo.size.width) { newValue in
+                                scrollTracker.containerWidth = newValue
+                            }
+                    }
+                )
             }
         }
         .padding(.vertical, 16)

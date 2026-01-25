@@ -5,14 +5,14 @@ appId: com.fiveq.ffci
 - launchApp
 - waitForAnimationToEnd
 
-# Scroll to Resources section
+# Scroll to Resources section (avoid tab bar "Resources")
 - scrollUntilVisible:
     element:
-      text: "Resources"
+      id: "resources-section-title"
     direction: DOWN
     timeout: 10000
 - assertVisible:
-    text: "Resources"
+    id: "resources-section-title"
 
 # Right arrow should be visible at start
 - extendedWaitUntil:
