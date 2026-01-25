@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [205](205-ios-resources-scroll-arrows.md) - iOS Resources Section Scroll Arrows
+(none)
 
 ## In Progress
 (none)
@@ -21,6 +21,10 @@ Quick reference for active tasks. See individual files for details.
 - [207](207-android-resources-missing-buttons.md) - Resources Page Missing Buttons/Cards
 - [208](208-android-bracket-artifacts.md) - Red Bracket Artifacts in Content
 - [210](210-ios-connect-tab-missing-buttons.md) - iOS Connect Tab Missing Buttons
+- [211](211-ios-quick-actions-external-links.md) - iOS Quick Actions External Links Should Open in Browser
+- [212](212-ios-quick-actions-instagram-last.md) - iOS Quick Actions Should Show Instagram Last, Not Facebook
+- [213](213-ios-quick-actions-scroll-to-instagram.md) - iOS Quick Actions Right Arrow Should Scroll to Instagram
+- [214](214-ios-about-us-back-button-double-chevron.md) - iOS About Us Page Shows Double Chevron in Back Button
 
 ### 🟡 Nice to Have
 - [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
@@ -139,6 +143,7 @@ Quick reference for active tasks. See individual files for details.
 - [201](201-ios-audio-player.md) - iOS Audio Player
 - [202](202-ios-search-functionality.md) - iOS Search Functionality
 - [203](203-ios-page-caching.md) - iOS Page Caching
+- [205](205-ios-resources-scroll-arrows.md) - iOS Resources Section Scroll Arrows
 - [209](209-ios-about-us-card-not-clickable.md) - iOS About Us Card Not Clickable on Home Screen
 
 ---
