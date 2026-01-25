@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [210](210-ios-connect-tab-missing-buttons.md) - iOS Connect Tab Missing Buttons
 
 ## In Progress
-- [210](210-ios-connect-tab-missing-buttons.md) - iOS Connect Tab Missing Buttons
+(none)
 
 ## Backlog
 
