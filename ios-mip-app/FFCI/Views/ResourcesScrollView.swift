@@ -93,7 +93,8 @@ struct ResourcesScrollView: View {
                             ScrollArrowButton(direction: .left) {
                                 let targetIndex = max(0, scrollTracker.visibleIndex - 1)
                                 let itemWidth = cardWidth + cardSpacing
-                                scrollTracker.updateScrollOffset(CGFloat(targetIndex) * itemWidth)
+                                let targetOffset = CGFloat(targetIndex) * itemWidth
+                                scrollTracker.updateScrollOffset(targetOffset)
                                 withAnimation(.easeInOut(duration: 0.3)) {
                                     scrollProxy.scrollTo(targetIndex, anchor: .leading)
                                 }
@@ -110,9 +111,11 @@ struct ResourcesScrollView: View {
                             ScrollArrowButton(direction: .right) {
                                 let targetIndex = min(quickTasks.count - 1, scrollTracker.visibleIndex + 1)
                                 let itemWidth = cardWidth + cardSpacing
-                                scrollTracker.updateScrollOffset(CGFloat(targetIndex) * itemWidth)
+                                let targetOffset = CGFloat(targetIndex) * itemWidth
+                                scrollTracker.updateScrollOffset(targetOffset)
                                 withAnimation(.easeInOut(duration: 0.3)) {
-                                    scrollProxy.scrollTo(targetIndex, anchor: .leading)
+                                    let anchor: UnitPoint = targetIndex == quickTasks.count - 1 ? .trailing : .leading
+                                    scrollProxy.scrollTo(targetIndex, anchor: anchor)
                                 }
                             }
                             .padding(.trailing, 8)

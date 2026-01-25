@@ -16,12 +16,16 @@ class ScrollTracker: ObservableObject {
     private let cardWidth: CGFloat = 280
     private let cardSpacing: CGFloat = 16
     
+    var maxScrollOffset: CGFloat {
+        max(contentWidth - containerWidth, 0)
+    }
+    
     var canScrollLeft: Bool {
         scrollOffset > 5
     }
     
     var canScrollRight: Bool {
-        scrollOffset < (contentWidth - containerWidth - 5)
+        scrollOffset < (maxScrollOffset - 5)
     }
     
     func calculateVisibleIndex() -> Int {
@@ -30,7 +34,8 @@ class ScrollTracker: ObservableObject {
     }
     
     func updateScrollOffset(_ value: CGFloat) {
-        scrollOffset = value
+        let clampedOffset = min(max(value, 0), maxScrollOffset)
+        scrollOffset = clampedOffset
         visibleIndex = calculateVisibleIndex()
     }
 }
