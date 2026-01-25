@@ -1,0 +1,86 @@
+appId: com.fiveq.ffci
+---
+# Verify Connect tab displays social media buttons in "Follow Us" section
+# Ticket 210: iOS Connect Tab Missing Buttons
+#
+# The buttons ARE in the HTML from Kirby, but iOS was missing CSS styles
+# that Android has. This test verifies the buttons are visible after adding styles.
+
+- launchApp
+- waitForAnimationToEnd
+
+# Navigate to Connect tab
+- tapOn:
+    text: "Connect"
+    
+- waitForAnimationToEnd
+
+# Verify Connect tab content loads - "Join the Brotherhood" should be visible
+- scrollUntilVisible:
+    element:
+      text: "Join the Brotherhood"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    text: "Join the Brotherhood"
+
+# Verify Membership Form button works (primary button style)
+- assertVisible:
+    text: "Membership Form"
+
+# Scroll to "We Are Here For You" section
+- scrollUntilVisible:
+    element:
+      text: "We Are Here For You"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    text: "We Are Here For You"
+
+# Verify Prayer Request button
+- assertVisible:
+    text: "Prayer Request"
+
+# Scroll to "Follow Us" section - this is where the missing buttons should be
+- scrollUntilVisible:
+    element:
+      text: "Follow Us"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    text: "Follow Us"
+
+# These are the buttons that should now be visible after CSS fix
+# They are rendered as secondary buttons (red outline style)
+- scrollUntilVisible:
+    element:
+      text: "Facebook"
+    direction: DOWN
+    timeout: 5000
+- assertVisible:
+    text: "Facebook"
+
+- assertVisible:
+    text: "Instagram"
+
+- scrollUntilVisible:
+    element:
+      text: "Website"
+    direction: DOWN
+    timeout: 5000
+- assertVisible:
+    text: "Website"
+
+- scrollUntilVisible:
+    element:
+      text: "Give"
+    direction: DOWN
+    timeout: 5000
+- assertVisible:
+    text: "Give"
+
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-210-connect-buttons-visible"
+
+# Verify a button is tappable (optional - won't navigate away for test stability)
+# Just confirming the button element exists and is interactive

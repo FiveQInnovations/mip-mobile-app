@@ -77,6 +77,58 @@ struct HtmlContentView: UIViewRepresentable {
                 ._background { position: relative; width: 100%; min-height: 200px; margin-bottom: 16px; border-radius: 8px; overflow: hidden; }
                 ._background picture { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
                 ._background picture img { width: 100%; height: 100%; object-fit: cover; border-radius: 0; margin: 0; }
+                /* Button group - stack buttons vertically */
+                ._button-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                    margin: 16px 0;
+                }
+                /* Base button styles */
+                a[class*="_button-priority"],
+                a[class*="_button-secondary"],
+                a[class*="_button"] {
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    width: 100%;
+                    min-height: 56px;
+                    padding: 18px 24px;
+                    border-radius: 12px;
+                    text-align: center;
+                    font-size: 20px;
+                    font-weight: 500;
+                    letter-spacing: 0.5px;
+                    text-decoration: none !important;
+                    border-bottom: none !important;
+                    box-sizing: border-box;
+                    margin: 8px 0 !important;
+                    background: rgba(217, 35, 42, 0.08);
+                }
+                /* Primary button - red background */
+                a[class*="_button-priority"] {
+                    background-color: #D9232A !important;
+                    color: white !important;
+                    border: none !important;
+                }
+                /* Secondary button - outline style */
+                a[class*="_button-secondary"] {
+                    background-color: transparent !important;
+                    color: #D9232A !important;
+                    border: 2px solid #D9232A;
+                }
+                /* Regular button */
+                a[class*="_button"]:not([class*="_button-priority"]):not([class*="_button-secondary"]) {
+                    background-color: #D9232A !important;
+                    color: white !important;
+                    border: none !important;
+                }
+                /* Button span should inherit */
+                a[class*="_button-priority"] span,
+                a[class*="_button-secondary"] span,
+                a[class*="_button"] span {
+                    color: inherit;
+                }
             </style>
         </head>
         <body>

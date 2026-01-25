@@ -11,7 +11,7 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [210](210-ios-connect-tab-missing-buttons.md) - iOS Connect Tab Missing Buttons
 
 ## Backlog
 
@@ -19,7 +19,6 @@ Quick reference for active tasks. See individual files for details.
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
 - [207](207-android-resources-missing-buttons.md) - Resources Page Missing Buttons/Cards
 - [208](208-android-bracket-artifacts.md) - Red Bracket Artifacts in Content
-- [210](210-ios-connect-tab-missing-buttons.md) - iOS Connect Tab Missing Buttons
 - [211](211-ios-quick-actions-external-links.md) - iOS Quick Actions External Links Should Open in Browser
 - [212](212-ios-quick-actions-instagram-last.md) - iOS Quick Actions Should Show Instagram Last, Not Facebook
 - [213](213-ios-quick-actions-scroll-to-instagram.md) - iOS Quick Actions Right Arrow Should Scroll to Instagram
