@@ -54,6 +54,7 @@ struct ResourcesScrollView: View {
                                         ResourcesCard(task: task)
                                     }
                                 }
+                                .accessibilityIdentifier("resources-card-\(index)")
                                 .id(index)
                             }
                         }

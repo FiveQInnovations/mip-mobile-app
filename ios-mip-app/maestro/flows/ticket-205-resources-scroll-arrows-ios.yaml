@@ -22,5 +22,14 @@ appId: com.fiveq.ffci
 - assertVisible:
     id: "scroll-arrow-right"
 
+- assertVisible:
+    id: "resources-card-0"
+
+- tapOn:
+    id: "scroll-arrow-right"
+- waitForAnimationToEnd
+- assertNotVisible:
+    id: "resources-card-0"
+
 - takeScreenshot:
-    path: "maestro/screenshots/ticket-205-resources-right-arrow-visible"
+    path: "maestro/screenshots/ticket-205-resources-after-scroll-right"
