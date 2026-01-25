@@ -38,18 +38,21 @@ struct ResourcesScrollView: View {
                         HStack(spacing: cardSpacing) {
                             ForEach(Array(quickTasks.enumerated()), id: \.element.uuid) { index, task in
                                 Group {
-                                    if let uuid = task.uuid, !uuid.isEmpty {
+                                    // Check externalUrl FIRST - external links should open in Safari
+                                    // If we checked uuid first, items with BOTH uuid AND externalUrl
+                                    // would incorrectly use NavigationLink instead of Link
+                                    if let externalUrl = task.externalUrl, let url = URL(string: externalUrl) {
+                                        Link(destination: url) {
+                                            ResourcesCard(task: task)
+                                        }
+                                        .buttonStyle(.plain)
+                                    } else if let uuid = task.uuid, !uuid.isEmpty {
                                         NavigationLink(destination: TabPageView(uuid: uuid)) {
                                             ResourcesCard(task: task)
                                         }
                                         .simultaneousGesture(TapGesture().onEnded {
                                             onQuickTaskClick(uuid)
                                         })
-                                        .buttonStyle(.plain)
-                                    } else if let externalUrl = task.externalUrl, let url = URL(string: externalUrl) {
-                                        Link(destination: url) {
-                                            ResourcesCard(task: task)
-                                        }
                                         .buttonStyle(.plain)
                                     } else {
                                         ResourcesCard(task: task)

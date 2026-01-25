@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [211](211-ios-quick-actions-external-links.md) - iOS Quick Actions External Links Should Open in Browser
 
 ## In Progress
 (none)
@@ -19,7 +19,6 @@ Quick reference for active tasks. See individual files for details.
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
 - [207](207-android-resources-missing-buttons.md) - Resources Page Missing Buttons/Cards
 - [208](208-android-bracket-artifacts.md) - Red Bracket Artifacts in Content
-- [211](211-ios-quick-actions-external-links.md) - iOS Quick Actions External Links Should Open in Browser
 - [212](212-ios-quick-actions-instagram-last.md) - iOS Quick Actions Should Show Instagram Last, Not Facebook
 - [213](213-ios-quick-actions-scroll-to-instagram.md) - iOS Quick Actions Right Arrow Should Scroll to Instagram
 - [214](214-ios-about-us-back-button-double-chevron.md) - iOS About Us Page Shows Double Chevron in Back Button

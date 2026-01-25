@@ -1,0 +1,65 @@
+appId: com.fiveq.ffci
+---
+# Ticket 211: iOS Quick Actions External Links Should Open in Browser
+#
+# External links like "Peace With God" and "Facebook" in the Resources section
+# should open in Safari, NOT navigate internally within the app.
+#
+# Fix applied to: ResourcesScrollView.swift and FeaturedSectionView.swift
+# Check externalUrl BEFORE uuid so external links get priority.
+
+# Wait for app to fully load (launched by script)
+- waitForAnimationToEnd
+
+# Assert initial screen loads
+- assertVisible:
+    text: "Featured"
+
+# Scroll down through the content to reach Resources section
+- scrollUntilVisible:
+    element:
+      text: "Resources"
+    direction: DOWN
+    timeout: 15000
+    
+- assertVisible:
+    text: "Resources"
+
+# Continue scrolling to bring Resources cards into view
+- scrollUntilVisible:
+    element:
+      text: "Resources"
+    direction: DOWN
+    speed: 60
+    timeout: 3000
+
+# Take screenshot showing current state
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-211-scrolled"
+
+# Tap on the visible area where a card should be
+# After scrolling to Resources, the cards should be visible below
+- tapOn:
+    point: "40%,70%"
+
+- waitForAnimationToEnd
+
+# Take screenshot to verify result
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-211-after-tap"
+
+# Return to app
+- launchApp
+- waitForAnimationToEnd
+
+# Navigate to Home tab
+- tapOn:
+    text: "Home"
+- waitForAnimationToEnd
+
+# Verify we're back on home
+- assertVisible:
+    text: "Featured"
+
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-211-final"

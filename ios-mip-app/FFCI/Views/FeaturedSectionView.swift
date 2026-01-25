@@ -21,18 +21,21 @@ struct FeaturedSectionView: View {
             
             ForEach(featured, id: \.uuid) { item in
                 Group {
-                    if let uuid = item.uuid, !uuid.isEmpty {
+                    // Check externalUrl FIRST - external links should open in Safari
+                    // If we checked uuid first, items with BOTH uuid AND externalUrl
+                    // would incorrectly use NavigationLink instead of Link
+                    if let externalUrl = item.externalUrl, let url = URL(string: externalUrl) {
+                        Link(destination: url) {
+                            FeaturedCard(featured: item)
+                        }
+                        .buttonStyle(.plain)
+                    } else if let uuid = item.uuid, !uuid.isEmpty {
                         NavigationLink(destination: TabPageView(uuid: uuid)) {
                             FeaturedCard(featured: item)
                         }
                         .simultaneousGesture(TapGesture().onEnded {
                             onFeaturedClick(uuid)
                         })
-                        .buttonStyle(.plain)
-                    } else if let externalUrl = item.externalUrl, let url = URL(string: externalUrl) {
-                        Link(destination: url) {
-                            FeaturedCard(featured: item)
-                        }
                         .buttonStyle(.plain)
                     } else {
                         FeaturedCard(featured: item)
