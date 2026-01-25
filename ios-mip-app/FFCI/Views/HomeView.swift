@@ -10,6 +10,22 @@ import os.log
 
 private let logger = Logger(subsystem: "com.fiveq.ffci", category: "HomeView")
 
+// PreferenceKey for tracking scroll offset
+struct ScrollOffsetPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
+// PreferenceKey for tracking content width
+struct ContentWidthPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
 struct HomeView: View {
     let siteMeta: SiteMeta
     let onQuickTaskClick: (String) -> Void
@@ -17,6 +33,28 @@ struct HomeView: View {
     
     @State private var tapCount = 0
     @State private var showSearch = false
+    
+    // Scroll arrow state
+    @State private var scrollOffset: CGFloat = 0
+    @State private var contentWidth: CGFloat = 0
+    @State private var containerWidth: CGFloat = 0
+    @State private var visibleIndex: Int = 0
+    
+    private var canScrollLeft: Bool {
+        scrollOffset > 5
+    }
+    
+    private var canScrollRight: Bool {
+        scrollOffset < (contentWidth - containerWidth - 5)
+    }
+    
+    private let cardWidth: CGFloat = 280
+    private let cardSpacing: CGFloat = 16
+    
+    private func calculateVisibleIndex() -> Int {
+        let itemWidth = cardWidth + cardSpacing
+        return max(0, Int((scrollOffset + itemWidth / 2) / itemWidth))
+    }
     
     var body: some View {
         NavigationStack {
@@ -129,30 +167,86 @@ struct HomeView: View {
                             .padding(.horizontal, 16)
                             .padding(.top, 24)
                         
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 16) {
-                                ForEach(quickTasks, id: \.uuid) { task in
-                                    Group {
-                                        if let uuid = task.uuid, !uuid.isEmpty {
-                                            NavigationLink(destination: TabPageView(uuid: uuid)) {
-                                                ResourcesCard(task: task)
+                        // ZStack for scroll arrows overlay
+                        ScrollViewReader { scrollProxy in
+                            ZStack {
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: cardSpacing) {
+                                        ForEach(Array(quickTasks.enumerated()), id: \.element.uuid) { index, task in
+                                            Group {
+                                                if let uuid = task.uuid, !uuid.isEmpty {
+                                                    NavigationLink(destination: TabPageView(uuid: uuid)) {
+                                                        ResourcesCard(task: task)
+                                                    }
+                                                    .simultaneousGesture(TapGesture().onEnded {
+                                                        onQuickTaskClick(uuid)
+                                                    })
+                                                    .buttonStyle(.plain)
+                                                } else if let externalUrl = task.externalUrl, let url = URL(string: externalUrl) {
+                                                    Link(destination: url) {
+                                                        ResourcesCard(task: task)
+                                                    }
+                                                    .buttonStyle(.plain)
+                                                } else {
+                                                    ResourcesCard(task: task)
+                                                }
                                             }
-                                            .simultaneousGesture(TapGesture().onEnded {
-                                                onQuickTaskClick(uuid)
-                                            })
-                                            .buttonStyle(.plain)
-                                        } else if let externalUrl = task.externalUrl, let url = URL(string: externalUrl) {
-                                            Link(destination: url) {
-                                                ResourcesCard(task: task)
-                                            }
-                                            .buttonStyle(.plain)
-                                        } else {
-                                            ResourcesCard(task: task)
+                                            .id(index)
                                         }
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .background(
+                                        GeometryReader { geo in
+                                            Color.clear
+                                                .preference(key: ContentWidthPreferenceKey.self, value: geo.size.width)
+                                                .preference(key: ScrollOffsetPreferenceKey.self, value: -geo.frame(in: .named("resourcesScroll")).minX)
+                                        }
+                                    )
+                                }
+                                .coordinateSpace(name: "resourcesScroll")
+                                .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
+                                    scrollOffset = value
+                                    visibleIndex = calculateVisibleIndex()
+                                }
+                                .onPreferenceChange(ContentWidthPreferenceKey.self) { value in
+                                    contentWidth = value
+                                }
+                                .background(
+                                    GeometryReader { geo in
+                                        Color.clear.onAppear {
+                                            containerWidth = geo.size.width
+                                        }
+                                    }
+                                )
+                                
+                                // Left scroll arrow
+                                if canScrollLeft {
+                                    HStack {
+                                        ScrollArrowButton(direction: .left) {
+                                            let targetIndex = max(0, visibleIndex - 1)
+                                            withAnimation(.easeInOut(duration: 0.3)) {
+                                                scrollProxy.scrollTo(targetIndex, anchor: .leading)
+                                            }
+                                        }
+                                        .padding(.leading, 8)
+                                        Spacer()
+                                    }
+                                }
+                                
+                                // Right scroll arrow
+                                if canScrollRight {
+                                    HStack {
+                                        Spacer()
+                                        ScrollArrowButton(direction: .right) {
+                                            let targetIndex = min(quickTasks.count - 1, visibleIndex + 1)
+                                            withAnimation(.easeInOut(duration: 0.3)) {
+                                                scrollProxy.scrollTo(targetIndex, anchor: .leading)
+                                            }
+                                        }
+                                        .padding(.trailing, 8)
                                     }
                                 }
                             }
-                            .padding(.horizontal, 16)
                         }
                     }
                     .padding(.vertical, 16)
@@ -326,6 +420,42 @@ struct ResourcesCard: View {
                 .stroke(Color.gray.opacity(0.2), lineWidth: 1)
         )
         .contentShape(Rectangle())
+    }
+}
+
+struct ScrollArrowButton: View {
+    enum Direction {
+        case left, right
+        
+        var iconName: String {
+            self == .left ? "chevron.left" : "chevron.right"
+        }
+        
+        var accessibilityId: String {
+            self == .left ? "scroll-arrow-left" : "scroll-arrow-right"
+        }
+        
+        var accessibilityText: String {
+            self == .left ? "Scroll left" : "Scroll right"
+        }
+    }
+    
+    let direction: Direction
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: direction.iconName)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(.primary)
+                .frame(width: 40, height: 40)
+                .background(Color.white.opacity(0.95))
+                .clipShape(Circle())
+                .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(direction.accessibilityId)
+        .accessibilityLabel(direction.accessibilityText)
     }
 }
 
