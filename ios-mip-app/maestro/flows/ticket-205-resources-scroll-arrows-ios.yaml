@@ -1,0 +1,26 @@
+appId: com.fiveq.ffci
+---
+# Verify Resources scroll arrows on native iOS app
+
+- launchApp
+- waitForAnimationToEnd
+
+# Scroll to Resources section
+- scrollUntilVisible:
+    element:
+      text: "Resources"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    text: "Resources"
+
+# Right arrow should be visible at start
+- extendedWaitUntil:
+    visible:
+      id: "scroll-arrow-right"
+    timeout: 5000
+- assertVisible:
+    id: "scroll-arrow-right"
+
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-205-resources-right-arrow-visible"

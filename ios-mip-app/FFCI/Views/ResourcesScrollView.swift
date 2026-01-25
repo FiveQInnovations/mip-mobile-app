@@ -12,7 +12,16 @@ struct ResourcesScrollView: View {
     let onQuickTaskClick: (String) -> Void
     @ObservedObject var scrollTracker: ScrollTracker
     
+    private let cardWidth: CGFloat = 280
     private let cardSpacing: CGFloat = 16
+    private let horizontalPadding: CGFloat = 16
+    
+    private var estimatedContentWidth: CGFloat {
+        let count = CGFloat(quickTasks.count)
+        guard count > 0 else { return 0 }
+        let spacingWidth = max(count - 1, 0) * cardSpacing
+        return (count * cardWidth) + spacingWidth + (horizontalPadding * 2)
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -48,7 +57,7 @@ struct ResourcesScrollView: View {
                                 .id(index)
                             }
                         }
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, horizontalPadding)
                         .background(
                             GeometryReader { geo in
                                 Color.clear
@@ -62,13 +71,18 @@ struct ResourcesScrollView: View {
                         scrollTracker.updateScrollOffset(value)
                     }
                     .onPreferenceChange(ContentWidthPreferenceKey.self) { value in
-                        scrollTracker.contentWidth = value
+                        scrollTracker.contentWidth = max(value, estimatedContentWidth)
                     }
                     .background(
                         GeometryReader { geo in
-                            Color.clear.onAppear {
-                                scrollTracker.containerWidth = geo.size.width
-                            }
+                            Color.clear
+                                .onAppear {
+                                    scrollTracker.containerWidth = geo.size.width
+                                    scrollTracker.contentWidth = max(scrollTracker.contentWidth, estimatedContentWidth)
+                                }
+                                .onChange(of: geo.size.width) { newValue in
+                                    scrollTracker.containerWidth = newValue
+                                }
                         }
                     )
                     
