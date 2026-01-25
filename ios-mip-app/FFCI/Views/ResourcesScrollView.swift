@@ -36,7 +36,7 @@ struct ResourcesScrollView: View {
                 ZStack {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: cardSpacing) {
-                            ForEach(Array(quickTasks.enumerated()), id: \.element.uuid) { index, task in
+                            ForEach(Array(quickTasks.enumerated()), id: \.offset) { index, task in
                                 Group {
                                     // Check externalUrl FIRST - external links should open in Safari
                                     // If we checked uuid first, items with BOTH uuid AND externalUrl

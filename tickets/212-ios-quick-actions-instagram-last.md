@@ -1,9 +1,22 @@
 ---
-status: backlog
+status: qa
 area: ios-mip-app
 phase: core
 created: 2026-01-24
 ---
+
+## Implementation Complete (TDD Verified)
+
+**Fix applied:** Changed ForEach identity from `\.element.uuid` to `\.offset` in `ResourcesScrollView.swift`
+
+**Maestro test:** `ios-mip-app/maestro/flows/ticket-212-instagram-last-ios.yaml`
+- Test result: **PASSED**
+- Verified: Instagram card appears last when scrolling right in Resources section
+
+**Root cause:** Facebook and Instagram shared the same UUID (`gnf1dvBkM4SJWQdA`) because they point to the same Kirby page. SwiftUI's ForEach was using UUID as identity, treating them as the same element.
+
+---
+
 
 # iOS Quick Actions Should Show Instagram Last, Not Facebook
 
@@ -40,6 +53,41 @@ The Quick Actions list is not displaying Instagram as the last item. Facebook ap
 - Both currently point to the same Kirby page (Privacy Policy)
 - May be an API ordering issue or data mapping problem
 - After fixing, verify horizontal scrolling works correctly (see ticket 213)
+
+## Research Findings (Scouted)
+
+### Root Cause Identified: Duplicate UUID Issue
+
+**The API order is CORRECT** - Instagram is last in the API response:
+1. About Us
+2. What We Believe
+3. Peace With God
+4. Facebook (uuid: `gnf1dvBkM4SJWQdA`)
+5. Instagram (uuid: `gnf1dvBkM4SJWQdA`) - LAST
+
+**Bug Location**: `ios-mip-app/FFCI/Views/ResourcesScrollView.swift` line 39
+
+```swift
+ForEach(Array(quickTasks.enumerated()), id: \.element.uuid) { index, task in
+```
+
+**Problem**: SwiftUI uses `uuid` as the identity for ForEach. Since Facebook and Instagram have the SAME UUID (both point to the same Kirby page), SwiftUI treats them as the same element, causing unpredictable display behavior.
+
+### Fix Required
+
+Change the ForEach identity to use a unique identifier. Options:
+1. Use index directly: `id: \.offset`
+2. Use combination: Create a computed ID from index + uuid
+3. Make HomepageQuickTask identifiable by a synthesized unique ID
+
+### Verification
+
+After fix, the Resources section should show cards in this order:
+1. About Us
+2. What We Believe  
+3. Peace With God
+4. Facebook
+5. Instagram (LAST - scroll right to verify)
 
 ---
 

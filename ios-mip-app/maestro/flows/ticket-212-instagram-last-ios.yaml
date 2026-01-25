@@ -1,0 +1,77 @@
+appId: com.fiveq.ffci
+---
+# Ticket 212: iOS Quick Actions Should Show Instagram Last, Not Facebook
+#
+# Bug: Facebook and Instagram share the same UUID because they point to the
+# same Kirby page. SwiftUI's ForEach using uuid as identity causes display issues.
+#
+# Expected order in Resources section:
+# 1. About Us
+# 2. What We Believe
+# 3. Peace With God
+# 4. Facebook
+# 5. Instagram (LAST)
+#
+# Fix: Change ForEach identity from \.element.uuid to \.offset
+
+# Wait for app to fully load (launched by script)
+- waitForAnimationToEnd
+
+# Scroll to Resources section
+- scrollUntilVisible:
+    element:
+      id: "resources-section-title"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: "resources-section-title"
+
+# Take baseline screenshot showing Resources section
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-212-resources-baseline"
+
+# Wait for scroll arrows to appear
+- extendedWaitUntil:
+    visible:
+      id: "scroll-arrow-right"
+    timeout: 5000
+
+# Scroll to the end of Resources using right arrow
+# There are 5 cards, need to scroll several times to reach the end
+- tapOn:
+    id: "scroll-arrow-right"
+- waitForAnimationToEnd
+- tapOn:
+    id: "scroll-arrow-right"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+- tapOn:
+    id: "scroll-arrow-right"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+- tapOn:
+    id: "scroll-arrow-right"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+- tapOn:
+    id: "scroll-arrow-right"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+
+# Take screenshot at the end of Resources scroll
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-212-scrolled-to-end"
+
+# CRITICAL ASSERTION: Instagram should be visible as the last card
+# If the bug exists, Facebook will be shown instead of Instagram
+- assertVisible:
+    text: "Instagram"
+    enabled: true
+
+# Take final screenshot showing Instagram is the last visible card
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-212-instagram-last-verified"
