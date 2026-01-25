@@ -6,15 +6,44 @@
 //
 
 import SwiftUI
+import os.log
+
+private let logger = Logger(subsystem: "com.fiveq.ffci", category: "HomeView")
 
 struct HomeView: View {
     let siteMeta: SiteMeta
     let onQuickTaskClick: (String) -> Void
     let onFeaturedClick: (String) -> Void
     
+    @State private var tapCount = 0
+    
     var body: some View {
-        ScrollView {
+        NavigationStack {
             VStack(spacing: 0) {
+                // DEBUG: Test button to verify taps work
+                // This button is used for Maestro UI testing to verify tap functionality
+                // Placed outside ScrollView to ensure it's always accessible
+                Button(action: {
+                    tapCount += 1
+                    logger.notice("TEST TAP: count = \(tapCount)")
+                }) {
+                    Text("TAP TEST: \(tapCount)")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.red)
+                        .cornerRadius(8)
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityIdentifier("tap-test-button")
+                .accessibilityLabel("TAP TEST: \(tapCount)")
+                .accessibilityValue("\(tapCount)")
+                .padding()
+                .buttonStyle(.plain)
+            
+            ScrollView {
+            VStack(spacing: 0) {
+                
                 // Header with logo
                 VStack(spacing: 8) {
                     if let logo = siteMeta.logo {
@@ -50,14 +79,24 @@ struct HomeView: View {
                             .padding(.top, 24)
                         
                         ForEach(featured, id: \.uuid) { item in
-                            FeaturedCard(
-                                featured: item,
-                                onClick: {
-                                    if let uuid = item.uuid {
-                                        onFeaturedClick(uuid)
+                            Group {
+                                if let uuid = item.uuid, !uuid.isEmpty {
+                                    NavigationLink(destination: TabPageView(uuid: uuid)) {
+                                        FeaturedCard(featured: item)
                                     }
+                                    .simultaneousGesture(TapGesture().onEnded {
+                                        onFeaturedClick(uuid)
+                                    })
+                                    .buttonStyle(.plain)
+                                } else if let externalUrl = item.externalUrl, let url = URL(string: externalUrl) {
+                                    Link(destination: url) {
+                                        FeaturedCard(featured: item)
+                                    }
+                                    .buttonStyle(.plain)
+                                } else {
+                                    FeaturedCard(featured: item)
                                 }
-                            )
+                            }
                             .padding(.horizontal, 16)
                             .padding(.bottom, 6)
                         }
@@ -76,14 +115,24 @@ struct HomeView: View {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 16) {
                                 ForEach(quickTasks, id: \.uuid) { task in
-                                    ResourcesCard(
-                                        task: task,
-                                        onClick: {
-                                            if let uuid = task.uuid {
-                                                onQuickTaskClick(uuid)
+                                    Group {
+                                        if let uuid = task.uuid, !uuid.isEmpty {
+                                            NavigationLink(destination: TabPageView(uuid: uuid)) {
+                                                ResourcesCard(task: task)
                                             }
+                                            .simultaneousGesture(TapGesture().onEnded {
+                                                onQuickTaskClick(uuid)
+                                            })
+                                            .buttonStyle(.plain)
+                                        } else if let externalUrl = task.externalUrl, let url = URL(string: externalUrl) {
+                                            Link(destination: url) {
+                                                ResourcesCard(task: task)
+                                            }
+                                            .buttonStyle(.plain)
+                                        } else {
+                                            ResourcesCard(task: task)
                                         }
-                                    )
+                                    }
                                 }
                             }
                             .padding(.horizontal, 16)
@@ -110,87 +159,42 @@ struct HomeView: View {
                     .padding(32)
                 }
             }
+            }
+            .background(Color(.systemBackground))
+            }
         }
-        .background(Color(.systemBackground))
     }
 }
 
 struct FeaturedCard: View {
     let featured: HomepageFeatured
-    let onClick: () -> Void
     
     var body: some View {
-        Button(action: onClick) {
-            if let imageUrl = featured.imageUrl {
-                // Card with image
-                ZStack(alignment: .bottomLeading) {
-                    AsyncImage(url: URL(string: imageUrl)) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.2))
-                    }
-                    .frame(height: 200)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    
-                    // Gradient overlay
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.7)]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 200)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    
-                    // Content overlay
-                    VStack(alignment: .leading, spacing: 8) {
-                        if let badge = featured.badgeText {
-                            Text(badge.uppercased())
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.blue)
-                                .cornerRadius(4)
-                        }
-                        
-                        if let title = featured.title {
-                            Text(title)
-                                .font(.headline)
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
-                        }
-                        
-                        if let description = featured.description {
-                            Text(description)
-                                .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.9))
-                                .lineLimit(2)
-                        }
-                    }
-                    .padding(16)
+        if let imageUrl = featured.imageUrl {
+            // Card with image
+            ZStack(alignment: .bottomLeading) {
+                AsyncImage(url: URL(string: imageUrl)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } placeholder: {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
                 }
-            } else {
-                // Simple card without image
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        if let title = featured.title {
-                            Text(title)
-                                .font(.headline)
-                                .fontWeight(.bold)
-                        }
-                        if let description = featured.description {
-                            Text(description)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    
-                    Spacer()
-                    
+                .frame(height: 200)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                
+                // Gradient overlay
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.7)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 200)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                
+                // Content overlay
+                VStack(alignment: .leading, spacing: 8) {
                     if let badge = featured.badgeText {
                         Text(badge.uppercased())
                             .font(.caption)
@@ -201,64 +205,107 @@ struct FeaturedCard: View {
                             .background(Color.blue)
                             .cornerRadius(4)
                     }
+                    
+                    if let title = featured.title {
+                        Text(title)
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                    }
+                    
+                    if let description = featured.description {
+                        Text(description)
+                            .font(.subheadline)
+                            .foregroundColor(.white.opacity(0.9))
+                            .lineLimit(2)
+                    }
                 }
                 .padding(16)
-                .background(Color(.systemBackground))
-                .cornerRadius(12)
-                .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
             }
+            .contentShape(Rectangle())
+        } else {
+            // Simple card without image
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    if let title = featured.title {
+                        Text(title)
+                            .font(.headline)
+                            .fontWeight(.bold)
+                    }
+                    if let description = featured.description {
+                        Text(description)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                Spacer()
+                
+                if let badge = featured.badgeText {
+                    Text(badge.uppercased())
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.blue)
+                        .cornerRadius(4)
+                }
+            }
+            .padding(16)
+            .background(Color(.systemBackground))
+            .cornerRadius(12)
+            .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+            .contentShape(Rectangle())
         }
-        .buttonStyle(PlainButtonStyle())
     }
 }
 
 struct ResourcesCard: View {
     let task: HomepageQuickTask
-    let onClick: () -> Void
     
     var body: some View {
-        Button(action: onClick) {
-            VStack(alignment: .leading, spacing: 0) {
-                if let imageUrl = task.imageUrl {
-                    AsyncImage(url: URL(string: imageUrl)) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.2))
-                    }
-                    .frame(height: 158)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+        VStack(alignment: .leading, spacing: 0) {
+            if let imageUrl = task.imageUrl {
+                AsyncImage(url: URL(string: imageUrl)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } placeholder: {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                }
+                .frame(height: 158)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+            
+            VStack(alignment: .leading, spacing: 4) {
+                if let label = task.label {
+                    Text(label)
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
+                        .lineLimit(2)
                 }
                 
-                VStack(alignment: .leading, spacing: 4) {
-                    if let label = task.label {
-                        Text(label)
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .lineLimit(2)
-                    }
-                    
-                    if let description = task.description {
-                        Text(description)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .lineLimit(2)
-                    }
+                if let description = task.description {
+                    Text(description)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
                 }
-                .padding(16)
             }
-            .frame(width: 280)
-            .background(Color(.systemBackground))
-            .cornerRadius(12)
-            .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-            )
+            .padding(16)
         }
-        .buttonStyle(PlainButtonStyle())
+        .frame(width: 280)
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+        )
+        .contentShape(Rectangle())
     }
 }
 

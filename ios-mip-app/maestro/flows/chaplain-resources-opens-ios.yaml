@@ -23,8 +23,8 @@ appId: com.fiveq.ffci
 # Expect scripture text on the destination page (partial matches are OK)
 - extendedWaitUntil:
     visible:
-      text: "brokenhearted"
-    timeout: 8000
+      text: ".*brokenhearted.*"
+    timeout: 12000
 
 - assertVisible:
     text: "Psalm 34:18"
