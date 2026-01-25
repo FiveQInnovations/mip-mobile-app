@@ -91,3 +91,57 @@ appId: com.fiveq.ffci
 
 - takeScreenshot:
     path: "maestro/screenshots/ticket-205-resources-scroll-right-end"
+
+# Return to the start of the list
+- tapOn:
+    id: "scroll-arrow-left"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+- tapOn:
+    id: "scroll-arrow-left"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+- tapOn:
+    id: "scroll-arrow-left"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+- tapOn:
+    id: "scroll-arrow-left"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+- tapOn:
+    id: "scroll-arrow-left"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+- tapOn:
+    id: "scroll-arrow-left"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+- tapOn:
+    id: "scroll-arrow-left"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+- tapOn:
+    id: "scroll-arrow-left"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+
+- assertVisible:
+    id: "resources-card-0"
+
+- assertNotVisible:
+    id: "scroll-arrow-left"
+
+- assertVisible:
+    id: "scroll-arrow-right"
+
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-205-resources-scroll-left-start"
