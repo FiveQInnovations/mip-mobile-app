@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [205](205-ios-resources-scroll-arrows.md) - iOS Resources Section Scroll Arrows
 
 ## In Progress
-- [205](205-ios-resources-scroll-arrows.md) - iOS Resources Section Scroll Arrows
+(none)
 
 ## Backlog
 
