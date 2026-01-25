@@ -31,5 +31,8 @@ appId: com.fiveq.ffci
 - assertNotVisible:
     id: "resources-card-0"
 
+- assertVisible:
+    id: "scroll-arrow-left"
+
 - takeScreenshot:
     path: "maestro/screenshots/ticket-205-resources-after-scroll-right"

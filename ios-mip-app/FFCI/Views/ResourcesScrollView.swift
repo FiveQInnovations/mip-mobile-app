@@ -92,6 +92,8 @@ struct ResourcesScrollView: View {
                         HStack {
                             ScrollArrowButton(direction: .left) {
                                 let targetIndex = max(0, scrollTracker.visibleIndex - 1)
+                                let itemWidth = cardWidth + cardSpacing
+                                scrollTracker.updateScrollOffset(CGFloat(targetIndex) * itemWidth)
                                 withAnimation(.easeInOut(duration: 0.3)) {
                                     scrollProxy.scrollTo(targetIndex, anchor: .leading)
                                 }
@@ -107,6 +109,8 @@ struct ResourcesScrollView: View {
                             Spacer()
                             ScrollArrowButton(direction: .right) {
                                 let targetIndex = min(quickTasks.count - 1, scrollTracker.visibleIndex + 1)
+                                let itemWidth = cardWidth + cardSpacing
+                                scrollTracker.updateScrollOffset(CGFloat(targetIndex) * itemWidth)
                                 withAnimation(.easeInOut(duration: 0.3)) {
                                     scrollProxy.scrollTo(targetIndex, anchor: .leading)
                                 }
