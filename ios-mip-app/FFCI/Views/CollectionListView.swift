@@ -16,6 +16,7 @@ struct CollectionListView: View {
             ForEach(Array(items.enumerated()), id: \.element.uuid) { index, item in
                 CollectionListItem(
                     item: item,
+                    index: index,
                     onClick: { onItemClick(item.uuid) }
                 )
                 
@@ -30,6 +31,7 @@ struct CollectionListView: View {
 
 struct CollectionListItem: View {
     let item: CollectionChild
+    let index: Int
     let onClick: () -> Void
     
     var body: some View {
@@ -66,6 +68,7 @@ struct CollectionListItem: View {
             .padding(.horizontal, 16)
         }
         .buttonStyle(PlainButtonStyle())
+        .accessibilityIdentifier("collection-item-\(index)")
     }
 }
 

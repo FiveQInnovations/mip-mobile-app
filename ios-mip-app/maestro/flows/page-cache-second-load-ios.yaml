@@ -1,0 +1,48 @@
+appId: com.fiveq.ffci
+---
+# Page caching test for native iOS app
+# Ensures cached page renders immediately on second visit
+
+- launchApp
+- waitForAnimationToEnd
+
+# Open Audio Sermons collection from home
+- scrollUntilVisible:
+    element:
+      text: "Audio Sermons"
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    text: "Audio Sermons"
+- waitForAnimationToEnd
+
+# Wait for collection list to render
+- extendedWaitUntil:
+    visible:
+      id: "collection-item-0"
+    timeout: 15000
+- takeScreenshot:
+    path: "maestro/screenshots/page-cache-parent-loaded"
+
+# Go back to home
+- tapOn:
+    text: "Back"
+- waitForAnimationToEnd
+
+# Re-open the same page from home
+- assertVisible:
+    text: "Audio Sermons"
+- tapOn:
+    text: "Audio Sermons"
+- waitForAnimationToEnd
+
+# Cached page should display on second visit
+- extendedWaitUntil:
+    visible:
+      id: "page-cache-hit"
+    timeout: 3000
+- assertVisible:
+    id: "collection-item-0"
+
+- takeScreenshot:
+    path: "maestro/screenshots/page-cache-second-load-ios"

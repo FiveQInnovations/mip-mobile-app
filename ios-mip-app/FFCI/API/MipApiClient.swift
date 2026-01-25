@@ -127,6 +127,21 @@ class MipApiClient {
         }
     }
     
+    func getPageWithCache(
+        uuid: String,
+        ttl: TimeInterval = PageCache.defaultTTL
+    ) async throws -> (data: PageData, fromCache: Bool, isStale: Bool) {
+        if let cached = await PageCache.shared.getAnyCache(uuid) {
+            let isStale = await PageCache.shared.isExpired(uuid, ttl: ttl)
+            logger.notice("Returning cached page: \(uuid, privacy: .public)")
+            return (data: cached, fromCache: true, isStale: isStale)
+        }
+        
+        let fresh = try await getPage(uuid: uuid)
+        await PageCache.shared.put(uuid, data: fresh)
+        return (data: fresh, fromCache: false, isStale: false)
+    }
+    
     func searchSite(query: String) async throws -> [SearchResult] {
         guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
             throw ApiError.networkError(NSError(domain: "Invalid query", code: -1))

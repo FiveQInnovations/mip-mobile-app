@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [202](202-ios-search-functionality.md) - iOS Search Functionality
+(none)
 
 ## In Progress
 - [209](209-ios-about-us-card-not-clickable.md) - iOS About Us Card Not Clickable on Home Screen
@@ -17,7 +17,6 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
-- [203](203-ios-page-caching.md) - iOS Page Caching
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
 - [205](205-ios-resources-scroll-arrows.md) - iOS Resources Section Scroll Arrows
 - [207](207-android-resources-missing-buttons.md) - Resources Page Missing Buttons/Cards
@@ -139,6 +138,8 @@ Quick reference for active tasks. See individual files for details.
 - [100](100-android-app-icon-splash-screen.md) - Android App Icon and Splash Screen
 - [200](200-ios-resources-page-opens-browser.md) - iOS Resources Page Opens Browser Instead of Rendering HTML
 - [201](201-ios-audio-player.md) - iOS Audio Player
+- [202](202-ios-search-functionality.md) - iOS Search Functionality
+- [203](203-ios-page-caching.md) - iOS Page Caching
 
 ---
 
