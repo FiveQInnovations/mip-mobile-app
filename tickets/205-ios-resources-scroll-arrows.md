@@ -1,7 +1,7 @@
 ---
 status: backlog
 area: ios-mip-app
-phase: polish
+phase: core
 created: 2026-01-24
 ---
 

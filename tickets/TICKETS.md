@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [202](202-ios-search-functionality.md) - iOS Search Functionality
 
 ## In Progress
 - [209](209-ios-about-us-card-not-clickable.md) - iOS About Us Card Not Clickable on Home Screen
@@ -17,9 +17,9 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
-- [202](202-ios-search-functionality.md) - iOS Search Functionality
 - [203](203-ios-page-caching.md) - iOS Page Caching
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
+- [205](205-ios-resources-scroll-arrows.md) - iOS Resources Section Scroll Arrows
 - [207](207-android-resources-missing-buttons.md) - Resources Page Missing Buttons/Cards
 - [208](208-android-bracket-artifacts.md) - Red Bracket Artifacts in Content
 - [210](210-ios-connect-tab-missing-buttons.md) - iOS Connect Tab Missing Buttons
@@ -44,9 +44,6 @@ Quick reference for active tasks. See individual files for details.
 - [040](040-eas-build-profiles.md) - Set Up EAS Build Profiles for Multiple Sites
 - [041](041-new-site-guide.md) - Document "Adding a New Site" Step-by-Step Guide
 - [042](042-remove-dev-tools.md) - Remove Dev Tools Section Before Production
-
-### Unassigned
-- [205](205-ios-resources-scroll-arrows.md) - iOS Resources Section Scroll Arrows
 
 ## Blocked
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)

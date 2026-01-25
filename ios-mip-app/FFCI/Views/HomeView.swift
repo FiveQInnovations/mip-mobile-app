@@ -16,6 +16,7 @@ struct HomeView: View {
     let onFeaturedClick: (String) -> Void
     
     @State private var tapCount = 0
+    @State private var showSearch = false
     
     var body: some View {
         NavigationStack {
@@ -44,25 +45,41 @@ struct HomeView: View {
             ScrollView {
             VStack(spacing: 0) {
                 
-                // Header with logo
+                // Header with logo and search button
                 VStack(spacing: 8) {
-                    if let logo = siteMeta.logo {
-                        let logoUrl = logo.starts(with: "http://") || logo.starts(with: "https://") 
-                            ? logo 
-                            : "https://ffci.fiveq.dev\(logo)"
-                        
-                        AsyncImage(url: URL(string: logoUrl)) { image in
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        } placeholder: {
-                            ProgressView()
+                    ZStack {
+                        if let logo = siteMeta.logo {
+                            let logoUrl = logo.starts(with: "http://") || logo.starts(with: "https://") 
+                                ? logo 
+                                : "https://ffci.fiveq.dev\(logo)"
+                            
+                            AsyncImage(url: URL(string: logoUrl)) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            .frame(height: 80)
+                        } else {
+                            Text(siteMeta.title)
+                                .font(.title)
+                                .fontWeight(.bold)
                         }
-                        .frame(height: 80)
-                    } else {
-                        Text(siteMeta.title)
-                            .font(.title)
-                            .fontWeight(.bold)
+                        
+                        HStack {
+                            Spacer()
+                            Button(action: { showSearch = true }) {
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundColor(Color("PrimaryColor"))
+                                    .frame(width: 44, height: 44)
+                            }
+                            .accessibilityIdentifier("search-button")
+                            .accessibilityLabel("Search")
+                            .buttonStyle(.plain)
+                        }
+                        .padding(.horizontal, 16)
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -162,6 +179,9 @@ struct HomeView: View {
             }
             .background(Color(.systemBackground))
             }
+        }
+        .sheet(isPresented: $showSearch) {
+            SearchView()
         }
     }
 }

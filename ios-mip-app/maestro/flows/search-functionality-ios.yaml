@@ -1,0 +1,38 @@
+appId: com.fiveq.ffci
+---
+# Search functionality test for native iOS app
+# Note: launchApp is optional because app is launched by script
+
+- launchApp
+- waitForAnimationToEnd
+
+# Tap the search icon in the header
+- tapOn:
+    id: "search-button"
+
+# Wait for search screen to appear
+- waitForAnimationToEnd
+
+# Verify search input is visible
+- assertVisible:
+    id: "search-input"
+
+# Type a search query (using "test" for quick results)
+- inputText: "test"
+
+# Wait for search results to appear
+- waitForAnimationToEnd:
+    timeout: 5000
+
+# Verify search results are displayed (at least one result appears)
+- extendedWaitUntil:
+    visible:
+      id: "search-result-row"
+    timeout: 10000
+
+# Verify we're seeing search results (not empty state)
+- assertNotVisible:
+    text: "No results found"
+
+- takeScreenshot:
+    path: "maestro/screenshots/search-functionality-ios-native"

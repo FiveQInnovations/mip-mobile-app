@@ -14,10 +14,12 @@
 		D1BDFA241184435CBF6EE731 /* CollectionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97418B1187BB47D582240761 /* CollectionListView.swift */; };
 		B796F3DC0B4C4D5092FD0919 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE15394DB45A4153AF9A4BD4 /* ErrorView.swift */; };
 		FF736214FB3841A888026BD1 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40900D8851BD40D591DC5640 /* HomeView.swift */; };
+		9E1F2A3B4C5D6E7F8091A2B3 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* SearchView.swift */; };
 		9ED2219387AD454B8E0D0927 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE9115171EE4243A6AE0A2B /* LoadingView.swift */; };
 		1C63E5C62816485AA552F210 /* TabPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD67E6F8F8C4C988F741931 /* TabPageView.swift */; };
 		890456F6A200436691B1D9D1 /* HtmlContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D51A13CFD7348FAB546FCB6 /* HtmlContentView.swift */; };
 		A8B9C0D1E2F3A4B5C6D7E8F9 /* AudioPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* AudioPlayerView.swift */; };
+		B2C3D4E5F60718293A4B5C6D /* SearchCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F60718293A4B5C6D7E /* SearchCache.swift */; };
 
 
 		A71111152B0000020000FFCI /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A71111142B0000020000FFCI /* Assets.xcassets */; };
@@ -30,9 +32,11 @@
 		A71111122B0000010000FFCI /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7A0B7BA3F7D347D2993A9ECD /* ApiModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API/ApiModels.swift; sourceTree = "<group>"; };
 		549E27E02AE14FA3BDD30465 /* MipApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API/MipApiClient.swift; sourceTree = "<group>"; };
+		C3D4E5F60718293A4B5C6D7E /* SearchCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data/SearchCache.swift; sourceTree = "<group>"; };
 		97418B1187BB47D582240761 /* CollectionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/CollectionListView.swift; sourceTree = "<group>"; };
 		CE15394DB45A4153AF9A4BD4 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ErrorView.swift; sourceTree = "<group>"; };
 		40900D8851BD40D591DC5640 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/HomeView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5C /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SearchView.swift; sourceTree = "<group>"; };
 		3AE9115171EE4243A6AE0A2B /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/LoadingView.swift; sourceTree = "<group>"; };
 		DBD67E6F8F8C4C988F741931 /* TabPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/TabPageView.swift; sourceTree = "<group>"; };
 		3D51A13CFD7348FAB546FCB6 /* HtmlContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/HtmlContentView.swift; sourceTree = "<group>"; };
@@ -77,9 +81,11 @@
 				A71111122B0000010000FFCI /* ContentView.swift */,
 				7A0B7BA3F7D347D2993A9ECD /* ApiModels.swift */,
 				549E27E02AE14FA3BDD30465 /* MipApiClient.swift */,
+				C3D4E5F60718293A4B5C6D7E /* SearchCache.swift */,
 				97418B1187BB47D582240761 /* CollectionListView.swift */,
 				CE15394DB45A4153AF9A4BD4 /* ErrorView.swift */,
 				40900D8851BD40D591DC5640 /* HomeView.swift */,
+				A1B2C3D4E5F60718293A4B5C /* SearchView.swift */,
 				3AE9115171EE4243A6AE0A2B /* LoadingView.swift */,
 				DBD67E6F8F8C4C988F741931 /* TabPageView.swift */,
 				3D51A13CFD7348FAB546FCB6 /* HtmlContentView.swift */,
@@ -174,9 +180,11 @@
 				A71111112B0000010000FFCI /* FFCIApp.swift in Sources */,
 				4FA7904F51F34D7589CBFF68 /* ApiModels.swift in Sources */,
 				FE6F96A343BC4881BF8DF12A /* MipApiClient.swift in Sources */,
+				B2C3D4E5F60718293A4B5C6D /* SearchCache.swift in Sources */,
 				D1BDFA241184435CBF6EE731 /* CollectionListView.swift in Sources */,
 				B796F3DC0B4C4D5092FD0919 /* ErrorView.swift in Sources */,
 				FF736214FB3841A888026BD1 /* HomeView.swift in Sources */,
+				9E1F2A3B4C5D6E7F8091A2B3 /* SearchView.swift in Sources */,
 				9ED2219387AD454B8E0D0927 /* LoadingView.swift in Sources */,
 				1C63E5C62816485AA552F210 /* TabPageView.swift in Sources */,
 				890456F6A200436691B1D9D1 /* HtmlContentView.swift in Sources */,
