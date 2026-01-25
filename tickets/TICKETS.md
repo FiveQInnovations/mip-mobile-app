@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [210](210-ios-connect-tab-missing-buttons.md) - iOS Connect Tab Missing Buttons
+(none)
 
 ## In Progress
 (none)
@@ -143,6 +143,7 @@ Quick reference for active tasks. See individual files for details.
 - [203](203-ios-page-caching.md) - iOS Page Caching
 - [205](205-ios-resources-scroll-arrows.md) - iOS Resources Section Scroll Arrows
 - [209](209-ios-about-us-card-not-clickable.md) - iOS About Us Card Not Clickable on Home Screen
+- [210](210-ios-connect-tab-missing-buttons.md) - iOS Connect Tab Missing Buttons
 
 ---
 
