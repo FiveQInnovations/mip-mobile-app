@@ -1,5 +1,5 @@
 ---
-status: qa
+status: in-progress
 area: ios-mip-app
 phase: core
 created: 2026-01-24

@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [205](205-ios-resources-scroll-arrows.md) - iOS Resources Section Scroll Arrows
+(none)
 
 ## In Progress
-- [209](209-ios-about-us-card-not-clickable.md) - iOS About Us Card Not Clickable on Home Screen
+- [205](205-ios-resources-scroll-arrows.md) - iOS Resources Section Scroll Arrows
 
 ## Backlog
 
@@ -139,6 +139,7 @@ Quick reference for active tasks. See individual files for details.
 - [201](201-ios-audio-player.md) - iOS Audio Player
 - [202](202-ios-search-functionality.md) - iOS Search Functionality
 - [203](203-ios-page-caching.md) - iOS Page Caching
+- [209](209-ios-about-us-card-not-clickable.md) - iOS About Us Card Not Clickable on Home Screen
 
 ---
 
