@@ -500,6 +500,10 @@ The script automatically kills stale Maestro processes, but if issues persist:
 lsof -ti :7001 | xargs kill -9
 ```
 
+**Assertions fail for HTML content that is visible:**
+- WebView text often includes extra quotes or whitespace
+- Prefer partial/regex matches like `.*brokenhearted.*` over exact strings
+
 ---
 
 ## Opening in Xcode
