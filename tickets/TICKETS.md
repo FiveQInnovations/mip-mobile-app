@@ -8,8 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [214](214-ios-about-us-back-button-double-chevron.md) - iOS About Us Page Shows Double Chevron in Back Button
-- [215](215-ios-back-button-style-consistency.md) - iOS Back Button Style Consistency
+(none)
 
 ## In Progress
 (none)
@@ -144,6 +143,8 @@ Quick reference for active tasks. See individual files for details.
 - [210](210-ios-connect-tab-missing-buttons.md) - iOS Connect Tab Missing Buttons
 - [211](211-ios-quick-actions-external-links.md) - iOS Quick Actions External Links Should Open in Browser
 - [212](212-ios-quick-actions-instagram-last.md) - iOS Quick Actions Should Show Instagram Last, Not Facebook
+- [214](214-ios-about-us-back-button-double-chevron.md) - iOS About Us Page Shows Double Chevron in Back Button
+- [215](215-ios-back-button-style-consistency.md) - iOS Back Button Style Consistency
 
 ---
 
