@@ -1,0 +1,74 @@
+appId: com.fiveq.ffci
+---
+# Ticket 214: iOS About Us Page Shows Double Chevron in Back Button
+#
+# BUG: When navigating to an internal page via NavigationLink, TWO back buttons appear:
+# - SwiftUI's default back button (from outer NavigationStack)
+# - Our custom back button (page-back-button) - shown incorrectly at root level
+#
+# ROOT CAUSE: canGoBack returns true when pageStack.count == 1 (root level)
+# FIX: Change canGoBack from "!pageStack.isEmpty" to "pageStack.count > 1"
+#
+# This test verifies:
+# 1. At root level of TabPageView, custom back button is NOT visible
+# 2. When drilling deeper, custom back button IS visible and works correctly
+# 3. Back navigation returns to correct levels
+
+- launchApp
+- waitForAnimationToEnd
+
+# === PART 1: Verify custom back button is hidden at root level ===
+
+# Scroll to find Audio Sermons (a featured item that navigates to TabPageView)
+- scrollUntilVisible:
+    element:
+      text: "Audio Sermons"
+    direction: DOWN
+    timeout: 10000
+
+# Tap on Audio Sermons to navigate into TabPageView
+- tapOn:
+    text: "Audio Sermons"
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# Take screenshot showing single back button at root level
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-214-root-level-single-back"
+
+# ASSERTION 1: At root level, custom back button should NOT be visible
+- assertNotVisible:
+    id: "page-back-button"
+
+# === PART 2: Verify custom back button works when drilling deeper ===
+
+# Tap on a collection item to drill deeper (e.g., "Fixed Husbands" or similar)
+# This increases pageStack.count to 2, so custom back button should appear
+- tapOn:
+    text: "Fixed Husbands"
+    optional: true
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# Take screenshot showing custom back button at deeper level
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-214-drilled-level-custom-back"
+
+# ASSERTION 2: At deeper level (pageStack.count > 1), custom back button SHOULD be visible
+- assertVisible:
+    id: "page-back-button"
+
+# === PART 3: Verify custom back button navigation works ===
+
+# Tap custom back button to go back one level
+- tapOn:
+    id: "page-back-button"
+- waitForAnimationToEnd
+
+# ASSERTION 3: After going back, custom back button should be hidden again (root level)
+- assertNotVisible:
+    id: "page-back-button"
+
+# Take final screenshot showing we're back at collection root
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-214-back-to-root"

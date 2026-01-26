@@ -28,7 +28,7 @@ struct TabPageView: View {
     }
     
     var canGoBack: Bool {
-        !pageStack.isEmpty
+        pageStack.count > 1
     }
     
     var body: some View {
@@ -102,6 +102,7 @@ struct TabPageView: View {
                                 }
                             }
                         }
+                        .navigationBarBackButtonHidden(canGoBack)
                     }
                 }
                 

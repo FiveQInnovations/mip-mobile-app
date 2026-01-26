@@ -11,7 +11,7 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [214](214-ios-about-us-back-button-double-chevron.md) - iOS About Us Page Shows Double Chevron in Back Button
 
 ## Backlog
 
@@ -20,7 +20,6 @@ Quick reference for active tasks. See individual files for details.
 - [207](207-android-resources-missing-buttons.md) - Resources Page Missing Buttons/Cards
 - [208](208-android-bracket-artifacts.md) - Red Bracket Artifacts in Content
 - [213](213-ios-quick-actions-scroll-to-instagram.md) - iOS Quick Actions Right Arrow Should Scroll to Instagram
-- [214](214-ios-about-us-back-button-double-chevron.md) - iOS About Us Page Shows Double Chevron in Back Button
 
 ### 🟡 Nice to Have
 - [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
