@@ -9,9 +9,10 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [214](214-ios-about-us-back-button-double-chevron.md) - iOS About Us Page Shows Double Chevron in Back Button
+- [215](215-ios-back-button-style-consistency.md) - iOS Back Button Style Consistency
 
 ## In Progress
-- [215](215-ios-back-button-style-consistency.md) - iOS Back Button Style Consistency
+(none)
 
 ## Backlog
 
