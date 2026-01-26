@@ -21,7 +21,9 @@ class ScrollTracker: ObservableObject {
     }
     
     var canScrollLeft: Bool {
-        scrollOffset > 5
+        // Check both offset and visibleIndex to handle edge cases where
+        // scroll tracking may report slightly non-zero offset at start position
+        scrollOffset > 5 && visibleIndex > 0
     }
     
     var canScrollRight: Bool {
