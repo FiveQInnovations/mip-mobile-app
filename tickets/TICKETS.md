@@ -11,7 +11,7 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [213](213-ios-quick-actions-scroll-to-instagram.md) - iOS Quick Actions Right Arrow Should Scroll to Instagram
 
 ## Backlog
 
@@ -19,7 +19,6 @@ Quick reference for active tasks. See individual files for details.
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
 - [207](207-android-resources-missing-buttons.md) - Resources Page Missing Buttons/Cards
 - [208](208-android-bracket-artifacts.md) - Red Bracket Artifacts in Content
-- [213](213-ios-quick-actions-scroll-to-instagram.md) - iOS Quick Actions Right Arrow Should Scroll to Instagram
 
 ### 🟡 Nice to Have
 - [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
