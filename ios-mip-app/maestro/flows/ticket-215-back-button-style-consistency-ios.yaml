@@ -1,0 +1,65 @@
+appId: com.fiveq.ffci
+---
+# Ticket 215: iOS Back Button Style Consistency
+#
+# ISSUE: Two different back button styles appear at different navigation levels:
+# 1. Root level (About page): SwiftUI default "< Back" with text label
+# 2. Drilled level (Mission & Vision): Custom chevron only, no text
+#
+# This test verifies that the custom back button at drilled level includes
+# "Back" text to match the SwiftUI default style.
+
+- launchApp
+- waitForAnimationToEnd
+
+# Navigate to Audio Sermons from home page (goes into TabPageView)
+- scrollUntilVisible:
+    element:
+      text: "Audio Sermons"
+    direction: DOWN
+    timeout: 10000
+
+- tapOn:
+    text: "Audio Sermons"
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# Take screenshot of Audio Sermons root level (SwiftUI default back button)
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-215-collection-root-level"
+
+# Drill into a child page to trigger custom back button
+- scrollUntilVisible:
+    element:
+      text: "Fixed Husbands"
+    direction: DOWN
+    timeout: 10000
+
+- tapOn:
+    text: "Fixed Husbands"
+- waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# Take screenshot showing custom back button at drilled level
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-215-drilled-level-back-button"
+
+# ASSERTION: Custom back button should have "Back" text for consistency
+# This will FAIL initially because the custom button only has a chevron
+- assertVisible:
+    text: "Back"
+    label: "Custom back button should show 'Back' text"
+
+# Verify the back button is functional
+- tapOn:
+    id: "page-back-button"
+- waitForAnimationToEnd
+
+# Take screenshot showing we returned to collection root
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-215-back-to-collection"
+
+# Verify we're back at Audio Sermons (collection root)
+- assertVisible:
+    text: "Fixed Husbands"
+    label: "Should see Fixed Husbands option after going back"

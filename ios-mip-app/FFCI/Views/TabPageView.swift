@@ -95,8 +95,11 @@ struct TabPageView: View {
                             if canGoBack {
                                 ToolbarItem(placement: .navigationBarLeading) {
                                     Button(action: goBack) {
-                                        Image(systemName: "chevron.left")
-                                            .foregroundColor(Color("PrimaryColor"))
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "chevron.left")
+                                            Text("Back")
+                                        }
+                                        .foregroundColor(Color("PrimaryColor"))
                                     }
                                     .accessibilityIdentifier("page-back-button")
                                 }
