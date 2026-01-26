@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [212](212-ios-quick-actions-instagram-last.md) - iOS Quick Actions Should Show Instagram Last, Not Facebook
+(none)
 
 ## In Progress
 (none)
@@ -143,6 +143,7 @@ Quick reference for active tasks. See individual files for details.
 - [209](209-ios-about-us-card-not-clickable.md) - iOS About Us Card Not Clickable on Home Screen
 - [210](210-ios-connect-tab-missing-buttons.md) - iOS Connect Tab Missing Buttons
 - [211](211-ios-quick-actions-external-links.md) - iOS Quick Actions External Links Should Open in Browser
+- [212](212-ios-quick-actions-instagram-last.md) - iOS Quick Actions Should Show Instagram Last, Not Facebook
 
 ---
 
