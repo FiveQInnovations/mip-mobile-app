@@ -1,0 +1,95 @@
+appId: com.fiveq.ffci
+---
+# Ticket 213: iOS Quick Actions Right Arrow Should Scroll to Instagram
+#
+# Bug: The right scroll arrow doesn't properly scroll to Instagram (last card) 
+# because scrollTracker.updateScrollOffset() is called with a targetOffset 
+# assuming .leading anchor, but the actual scroll uses .trailing anchor for 
+# the last card.
+#
+# Fix: Remove the manual offset update (line 107) - let GeometryReader-based 
+# automatic tracking handle position sync naturally.
+#
+# Acceptance Criteria:
+# - Right arrow appears when not at the end of the scroll
+# - Right arrow can scroll to Instagram (last card)  
+# - Right arrow disappears when scrolled to Instagram
+# - Left arrow appears when scrolled past the first card
+# - Scroll animation is smooth
+
+# Wait for app to fully load (launched by script)
+- waitForAnimationToEnd
+
+# Scroll to Resources section
+- scrollUntilVisible:
+    element:
+      id: "resources-section-title"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: "resources-section-title"
+
+# Right arrow should be visible at start
+- extendedWaitUntil:
+    visible:
+      id: "scroll-arrow-right"
+    timeout: 5000
+- assertVisible:
+    id: "scroll-arrow-right"
+
+# Take screenshot at initial state
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-213-initial-state"
+
+# Tap right arrow to scroll toward Instagram (last card)
+# Cards: About Us, What We Believe, Peace With God, Facebook, Instagram (5 total)
+- tapOn:
+    id: "scroll-arrow-right"
+- waitForAnimationToEnd
+
+# Continue scrolling until we see Instagram
+- tapOn:
+    id: "scroll-arrow-right"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+
+- tapOn:
+    id: "scroll-arrow-right"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+
+- tapOn:
+    id: "scroll-arrow-right"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+
+- tapOn:
+    id: "scroll-arrow-right"
+    optional: true
+    waitUntilVisible: false
+- waitForAnimationToEnd
+
+# Instagram should now be visible (last card)
+- assertVisible:
+    text: "Instagram"
+    enabled: true
+
+# Take screenshot showing Instagram is visible
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-213-instagram-visible"
+
+# CRITICAL: Right arrow should NOT be visible when at the end
+# This is the main bug - the arrow stays visible due to scroll offset mismatch
+- assertNotVisible:
+    id: "scroll-arrow-right"
+
+# Left arrow SHOULD be visible since we're past the first card
+- assertVisible:
+    id: "scroll-arrow-left"
+
+# Take final screenshot
+- takeScreenshot:
+    path: "maestro/screenshots/ticket-213-at-end-verified"

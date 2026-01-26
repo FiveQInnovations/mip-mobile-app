@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [213](213-ios-quick-actions-scroll-to-instagram.md) - iOS Quick Actions Right Arrow Should Scroll to Instagram
 
 ## In Progress
-- [213](213-ios-quick-actions-scroll-to-instagram.md) - iOS Quick Actions Right Arrow Should Scroll to Instagram
+(none)
 
 ## Backlog
 

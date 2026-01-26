@@ -103,10 +103,22 @@ struct ResourcesScrollView: View {
                             ScrollArrowButton(direction: .right) {
                                 let targetIndex = min(quickTasks.count - 1, scrollTracker.visibleIndex + 1)
                                 let itemWidth = cardWidth + cardSpacing
-                                let targetOffset = CGFloat(targetIndex) * itemWidth
+                                let isLastCard = targetIndex == quickTasks.count - 1
+                                
+                                // Calculate the correct offset based on anchor type
+                                // For .trailing anchor (last card), calculate offset where card's right edge
+                                // aligns with container's right edge
+                                let targetOffset: CGFloat
+                                if isLastCard {
+                                    // maxScrollOffset = contentWidth - containerWidth
+                                    targetOffset = max(0, scrollTracker.contentWidth - scrollTracker.containerWidth)
+                                } else {
+                                    targetOffset = CGFloat(targetIndex) * itemWidth
+                                }
                                 scrollTracker.updateScrollOffset(targetOffset)
+                                
                                 withAnimation(.easeInOut(duration: 0.3)) {
-                                    let anchor: UnitPoint = targetIndex == quickTasks.count - 1 ? .trailing : .leading
+                                    let anchor: UnitPoint = isLastCard ? .trailing : .leading
                                     scrollProxy.scrollTo(targetIndex, anchor: anchor)
                                 }
                             }
