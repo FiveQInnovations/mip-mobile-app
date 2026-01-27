@@ -293,3 +293,31 @@ Add CSS rules to both apps that respect inline styles on any element:
 - Android CSS updates: 30 minutes (match iOS rules)
 - Testing: 1 hour (verify on "What We Believe" and other pages)
 - **Total: ~4-5 hours**
+
+---
+
+## Implementation Notes (2026-01-26)
+
+### Changes Made
+1. **API (`wsp-mobile/lib/pages.php`)**: Added `generateSectionAwareHtml()` method that parses section JSON and wraps each section's HTML in `<div class="_section" style="background-color: X; color: Y">` when section styling is enabled.
+
+2. **iOS (`HtmlContentView.swift`)**: Added CSS rules for `._section` elements to support background colors and text color inheritance.
+
+### Bug Fix: Gray Divider Lines
+**Issue**: Initial implementation applied margins (`margin-top: 16px; margin-bottom: 16px`) to ALL section divs, causing visible gray gaps between sections (body background showing through).
+
+**Fix**: Changed CSS to only apply padding/margins to sections that have `background-color` in their inline style attribute. Sections without background styling now have no default margins.
+
+### Bug Fix: Horizontal Rule Lines
+**Issue**: Kirby "line" blocks render as `<hr>` elements, creating visible gray divider lines throughout the page.
+
+**Fix**: Added `hr { display: none; }` to CSS to hide these dividers.
+
+### Remaining Issues
+The "What We Believe" page has additional design issues beyond section background colors that need separate investigation:
+- Layout/spacing issues with collapsed sections
+- Visual styling of card-like content blocks (Vision, Focus, Blueprint, etc.)
+- Accordion/expandable sections not functioning
+- Other visual discrepancies from website design
+
+These should be addressed in separate tickets focused on specific block types or layout patterns.

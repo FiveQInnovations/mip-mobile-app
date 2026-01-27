@@ -227,6 +227,7 @@ struct HtmlContentView: UIViewRepresentable {
                 h2 { font-size: 28px; font-weight: 700; margin-top: 32px; margin-bottom: 16px; color: #0f172a; letter-spacing: -0.6px; line-height: 34px; }
                 h3 { font-size: 23px; font-weight: 700; margin-top: 28px; margin-bottom: 12px; color: #024D91; line-height: 30px; padding-left: 12px; border-left: 3px solid #D9232A; }
                 p { margin: 16px 0; }
+                hr { display: none; }
                 a { color: #D9232A; text-decoration: none; font-weight: 600; background: rgba(217, 35, 42, 0.08); padding: 4px 6px; border-bottom: 2px solid #D9232A; border-radius: 4px; }
                 img { max-width: 100%; height: auto; border-radius: 8px; margin: 24px 0; }
                 picture { display: block; width: 100%; }
@@ -289,15 +290,15 @@ struct HtmlContentView: UIViewRepresentable {
                 }
                 /* Section styling - support for background colors and text colors */
                 ._section {
+                    /* No default styling for sections without backgrounds */
+                }
+                /* Only apply padding/margins to sections with background colors */
+                ._section[style*="background-color"] {
                     padding: 24px 16px;
                     margin-left: -16px;
                     margin-right: -16px;
                     margin-top: 16px;
                     margin-bottom: 16px;
-                }
-                /* Ensure section background colors are applied */
-                ._section[style*="background-color"] {
-                    padding: 24px 16px;
                 }
                 /* Ensure text colors within sections are applied */
                 ._section[style*="color"] {
