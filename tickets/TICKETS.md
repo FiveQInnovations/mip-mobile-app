@@ -12,7 +12,6 @@ Quick reference for active tasks. See individual files for details.
 
 ## In Progress
 - [222](222-section-background-colors-not-appearing.md) - Section Background Colors Not Appearing in iOS App
-- [228](228-mobile-api-replace-forms-with-buttons.md) - Mobile API: Replace Form Blocks with Buttons
 
 ## Backlog
 
@@ -157,6 +156,7 @@ Quick reference for active tasks. See individual files for details.
 - [224](224-ios-resources-red-artifacts.md) - Red Artifacts on Left Side of Resources Tab Content
 - [225](225-media-ministry-embed-too-wide.md) - Media Ministry Page - FFC's Monthly Media Embed Too Wide
 - [226](226-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
+- [228](228-mobile-api-replace-forms-with-buttons.md) - Mobile API: Replace Form Blocks with Buttons
 
 ---
 
