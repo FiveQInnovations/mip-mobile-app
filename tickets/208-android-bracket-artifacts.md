@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: done
 area: android-mip-app
 phase: core
 created: 2026-01-24
@@ -150,3 +150,15 @@ The React Native app expects the same HTML structure:
 - Android WebView's handling of Blocks objects vs React Native's renderer
 - Possible caching issues requiring app restart
 - Different HTML processing between platforms
+
+### Resolution ✅
+
+**Status:** RESOLVED - Bracket artifacts were fixed as part of ticket 207.
+
+**Resolution Details:**
+- The root cause was the same as ticket 207 - the buttongroup snippet wasn't calling `->toHTML()`
+- When the backend fix was applied (adding `->toHTML()` to the buttongroup snippet), bracket artifacts disappeared
+- Additional CSS fixes in `HtmlContent.kt` ensured no red artifacts from base link styles
+- All bracket artifacts eliminated once buttons rendered correctly as HTML
+
+**Related:** This ticket was resolved alongside ticket 207 (Android Resources Missing Buttons), as they shared the same root cause.

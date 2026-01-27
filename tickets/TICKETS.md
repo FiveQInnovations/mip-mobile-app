@@ -17,8 +17,6 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
-- [207](207-android-resources-missing-buttons.md) - Resources Page Missing Buttons/Cards
-- [208](208-android-bracket-artifacts.md) - Red Bracket Artifacts in Content
 - [216](216-homescreen-logo-appear.md) - Homepage Logo Should Appear on Homescreen
 - [217](217-header-maltese-cross-appear.md) - Small Maltese Cross Should Appear on Left Side of Header
 - [218](218-remove-tap-test-button.md) - Remove Tap Test Button from Home Screen
@@ -148,6 +146,8 @@ Quick reference for active tasks. See individual files for details.
 - [202](202-ios-search-functionality.md) - iOS Search Functionality
 - [203](203-ios-page-caching.md) - iOS Page Caching
 - [205](205-ios-resources-scroll-arrows.md) - iOS Resources Section Scroll Arrows
+- [207](207-android-resources-missing-buttons.md) - Resources Page Missing Buttons/Cards
+- [208](208-android-bracket-artifacts.md) - Red Bracket Artifacts in Content
 - [209](209-ios-about-us-card-not-clickable.md) - iOS About Us Card Not Clickable on Home Screen
 - [210](210-ios-connect-tab-missing-buttons.md) - iOS Connect Tab Missing Buttons
 - [211](211-ios-quick-actions-external-links.md) - iOS Quick Actions External Links Should Open in Browser
