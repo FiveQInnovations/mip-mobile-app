@@ -15,12 +15,13 @@ Research the ticket thoroughly and add findings directly to the ticket file. **D
 
 This is a multi-repo workspace:
 - `android-mip-app/` - Native Android app (Kotlin/Jetpack Compose)
+- `ios-mip-app/` - Native iOS app (Swift/SwiftUI)
 - `rn-mip-app/` - React Native mobile app (Expo)
 - `ws-ffci/` - Kirby CMS site with content
 - `wsp-mobile/` - Kirby plugin for mobile API
 - `wsp-forms/` - Kirby plugin for forms
 
-**Note:** The Android app is being built to match the React Native app's functionality. When scouting Android tickets, always check if the feature exists in the React Native app first.
+**Note:** Both native apps (Android and iOS) are being built to match the React Native app's functionality. When scouting native app tickets, always check if the feature exists in the React Native app first.
 
 ## Scouting Process
 
@@ -33,8 +34,8 @@ This is a multi-repo workspace:
 - Read the ticket's Context, Goals, and Acceptance Criteria
 - Check referenced meeting notes or related tickets
 
-### 3. Check React Native Reference (Android tickets)
-If scouting an Android ticket, check if the feature exists in `rn-mip-app/`:
+### 3. Check React Native Reference (Native app tickets)
+If scouting an Android or iOS ticket, check if the feature exists in `rn-mip-app/`:
 
 **Find the RN implementation:**
 - Search for similar components/screens in `rn-mip-app/app/`
@@ -52,6 +53,12 @@ If scouting an Android ticket, check if the feature exists in `rn-mip-app/`:
 - AbortController → OkHttp Call.cancel() / coroutine cancellation
 - useState/useEffect → remember/LaunchedEffect
 - In-memory cache Map → Kotlin equivalent
+
+**Note iOS equivalents:**
+- FlatList → List or ScrollView with LazyVStack
+- AbortController → URLSessionTask.cancel()
+- useState/useEffect → @State/@StateObject with .onAppear/.onChange
+- In-memory cache Map → Swift Dictionary
 
 ### 4. Research the Codebase
 For each requirement, identify:
@@ -80,7 +87,7 @@ Add a "Research Findings (Scouted)" section to the ticket with:
 
 ## Research Findings (Scouted)
 
-### React Native Reference (Android tickets only)
+### React Native Reference (Native app tickets only)
 [Document how RN app implements this feature - UI patterns, caching, API calls, tests]
 
 ### Current Implementation Analysis
