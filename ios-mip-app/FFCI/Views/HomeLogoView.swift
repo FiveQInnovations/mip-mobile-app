@@ -20,7 +20,7 @@ struct HomeLogoView: View {
                     : "https://ffci.fiveq.dev\(logo)"
                 
                 SVGImageView(url: logoUrl)
-                    .frame(width: 280, height: 168) // 5:3 aspect ratio
+                    .frame(width: 240, height: 144) // 5:3 aspect ratio, reduced from 280x168
             } else {
                 // No logo URL - show site title
                 Text(siteMeta.title)
@@ -30,7 +30,7 @@ struct HomeLogoView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
+        .padding(.vertical, 12)
         .padding(.horizontal, 20)
         .background(Color(red: 0.973, green: 0.980, blue: 0.988)) // Light gray #F8FAFC
     }

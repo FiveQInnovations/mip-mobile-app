@@ -12,7 +12,7 @@ struct HomeHeaderView: View {
     let onSearchTap: () -> Void
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 0) {
             HStack {
                 // Maltese cross icon on the left
                 Image("HeaderLogo")
@@ -37,7 +37,8 @@ struct HomeHeaderView: View {
             .padding(.horizontal, 16)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
+        .padding(.top, 0)
+        .padding(.bottom, 0)
         .background(Color.white)
     }
 }

@@ -17,7 +17,7 @@ struct FeaturedSectionView: View {
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.horizontal, 16)
-                .padding(.top, 24)
+                .padding(.top, 16)
             
             ForEach(featured, id: \.uuid) { item in
                 Group {
@@ -42,7 +42,7 @@ struct FeaturedSectionView: View {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.bottom, 6)
+                .padding(.bottom, 4)
             }
         }
     }
