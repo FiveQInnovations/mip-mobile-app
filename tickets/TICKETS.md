@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [217](217-header-maltese-cross-appear.md) - Small Maltese Cross Should Appear on Left Side of Header
+(none)
 
 ## In Progress
 (none)
@@ -155,6 +155,7 @@ Quick reference for active tasks. See individual files for details.
 - [214](214-ios-about-us-back-button-double-chevron.md) - iOS About Us Page Shows Double Chevron in Back Button
 - [215](215-ios-back-button-style-consistency.md) - iOS Back Button Style Consistency
 - [216](216-homescreen-logo-appear.md) - Homepage Logo Should Appear on Homescreen
+- [217](217-header-maltese-cross-appear.md) - Small Maltese Cross Should Appear on Left Side of Header
 - [218](218-remove-tap-test-button.md) - Remove Tap Test Button from Home Screen
 
 ---
