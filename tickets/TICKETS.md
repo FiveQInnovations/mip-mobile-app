@@ -11,14 +11,13 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [222](222-section-background-colors-not-appearing.md) - Section Background Colors Not Appearing in iOS App
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
 - [101](101-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
-- [222](222-section-background-colors-not-appearing.md) - Section Background Colors Not Appearing in iOS App
 - [223](223-purpose-for-gathering-accordion-design.md) - "Purpose for Gathering" Accordion Sections Not Expandable - Design Improvement Needed
 - [224](224-ios-resources-red-artifacts.md) - Red Artifacts on Left Side of Resources Tab Content
 - [225](225-media-ministry-embed-too-wide.md) - Media Ministry Page - FFC's Monthly Media Embed Too Wide

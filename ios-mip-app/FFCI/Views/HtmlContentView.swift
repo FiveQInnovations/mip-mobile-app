@@ -287,6 +287,38 @@ struct HtmlContentView: UIViewRepresentable {
                 a[class*="_button"] span {
                     color: inherit;
                 }
+                /* Section styling - support for background colors and text colors */
+                ._section {
+                    padding: 24px 16px;
+                    margin-left: -16px;
+                    margin-right: -16px;
+                    margin-top: 16px;
+                    margin-bottom: 16px;
+                }
+                /* Ensure section background colors are applied */
+                ._section[style*="background-color"] {
+                    padding: 24px 16px;
+                }
+                /* Ensure text colors within sections are applied */
+                ._section[style*="color"] {
+                    /* Text color is applied via inline style */
+                }
+                /* Ensure headings inherit section text color */
+                ._section[style*="color"] h1,
+                ._section[style*="color"] h2,
+                ._section[style*="color"] h3,
+                ._section[style*="color"] h4,
+                ._section[style*="color"] h5,
+                ._section[style*="color"] h6 {
+                    color: inherit;
+                }
+                /* Ensure paragraphs and other text elements inherit section text color */
+                ._section[style*="color"] p,
+                ._section[style*="color"] li,
+                ._section[style*="color"] span,
+                ._section[style*="color"] div {
+                    color: inherit;
+                }
             </style>
         </head>
         <body>
