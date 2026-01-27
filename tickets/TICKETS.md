@@ -18,7 +18,6 @@ Quick reference for active tasks. See individual files for details.
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
 - [101](101-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
-- [221](221-what-we-believe-images-not-appearing.md) - Images Not Appearing on "What We Believe" Page
 - [222](222-section-background-colors-not-appearing.md) - Section Background Colors Not Appearing in iOS App
 - [223](223-purpose-for-gathering-accordion-design.md) - "Purpose for Gathering" Accordion Sections Not Expandable - Design Improvement Needed
 - [224](224-ios-resources-red-artifacts.md) - Red Artifacts on Left Side of Resources Tab Content
@@ -157,6 +156,7 @@ Quick reference for active tasks. See individual files for details.
 - [218](218-remove-tap-test-button.md) - Remove Tap Test Button from Home Screen
 - [219](219-remove-duplicate-content-page-title.md) - Remove Duplicate Title on Content Pages
 - [220](220-membership-form-button-open-browser.md) - Membership Form Button Should Open Form in Browser
+- [221](221-what-we-believe-images-not-appearing.md) - Images Not Appearing on "What We Believe" Page
 
 ---
 

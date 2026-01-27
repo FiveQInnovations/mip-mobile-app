@@ -7,9 +7,136 @@
 
 import SwiftUI
 import WebKit
+import Foundation
 import os.log
 
 private let logger = Logger(subsystem: "com.fiveq.ffci", category: "HtmlContent")
+
+// Custom URL scheme handler for Basic Auth resource loading
+class AuthURLSchemeHandler: NSObject, WKURLSchemeHandler {
+    private let username = "fiveq"
+    private let password = "demo"
+    
+    // Track stopped tasks to avoid calling methods on them after they're stopped
+    private var stoppedTasks = Set<Int>()
+    private let lock = NSLock()
+    
+    private func isTaskStopped(_ task: WKURLSchemeTask) -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return stoppedTasks.contains(ObjectIdentifier(task as AnyObject).hashValue)
+    }
+    
+    private func markTaskStopped(_ task: WKURLSchemeTask) {
+        lock.lock()
+        defer { lock.unlock() }
+        stoppedTasks.insert(ObjectIdentifier(task as AnyObject).hashValue)
+    }
+    
+    private func cleanupTask(_ task: WKURLSchemeTask) {
+        lock.lock()
+        defer { lock.unlock() }
+        stoppedTasks.remove(ObjectIdentifier(task as AnyObject).hashValue)
+    }
+    
+    func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
+        guard let url = urlSchemeTask.request.url else {
+            if !isTaskStopped(urlSchemeTask) {
+                urlSchemeTask.didFailWithError(NSError(domain: "Invalid URL", code: -1))
+            }
+            return
+        }
+        
+        // Extract the original HTTPS URL from the custom scheme
+        // Custom scheme format: ffci-auth://ffci.fiveq.dev/path/to/resource
+        let originalURLString = url.absoluteString.replacingOccurrences(of: "ffci-auth://", with: "https://")
+        guard let originalURL = URL(string: originalURLString) else {
+            if !isTaskStopped(urlSchemeTask) {
+                urlSchemeTask.didFailWithError(NSError(domain: "Invalid URL conversion", code: -1))
+            }
+            return
+        }
+        
+        // Create request with Basic Auth headers
+        var request = URLRequest(url: originalURL)
+        let credentials = "\(username):\(password)"
+        if let credentialsData = credentials.data(using: .utf8) {
+            let base64Credentials = credentialsData.base64EncodedString()
+            request.setValue("Basic \(base64Credentials)", forHTTPHeaderField: "Authorization")
+        }
+        
+        // Perform the request
+        let task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            guard let self = self else { return }
+            
+            // Ensure we're on the main thread for WKURLSchemeTask methods
+            DispatchQueue.main.async {
+                // Check if task was stopped before we respond
+                guard !self.isTaskStopped(urlSchemeTask) else {
+                    return
+                }
+                
+                if let error = error {
+                    if !self.isTaskStopped(urlSchemeTask) {
+                        urlSchemeTask.didFailWithError(error)
+                    }
+                    return
+                }
+                
+                guard let httpResponse = response as? HTTPURLResponse,
+                      let data = data else {
+                    if !self.isTaskStopped(urlSchemeTask) {
+                        urlSchemeTask.didFailWithError(NSError(domain: "Invalid response", code: -1))
+                    }
+                    return
+                }
+                
+                // Convert headers from [AnyHashable: Any] to [String: String]
+                var headerFields: [String: String] = [:]
+                for (key, value) in httpResponse.allHeaderFields {
+                    if let keyString = key as? String, let valueString = value as? String {
+                        headerFields[keyString] = valueString
+                    }
+                }
+                
+                // Create a new HTTPURLResponse with the original request URL (custom scheme)
+                // WKWebView requires the response URL to match the request URL
+                guard let responseURL = urlSchemeTask.request.url,
+                      let newResponse = HTTPURLResponse(
+                        url: responseURL,
+                        statusCode: httpResponse.statusCode,
+                        httpVersion: "HTTP/1.1",
+                        headerFields: headerFields.isEmpty ? nil : headerFields
+                      ) else {
+                    if !self.isTaskStopped(urlSchemeTask) {
+                        urlSchemeTask.didFailWithError(NSError(domain: "Failed to create response", code: -1))
+                    }
+                    return
+                }
+                
+                // Final check before sending response
+                guard !self.isTaskStopped(urlSchemeTask) else {
+                    return
+                }
+                
+                // Send response (must match request URL)
+                urlSchemeTask.didReceive(newResponse)
+                urlSchemeTask.didReceive(data)
+                urlSchemeTask.didFinish()
+                
+                // Clean up tracking
+                self.cleanupTask(urlSchemeTask)
+            }
+        }
+        
+        task.resume()
+    }
+    
+    func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
+        // Mark task as stopped so we don't try to call methods on it
+        markTaskStopped(urlSchemeTask)
+    }
+}
 
 struct HtmlContentView: UIViewRepresentable {
     let html: String
@@ -25,6 +152,10 @@ struct HtmlContentView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         configuration.allowsInlineMediaPlayback = true
+        
+        // Register custom URL scheme handler for Basic Auth resource loading
+        let authHandler = AuthURLSchemeHandler()
+        configuration.setURLSchemeHandler(authHandler, forURLScheme: "ffci-auth")
         
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
@@ -59,6 +190,32 @@ struct HtmlContentView: UIViewRepresentable {
             fixedHtml = fixedHtml.replacingOccurrences(of: "src=\"\"", with: "src=\"\(firstUrl)\"")
         }
         
+        // Replace ffci.fiveq.dev URLs with custom scheme for Basic Auth
+        // This allows WKURLSchemeHandler to intercept and add auth headers
+        // Handle both http:// and https:// URLs, and replace in src, srcset, and href attributes
+        let urlPattern = "(https?://ffci\\.fiveq\\.dev)"
+        if let regex = try? NSRegularExpression(pattern: urlPattern, options: .caseInsensitive) {
+            let range = NSRange(fixedHtml.startIndex..<fixedHtml.endIndex, in: fixedHtml)
+            fixedHtml = regex.stringByReplacingMatches(
+                in: fixedHtml,
+                options: [],
+                range: range,
+                withTemplate: "ffci-auth://ffci.fiveq.dev"
+            )
+        } else {
+            // Fallback to simple string replacement if regex fails
+            fixedHtml = fixedHtml.replacingOccurrences(
+                of: "https://ffci.fiveq.dev",
+                with: "ffci-auth://ffci.fiveq.dev",
+                options: .caseInsensitive
+            )
+            fixedHtml = fixedHtml.replacingOccurrences(
+                of: "http://ffci.fiveq.dev",
+                with: "ffci-auth://ffci.fiveq.dev",
+                options: .caseInsensitive
+            )
+        }
+        
         return """
         <!DOCTYPE html>
         <html>
@@ -75,8 +232,9 @@ struct HtmlContentView: UIViewRepresentable {
                 picture { display: block; width: 100%; }
                 picture img { width: 100%; border-radius: 8px; margin: 24px 0; }
                 ._background { position: relative; width: 100%; min-height: 200px; margin-bottom: 16px; border-radius: 8px; overflow: hidden; }
-                ._background picture { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-                ._background picture img { width: 100%; height: 100%; object-fit: cover; border-radius: 0; margin: 0; }
+                ._background picture { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+                ._background picture img { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 0; margin: 0; }
+                ._background > *:not(picture) { position: relative; z-index: 1; }
                 /* Button group - stack buttons vertically */
                 ._button-group {
                     display: flex;
