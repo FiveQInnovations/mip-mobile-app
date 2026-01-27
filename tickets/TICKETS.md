@@ -19,7 +19,6 @@ Quick reference for active tasks. See individual files for details.
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
 - [101](101-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
 - [217](217-header-maltese-cross-appear.md) - Small Maltese Cross Should Appear on Left Side of Header
-- [218](218-remove-tap-test-button.md) - Remove Tap Test Button from Home Screen
 - [219](219-remove-duplicate-content-page-title.md) - Remove Duplicate Title on Content Pages
 - [220](220-membership-form-button-open-browser.md) - Membership Form Button Should Open Form in Browser
 - [221](221-what-we-believe-images-not-appearing.md) - Images Not Appearing on "What We Believe" Page
@@ -27,6 +26,7 @@ Quick reference for active tasks. See individual files for details.
 - [223](223-purpose-for-gathering-accordion-design.md) - "Purpose for Gathering" Accordion Sections Not Expandable - Design Improvement Needed
 - [224](224-ios-resources-red-artifacts.md) - Red Artifacts on Left Side of Resources Tab Content
 - [225](225-media-ministry-embed-too-wide.md) - Media Ministry Page - FFC's Monthly Media Embed Too Wide
+- [226](226-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
 
 ### 🟡 Nice to Have
 - [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
@@ -156,6 +156,7 @@ Quick reference for active tasks. See individual files for details.
 - [214](214-ios-about-us-back-button-double-chevron.md) - iOS About Us Page Shows Double Chevron in Back Button
 - [215](215-ios-back-button-style-consistency.md) - iOS Back Button Style Consistency
 - [216](216-homescreen-logo-appear.md) - Homepage Logo Should Appear on Homescreen
+- [218](218-remove-tap-test-button.md) - Remove Tap Test Button from Home Screen
 
 ---
 

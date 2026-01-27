@@ -15,34 +15,12 @@ struct HomeView: View {
     let onQuickTaskClick: (String) -> Void
     let onFeaturedClick: (String) -> Void
     
-    @State private var tapCount = 0
     @State private var showSearch = false
     @StateObject private var scrollTracker = ScrollTracker()
     
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // DEBUG: Test button to verify taps work
-                // This button is used for Maestro UI testing to verify tap functionality
-                // Placed outside ScrollView to ensure it's always accessible
-                Button(action: {
-                    tapCount += 1
-                    logger.notice("TEST TAP: count = \(tapCount)")
-                }) {
-                    Text("TAP TEST: \(tapCount)")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.red)
-                        .cornerRadius(8)
-                }
-                .accessibilityElement(children: .ignore)
-                .accessibilityIdentifier("tap-test-button")
-                .accessibilityLabel("TAP TEST: \(tapCount)")
-                .accessibilityValue("\(tapCount)")
-                .padding()
-                .buttonStyle(.plain)
-            
             ScrollView {
             VStack(spacing: 0) {
                 
