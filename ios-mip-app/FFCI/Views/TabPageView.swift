@@ -44,13 +44,6 @@ struct TabPageView: View {
                     } else if let pageData = pageData {
                         ScrollView {
                             VStack(alignment: .leading, spacing: 16) {
-                                // Title
-                                Text(pageData.title)
-                                    .font(.title)
-                                    .fontWeight(.bold)
-                                    .padding(.horizontal, 16)
-                                    .padding(.top, 24)
-                                
                                 // HTML content
                                 if let htmlContent = pageData.htmlContent, !htmlContent.isEmpty {
                                     HtmlContentView(
@@ -62,6 +55,7 @@ struct TabPageView: View {
                                     )
                                     .frame(height: htmlContentHeight)
                                     .padding(.horizontal, 0)
+                                    .padding(.top, 2)
                                     .padding(.bottom, 8)
                                 }
                                 

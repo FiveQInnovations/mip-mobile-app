@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [219](219-remove-duplicate-content-page-title.md) - Remove Duplicate Title on Content Pages
+(none)
 
 ## In Progress
 (none)
@@ -156,6 +156,7 @@ Quick reference for active tasks. See individual files for details.
 - [216](216-homescreen-logo-appear.md) - Homepage Logo Should Appear on Homescreen
 - [217](217-header-maltese-cross-appear.md) - Small Maltese Cross Should Appear on Left Side of Header
 - [218](218-remove-tap-test-button.md) - Remove Tap Test Button from Home Screen
+- [219](219-remove-duplicate-content-page-title.md) - Remove Duplicate Title on Content Pages
 
 ---
 
