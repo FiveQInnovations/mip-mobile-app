@@ -1,6 +1,6 @@
 ---
-status: backlog
-area: rn-mip-app
+status: qa
+area: ios-mip-app
 phase: core
 created: 2026-01-26
 ---
@@ -30,6 +30,32 @@ A small Maltese cross icon should appear on the left side of the header, but it 
 - Related to ticket 070 which replaced header logo with Maltese Cross (already completed)
 - Check if the icon asset is being loaded correctly
 - Verify header component is rendering the icon
+
+## Implementation Notes (from ticket 216 work)
+
+### Reference Implementations
+
+**Android (HomeScreen.kt line 91-99):**
+- Uses local drawable resource: `R.drawable.header_logo` 
+- Asset location: `drawable-xxhdpi/header_logo.png`
+- Size: 32dp
+- Positioned top-left in header
+- Comment notes: "App icon (Maltese cross) top-left - matches RN assets/adaptive-icon.png"
+
+**React Native (HomeScreen.tsx line 23-26):**
+- Uses local asset: `require('../assets/adaptive-icon.png')`
+- Positioned in header
+
+**iOS Current State (HomeHeaderView.swift):**
+- Currently displays API logo (`siteMeta.logo`) in header
+- Should be replaced with local Maltese cross asset (similar to Android/RN)
+- Main homepage logo (ticket 216) is now separate and loads from API URL
+
+### Implementation Approach
+- Replace API logo loading in `HomeHeaderView.swift` with local asset
+- Use `Image` with `Image("header_logo")` or similar asset reference
+- Size should match Android (32pt equivalent)
+- Position top-left in header (opposite side from search button)
 
 ## References
 

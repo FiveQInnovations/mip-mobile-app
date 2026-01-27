@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [217](217-header-maltese-cross-appear.md) - Small Maltese Cross Should Appear on Left Side of Header
 
 ## In Progress
 (none)
@@ -18,7 +18,6 @@ Quick reference for active tasks. See individual files for details.
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
 - [101](101-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
-- [217](217-header-maltese-cross-appear.md) - Small Maltese Cross Should Appear on Left Side of Header
 - [219](219-remove-duplicate-content-page-title.md) - Remove Duplicate Title on Content Pages
 - [220](220-membership-form-button-open-browser.md) - Membership Form Button Should Open Form in Browser
 - [221](221-what-we-believe-images-not-appearing.md) - Images Not Appearing on "What We Believe" Page
