@@ -12,11 +12,11 @@ Quick reference for active tasks. See individual files for details.
 
 ## In Progress
 - [222](222-section-background-colors-not-appearing.md) - Section Background Colors Not Appearing in iOS App
+- [228](228-mobile-api-replace-forms-with-buttons.md) - Mobile API: Replace Form Blocks with Buttons
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
 - [101](101-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
 - [223](223-purpose-for-gathering-accordion-design.md) - "Purpose for Gathering" Accordion Sections Not Expandable - Design Improvement Needed
 
@@ -46,7 +46,6 @@ Quick reference for active tasks. See individual files for details.
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
 - [015](015-ios-browserstack-without-apple-dev-account.md) - Build and Upload iOS to BrowserStack Without Apple Developer Account
-- [075](075-integrate-audio-sermons.md) - Integrate Audio Sermons Collection
 - [077](077-homepage-touch-handling.md) - Homepage Touch Handling on Real Devices
 
 ## Maybe
@@ -107,6 +106,7 @@ Quick reference for active tasks. See individual files for details.
 - [072](072-connect-tab-navigation.md) - Add "Connect" Tab - Replace "Get Involved"
 - [073](073-reduce-tab-bar-4-tabs.md) - Fix Tab Bar - Reduce to 4 Tabs
 - [074](074-scrollable-cards-indicators.md) - Scrollable Cards - Add Scroll Indicators
+- [075](075-integrate-audio-sermons.md) - Integrate Audio Sermons Collection
 - [076](076-improve-subpage-links.md) - Make Subpage Links More Obvious
 - [078](078-content-page-design-improvements.md) - Content Page Visual Design Improvements
 - [079](079-trivial-test-card-radius.md) - Untitled
