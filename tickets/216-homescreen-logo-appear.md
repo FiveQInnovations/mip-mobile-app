@@ -38,231 +38,316 @@ The main Firefighters for Christ logo should be visible on the homescreen, but i
 
 ---
 
-## Research Findings (Scouted)
+## Research Findings (Scouted) - INDEPENDENT INVESTIGATION
+
+### Executive Summary
+
+**Root Cause Identified:** The logo is configured correctly in the CMS and should be returned by the API. The primary issue is with **SVG rendering failing silently** in the `SvgUri` component, with **no error handling or fallback mechanism**. Secondary issue: the fallback logo rendering is fundamentally broken due to incompatibility with React Native's `Image` component.
+
+**Critical Discovery:** The CMS has a logo configured at CDN URL `https://ffci-5q.b-cdn.net/image/logo-mobile.svg`, so the API *should* be returning a valid logo URL. The problem is in the frontend rendering logic.
 
 ### Current Implementation Analysis
 
-**Homepage Logo Location:**
-- **File:** `rn-mip-app/components/HomeScreen.tsx`
-- **Lines:** 234-258 (Logo section rendering)
-- **Lines:** 54-58 (Logo URL extraction from API)
-- **Lines:** 61 (Fallback logo asset reference)
-- **Lines:** 64-66 (Responsive logo size calculation)
-- **Lines:** 181 (SVG detection logic)
-- **Lines:** 406-411 (Logo section styling)
+**Logo Rendering Flow:**
 
-**Logo Rendering Logic:**
+```
+1. API call to /mobile-api
+2. Extract site_data.logo (should be CDN URL or null)
+3. Process URL (prepend base URL if relative)
+4. Detect if SVG (.svg extension)
+5. Render:
+   - If SVG → use SvgUri component (lines 237-242)
+   - If raster → use Image component (lines 244-248)
+   - If null → use fallback Image with require() (lines 251-256)
+```
 
-The logo section is always rendered (line 234), but the content inside is conditional:
+**File:** `rn-mip-app/components/HomeScreen.tsx`
 
+| Lines | Purpose | Issue Status |
+|-------|---------|-------------|
+| 54-58 | Logo URL extraction from API | ✅ Logic correct |
+| 61 | Fallback logo asset reference | ❌ **BROKEN** - see details below |
+| 64-66 | Responsive logo size calculation | ✅ Working correctly |
+| 181 | SVG detection logic | ✅ Correct (checks .svg extension) |
+| 234-258 | Logo section rendering | ⚠️ Missing error handling |
+| 237-242 | SVG logo rendering via SvgUri | ❌ **NO ERROR HANDLING** |
+| 244-248 | Raster logo rendering via Image | ⚠️ No onError handler |
+| 251-256 | Fallback logo rendering | ❌ **BROKEN** - incompatible approach |
+| 406-411 | Logo section styling | ✅ Styles correct |
+
+### Backend API Investigation
+
+**File:** `wsp-mobile/lib/site.php`
+- **Lines 11-20:** `get_site_logo()` method
+- **Line 99:** Logo field included in API response
+
+**API Behavior:**
+1. Checks for `mobileLogo` field on site
+2. If file exists, returns `$file->toCDNFile()->url()`
+3. Returns `null` if no logo or file doesn't exist
+
+**CMS Configuration (ws-ffci site):**
+- **File:** `content/site.txt` line 136
+- **Value:** `Mobilelogo: - file://xYEJWsj9KFipE9rA`
+- **File exists:** `content/logo-mobile.svg` (19,251 bytes)
+- **Metadata:** `content/logo-mobile.svg.txt`
+- **CDN URL:** `https://ffci-5q.b-cdn.net/image/logo-mobile.svg`
+- **Blueprint:** `wsp-mobile/blueprints/tabs/mobile.yml` lines 37-42
+
+**Conclusion:** The API SHOULD be returning `https://ffci-5q.b-cdn.net/image/logo-mobile.svg` for the FFCI site.
+
+### Critical Issue #1: SVG Rendering Has No Error Handling
+
+**Lines 237-242:**
 ```tsx
-// Lines 54-58: Extract logo URL from API
-const logoUrl = site_data.logo
-  ? site_data.logo.startsWith('http')
-    ? site_data.logo
-    : `${config.apiBaseUrl}${site_data.logo}`
-  : null;
+<SvgUri
+  uri={logoUrl}
+  width={logoWidth}
+  height={logoHeight}
+  style={styles.logo}
+/>
+```
 
-// Lines 61: Fallback asset reference
+**Problem:**
+- `SvgUri` can fail silently if:
+  - Network request fails
+  - SVG parsing fails
+  - CORS issues
+  - URL is invalid
+  - CDN is unreachable
+- **NO `onError` prop or error boundary**
+- **NO fallback to raster format or placeholder**
+- **NO loading state**
+
+**Impact:** If the CDN SVG fails to load for any reason, the user sees a blank space where the logo should be.
+
+### Critical Issue #2: Fallback Logo Rendering is Fundamentally Broken
+
+**Lines 61 & 251-256:**
+```tsx
+// Line 61
 const fallbackLogoPath = require('../assets/ffci-logo.svg');
 
-// Lines 235-257: Conditional rendering
-{logoUrl ? (
-  isSvgLogo ? (
-    <SvgUri uri={logoUrl} ... />
-  ) : (
-    <Image source={{ uri: logoUrl }} ... />
-  )
-) : (
-  <Image source={fallbackLogoPath} ... />
-)}
+// Lines 251-256
+<Image
+  source={fallbackLogoPath}
+  style={[styles.logo, { width: logoWidth, height: logoHeight }]}
+  resizeMode="contain"
+  accessibilityLabel="Firefighters for Christ Logo"
+/>
 ```
 
-**Current Behavior:**
-1. If `site_data.logo` exists → renders API logo (SVG or raster)
-2. If `site_data.logo` is null/undefined → should render fallback logo from `assets/ffci-logo.svg`
-3. Logo section container is always visible (light gray background `#f8fafc`)
+**Problem:**
+- `metro.config.js` uses `react-native-svg-transformer` (line 8)
+- SVG files are configured as **source files**, not **asset files** (line 14)
+- `require('../assets/ffci-logo.svg')` returns a **React component**, not an image source
+- React Native's `Image` component **cannot render React components**
+- This will fail silently - no error, no logo
 
-**Logo Size Calculation (lines 64-66):**
-- Width: 60% of screen width, constrained between 200px-280px
-- Height: 60% of width (maintains 5:3 aspect ratio)
-- This sizing was implemented in ticket 071
+**Correct Approach with SVG Transformer:**
+```tsx
+// Import SVG as component
+import FallbackLogo from '../assets/ffci-logo.svg';
 
-**Backend API Implementation:**
-
-- **File:** `wsp-mobile/lib/site.php`
-- **Lines:** 11-20 (`get_site_logo()` method)
-- **Lines:** 99 (Logo included in API response)
-
-```php
-private function get_site_logo($site) {
-    $logo = $site->mobileLogo();
-    if ($logo->isNotEmpty()) {
-        $file = $logo->toFile();
-        if ($file && $file->exists()) {
-            return $file->toCDNFile()->url();
-        }
-    }
-    return null; // Returns null if no logo configured
-}
+// Render as component
+<FallbackLogo width={logoWidth} height={logoHeight} />
 ```
 
-**API Response Structure:**
-- Endpoint: `/mobile-api`
-- Field: `site_data.logo` (string | null)
-- Returns CDN URL if logo exists in CMS, `null` otherwise
+**However:** The code needs dynamic switching between API logo and fallback, so imports need to be conditional or always available.
 
-**Fallback Asset:**
-- **File:** `rn-mip-app/assets/ffci-logo.svg` ✅ (exists)
-- Used when API returns `null` for logo field
-- Should render via `Image` component with `require()` import
+### Metro Configuration Analysis
 
-### Potential Issues Identified
+**File:** `rn-mip-app/metro.config.js`
+```js
+config.transformer = {
+  babelTransformerPath: require.resolve('react-native-svg-transformer'),
+};
 
-1. **SVG Rendering Failure:**
-   - Uses `react-native-svg` `SvgUri` component for SVG logos
-   - If SVG fails to load/parse, might render nothing silently
-   - No error handling or fallback within SVG render path
+config.resolver = {
+  assetExts: config.resolver.assetExts.filter((ext) => ext !== 'svg'),
+  sourceExts: [...config.resolver.sourceExts, 'svg'],
+};
+```
 
-2. **Fallback Logo Not Loading:**
-   - Fallback uses `require('../assets/ffci-logo.svg')` 
-   - React Native may not handle SVG via `require()` correctly
-   - Should verify if SVG assets work with standard `Image` component
+**Implication:** All SVG files are transformed into React components at build time. The `Image` component approach for SVG is incompatible.
 
-3. **API Logo URL Construction:**
-   - If `site_data.logo` is relative path, prepends `config.apiBaseUrl`
-   - If URL construction fails or API base URL is wrong, logo won't load
-   - No validation that constructed URL is valid
+### Root Cause Analysis
 
-4. **Conditional Rendering Logic:**
-   - Line 235: `{logoUrl ? (` - if `logoUrl` is empty string `""`, this evaluates to false
-   - Empty string would trigger fallback, but might indicate API issue
+**Most Likely Scenario:**
 
-5. **No Loading/Error States:**
-   - No loading indicator while logo fetches
-   - No error handling if image fails to load
-   - Silent failures could make logo appear "missing"
+1. ✅ API returns logo URL: `https://ffci-5q.b-cdn.net/image/logo-mobile.svg`
+2. ✅ HomeScreen correctly extracts URL into `logoUrl`
+3. ✅ Detects `.svg` extension → `isSvgLogo = true`
+4. ❌ `SvgUri` attempts to fetch SVG from CDN
+5. ❌ **SVG fetch/render fails** (network issue, CORS, CDN problem, parsing error)
+6. ❌ **No error handling** → renders nothing
+7. ❌ No fallback mechanism → user sees blank space
 
-### Android Implementation Reference
+**Alternative Scenario (if API returns null):**
+
+1. ⚠️ API returns `null` for logo (file missing or deleted)
+2. ✅ `logoUrl` becomes `null`
+3. ✅ Fallback path triggers (line 251)
+4. ❌ `require()` returns React component, not image source
+5. ❌ `Image` component cannot render component → **fails silently**
+6. ❌ User sees blank space
+
+**Conclusion:** Either way, the user sees nothing. The code has no error handling in the success path and a broken fallback path.
+
+### Android Reference Implementation
 
 **File:** `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/screens/HomeScreen.kt`
 **Lines:** 115-181
 
-Android implementation shows:
-- Logo section always renders (light gray background)
-- Uses `SubcomposeAsyncImage` with proper loading/error states
-- Shows site title as fallback if logo fails to load
-- Handles both absolute and relative URLs correctly
+**Key Differences:**
+- Uses `SubcomposeAsyncImage` with explicit loading/error/success states
+- Shows site title text as fallback if image fails
+- Has proper error handling throughout
+- Network failures don't result in blank space
 
-**Key Difference:** Android has explicit error handling that shows fallback text, React Native might fail silently.
+**Lesson:** Need explicit error handling and text fallback.
 
 ### Implementation Plan
 
-**Step 1: Verify API Response**
-- Check what `site_data.logo` actually returns in API response
-- Verify if it's `null`, empty string, or a valid URL
-- Test API endpoint: `${config.apiBaseUrl}/mobile-api`
+**Step 1: Add Error Handling to SvgUri (Priority: HIGH)**
+- **Location:** Lines 237-242
+- **Action:** Wrap `SvgUri` in error boundary or add state-based error handling
+- **Fallback:** Switch to text-based logo (site title) or PNG fallback
 
-**Step 2: Debug Logo Rendering**
-- Add console logs to verify `logoUrl` value
-- Check if `logoUrl` is truthy when API returns logo
-- Verify fallback path executes when `logoUrl` is null
+**Step 2: Fix Fallback Logo Rendering (Priority: HIGH)**
+- **Location:** Lines 61 & 251-256
+- **Option A:** Import SVG as component at top of file:
+  ```tsx
+  import FallbackLogo from '../assets/ffci-logo.svg';
+  ```
+  Then render conditionally as component instead of via Image
+- **Option B:** Convert `assets/ffci-logo.svg` to PNG format
+- **Option C:** Use `SvgUri` with local file path (if supported)
+- **Recommendation:** Option A (cleanest, maintains vector quality)
 
-**Step 3: Fix SVG Fallback Handling**
-- Verify `require('../assets/ffci-logo.svg')` works with React Native Image component
-- If SVG doesn't work via `require()`, convert to PNG or use different approach
-- Consider using `react-native-svg` for fallback SVG too
+**Step 3: Add Debugging Logs (Priority: MEDIUM)**
+- **Location:** After lines 52, 58, 181
+- **Action:** Log values to verify data flow:
+  ```tsx
+  console.log('[Logo] site_data.logo:', site_data.logo);
+  console.log('[Logo] logoUrl:', logoUrl);
+  console.log('[Logo] isSvgLogo:', isSvgLogo);
+  ```
 
-**Step 4: Add Error Handling**
-- Add `onError` handler to Image components
-- Add loading state indicator
-- Log errors to help debug rendering failures
+**Step 4: Add Loading State (Priority: LOW)**
+- Show placeholder or skeleton while logo loads
+- Improves perceived performance
 
-**Step 5: Verify Logo URL Construction**
-- Ensure `config.apiBaseUrl` is correct
-- Validate URL construction logic handles all cases
-- Test with both absolute and relative URLs
+**Step 5: Add Network Error Fallback (Priority: MEDIUM)**
+- If SvgUri fails, show site title text instead
+- Ensures users always see *something* branded
 
-**Step 6: Test Both Paths**
-- Test when API returns logo URL (should show API logo)
-- Test when API returns null (should show fallback logo)
-- Verify on both iOS and Android platforms
+**Step 6: Verify API Response (Priority: HIGH - FIRST STEP)**
+- Check actual API response in dev environment
+- Confirm logo URL is being returned
+- Verify URL is reachable from device/emulator
 
 ### Code Locations
 
-| File | Lines | Purpose | Change Needed |
-|------|-------|---------|---------------|
-| `rn-mip-app/components/HomeScreen.tsx` | 54-58 | Logo URL extraction | Add logging, verify null handling |
-| `rn-mip-app/components/HomeScreen.tsx` | 61 | Fallback logo asset | Verify SVG works with require() |
-| `rn-mip-app/components/HomeScreen.tsx` | 235-257 | Logo rendering logic | Add error handling, loading states |
-| `rn-mip-app/components/HomeScreen.tsx` | 237-242 | SVG logo rendering | Add error callback, fallback |
-| `rn-mip-app/components/HomeScreen.tsx` | 244-248 | Raster logo rendering | Add onError handler |
-| `rn-mip-app/components/HomeScreen.tsx` | 251-256 | Fallback logo rendering | Verify SVG asset loads correctly |
+| File | Lines | Purpose | Change Needed? |
+|------|-------|---------|----------------|
+| `rn-mip-app/components/HomeScreen.tsx` | 1 | Add SVG component import | ✅ YES - import fallback SVG as component |
+| `rn-mip-app/components/HomeScreen.tsx` | 54-58 | Logo URL extraction | ⚠️ Add debug logging |
+| `rn-mip-app/components/HomeScreen.tsx` | 61 | Fallback logo reference | ❌ REMOVE - incompatible with transformer |
+| `rn-mip-app/components/HomeScreen.tsx` | 181 | SVG detection | ✅ NO CHANGE - logic correct |
+| `rn-mip-app/components/HomeScreen.tsx` | 237-242 | SVG logo rendering | ✅ YES - add error handling + fallback |
+| `rn-mip-app/components/HomeScreen.tsx` | 244-248 | Raster logo rendering | ⚠️ Add onError handler (lower priority) |
+| `rn-mip-app/components/HomeScreen.tsx` | 251-256 | Fallback rendering | ✅ YES - rewrite to use component instead of Image |
 
 ### Files That DON'T Need Changes
 
 | File | Reason |
 |------|--------|
-| `rn-mip-app/components/HomeScreen.tsx` (lines 18-36) | CustomHeader component - different logo (small header icon) |
-| `rn-mip-app/lib/api.ts` | API interface - correctly typed, no changes needed |
-| `rn-mip-app/lib/config.ts` | Configuration - no changes unless API base URL is wrong |
-| `wsp-mobile/lib/site.php` | Backend API - correctly returns logo or null |
-| `android-mip-app/.../HomeScreen.kt` | Android implementation - separate codebase |
-| `ios-mip-app/` | iOS native app - separate codebase (if exists) |
+| `rn-mip-app/lib/api.ts` | TypeScript interface correct; API client working |
+| `rn-mip-app/lib/config.ts` | Config structure fine; no changes needed |
+| `rn-mip-app/metro.config.js` | SVG transformer correctly configured |
+| `wsp-mobile/lib/site.php` | Backend logic correct; returns CDN URL properly |
+| `content/site.txt` | Logo reference exists and is valid |
+| `content/logo-mobile.svg` | Logo file exists and is valid SVG |
+| `rn-mip-app/components/HomeScreen.tsx` lines 18-36 | CustomHeader uses different logo (header icon) |
+| `rn-mip-app/components/HomeScreen.tsx` lines 406-411 | Logo section styles are correct |
 
 ### Variables/Data Reference
 
-| Variable | Type | Purpose | Location |
-|----------|------|---------|----------|
-| `site_data.logo` | string \| null | Logo URL from API response | API interface (`lib/api.ts` line 39) |
-| `logoUrl` | string \| null | Processed logo URL (with base URL prepended) | HomeScreen.tsx line 54 |
-| `isSvgLogo` | boolean | Whether logo URL ends with `.svg` | HomeScreen.tsx line 181 |
-| `fallbackLogoPath` | any | Bundled SVG asset reference | HomeScreen.tsx line 61 |
-| `logoWidth` | number | Calculated responsive logo width | HomeScreen.tsx line 65 |
-| `logoHeight` | number | Calculated responsive logo height | HomeScreen.tsx line 66 |
-| `config.apiBaseUrl` | string | Base URL for API requests | From config.ts |
-
-### Root Cause Hypotheses
-
-1. **Most Likely:** Fallback SVG asset not loading correctly via `require()` - React Native may not support SVG files directly with `Image` component
-2. **Possible:** API returning empty string `""` instead of `null`, causing logoUrl to be truthy but invalid
-3. **Possible:** SVG rendering failing silently - `SvgUri` component might not handle errors gracefully
-4. **Less Likely:** Logo section rendering but with zero dimensions due to styling issue
+| Variable | Type | Source | Purpose |
+|----------|------|--------|---------|
+| `site_data.logo` | `string \| null` | API response | Logo URL from CMS/API (line 39 in api.ts) |
+| `logoUrl` | `string \| null` | Computed (line 54) | Processed logo URL (absolute or with base prepended) |
+| `isSvgLogo` | `boolean` | Computed (line 181) | True if logoUrl ends with `.svg` |
+| `fallbackLogoPath` | `any` | require() (line 61) | **BROKEN** - Returns React component, not image |
+| `logoWidth` | `number` | Computed (line 65) | Responsive width: 60% of screen, 200-280px |
+| `logoHeight` | `number` | Computed (line 66) | Height = width * 0.6 (5:3 aspect ratio) |
+| `config.apiBaseUrl` | `string` | config.ts | Base URL for API (e.g., `https://ffci.fiveq.dev`) |
 
 ### Testing Strategy
 
-**Manual Testing:**
-1. Check browser/network tab to see if logo URL is being requested
-2. Verify API response contains logo field
-3. Test with API logo present (should show API logo)
-4. Test with API logo null (should show fallback)
-5. Check console for any rendering errors
-6. Verify logo section background appears (confirms section renders)
+**1. Verify API Response (FIRST):**
+```bash
+# Test from command line
+curl -H "X-API-Key: <key>" https://ffci.fiveq.dev/mobile-api | jq '.site_data.logo'
 
-**Debugging Steps:**
-1. Add `console.log('logoUrl:', logoUrl)` after line 58
-2. Add `console.log('site_data.logo:', site_data.logo)` after line 52
-3. Add `onError` handlers to Image components to log failures
-4. Verify `fallbackLogoPath` resolves correctly
+# Expected: "https://ffci-5q.b-cdn.net/image/logo-mobile.svg"
+```
+
+**2. Test CDN Accessibility:**
+```bash
+# Verify CDN URL is reachable
+curl -I https://ffci-5q.b-cdn.net/image/logo-mobile.svg
+
+# Expected: HTTP 200 with Content-Type: image/svg+xml
+```
+
+**3. Add Debug Logging:**
+- Check metro bundler logs for logo URL value
+- Verify SvgUri is receiving correct URL
+- Check for network errors or SVG parsing errors
+
+**4. Test Error Paths:**
+- Disconnect network → verify fallback appears
+- Temporarily break CDN URL → verify fallback works
+- Set API logo to null in CMS → verify fallback shows
+
+**5. Visual Verification:**
+- Logo appears in light gray section on homescreen
+- Logo is properly sized (60% width, 200-280px)
+- Logo maintains aspect ratio
 
 ### Estimated Complexity
 
-**Medium Complexity**
+**HIGH Complexity** (revised from Medium)
 
 **Reasoning:**
-- Requires debugging to identify root cause
-- May need to fix SVG asset handling (could require asset conversion)
-- Error handling improvements needed
-- Multiple potential failure points to investigate
-- Testing required on both platforms
+- Two critical bugs identified (SVG error handling + fallback broken)
+- Requires understanding React Native SVG transformer behavior
+- Need to refactor fallback rendering approach
+- Must add comprehensive error handling
+- Testing requires API access and network simulation
+- May need to handle edge cases (CDN down, CORS issues, etc.)
 
-**Development Time:**
-- Investigation/debugging: 30-45 minutes
-- Code fixes: 15-30 minutes
-- Testing on iOS/Android: 20-30 minutes
-- Total: **1-2 hours**
+**Estimated Effort:**
+- API verification & debugging: 30-45 min
+- Refactor fallback logo rendering: 30-45 min
+- Add error handling to SvgUri: 30-45 min
+- Add logging & debug support: 15-30 min
+- Testing on both platforms: 30-45 min
+- **Total: 2.5-3.5 hours**
 
-**Risk Level:** Low-Medium
-- Changes are isolated to logo rendering
-- Fallback exists, so won't break app
-- May require asset format changes if SVG issue confirmed
+**Risk Level:** Medium
+- Changes are localized to logo rendering
+- Error handling additions are low-risk
+- Fallback refactor needs careful testing
+- No backend changes required
+- Won't break existing functionality (already broken)
+
+### Recommendations
+
+1. **Immediate Action:** Add debug logging to verify what API is returning
+2. **Primary Fix:** Add error handling to SvgUri with text fallback
+3. **Secondary Fix:** Refactor fallback logo to use SVG component import
+4. **Nice-to-have:** Add loading state for better UX
+5. **Long-term:** Consider using same image loading library as Android (Coil equivalent)

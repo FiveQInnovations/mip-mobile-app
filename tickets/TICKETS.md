@@ -29,7 +29,6 @@ Quick reference for active tasks. See individual files for details.
 - [223](223-purpose-for-gathering-accordion-design.md) - "Purpose for Gathering" Accordion Sections Not Expandable - Design Improvement Needed
 - [224](224-ios-resources-red-artifacts.md) - Red Artifacts on Left Side of Resources Tab Content
 - [225](225-media-ministry-embed-too-wide.md) - Media Ministry Page - FFC's Monthly Media Embed Too Wide
-- [225](225-media-ministry-image-too-wide.md) - Media Ministry Page - FFC's Monthly Media Embed Too Wide
 
 ### 🟡 Nice to Have
 - [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
