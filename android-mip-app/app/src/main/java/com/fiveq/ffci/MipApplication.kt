@@ -5,6 +5,7 @@ import android.util.Base64
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.decode.SvgDecoder
+import com.fiveq.ffci.config.AppConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
@@ -12,9 +13,13 @@ import java.util.concurrent.TimeUnit
 class MipApplication : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
+        // Initialize config before any other components access it
+        AppConfig.initialize(this)
     }
 
     override fun newImageLoader(): ImageLoader {
+        val config = AppConfig.get()
+        
         val client = OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -22,7 +27,7 @@ class MipApplication : Application(), ImageLoaderFactory {
                 level = HttpLoggingInterceptor.Level.BODY
             })
             .addInterceptor { chain ->
-                val credentials = "fiveq:demo"
+                val credentials = "${config.username}:${config.password}"
                 val basicAuth = "Basic " + Base64.encodeToString(
                     credentials.toByteArray(Charsets.UTF_8),
                     Base64.NO_WRAP

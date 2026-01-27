@@ -2,6 +2,7 @@ package com.fiveq.ffci.data.api
 
 import android.util.Base64
 import android.util.Log
+import com.fiveq.ffci.config.AppConfig
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
@@ -19,37 +20,40 @@ class ApiException(message: String, val statusCode: Int, val url: String) : Exce
 
 object MipApiClient {
     private const val TAG = "MipApiClient"
-    private const val BASE_URL = "https://ffci.fiveq.dev"
-    private const val API_KEY = "777359235aecc10fdfb144041dfdacfc80ca0751c7bed7b14c96f935456fc4ce"
-    private const val USERNAME = "fiveq"
-    private const val PASSWORD = "demo"
+    
+    // Load configuration from AppConfig singleton
+    private val config get() = AppConfig.get()
+    private val BASE_URL get() = config.apiBaseUrl
+    private val API_KEY get() = config.apiKey
 
     private val moshi: Moshi = Moshi.Builder()
         .addLast(KotlinJsonAdapterFactory())
         .build()
 
-    private val client: OkHttpClient = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .addInterceptor(HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        })
-        .addInterceptor { chain ->
-            val credentials = "$USERNAME:$PASSWORD"
-            val basicAuth = "Basic " + Base64.encodeToString(
-                credentials.toByteArray(Charsets.UTF_8),
-                Base64.NO_WRAP
-            )
+    private val client: OkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .addInterceptor { chain ->
+                val credentials = "${config.username}:${config.password}"
+                val basicAuth = "Basic " + Base64.encodeToString(
+                    credentials.toByteArray(Charsets.UTF_8),
+                    Base64.NO_WRAP
+                )
 
-            val request = chain.request().newBuilder()
-                .addHeader("Authorization", basicAuth)
-                .addHeader("X-API-Key", API_KEY)
-                .addHeader("Content-Type", "application/json")
-                .build()
+                val request = chain.request().newBuilder()
+                    .addHeader("Authorization", basicAuth)
+                    .addHeader("X-API-Key", API_KEY)
+                    .addHeader("Content-Type", "application/json")
+                    .build()
 
-            chain.proceed(request)
-        }
-        .build()
+                chain.proceed(request)
+            }
+            .build()
+    }
 
     private suspend fun <T> fetchJson(url: String, adapter: com.squareup.moshi.JsonAdapter<T>): T {
         return withContext(Dispatchers.IO) {
