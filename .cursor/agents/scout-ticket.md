@@ -14,14 +14,17 @@ Research the ticket thoroughly and add findings directly to the ticket file. **D
 ## Workspace Context
 
 This is a multi-repo workspace:
-- `android-mip-app/` - Native Android app (Kotlin/Jetpack Compose)
-- `ios-mip-app/` - Native iOS app (Swift/SwiftUI)
-- `rn-mip-app/` - React Native mobile app (Expo)
+- `android-mip-app/` - Native Android app (Kotlin/Jetpack Compose) - **PRIMARY**
+- `ios-mip-app/` - Native iOS app (Swift/SwiftUI) - **PRIMARY**
+- `rn-mip-app/` - React Native mobile app (Expo) - **LEGACY/REFERENCE ONLY**
 - `ws-ffci/` - Kirby CMS site with content
 - `wsp-mobile/` - Kirby plugin for mobile API
 - `wsp-forms/` - Kirby plugin for forms
 
-**Note:** Both native apps (Android and iOS) are being built to match the React Native app's functionality. When scouting native app tickets, always check if the feature exists in the React Native app first.
+**Note:** The project has moved away from React Native to native Kotlin (Android) and Swift (iOS) implementations. When scouting tickets:
+- **For Android tickets:** Check iOS implementation first for reference patterns, then React Native if needed
+- **For iOS tickets:** Check Android implementation first for reference patterns, then React Native if needed
+- React Native (`rn-mip-app/`) exists only as a legacy reference - do not use it as the primary implementation target
 
 ## Scouting Process
 
@@ -34,31 +37,32 @@ This is a multi-repo workspace:
 - Read the ticket's Context, Goals, and Acceptance Criteria
 - Check referenced meeting notes or related tickets
 
-### 3. Check React Native Reference (Native app tickets)
-If scouting an Android or iOS ticket, check if the feature exists in `rn-mip-app/`:
+### 3. Check Cross-Platform Reference (Native app tickets)
+When scouting Android or iOS tickets, check the other native platform first, then React Native if needed:
 
-**Find the RN implementation:**
-- Search for similar components/screens in `rn-mip-app/app/`
-- Check for related utilities in `rn-mip-app/lib/`
-- Look for Maestro tests in `rn-mip-app/maestro/flows/`
+**For Android tickets - Check iOS first:**
+- Search for similar components/screens in `ios-mip-app/FFCI/Views/`
+- Check for related utilities in `ios-mip-app/FFCI/`
+- Look for Maestro tests in `ios-mip-app/maestro/flows/`
+- Document SwiftUI patterns that can be adapted to Jetpack Compose
 
-**Document the RN strategy:**
-- UI patterns used (debouncing, caching, state management)
-- API integration approach
-- Performance optimizations
-- Test coverage
+**For iOS tickets - Check Android first:**
+- Search for similar components/screens in `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/`
+- Check for related utilities in `android-mip-app/app/src/main/java/com/fiveq/ffci/`
+- Look for Maestro tests in `android-mip-app/maestro/flows/`
+- Document Jetpack Compose patterns that can be adapted to SwiftUI
 
-**Note Android equivalents:**
-- FlatList → LazyColumn
-- AbortController → OkHttp Call.cancel() / coroutine cancellation
-- useState/useEffect → remember/LaunchedEffect
-- In-memory cache Map → Kotlin equivalent
+**Cross-platform pattern mapping:**
+- Android LazyColumn ↔ iOS List/LazyVStack
+- Android remember/LaunchedEffect ↔ iOS @State/@StateObject with .onAppear
+- Android Coroutine cancellation ↔ iOS URLSessionTask.cancel()
+- Android ViewModel ↔ iOS ObservableObject/@StateObject
+- Android StateFlow ↔ iOS @Published/@State
 
-**Note iOS equivalents:**
-- FlatList → List or ScrollView with LazyVStack
-- AbortController → URLSessionTask.cancel()
-- useState/useEffect → @State/@StateObject with .onAppear/.onChange
-- In-memory cache Map → Swift Dictionary
+**React Native reference (legacy only):**
+- Only check `rn-mip-app/` if the feature doesn't exist in either native app
+- Use React Native as a last resort for understanding API patterns or business logic
+- Do not use React Native as the primary implementation reference
 
 ### 4. Research the Codebase
 For each requirement, identify:
@@ -87,8 +91,10 @@ Add a "Research Findings (Scouted)" section to the ticket with:
 
 ## Research Findings (Scouted)
 
-### React Native Reference (Native app tickets only)
-[Document how RN app implements this feature - UI patterns, caching, API calls, tests]
+### Cross-Platform Reference (Native app tickets only)
+[For Android tickets: Document iOS implementation patterns]
+[For iOS tickets: Document Android implementation patterns]
+[Include UI patterns, state management, API integration, caching strategies, test coverage]
 
 ### Current Implementation Analysis
 [Describe what exists today with specific file:line references]

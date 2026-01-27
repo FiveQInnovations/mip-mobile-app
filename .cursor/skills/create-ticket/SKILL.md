@@ -18,7 +18,7 @@ Create tickets in the project's markdown-based ticket tracking system.
 ```markdown
 ---
 status: backlog
-area: rn-mip-app
+area: ios-mip-app
 phase: core
 created: YYYY-MM-DD
 ---
@@ -65,7 +65,7 @@ Why this ticket exists and any relevant background.
 | Value | Meaning |
 |-------|---------|
 | `android-mip-app` | Native Android Jetpack Compose app |
-| `rn-mip-app` | React Native mobile app (legacy) |
+| `ios-mip-app` | Native iOS SwiftUI app |
 | `wsp-mobile` | Kirby plugin for mobile API |
 | `ws-ffci-copy` | Kirby site configuration |
 | `astro-prototype` | Astro PWA prototype |
@@ -109,7 +109,7 @@ Creating ticket #070 for a new feature:
 ```markdown
 ---
 status: backlog
-area: rn-mip-app
+area: ios-mip-app
 phase: nice-to-have
 created: 2026-01-16
 ---
