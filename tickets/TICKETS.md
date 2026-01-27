@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [227](227-android-multi-site-config-system.md) - Android Multi-Site Configuration System
 
 ## In Progress
 - [222](222-section-background-colors-not-appearing.md) - Section Background Colors Not Appearing in iOS App
@@ -21,7 +21,6 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🟡 Nice to Have
 - [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
-- [227](227-android-multi-site-config-system.md) - Android Multi-Site Configuration System
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component

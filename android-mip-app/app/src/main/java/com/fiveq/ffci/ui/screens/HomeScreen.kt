@@ -62,6 +62,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.fiveq.ffci.R
+import com.fiveq.ffci.config.AppConfig
 import com.fiveq.ffci.data.api.HomepageFeatured
 import com.fiveq.ffci.data.api.HomepageQuickTask
 import com.fiveq.ffci.data.api.SiteMeta
@@ -136,7 +137,7 @@ fun HomeScreen(
                     val logoUrl = if (siteMeta.logo.startsWith("http://") || siteMeta.logo.startsWith("https://")) {
                         siteMeta.logo
                     } else {
-                        "https://ffci.fiveq.dev${siteMeta.logo}"
+                        "${AppConfig.get().apiBaseUrl}${siteMeta.logo}"
                     }
                     
                     // Use SubcomposeAsyncImage for better error handling
@@ -486,7 +487,7 @@ private fun FeaturedCard(
                     if (featured.badgeText != null) {
                         Surface(
                             shape = RoundedCornerShape(4.dp),
-                            color = Color(0xFF2563EB) // Blue badge like iOS
+                            color = MaterialTheme.colorScheme.secondary
                         ) {
                             Text(
                                 text = featured.badgeText.uppercase(),

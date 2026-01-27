@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import com.fiveq.ffci.config.AppConfig
 
 /**
  * Checks if a URL is a form page that should be opened in an external browser.
@@ -54,6 +55,10 @@ fun HtmlContent(
         fixedHtml = fixedHtml.replace("src=\"\"", "src=\"$firstUrl\"")
     }
 
+    // Get primary color from config for CSS
+    val config = AppConfig.get()
+    val primaryColor = config.primaryColor
+
     // Wrap HTML with basic styling
     val styledHtml = """
         <!DOCTYPE html>
@@ -61,6 +66,9 @@ fun HtmlContent(
         <head>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
+                :root {
+                    --primary-color: $primaryColor;
+                }
                 body {
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                     font-size: 17px;
@@ -95,7 +103,7 @@ fun HtmlContent(
                     color: #024D91;
                     line-height: 30px;
                     padding-left: 12px;
-                    border-left: 3px solid #D9232A;
+                    border-left: 3px solid var(--primary-color);
                 }
                 /* Headings and text inside colored sections inherit text color */
                 ._section[style*="color"] h1,
@@ -154,12 +162,12 @@ fun HtmlContent(
                 .text-left { text-align: left; }
                 /* Base link styles - but NOT for buttons or image links */
                 a:not([class*="_button"]):not([class*="_image-link"]):not([class*="image-link"]) {
-                    color: #D9232A;
+                    color: var(--primary-color);
                     text-decoration: none;
                     font-weight: 600;
                     background: rgba(217, 35, 42, 0.08);
                     padding: 4px 6px;
-                    border-bottom: 2px solid #D9232A;
+                    border-bottom: 2px solid var(--primary-color);
                     border-radius: 4px;
                 }
                 /* Ensure buttons NEVER get base link styles */
@@ -265,7 +273,7 @@ fun HtmlContent(
                     margin-bottom: 8px;
                 }
                 blockquote {
-                    border-left: 4px solid #D9232A;
+                    border-left: 4px solid var(--primary-color);
                     margin: 24px 0;
                     padding: 12px 0 12px 20px;
                     background: #f1f5f9;
@@ -356,10 +364,10 @@ fun HtmlContent(
                     position: relative;
                     z-index: 1;
                 }
-                /* Primary button - red background */
+                /* Primary button - uses config primary color */
                 a[class*="_button-priority"] {
-                    background-color: #D9232A !important;
-                    background: #D9232A !important;
+                    background-color: var(--primary-color) !important;
+                    background: var(--primary-color) !important;
                     background-clip: padding-box !important;
                     color: white !important;
                     border: none !important;
@@ -373,13 +381,13 @@ fun HtmlContent(
                 /* Secondary button - outline style */
                 a[class*="_button-secondary"] {
                     background-color: transparent !important;
-                    color: #D9232A !important;
-                    border: 2px solid #D9232A;
+                    color: var(--primary-color) !important;
+                    border: 2px solid var(--primary-color);
                 }
                 /* Regular button (non-priority) */
                 a[class*="_button"]:not([class*="_button-priority"]):not([class*="_button-secondary"]) {
-                    background-color: #D9232A !important;
-                    background: #D9232A !important;
+                    background-color: var(--primary-color) !important;
+                    background: var(--primary-color) !important;
                     color: white !important;
                     border: none !important;
                     border-bottom: none !important;
@@ -418,10 +426,12 @@ fun HtmlContent(
                 }
 
                 webViewClient = object : WebViewClient() {
+                    private val config = AppConfig.get()
                     private val credentials = Base64.encodeToString(
-                        "fiveq:demo".toByteArray(),
+                        "${config.username}:${config.password}".toByteArray(),
                         Base64.NO_WRAP
                     )
+                    private val baseHost = Uri.parse(config.apiBaseUrl).host ?: ""
 
                     override fun shouldInterceptRequest(
                         view: WebView?,
@@ -429,8 +439,8 @@ fun HtmlContent(
                     ): WebResourceResponse? {
                         val url = request?.url?.toString() ?: return null
 
-                        // Add auth headers for ffci.fiveq.dev resources
-                        if (url.contains("ffci.fiveq.dev")) {
+                        // Add auth headers for site resources
+                        if (url.contains(baseHost)) {
                             try {
                                 val connection = URL(url).openConnection() as HttpsURLConnection
                                 connection.setRequestProperty("Authorization", "Basic $credentials")
@@ -478,7 +488,7 @@ fun HtmlContent(
                                 try {
                                     // Resolve relative URL to full URL for browser
                                     val fullUrl = if (url.startsWith("/")) {
-                                        "https://ffci.fiveq.dev$url"
+                                        "${config.apiBaseUrl}$url"
                                     } else {
                                         url
                                     }
@@ -503,7 +513,6 @@ fun HtmlContent(
                         }
 
                         // Check if internal link (same domain or relative)
-                        val baseHost = "ffci.fiveq.dev"
                         val isInternal = try {
                             val uri = Uri.parse(url)
                             uri.host == null || uri.host == baseHost || url.startsWith("/")
@@ -527,7 +536,7 @@ fun HtmlContent(
                         Log.d("HtmlContent", "Opening internal link in browser: $url")
                         try {
                             val fullUrl = if (url.startsWith("/")) {
-                                "https://ffci.fiveq.dev$url"
+                                "${config.apiBaseUrl}$url"
                             } else {
                                 url
                             }
@@ -541,7 +550,7 @@ fun HtmlContent(
                 }
 
                 loadDataWithBaseURL(
-                    "https://ffci.fiveq.dev",
+                    AppConfig.get().apiBaseUrl,
                     styledHtml,
                     "text/html",
                     "UTF-8",
@@ -557,7 +566,7 @@ fun HtmlContent(
             
             // Load fresh content
             webView.loadDataWithBaseURL(
-                "https://ffci.fiveq.dev",
+                AppConfig.get().apiBaseUrl,
                 styledHtml,
                 "text/html",
                 "UTF-8",

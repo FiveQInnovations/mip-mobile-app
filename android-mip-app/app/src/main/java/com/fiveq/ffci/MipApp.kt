@@ -150,16 +150,16 @@ private fun MainContent(siteData: SiteData) {
                                         modifier = Modifier
                                             .height(2.dp)
                                             .width(24.dp)
-                                            .background(Color(0xFF0F172A))
+                                            .background(MaterialTheme.colorScheme.primary)
                                     )
                                 }
                             }
                         },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Color(0xFFD9232A), // Red for selected
-                            selectedTextColor = Color(0xFFD9232A), // Red for selected
-                            unselectedIconColor = Color(0xFF64748B), // Grey for unselected
-                            unselectedTextColor = Color(0xFF64748B), // Grey for unselected
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             indicatorColor = Color.Transparent // No background pill
                         )
                     )
