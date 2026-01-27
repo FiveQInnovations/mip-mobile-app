@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [213](213-ios-quick-actions-scroll-to-instagram.md) - iOS Quick Actions Right Arrow Should Scroll to Instagram
+(none)
 
 ## In Progress
 (none)
@@ -152,6 +152,7 @@ Quick reference for active tasks. See individual files for details.
 - [210](210-ios-connect-tab-missing-buttons.md) - iOS Connect Tab Missing Buttons
 - [211](211-ios-quick-actions-external-links.md) - iOS Quick Actions External Links Should Open in Browser
 - [212](212-ios-quick-actions-instagram-last.md) - iOS Quick Actions Should Show Instagram Last, Not Facebook
+- [213](213-ios-quick-actions-scroll-to-instagram.md) - iOS Quick Actions Right Arrow Should Scroll to Instagram
 - [214](214-ios-about-us-back-button-double-chevron.md) - iOS About Us Page Shows Double Chevron in Back Button
 - [215](215-ios-back-button-style-consistency.md) - iOS Back Button Style Consistency
 
