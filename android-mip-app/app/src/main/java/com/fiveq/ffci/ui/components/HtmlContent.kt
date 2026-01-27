@@ -90,12 +90,28 @@ fun HtmlContent(
                 h3 {
                     font-size: 23px;
                     font-weight: 700;
-                    margin-top: 28px;
+                    margin-top: 16px;
                     margin-bottom: 12px;
                     color: #024D91;
                     line-height: 30px;
                     padding-left: 12px;
                     border-left: 3px solid #D9232A;
+                }
+                /* Headings and text inside colored sections inherit text color */
+                ._section[style*="color"] h1,
+                ._section[style*="color"] h2,
+                ._section[style*="color"] h3,
+                ._section[style*="color"] h4,
+                ._section[style*="color"] h5,
+                ._section[style*="color"] h6,
+                ._section[style*="color"] p,
+                ._section[style*="color"] ._text {
+                    color: inherit !important;
+                }
+                /* Remove red border from h3 in colored sections */
+                ._section[style*="color"] h3 {
+                    border-left: none;
+                    padding-left: 0;
                 }
                 h4 {
                     font-size: 20px;
@@ -126,6 +142,16 @@ fun HtmlContent(
                 p {
                     margin: 16px 0;
                 }
+                /* Tailwind spacing utilities */
+                .mb-2 { margin-bottom: 8px !important; }
+                .mb-4 { margin-bottom: 16px !important; }
+                .mb-8 { margin-bottom: 32px !important; }
+                .mb-12 { margin-bottom: 48px !important; }
+                .mt-8 { margin-top: 32px !important; }
+                .py-24 { padding-top: 96px !important; padding-bottom: 96px !important; }
+                /* Text alignment */
+                .text-center { text-align: center; }
+                .text-left { text-align: left; }
                 /* Base link styles - but NOT for buttons or image links */
                 a:not([class*="_button"]):not([class*="_image-link"]):not([class*="image-link"]) {
                     color: #D9232A;
@@ -192,13 +218,30 @@ fun HtmlContent(
                     border-radius: 8px;
                     margin: 24px 0;
                 }
-                ._background {
+                ._section {
                     position: relative;
-                    width: 100%;
-                    min-height: 200px;
-                    margin-bottom: 16px;
-                    border-radius: 8px;
+                    padding: 24px 0;
+                }
+                /* First section doesn't need top padding */
+                ._section:first-child {
+                    padding-top: 0;
+                }
+                /* Reduce spacing for h3 that follows a section with background */
+                ._section + ._section h3:first-child {
+                    margin-top: 8px;
+                }
+                ._background {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: -16px;
+                    right: -16px;
+                    width: calc(100% + 32px);
+                    margin-bottom: 0;
+                    border-radius: 0;
                     overflow: hidden;
+                    z-index: -1;
+                    background-color: var(--bgColor, transparent);
                 }
                 ._background picture {
                     position: absolute;

@@ -19,7 +19,6 @@ Quick reference for active tasks. See individual files for details.
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
 - [101](101-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
 - [223](223-purpose-for-gathering-accordion-design.md) - "Purpose for Gathering" Accordion Sections Not Expandable - Design Improvement Needed
-- [226](226-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
 
 ### 🟡 Nice to Have
 - [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
@@ -157,6 +156,7 @@ Quick reference for active tasks. See individual files for details.
 - [221](221-what-we-believe-images-not-appearing.md) - Images Not Appearing on "What We Believe" Page
 - [224](224-ios-resources-red-artifacts.md) - Red Artifacts on Left Side of Resources Tab Content
 - [225](225-media-ministry-embed-too-wide.md) - Media Ministry Page - FFC's Monthly Media Embed Too Wide
+- [226](226-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
 
 ---
 

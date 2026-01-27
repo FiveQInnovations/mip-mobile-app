@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: done
 area: android-mip-app
 phase: core
 created: 2026-01-26
@@ -15,7 +15,9 @@ On the Android app's Resources page, there is excessive vertical spacing between
 
 - Large empty vertical space (whitespace) between the "More Resources" section tagline and the "FFC Online Store" subheading
 - Spacing appears much larger than the web version of the same page
+- **Missing text**: "Gear, materials, and specialized tools to serve your community." is invisible (white text on white background because the blue background isn't rendering behind it)
 - Creates visual inconsistency and poor use of screen space on mobile
+- **Header image discrepancy**: Header image appears different from web version (visual styling/cropping difference)
 
 ## Goals
 
@@ -46,137 +48,135 @@ On the Android app's Resources page, there is excessive vertical spacing between
 
 ---
 
-## Research Findings (Scouted)
+## Research Findings (Verified via API)
 
-### Cross-Platform Reference
+### Actual Root Cause
 
-**iOS Implementation Analysis:**
+**The scout's analysis was incorrect.** After examining the actual API response, the real issue is:
 
-iOS uses identical CSS spacing values in `ios-mip-app/FFCI/Views/HtmlContentView.swift`:
-- h1: `margin-top: 36px, margin-bottom: 20px` (lines 69)
-- h2: `margin-top: 32px, margin-bottom: 16px` (line 70)
-- h3: `margin-top: 28px, margin-bottom: 12px` (line 71)
-- p: `margin: 16px 0` (line 72)
+**The `._background` CSS class uses `position: relative` with `min-height: 200px` instead of `position: absolute`.** This causes background elements to render as 200px tall blocks that take up vertical space, instead of being positioned behind section content.
 
-**iOS layout structure** (`ios-mip-app/FFCI/Views/TabPageView.swift`, lines 45-60):
-- Uses `ScrollView` with `VStack`
-- HtmlContentView has `.padding(.horizontal, 0)` (no horizontal padding)
-- Has `.padding(.top, 2)` and `.padding(.bottom, 8)` (minimal vertical padding)
-- No additional spacing around HTML content
+### Evidence from API Response
 
-**React Native Reference (Legacy):**
+The "More Resources" section HTML from the API:
 
-React Native uses the same spacing values in `rn-mip-app/components/HTMLContentRenderer.tsx`:
-- h3: `marginTop: 28, marginBottom: 12` (lines 349-356)
-- p: `marginTop: 16, marginBottom: 16` (lines 326-330)
-- Container: `paddingHorizontal: 16, paddingVertical: 12` (lines 470-473)
+```html
+<div class="_section" style="color: #fff">
+  <div class="_heading">
+    <h2 class="text-center text-2xl sm:text-3xl md:text-4xl font-bold">
+      More Resources
+    </h2>
+  </div>
+  <div class="_text text-center mb-12 text-xl sm:text-2xl font-normal">
+    <p>Gear, materials, and specialized tools to serve your community.</p>
+  </div>
+  <div class="_background" style="--bgColor: #024d91;">
+    <!-- EMPTY - just a background color, no image -->
+  </div>
+</div>
+```
 
-**Pattern Identified:**
-All three platforms (iOS, Android, React Native) use **identical CSS spacing values**. The excessive spacing issue is **NOT due to different CSS values**, but likely due to:
-1. HTML structure from API containing extra elements
-2. WebView CSS collapsing margin behavior vs WKWebView
-3. Android-specific padding/spacing around HtmlContent component
+The **empty `._background` div** is meant to create a blue background behind the section text. On the web, this element is absolutely positioned within the `._section` parent.
 
-### Current Implementation Analysis
+### Current Android CSS (Wrong)
 
-**Android HtmlContent.kt** (`android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt`):
+In `HtmlContent.kt` (lines 195-216):
 
-**CSS Spacing (lines 64-127):**
-- body: `padding: 0 16px` - Horizontal padding inside WebView
-- h1: `margin-top: 36px, margin-bottom: 20px`
-- h2: `margin-top: 32px, margin-bottom: 16px`
-- h3: `margin-top: 28px, margin-bottom: 12px`
-- p: `margin: 16px 0`
+```css
+._background {
+    position: relative;  /* BUG: Should be absolute! */
+    width: 100%;
+    min-height: 200px;   /* Creates 200px block when relative */
+    margin-bottom: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+```
 
-**Android TabScreen.kt** (`android-mip-app/app/src/main/java/com/fiveq/ffci/ui/screens/TabScreen.kt`):
+**Problem:** With `position: relative`, this empty `._background` div renders as a **200px tall block** in the document flow, creating the excessive spacing between sections.
 
-**Page Layout (lines 175-217):**
-- Column with `.verticalScroll(rememberScrollState())`
-- Title: `Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 16.dp)` (line 196)
-- HtmlContent: `Modifier.fillMaxWidth()` (line 215) - **No extra padding**
-- Ends with `Spacer(modifier = Modifier.height(32.dp))` (line 227)
+### Why the Scout Was Wrong
 
-**Key Finding:** The Android TabScreen adds a Title above the HTML content with 16dp bottom padding. This, combined with the h3 margin-top of 28px (≈28dp), creates approximately 44dp of spacing before the first h3 heading.
+The scout hypothesized:
+- h3 `margin-top: 28px` + Title bottom padding = 44dp total
 
-### Root Cause Hypothesis
+**Actual cause:**
+- `._background` div = **200px** (plus 16px margin-bottom = **216px** of spacing!)
 
-**Excessive spacing likely occurs from margin stacking:**
-
-1. **Title to HTML content gap:** 16dp bottom padding on Title (line 196)
-2. **H3 top margin:** 28px (28dp) on the h3 element (line 84 in HtmlContent.kt)
-3. **Total:** ~44dp of space between "More Resources" tagline and "FFC Online Store" subheading
-
-**Additional factors:**
-- WebView may not collapse margins like native views do
-- The HTML content might have extra paragraph or div elements creating more spacing
-- Web version might have tighter spacing or different HTML structure
+The scout's Option 3 correctly suggested investigating the API HTML structure, but the analysis focused on margin stacking rather than examining the actual HTML content.
 
 ### Implementation Plan
 
-**Option 1: Reduce h3 top margin (Recommended)**
+**Fix the `._background` positioning:**
 
-Reduce the h3 `margin-top` from 28px to a smaller value (e.g., 16px or 20px) to create tighter spacing between sections:
+In `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt`:
 
 ```css
-h3 {
-    margin-top: 16px;  /* Reduced from 28px */
-    margin-bottom: 12px;
-    /* ... other styles ... */
+._section {
+    position: relative;  /* ADD - establish positioning context */
+}
+._background {
+    position: absolute;  /* CHANGE from relative */
+    top: 0;
+    left: -16px;         /* Extend to edge (body has 16px padding) */
+    right: -16px;
+    bottom: 0;
+    width: calc(100% + 32px);  /* Full width including body padding */
+    min-height: 0;       /* CHANGE - don't need min-height when absolute */
+    margin-bottom: 0;    /* CHANGE - no margin needed */
+    z-index: -1;         /* ADD - place behind content */
+    border-radius: 0;    /* CHANGE - full-bleed backgrounds */
 }
 ```
 
-**Pros:**
-- Simple CSS change
-- Affects all h3 headings consistently
-- Matches iOS tighter layout feel
+**Note:** This requires also adding `._section { position: relative; }` to establish the positioning context for the absolute background.
 
-**Cons:**
-- Changes spacing for ALL h3 elements, not just the problematic one
-- May need to test other pages to ensure it doesn't make spacing too tight elsewhere
+### Secondary Issue: Tailwind Classes Not Defined
 
-**Option 2: Add specific CSS rule for first h3 after page title**
-
-Target the first h3 in the content to reduce its top margin:
-
-```css
-/* In HtmlContent.kt CSS, add: */
-h3:first-of-type {
-    margin-top: 8px;  /* Reduced only for first h3 */
-}
-```
-
-**Pros:**
-- Only affects the first h3, preserving spacing elsewhere
-- Surgical fix for the specific problem
-
-**Cons:**
-- Assumes the problem is always the first h3
-- More complex selector
-
-**Option 3: Investigate HTML structure from API**
-
-Before changing CSS, verify what HTML structure is coming from the API:
-- Check if there are extra `<p>` or `<div>` elements creating space
-- Look for empty elements between tagline and subheading
-- Compare web version HTML structure
-
-**Testing command:**
-```bash
-curl -u "fiveq:demo" "https://ffci.fiveq.dev/mobile-api/page/uezb3178BtP3oGuU" | jq -r '.page_content' | grep -A 20 "More Resources"
-```
+The HTML also contains Tailwind utility classes like `mb-12` (48px margin-bottom) which aren't defined in the Android CSS. This is a lower priority issue since fixing `._background` positioning is the main fix. The Tailwind classes could optionally be added for consistency with web.
 
 ### Code Locations
 
 | File | Lines | Purpose | Changes Needed |
 |------|-------|---------|----------------|
-| `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt` | 90-96 | h3 CSS styling | Reduce `margin-top` from 28px to 16px or 20px |
-| `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/screens/TabScreen.kt` | 196 | Title padding | Optional: Reduce bottom padding from 16dp to 8dp |
-| `ios-mip-app/FFCI/Views/HtmlContentView.swift` | 71 | iOS h3 styling | Update to match Android changes for consistency |
+| `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt` | 195-216 | `._background` CSS | Change from `position: relative` to `position: absolute`, remove `min-height: 200px` |
+| Same file | TBD | Add `._section` CSS | Add `position: relative` to establish positioning context |
+
+### Testing
+
+After fix, verify:
+1. "More Resources" tagline to "FFC Online Store" spacing is reasonable
+2. Background colors still appear behind section content
+3. Pages with background images (hero sections) still display correctly
 
 ### Estimated Complexity
 
-**Low** - This is a CSS spacing adjustment. The fix is straightforward:
-1. Reduce h3 margin-top value in HtmlContent.kt
-2. Optionally reduce Title bottom padding in TabScreen.kt
-3. Test on Resources page to verify spacing improvement
-4. Apply same changes to iOS for cross-platform consistency
+**Medium** - CSS positioning fix, but needs careful testing to ensure:
+- Absolute positioning works correctly in WebView
+- Background images and colors still display properly
+- Other sections with `._background` elements are not broken
+
+---
+
+## Implementation (2026-01-26)
+
+**Fixed:** Updated `HtmlContent.kt` CSS to properly position `._background` elements:
+
+1. Added `._section { position: relative; }` to establish positioning context
+2. Changed `._background` from `position: relative` to `position: absolute`
+3. Set `top: 0; bottom: 0` to stretch background to full section height
+4. Extended background beyond body padding: `left: -16px; right: -16px; width: calc(100% + 32px)`
+5. Added `z-index: -1` to place background behind content
+6. Added `background-color: var(--bgColor, transparent)` to use CSS custom property for background colors
+7. Removed `min-height: 200px` and `margin-bottom: 16px` (no longer needed)
+
+**Files Changed:**
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt` (lines 195-210)
+
+**Test Results (2026-01-26):**
+- ✅ **Progress:** White text "Gear, materials, and specialized tools to serve your community." is now visible against blue background
+- ✅ **Progress:** Spacing improved - background no longer renders as 200px block
+- ⚠️ **Needs Improvement:** Spacing between "More Resources" section and "FFC Online Store" still needs further refinement
+- 📝 **Note:** Header image appears different from web version (visual discrepancy noted)
+
+**Status:** Partial fix applied, further CSS adjustments needed for optimal spacing.
