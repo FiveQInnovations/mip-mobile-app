@@ -131,3 +131,234 @@ Add CSS rules in `HtmlContentView.swift` for accordion items:
 - iOS HTML Renderer: `ios-mip-app/FFCI/Views/HtmlContentView.swift`
 - API Plugin: `wsp-mobile/lib/pages.php` (generates HTML content)
 - Related: [222](222-section-background-colors-not-appearing.md) - Section Background Colors
+
+---
+
+## Research Findings (Scouted)
+
+### Cross-Platform Reference
+
+**Android Implementation (Reference for iOS):**
+- **File:** `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt`
+- **CSS Location:** Lines 63-353 (inline `<style>` block)
+- **Current Status:** No accordion-specific CSS styling exists
+- **Existing Patterns:** 
+  - Card-like styling for buttons with border-radius, padding, and shadows
+  - Uses WebView with inline CSS for content rendering
+  - Typography hierarchy: h3 uses `#024D91` color with left border accent (`#D9232A`)
+  - Links styled with red accent color `#D9232A`
+
+**React Native Implementation (Legacy Reference):**
+- No accordion-specific handling found
+- Basic HTML rendering without custom accordion styles
+
+**Key Pattern to Adapt:**
+- Android uses detailed inline CSS with proper heading hierarchy
+- iOS should follow similar pattern: h3 for accordion titles with color `#024D91` and red accent border
+- Both platforms render HTML in WebView, so CSS approach is consistent
+
+### Current Implementation Analysis
+
+**iOS HTML Renderer:**
+- **File:** `ios-mip-app/FFCI/Views/HtmlContentView.swift`
+- **CSS Section:** Lines 67-132
+- **Current CSS Styles:**
+  - h1, h2, h3, p, a, img, picture, buttons - all styled
+  - **NO accordion-specific styles** (no `details`, `summary`, or `.accordion` selectors)
+  - h3 currently styled with `#024D91` color, `#D9232A` left border (lines 71)
+
+**Android HTML Renderer:**
+- **File:** `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt`
+- **CSS Section:** Lines 63-353
+- **Current Status:** Also lacks accordion-specific styles
+- **Similar h3 styling:** Lines 90-99 (blue color, red border)
+
+**Backend/API:**
+- **File:** `wsp-mobile/lib/pages.php`
+- **Line:** 235 - `$pageContentHtml = $page->content()->page_content()->toBlocks()->toHTML();`
+- **Process:** Kirby converts accordion blocks to HTML via `toBlocks()->toHTML()`
+- **Plugin:** Uses `wsp-accordion` (Composer package from `fiveq/wsp-accordion`)
+- **Expected HTML Structure:** Likely uses semantic HTML `<details>` and `<summary>` elements (standard for Kirby accordion blocks)
+
+**CMS Content Structure:**
+- **File:** `/Users/anthony/mip/sites/ws-ffci/content/1_about/2_what-we-believe/default.txt`
+- **Line:** 5 (within JSON in Page-content field)
+- **Accordion Block ID:** `e582cffb-350c-433e-885b-dab462ce799f`
+- **Type:** `"type":"accordion"`
+- **Items:** 4 accordion items with `title` and `details` fields:
+  1. Fellowship (bullet list)
+  2. Relationship (bullet list)
+  3. Sharing God's Word (scripture quote)
+  4. Prayer (ACTS acronym)
+
+**Section Background Context:**
+- Section has `section_bg_color: "#bfbfbf"` (gray) and `section_text_color: "#fff"` (white)
+- Related to ticket #222 (section background colors)
+- Accordion titles and content should work with gray background
+
+### Expected HTML Structure
+
+Based on Kirby accordion block conventions (semantic HTML):
+
+```html
+<details class="accordion" open>
+  <summary class="accordion-title">Fellowship</summary>
+  <div class="accordion-content">
+    <ul>
+      <li>To spur one another on toward love and good deeds.</li>
+      <li>To encourage one another more and more...</li>
+    </ul>
+  </div>
+</details>
+<details class="accordion" open>
+  <summary class="accordion-title">Relationship</summary>
+  <div class="accordion-content">...</div>
+</details>
+<!-- etc -->
+```
+
+Or possibly custom class-based structure:
+```html
+<div class="accordion">
+  <div class="accordion-item">
+    <div class="accordion-title">Fellowship</div>
+    <div class="accordion-content">...</div>
+  </div>
+</div>
+```
+
+### Implementation Plan
+
+**iOS (Primary Platform):**
+
+1. **Add Accordion CSS to HtmlContentView.swift** (Lines 67-132)
+   - Force all `<details>` elements to be open (expanded)
+   - Style `<summary>` as prominent headings
+   - Style accordion content with proper spacing
+   - Create card-like appearance with borders/backgrounds
+   - Ensure compatibility with gray section background (#bfbfbf)
+
+2. **CSS Selectors to Add:**
+   ```css
+   /* Force accordion items open */
+   details { display: block; }
+   details[open] { display: block; }
+   summary { display: list-item; }
+   
+   /* Accordion item styling */
+   details, .accordion-item {
+     background: rgba(255, 255, 255, 0.1);
+     border: 1px solid rgba(255, 255, 255, 0.2);
+     border-radius: 12px;
+     padding: 20px;
+     margin-bottom: 16px;
+   }
+   
+   /* Accordion title styling */
+   summary, .accordion-title {
+     font-size: 20px;
+     font-weight: 700;
+     color: #fff;
+     margin-bottom: 12px;
+     cursor: default;
+     list-style: none;
+   }
+   
+   /* Hide default disclosure triangle */
+   summary::-webkit-details-marker { display: none; }
+   
+   /* Accordion content styling */
+   .accordion-content, details > *:not(summary) {
+     color: #fff;
+     font-size: 17px;
+     line-height: 28px;
+   }
+   ```
+
+3. **Test on iOS Simulator:**
+   - Navigate to "What We Believe" page (UUID: `fZdDBgMUDK3ZiRID`)
+   - Scroll to "Purpose for Gathering" section (gray background)
+   - Verify all 4 items display open
+   - Check visual design looks polished
+   - Verify text is readable on gray background
+
+**Android (Secondary - Apply Same Pattern):**
+
+4. **Update Android HtmlContent.kt** (Lines 63-353)
+   - Add identical accordion CSS styles
+   - Ensure consistency with iOS implementation
+   - Test on Android emulator
+
+### Code Locations
+
+| File | Purpose | Changes Needed |
+|------|---------|----------------|
+| `ios-mip-app/FFCI/Views/HtmlContentView.swift` | iOS HTML renderer with inline CSS | **ADD** accordion CSS styles (lines 67-132) |
+| `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt` | Android HTML renderer with inline CSS | **ADD** accordion CSS styles (lines 63-353) |
+| `wsp-mobile/lib/pages.php` | API that generates HTML | **NO CHANGES** - already generates accordion HTML |
+| `/Users/anthony/mip/sites/ws-ffci/content/1_about/2_what-we-believe/default.txt` | CMS content source | **NO CHANGES** - content is correct |
+
+### Key Variables/Data Reference
+
+**Accordion Block (CMS):**
+```json
+{
+  "type": "accordion",
+  "blocks": "[{...}]",
+  "id": "e582cffb-350c-433e-885b-dab462ce799f"
+}
+```
+
+**Section Background:**
+```json
+{
+  "section_bg_color": "#bfbfbf",
+  "section_text_color": "#fff"
+}
+```
+
+**Expected HTML Elements:**
+- `<details>` - Accordion container
+- `<summary>` - Accordion title/header
+- `.accordion-content` or nested elements - Accordion body content
+
+**Color Palette:**
+- Primary Red: `#D9232A` (brand color)
+- Primary Blue: `#024D91` (heading color)
+- Section Background: `#bfbfbf` (gray)
+- Section Text: `#fff` (white)
+
+### Design Approach (Recommended)
+
+**Card-Based Design with Subtle Transparency:**
+- Each accordion item as a semi-transparent card
+- Works well with gray background (#bfbfbf)
+- White text with good contrast
+- Border radius for modern feel (12px)
+- Vertical spacing between cards (16px)
+- Internal padding (20px)
+
+**Typography Hierarchy:**
+- Titles: 20px, bold, white
+- Content: 17px, regular, white, 28px line-height
+- Lists maintain proper spacing (8px between items)
+
+**No Interactivity:**
+- Remove disclosure triangles (since always open)
+- No hover states needed
+- Static display optimized for mobile reading
+
+### Estimated Complexity
+
+**Low-Medium**
+
+**Reasoning:**
+- **Simple CSS-only solution** - No JavaScript or native UI components needed
+- **Well-defined scope** - Single CSS block addition to 1-2 files
+- **Clear requirements** - Force open, improve visual design
+- **Existing patterns** - Can follow button/heading styling already in place
+- **Risk:** Unknown HTML structure from `wsp-accordion` plugin
+  - If structure differs from expected `<details>/<summary>`, may need to adjust selectors
+  - Can test by viewing page API response or inspecting rendered HTML
+  
+**Estimated Time:** 1-2 hours (includes testing both iOS and Android)
