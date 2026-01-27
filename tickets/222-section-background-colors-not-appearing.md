@@ -107,3 +107,189 @@ Sections in Kirby content have attributes like:
 - iOS HTML Renderer: `ios-mip-app/FFCI/Views/HtmlContentView.swift` (lines 67-132)
 - API Plugin: `wsp-mobile/lib/pages.php` (generates HTML content)
 - Related: [221](221-what-we-believe-images-not-appearing.md) - Images Not Appearing on Same Page
+
+---
+
+## Research Findings (Scouted)
+
+### Cross-Platform Reference
+
+**Android Implementation Pattern:**
+The Android app's `HtmlContent.kt` component has similar CSS structure to iOS but also lacks section background color support. Both platforms wrap API HTML content in a WebView with extensive CSS styling for typography, buttons, and images, but neither handles section-level styling.
+
+**Key Differences:**
+- Android uses `AndroidView` with `WebView` while iOS uses `WKWebView` via `UIViewRepresentable`
+- Both load HTML with `loadDataWithBaseURL`/`loadHTMLString` with base URL `https://ffci.fiveq.dev`
+- Both have identical CSS for typography, buttons, and images
+- Neither has CSS rules for section background colors or text colors
+
+**Shared Pattern to Adopt:**
+Both platforms wrap HTML content in a styled template with embedded CSS. The solution should add section styling CSS rules to both platforms' embedded stylesheets.
+
+### Current Implementation Analysis
+
+**How Website Renders Sections with Background Colors:**
+
+1. **Kirby Layout Processing** (`wsp-site-public/classes/H.php:561-646`):
+   - `H::parse()` function groups layouts into sections
+   - Extracts section attributes: `section_bg_style`, `section_bg_color`, `section_text_style`, `section_text_color`
+   - Generates inline styles using CSS custom properties:
+     ```php
+     // Line 604
+     $sections[$i]['styles'][] = "--theme-surface: {$layout->section_bg_color()->value()};";
+     // Line 609
+     $sections[$i]['styles'][] = "--theme-content: {$layout->section_text_color()->value()};";
+     // Line 612
+     $sections[$i]['styles'][] = "--color-heading: {$layout->section_text_color()->value()};";
+     ```
+
+2. **Website Template Rendering** (`wsp-site-public/snippets/general/page-builder.php:42`):
+   - Renders `<section class="_section">` elements with inline styles:
+     ```php
+     <section class="grid relative z-0 _section <?= $ss['classes'] ?>" style="<?= $ss['styles'] ?>">
+     ```
+   - Example rendered HTML:
+     ```html
+     <section class="_section" style="--theme-surface: #bfbfbf; --theme-content: #fff; --color-heading: #fff;">
+     ```
+
+3. **Website CSS** (applies these variables to elements):
+   - Uses CSS custom properties to style content within sections
+   - Background color applied via `--theme-surface`
+   - Text color applied via `--theme-content` to body text
+   - Heading color applied via `--color-heading` to headings
+
+**Mobile API HTML Generation** (`wsp-mobile/lib/pages.php:235-265`):
+
+The mobile API uses a different code path that bypasses section wrappers:
+
+```php
+// Line 258 (content_data function)
+$pageContentHtml = $page->content()->page_content()->toBlocks()->toHTML();
+return [
+    "page_content" => $this->transformInternalLinks($pageContentHtml),
+    // ... other fields
+];
+```
+
+**Key Issue:**
+- `toBlocks()->toHTML()` generates HTML directly from Kirby blocks **without section wrappers**
+- Section-level attributes (`section_bg_color`, `section_text_color`) are **not included** in the HTML
+- Mobile apps receive raw block HTML without any section styling information
+
+### Root Cause
+
+The mobile API returns HTML that lacks section-level styling because:
+1. It uses `toBlocks()->toHTML()` which renders individual blocks, not sections
+2. Section attributes exist in the raw JSON data but are not parsed or applied
+3. The iOS/Android WebView CSS has no rules to handle section styling
+
+### Implementation Plan
+
+**Option 1: Parse JSON and Generate Section-Aware HTML (Recommended)**
+
+Modify the mobile API to generate section-aware HTML with inline styles:
+
+1. **Update `wsp-mobile/lib/pages.php`** (around line 258):
+   - Parse `page_content` JSON to extract layouts and sections
+   - Use `H::parse()` or similar logic to group layouts into sections
+   - Wrap block HTML with section divs containing inline styles
+   - Apply `background-color` and `color` inline styles based on section attributes
+
+2. **Update iOS `HtmlContentView.swift`** (lines 67-132):
+   - Add CSS rules for section elements:
+     ```css
+     section {
+         padding: 16px 0;
+         margin-left: -16px;
+         margin-right: -16px;
+         padding-left: 16px;
+         padding-right: 16px;
+     }
+     section[style*="background-color"] {
+         /* Ensure background colors are respected */
+     }
+     section[style*="color"] {
+         /* Ensure text colors are respected */
+     }
+     ```
+
+3. **Update Android `HtmlContent.kt`** (lines 64-353):
+   - Add matching CSS rules for section elements (same as iOS)
+
+**Option 2: Add CSS for Inline Style Support (Simpler, Less Robust)**
+
+Add CSS rules to both apps that respect inline styles on any element:
+
+1. **iOS `HtmlContentView.swift`** - Add after line 132:
+   ```css
+   /* Support for section styling */
+   div[style*="background-color"],
+   section[style*="background-color"] {
+       padding: 24px 16px;
+       margin-left: -16px;
+       margin-right: -16px;
+   }
+   ```
+
+2. **Android `HtmlContent.kt`** - Add after line 353 (same CSS)
+
+3. **Modify API to wrap layouts in divs** with inline styles from section attributes
+
+### Code Locations
+
+| File | Purpose | Changes Needed |
+|------|---------|----------------|
+| `wsp-mobile/lib/pages.php:235-265` | Generates HTML for mobile API | Modify `content_data()` to parse sections and apply inline styles |
+| `ios-mip-app/FFCI/Views/HtmlContentView.swift:67-132` | iOS WebView CSS stylesheet | Add CSS rules for section elements with background/text colors |
+| `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt:64-353` | Android WebView CSS stylesheet | Add matching CSS rules for section styling |
+| `wsp-site-public/classes/H.php:561-646` | Section parsing logic (reference) | Reference implementation for parsing section attributes |
+| `wsp-site-panel/blueprints/shared/layout.yml:49-86` | Section attribute definitions | Documents available section attributes |
+
+### Variables/Data Reference
+
+**Section Attributes (from Kirby layout settings):**
+- `section_bg_style`: Boolean toggle ("true"/"false" string)
+- `section_bg_color`: Hex color value (e.g., "#bfbfbf", "#d9232a", "#024d91")
+- `section_text_style`: Boolean toggle ("true"/"false" string)
+- `section_text_color`: Hex color value (e.g., "#fff", "#222222")
+
+**CSS Variables (used on website):**
+- `--theme-surface`: Background color
+- `--theme-content`: Text color
+- `--color-heading`: Heading color
+
+**HTML Classes:**
+- `._section`: Class applied to section elements on website
+- Not currently present in mobile API HTML
+
+**Example Section Data from "What We Believe" page:**
+```json
+{
+  "attrs": {
+    "section_bg_style": "true",
+    "section_bg_color": "#bfbfbf",
+    "section_text_style": "true",
+    "section_text_color": "#fff"
+  }
+}
+```
+
+### Estimated Complexity
+
+**Medium** - Requires changes across three components (API, iOS, Android)
+
+**Complexity Factors:**
+- ✅ Simple: Well-documented section attributes in Kirby
+- ✅ Simple: Both mobile platforms use similar WebView approach
+- ⚠️ Medium: Need to parse JSON structure to extract section attributes
+- ⚠️ Medium: Must ensure proper HTML structure with section wrappers
+- ⚠️ Medium: Testing across multiple pages with various background colors
+- ✅ Low Risk: Changes are additive (won't break existing functionality)
+
+**Estimated Effort:**
+- API changes: 2-3 hours (parse sections, generate wrapped HTML)
+- iOS CSS updates: 30 minutes (add section styling rules)
+- Android CSS updates: 30 minutes (match iOS rules)
+- Testing: 1 hour (verify on "What We Believe" and other pages)
+- **Total: ~4-5 hours**
