@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: done
 area: ios-mip-app
 phase: core
 created: 2026-01-26
@@ -30,6 +30,7 @@ The main Firefighters for Christ logo should be visible on the homescreen, but i
 - Logo should be loaded from `site_data.logo` field via API
 - Check if logo URL is being fetched correctly
 - Verify logo rendering logic (SVG vs raster image handling)
+- **Follow-up needed:** Logo section spacing needs adjustment (to be tackled after other homescreen tickets)
 
 ## References
 

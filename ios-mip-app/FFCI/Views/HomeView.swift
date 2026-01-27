@@ -49,6 +49,9 @@ struct HomeView: View {
                 // Header with logo and search button
                 HomeHeaderView(siteMeta: siteMeta, onSearchTap: { showSearch = true })
                 
+                // Logo section - main homepage logo
+                HomeLogoView(siteMeta: siteMeta)
+                
                 // Featured section
                 if let featured = siteMeta.homepageFeatured, !featured.isEmpty {
                     FeaturedSectionView(featured: featured, onFeaturedClick: onFeaturedClick)

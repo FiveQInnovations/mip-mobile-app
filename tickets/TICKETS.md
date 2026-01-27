@@ -17,7 +17,7 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🔴 Core Functionality (FFCI)
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
-- [216](216-homescreen-logo-appear.md) - Homepage Logo Should Appear on Homescreen
+- [101](101-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
 - [217](217-header-maltese-cross-appear.md) - Small Maltese Cross Should Appear on Left Side of Header
 - [218](218-remove-tap-test-button.md) - Remove Tap Test Button from Home Screen
 - [219](219-remove-duplicate-content-page-title.md) - Remove Duplicate Title on Content Pages
@@ -155,6 +155,7 @@ Quick reference for active tasks. See individual files for details.
 - [213](213-ios-quick-actions-scroll-to-instagram.md) - iOS Quick Actions Right Arrow Should Scroll to Instagram
 - [214](214-ios-about-us-back-button-double-chevron.md) - iOS About Us Page Shows Double Chevron in Back Button
 - [215](215-ios-back-button-style-consistency.md) - iOS Back Button Style Consistency
+- [216](216-homescreen-logo-appear.md) - Homepage Logo Should Appear on Homescreen
 
 ---
 
