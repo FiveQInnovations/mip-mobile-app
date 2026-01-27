@@ -19,12 +19,12 @@ Quick reference for active tasks. See individual files for details.
 - [077](077-scrollable-cards-touch-handling.md) - Homepage Touch Handling on Real Devices
 - [101](101-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
 - [223](223-purpose-for-gathering-accordion-design.md) - "Purpose for Gathering" Accordion Sections Not Expandable - Design Improvement Needed
-- [224](224-ios-resources-red-artifacts.md) - Red Artifacts on Left Side of Resources Tab Content
 - [225](225-media-ministry-embed-too-wide.md) - Media Ministry Page - FFC's Monthly Media Embed Too Wide
 - [226](226-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
 
 ### 🟡 Nice to Have
 - [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
+- [227](227-android-multi-site-config-system.md) - Android Multi-Site Configuration System
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
@@ -156,6 +156,7 @@ Quick reference for active tasks. See individual files for details.
 - [219](219-remove-duplicate-content-page-title.md) - Remove Duplicate Title on Content Pages
 - [220](220-membership-form-button-open-browser.md) - Membership Form Button Should Open Form in Browser
 - [221](221-what-we-believe-images-not-appearing.md) - Images Not Appearing on "What We Believe" Page
+- [224](224-ios-resources-red-artifacts.md) - Red Artifacts on Left Side of Resources Tab Content
 
 ---
 

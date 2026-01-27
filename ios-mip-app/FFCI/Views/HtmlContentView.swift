@@ -228,7 +228,44 @@ struct HtmlContentView: UIViewRepresentable {
                 h3 { font-size: 23px; font-weight: 700; margin-top: 28px; margin-bottom: 12px; color: #024D91; line-height: 30px; padding-left: 12px; border-left: 3px solid #D9232A; }
                 p { margin: 16px 0; }
                 hr { display: none; }
-                a { color: #D9232A; text-decoration: none; font-weight: 600; background: rgba(217, 35, 42, 0.08); padding: 4px 6px; border-bottom: 2px solid #D9232A; border-radius: 4px; }
+                /* Base link styles - but NOT for buttons or image links */
+                a:not([class*="_button"]):not([class*="_image-link"]):not([class*="image-link"]) {
+                    color: #D9232A;
+                    text-decoration: none;
+                    font-weight: 600;
+                    background: rgba(217, 35, 42, 0.08);
+                    padding: 4px 6px;
+                    border-bottom: 2px solid #D9232A;
+                    border-radius: 4px;
+                }
+                /* Ensure buttons NEVER get base link styles */
+                a[class*="_button"] {
+                    /* Styles are defined separately below */
+                }
+                /* Remove red styling from image links - they shouldn't have borders/backgrounds */
+                a._image-link,
+                a[class*="_image-link"],
+                a[class*="image-link"] {
+                    background: none !important;
+                    border: none !important;
+                    border-bottom: none !important;
+                    border-top: none !important;
+                    border-left: none !important;
+                    border-right: none !important;
+                    padding: 0 !important;
+                    border-radius: 0 !important;
+                    display: block;
+                }
+                /* Specifically target any decorative elements that might show red */
+                ._button-group + a:not([class*="_button"]),
+                a:not([class*="_button"]) + ._button-group,
+                ._button-group ~ a:not([class*="_button"]) {
+                    background: none !important;
+                    border: none !important;
+                    border-bottom: none !important;
+                    padding: 0 !important;
+                    border-radius: 0 !important;
+                }
                 img { max-width: 100%; height: auto; border-radius: 8px; margin: 24px 0; }
                 picture { display: block; width: 100%; }
                 picture img { width: 100%; border-radius: 8px; margin: 24px 0; }
@@ -259,10 +296,19 @@ struct HtmlContentView: UIViewRepresentable {
                     font-weight: 500;
                     letter-spacing: 0.5px;
                     text-decoration: none !important;
+                    border-top: none !important;
+                    border-left: none !important;
+                    border-right: none !important;
                     border-bottom: none !important;
                     box-sizing: border-box;
                     margin: 8px 0 !important;
                     background: rgba(217, 35, 42, 0.08);
+                    /* Reset all inherited styles that might cause red artifacts */
+                    background-image: none !important;
+                    background-position: initial !important;
+                    background-repeat: initial !important;
+                    background-attachment: initial !important;
+                    background-size: initial !important;
                 }
                 /* Primary button - red background */
                 a[class*="_button-priority"] {
