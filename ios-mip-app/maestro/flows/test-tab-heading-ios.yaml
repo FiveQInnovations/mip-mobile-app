@@ -22,6 +22,14 @@ appId: com.fiveq.ffci
 - assertVisible:
     text: "Prayer & Fruit: Black Text on White Background"
 
-# Take screenshot for verification
+# Take screenshot to visually verify "Doctrinal Statement" section
+# Visual inspection confirms: "Doctrinal Statement: White Text on Blue Background" is NOT visible
+# The section either isn't rendering or has white text on white background (invisible)
+# This documents the bug: section background colors not working in iOS
 - takeScreenshot:
-    path: "maestro/screenshots/test-tab-heading-verified"
+    path: "maestro/screenshots/test-tab-doctrinal-statement-visibility"
+
+# Note: Screenshot review shows:
+# - "Prayer & Fruit" section is visible (black text on white - working)
+# - "Doctrinal Statement" section is NOT visible (should be white text on blue background)
+# This confirms section background colors are not rendering in iOS WebView
