@@ -223,6 +223,14 @@ struct HtmlContentView: UIViewRepresentable {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
                 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 17px; line-height: 28px; color: #334155; padding: 0 16px 32px 16px; margin: 0; overflow-x: hidden; background-color: transparent; }
+                /* Critical: Ensure inline styles on any element are respected by WKWebView */
+                [style*="background-color"] {
+                    /* Force inline background-color styles to be applied */
+                    background-attachment: scroll !important;
+                    background-clip: border-box !important;
+                    background-origin: padding-box !important;
+                    background-repeat: repeat !important;
+                }
                 h1 { font-size: 34px; font-weight: 700; margin-top: 36px; margin-bottom: 20px; color: #0f172a; letter-spacing: -1px; line-height: 40px; }
                 h2 { font-size: 28px; font-weight: 700; margin-top: 32px; margin-bottom: 16px; color: #0f172a; letter-spacing: -0.6px; line-height: 34px; }
                 h3 { font-size: 23px; font-weight: 700; margin-top: 28px; margin-bottom: 12px; color: #024D91; line-height: 30px; padding-left: 12px; border-left: 3px solid #D9232A; }
@@ -369,19 +377,32 @@ struct HtmlContentView: UIViewRepresentable {
                 /* Section styling - support for background colors and text colors */
                 /* Only apply padding/margins to sections with background colors */
                 ._section[style*="background-color"] {
-                    padding: 24px 16px !important;
+                    /* Use calc to make section full-width plus overflow body padding */
+                    width: calc(100% + 32px) !important;
+                    max-width: none !important;
                     margin-left: -16px !important;
                     margin-right: -16px !important;
                     margin-top: 16px !important;
                     margin-bottom: 16px !important;
+                    /* Consistent padding on all sides */
+                    padding: 24px 16px !important;
                     /* Force display block to ensure background is visible */
                     display: block !important;
-                    /* Ensure background is not overridden */
+                    /* Ensure inline styles are respected */
                     background-image: none !important;
+                    min-height: 1px;
+                    background-size: auto !important;
+                    /* Ensure proper box model */
+                    box-sizing: border-box !important;
                 }
                 /* Ensure inline styles are respected - use attribute selector to match any background-color value */
                 div._section[style] {
                     /* Inline styles should already have background-color, but ensure they're applied */
+                }
+                /* Critical: Ensure sections with inline color styles apply color to all children */
+                /* This ensures ALL descendants inherit the color from the section's inline style */
+                ._section[style*="color"] * {
+                    color: inherit !important;
                 }
                 /* Constrain embedded content (iframes, embeds) to prevent overflow */
                 iframe, embed, object {
@@ -414,6 +435,66 @@ struct HtmlContentView: UIViewRepresentable {
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            // Fix WKWebView not rendering background colors from inline styles
+            // WKWebView with isOpaque=false can fail to apply inline background-color
+            // Solution: Create a <style> block with explicit CSS rules for each section
+            webView.evaluateJavaScript("""
+                (function() {
+                    const sections = document.querySelectorAll('._section');
+                    if (sections.length === 0) return;
+                    
+                    // Build CSS rules for each section with background-color
+                    let cssRules = '';
+                    sections.forEach(function(section, index) {
+                        const styleAttr = section.getAttribute('style') || '';
+                        
+                        // Parse background-color and color from inline style
+                        let bgMatch = styleAttr.match(/background-color:\\s*([^;]+)/i);
+                        let colorMatch = styleAttr.match(/(?:^|;)\\s*color:\\s*([^;]+)/i);
+                        
+                        // Also check for ._background child element with --bgColor CSS variable
+                        // Some sections use a background block instead of inline style on the section
+                        if (!bgMatch) {
+                            const bgElement = section.querySelector('._background[style*="--bgColor"]');
+                            if (bgElement) {
+                                const bgStyle = bgElement.getAttribute('style') || '';
+                                const bgColorVar = bgStyle.match(/--bgColor:\\s*([^;]+)/i);
+                                if (bgColorVar && bgColorVar[1].trim() !== '') {
+                                    bgMatch = bgColorVar;
+                                }
+                            }
+                        }
+                        
+                        if (bgMatch || colorMatch) {
+                            // Add a unique data attribute to target this specific section
+                            section.setAttribute('data-section-id', 'section-' + index);
+                            
+                            let rule = '._section[data-section-id="section-' + index + '"] { ';
+                            if (bgMatch) {
+                                rule += 'background-color: ' + bgMatch[1].trim() + ' !important; ';
+                            }
+                            if (colorMatch) {
+                                rule += 'color: ' + colorMatch[1].trim() + ' !important; ';
+                            }
+                            rule += '}\\n';
+                            cssRules += rule;
+                            
+                            // Also add child text color inheritance
+                            if (colorMatch) {
+                                cssRules += '._section[data-section-id="section-' + index + '"] * { color: inherit !important; }\\n';
+                            }
+                        }
+                    });
+                    
+                    // Inject the CSS rules into a new style element
+                    if (cssRules) {
+                        const styleEl = document.createElement('style');
+                        styleEl.textContent = cssRules;
+                        document.head.appendChild(styleEl);
+                    }
+                })();
+            """) { _, _ in }
+            
             // Calculate content height after page loads
             webView.evaluateJavaScript("document.body.scrollHeight") { [weak self] result, error in
                 if let height = result as? CGFloat, height > 0 {

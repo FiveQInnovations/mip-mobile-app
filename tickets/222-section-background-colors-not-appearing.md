@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: qa
 area: ios-mip-app
 phase: core
 created: 2026-01-26
@@ -334,3 +334,102 @@ The "What We Believe" page has additional design issues beyond section backgroun
 - Other visual discrepancies from website design
 
 These should be addressed in separate tickets focused on specific block types or layout patterns.
+
+---
+
+## Attempted Fixes (2026-01-28)
+
+### Attempt 1: Enhanced CSS Rules
+**What was tried:**
+- Added explicit CSS rules for `._section[style*="background-color"]` with `display: block !important` and `background-size: auto !important`
+- Added universal selector `[style*="background-color"]` with background property rules
+- Enhanced color inheritance rules for `._section[style*="color"] *` to force `color: inherit !important`
+
+**Result:** ❌ Did not work - sections with blue background still not visible in iOS app
+
+### Attempt 2: JavaScript Style Enforcement
+**What was tried:**
+- Added JavaScript injection in `webView(_:didFinish:)` to parse inline `style` attributes and reapply `background-color` and `color` directly to `element.style` after page load
+- JavaScript queries all `._section[style]` elements and extracts/rebuilds style properties
+
+**Result:** ❌ Did not work - JavaScript executes but background colors still not rendering
+
+### Attempt 3: Dynamic CSS Rule Injection (SUCCESS)
+**Root Cause Discovered:**
+- Some sections have `section_bg_style: "true"` with inline `background-color` on the `._section` div
+- Other sections use a `background` block type which sets `--bgColor` as a CSS variable on a child `._background` element
+- The previous JavaScript only looked at section inline styles, missing the `._background` child pattern
+
+**What was tried:**
+- Enhanced JavaScript to also search for `._background` child elements within sections
+- Extract `--bgColor` CSS variable from background elements when section doesn't have inline `background-color`
+- Dynamically inject CSS rules targeting each section by unique `data-section-id` attribute
+
+**Result:** ✅ **Fixed!** - Sections with background blocks now correctly display blue backgrounds with white text
+
+### Solution Details
+1. **iOS JavaScript (`HtmlContentView.swift`)**: Updated `didFinish` handler to:
+   - Query all `._section` elements (not just those with `[style]`)
+   - Check for `._background[style*="--bgColor"]` child elements
+   - Extract the `--bgColor` CSS variable value
+   - Inject dynamic CSS rules with `!important` to force background colors
+
+2. **API Fix (`wsp-mobile/lib/pages.php`)**: Also updated `generateSectionAwareHtml()` to:
+   - Scan section blocks for `background` block types
+   - Extract `background_color` from those blocks
+   - Apply to section's inline style if `section_bg_style` is not enabled
+   - (Note: Deployed to git repo, awaiting server update)
+
+### Final Status
+- **iOS**: Fixed - background colors now render correctly via JavaScript CSS injection
+- **API**: Enhanced to generate better HTML, but server deployment pending
+- Test screenshot confirms "Doctrinal Statement: White Text on Blue Background" is now visible
+
+### Pending: Server Deployment
+The API fix in `wsp-mobile/lib/pages.php` has been committed and pushed to the git repo (`eaf3c06`), but needs to be deployed to the production server (`ffci.fiveq.dev`) via `composer update fiveq/wsp-mobile`. The iOS fix works independently of this API update.
+
+---
+
+## Visual Tester QA Report (2026-01-28)
+
+**Verdict:** PASS for ticket scope, minor issues noted
+
+### Section 2: "Doctrinal Statement: White Text on Blue Background"
+**Status:** ✅ CORRECT
+- White text on royal blue background renders correctly
+- Heading and body text both properly contrast
+- Excellent readability - **this was the primary bug, now fixed**
+
+### Section 1: "Prayer & Fruit: Black Text on White Background"
+**Status:** ⚠️ PARTIAL (out of scope for this ticket)
+- Body text: Black/dark gray on white - ✅ Correct
+- Heading text: Blue (#0055A4) instead of black - not matching label
+- This is existing site styling behavior, not a regression from this ticket
+
+### Minor Issues Noted
+1. **Debug text visible**: "cache-miss (1) s1 sl104U" showing at bottom right of blue section - should be hidden in production
+2. **Heading color inconsistency**: First section heading is blue while label says "Black Text" - pre-existing design issue
+
+### Scores
+- Spacing: 8/10
+- Alignment: 8/10
+- Readability: 9/10
+- Overall: 7/10
+
+### Recommendation
+The primary ticket goal (section background colors appearing) is **achieved**. The "Doctrinal Statement" blue background with white text is now correctly visible. Minor issues noted are out of scope for this ticket.
+
+---
+
+## Padding Fix (2026-01-28)
+
+**Issue:** Visual tester identified asymmetric padding on blue section - extended to left edge but had a gap on the right edge.
+
+**Root Cause:** CSS had `max-width: 100%` on all elements which prevented negative margins from working correctly.
+
+**Fix Applied (`HtmlContentView.swift`):**
+- Added explicit `width: calc(100% + 32px) !important` to sections with background colors
+- Added `max-width: none !important` to override the universal max-width constraint
+- Added `box-sizing: border-box !important` for proper box model
+
+**Result:** ✅ Blue section now extends edge-to-edge with consistent padding on both sides (9.4/10 design score from visual tester)
