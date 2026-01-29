@@ -128,29 +128,29 @@ fun TabScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            if (canGoBack) {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = pageData?.title ?: "",
-                            maxLines = 1
-                        )
-                    },
-                    navigationIcon = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = pageData?.title ?: "",
+                        maxLines = 1
+                    )
+                },
+                navigationIcon = {
+                    if (canGoBack) {
                         IconButton(onClick = { goBack() }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back"
                             )
                         }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
-                    )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
-            }
+            )
         }
     ) { innerPadding ->
         // Content area
@@ -179,22 +179,7 @@ fun TabScreen(
                         .verticalScroll(rememberScrollState())
                         .background(MaterialTheme.colorScheme.background)
                 ) {
-                    // Title (only show if no TopAppBar)
-                    if (!canGoBack) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(4.dp)
-                                .background(MaterialTheme.colorScheme.primary)
-                        )
-                    }
-
-                    Text(
-                        text = pageData!!.title,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 16.dp)
-                    )
+                    // Title now shown in TopAppBar for all pages
 
                     // Audio player for audio items
                     if (pageData!!.isAudioItem && pageData!!.audioUrl != null) {

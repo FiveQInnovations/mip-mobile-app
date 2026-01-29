@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [222](222-section-background-colors-not-appearing.md) - Section Background Colors Not Appearing in iOS App
 
 ## In Progress
-- [222](222-section-background-colors-not-appearing.md) - Section Background Colors Not Appearing in iOS App
+(none)
 
 ## Backlog
 
