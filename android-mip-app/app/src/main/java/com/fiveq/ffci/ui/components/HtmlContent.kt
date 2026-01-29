@@ -116,6 +116,28 @@ fun HtmlContent(
                 ._section[style*="color"] ._text {
                     color: inherit !important;
                 }
+                /* Force ALL descendants in colored sections to inherit */
+                ._section[style*="color"] * {
+                    color: inherit !important;
+                }
+                /* Text blocks with inline styles - force them to apply */
+                [style*="background-color"] {
+                    background-color: attr(style background-color) !important;
+                }
+                /* Italic/emphasis text blocks (like the quote) */
+                ._section em,
+                ._section i,
+                ._section blockquote,
+                ._section ._blockquote,
+                ._section .quote,
+                ._section [style*="font-style"] {
+                    color: inherit !important;
+                }
+                /* Blockquote text inside colored sections */
+                ._section[style*="color"] ._blockquote,
+                ._section[style*="color"] ._blockquote * {
+                    color: inherit !important;
+                }
                 /* Remove red border from h3 in colored sections */
                 ._section[style*="color"] h3 {
                     border-left: none;
@@ -367,6 +389,14 @@ fun HtmlContent(
                     font-size: 18px;
                     color: #475569;
                 }
+                /* Blockquotes inside colored sections should be transparent/subtle */
+                ._section[style*="background"] blockquote,
+                ._section[style*="background"] ._blockquote,
+                ._section ._blockquote {
+                    background: transparent !important;
+                    border-left-color: rgba(255,255,255,0.5) !important;
+                    color: inherit !important;
+                }
                 hr {
                     margin: 32px 0;
                     border: none;
@@ -549,13 +579,13 @@ fun HtmlContent(
 
                     override fun onPageFinished(view: WebView?, url: String?) {
                         super.onPageFinished(view, url)
-                        // Fix section background and text colors (inline styles need JS injection)
+                        // Fix inline styles for sections and text blocks (WebView doesn't always apply them)
                         view?.evaluateJavascript("""
                             (function() {
-                                const sections = document.querySelectorAll('._section');
-                                if (sections.length === 0) return;
-                                
                                 let cssRules = '';
+                                
+                                // Fix sections with inline styles
+                                const sections = document.querySelectorAll('._section');
                                 sections.forEach(function(section, index) {
                                     const styleAttr = section.getAttribute('style') || '';
                                     
@@ -588,6 +618,43 @@ fun HtmlContent(
                                         
                                         if (colorMatch) {
                                             cssRules += '._section[data-section-id="section-' + index + '"] * { color: inherit !important; }\n';
+                                        }
+                                    }
+                                });
+                                
+                                // Fix text blocks and other elements with inline background-color or color
+                                // Directly apply styles via JavaScript to ensure they work
+                                const styledElements = document.querySelectorAll('[style]');
+                                styledElements.forEach(function(el) {
+                                    if (el.classList.contains('_section')) return; // Already handled
+                                    
+                                    const styleAttr = el.getAttribute('style') || '';
+                                    const bgMatch = styleAttr.match(/background-color:\s*([^;]+)/i);
+                                    const colorMatch = styleAttr.match(/(?:^|;)\s*color:\s*([^;]+)/i);
+                                    
+                                    // Directly apply via JavaScript style property
+                                    if (bgMatch) {
+                                        el.style.setProperty('background-color', bgMatch[1].trim(), 'important');
+                                    }
+                                    if (colorMatch) {
+                                        el.style.setProperty('color', colorMatch[1].trim(), 'important');
+                                    }
+                                });
+                                
+                                // Fix blockquote elements inside colored sections
+                                const blockquotes = document.querySelectorAll('._section ._blockquote');
+                                blockquotes.forEach(function(bq) {
+                                    const section = bq.closest('._section');
+                                    if (section) {
+                                        const sectionStyle = section.getAttribute('style') || '';
+                                        const colorMatch = sectionStyle.match(/(?:^|;)\s*color:\s*([^;]+)/i);
+                                        if (colorMatch) {
+                                            const color = colorMatch[1].trim();
+                                            bq.style.setProperty('color', color, 'important');
+                                            // Also fix all children
+                                            bq.querySelectorAll('*').forEach(function(child) {
+                                                child.style.setProperty('color', color, 'important');
+                                            });
                                         }
                                     }
                                 });

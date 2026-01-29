@@ -245,6 +245,11 @@ struct HtmlContentView: UIViewRepresentable {
                 ._section[style*="color"] ._text {
                     color: inherit !important;
                 }
+                /* Blockquote text inside colored sections */
+                ._section[style*="color"] ._blockquote,
+                ._section[style*="color"] ._blockquote * {
+                    color: inherit !important;
+                }
                 /* Remove red border from h3 in colored sections */
                 ._section[style*="color"] h3 {
                     border-left: none;
@@ -569,6 +574,43 @@ struct HtmlContentView: UIViewRepresentable {
                             // Also add child text color inheritance
                             if (colorMatch) {
                                 cssRules += '._section[data-section-id="section-' + index + '"] * { color: inherit !important; }\\n';
+                            }
+                        }
+                    });
+                    
+                    // Fix text blocks and other elements with inline background-color or color
+                    // Directly apply styles via JavaScript to ensure they work
+                    const styledElements = document.querySelectorAll('[style]');
+                    styledElements.forEach(function(el) {
+                        if (el.classList.contains('_section')) return; // Already handled
+                        
+                        const styleAttr = el.getAttribute('style') || '';
+                        const bgMatch = styleAttr.match(/background-color:\\s*([^;]+)/i);
+                        const colorMatch = styleAttr.match(/(?:^|;)\\s*color:\\s*([^;]+)/i);
+                        
+                        // Directly apply via JavaScript style property
+                        if (bgMatch) {
+                            el.style.setProperty('background-color', bgMatch[1].trim(), 'important');
+                        }
+                        if (colorMatch) {
+                            el.style.setProperty('color', colorMatch[1].trim(), 'important');
+                        }
+                    });
+                    
+                    // Fix blockquote elements inside colored sections
+                    const blockquotes = document.querySelectorAll('._section ._blockquote');
+                    blockquotes.forEach(function(bq) {
+                        const section = bq.closest('._section');
+                        if (section) {
+                            const sectionStyle = section.getAttribute('style') || '';
+                            const colorMatch = sectionStyle.match(/(?:^|;)\\s*color:\\s*([^;]+)/i);
+                            if (colorMatch) {
+                                const color = colorMatch[1].trim();
+                                bq.style.setProperty('color', color, 'important');
+                                // Also fix all children
+                                bq.querySelectorAll('*').forEach(function(child) {
+                                    child.style.setProperty('color', color, 'important');
+                                });
                             }
                         }
                     });
