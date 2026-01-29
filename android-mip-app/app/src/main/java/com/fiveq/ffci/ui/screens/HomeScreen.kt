@@ -70,8 +70,8 @@ import com.fiveq.ffci.data.api.SiteMeta
 @Composable
 fun HomeScreen(
     siteMeta: SiteMeta,
-    onQuickTaskClick: (String) -> Unit,
-    onFeaturedClick: (String) -> Unit,
+    onQuickTaskClick: (uuid: String?, externalUrl: String?) -> Unit,
+    onFeaturedClick: (uuid: String?, externalUrl: String?) -> Unit,
     onSearchClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -198,7 +198,7 @@ fun HomeScreen(
                 FeaturedCard(
                     featured = featured,
                     onClick = {
-                        featured.uuid?.let { onFeaturedClick(it) }
+                        onFeaturedClick(featured.uuid, featured.externalUrl)
                     },
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
                 )
@@ -266,7 +266,7 @@ fun HomeScreen(
                                 ResourcesCard(
                                     task = task,
                                     onClick = {
-                                        task.uuid?.let { onQuickTaskClick(it) }
+                                        onQuickTaskClick(task.uuid, task.externalUrl)
                                     }
                                 )
                             }

@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [222](222-section-background-colors-not-appearing.md) - Section Background Colors Not Appearing in iOS App
+(none)
 
 ## In Progress
 (none)
@@ -16,7 +16,6 @@ Quick reference for active tasks. See individual files for details.
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [101](101-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
 - [223](223-purpose-for-gathering-accordion-design.md) - "Purpose for Gathering" Accordion Sections Not Expandable - Design Improvement Needed
 
 ### 🟡 Nice to Have
@@ -134,6 +133,7 @@ Quick reference for active tasks. See individual files for details.
 - [098](098-android-internal-page-navigation.md) - Android Internal Page Navigation
 - [099](099-android-back-navigation-research.md) - Android Back Navigation Research
 - [100](100-android-app-icon-splash-screen.md) - Android App Icon and Splash Screen
+- [101](101-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
 - [200](200-ios-resources-page-opens-browser.md) - iOS Resources Page Opens Browser Instead of Rendering HTML
 - [201](201-ios-audio-player.md) - iOS Audio Player
 - [202](202-ios-search-functionality.md) - iOS Search Functionality
@@ -154,6 +154,7 @@ Quick reference for active tasks. See individual files for details.
 - [219](219-remove-duplicate-content-page-title.md) - Remove Duplicate Title on Content Pages
 - [220](220-membership-form-button-open-browser.md) - Membership Form Button Should Open Form in Browser
 - [221](221-what-we-believe-images-not-appearing.md) - Images Not Appearing on "What We Believe" Page
+- [222](222-section-background-colors-not-appearing.md) - Section Background Colors Not Appearing in iOS App
 - [224](224-ios-resources-red-artifacts.md) - Red Artifacts on Left Side of Resources Tab Content
 - [225](225-media-ministry-embed-too-wide.md) - Media Ministry Page - FFC's Monthly Media Embed Too Wide
 - [226](226-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing

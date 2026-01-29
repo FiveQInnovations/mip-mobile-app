@@ -1,7 +1,10 @@
 package com.fiveq.ffci.ui.navigation
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -40,13 +43,26 @@ fun NavGraph(
     ) {
         // Home screen
         composable(Screen.Home.route) {
+            val context = LocalContext.current
             HomeScreen(
                 siteMeta = siteMeta,
-                onQuickTaskClick = { uuid ->
-                    navController.navigate(Screen.Page.createRoute(uuid))
+                onQuickTaskClick = { uuid, externalUrl ->
+                    if (!externalUrl.isNullOrEmpty()) {
+                        // Open external URL in browser
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(externalUrl))
+                        context.startActivity(intent)
+                    } else if (!uuid.isNullOrEmpty()) {
+                        navController.navigate(Screen.Page.createRoute(uuid))
+                    }
                 },
-                onFeaturedClick = { uuid ->
-                    navController.navigate(Screen.Page.createRoute(uuid))
+                onFeaturedClick = { uuid, externalUrl ->
+                    if (!externalUrl.isNullOrEmpty()) {
+                        // Open external URL in browser
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(externalUrl))
+                        context.startActivity(intent)
+                    } else if (!uuid.isNullOrEmpty()) {
+                        navController.navigate(Screen.Page.createRoute(uuid))
+                    }
                 },
                 onSearchClick = {
                     navController.navigate(Screen.Search.route)
