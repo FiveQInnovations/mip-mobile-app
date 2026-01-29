@@ -222,10 +222,26 @@ struct HtmlContentView: UIViewRepresentable {
         <head>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
-                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 17px; line-height: 28px; color: #334155; padding: 0 16px 32px 16px; margin: 0; overflow-x: hidden; }
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 17px; line-height: 28px; color: #334155; padding: 0 16px 32px 16px; margin: 0; overflow-x: hidden; background-color: transparent; }
                 h1 { font-size: 34px; font-weight: 700; margin-top: 36px; margin-bottom: 20px; color: #0f172a; letter-spacing: -1px; line-height: 40px; }
                 h2 { font-size: 28px; font-weight: 700; margin-top: 32px; margin-bottom: 16px; color: #0f172a; letter-spacing: -0.6px; line-height: 34px; }
                 h3 { font-size: 23px; font-weight: 700; margin-top: 28px; margin-bottom: 12px; color: #024D91; line-height: 30px; padding-left: 12px; border-left: 3px solid #D9232A; }
+                /* Headings and text inside colored sections inherit text color */
+                ._section[style*="color"] h1,
+                ._section[style*="color"] h2,
+                ._section[style*="color"] h3,
+                ._section[style*="color"] h4,
+                ._section[style*="color"] h5,
+                ._section[style*="color"] h6,
+                ._section[style*="color"] p,
+                ._section[style*="color"] ._text {
+                    color: inherit !important;
+                }
+                /* Remove red border from h3 in colored sections */
+                ._section[style*="color"] h3 {
+                    border-left: none;
+                    padding-left: 0;
+                }
                 p { margin: 16px 0; }
                 hr { display: none; }
                 /* Base link styles - but NOT for buttons or image links */
@@ -269,6 +285,22 @@ struct HtmlContentView: UIViewRepresentable {
                 img { max-width: 100%; height: auto; border-radius: 8px; margin: 24px 0; }
                 picture { display: block; width: 100%; }
                 picture img { width: 100%; border-radius: 8px; margin: 24px 0; }
+                ._section {
+                    position: relative;
+                    padding: 24px 0;
+                }
+                /* First section doesn't need top padding */
+                ._section:first-child {
+                    padding-top: 0;
+                }
+                /* Reduce spacing for h3 that follows a section with background */
+                ._section + ._section h3:first-child {
+                    margin-top: 8px;
+                }
+                /* Ensure sections with inline background-color styles display correctly */
+                ._section[style*="background-color"] {
+                    display: block !important;
+                }
                 ._background { position: relative; width: 100%; min-height: 200px; margin-bottom: 16px; border-radius: 8px; overflow: hidden; }
                 ._background picture { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
                 ._background picture img { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 0; margin: 0; }
@@ -335,36 +367,21 @@ struct HtmlContentView: UIViewRepresentable {
                     color: inherit;
                 }
                 /* Section styling - support for background colors and text colors */
-                ._section {
-                    /* No default styling for sections without backgrounds */
-                }
                 /* Only apply padding/margins to sections with background colors */
                 ._section[style*="background-color"] {
-                    padding: 24px 16px;
-                    margin-left: -16px;
-                    margin-right: -16px;
-                    margin-top: 16px;
-                    margin-bottom: 16px;
+                    padding: 24px 16px !important;
+                    margin-left: -16px !important;
+                    margin-right: -16px !important;
+                    margin-top: 16px !important;
+                    margin-bottom: 16px !important;
+                    /* Force display block to ensure background is visible */
+                    display: block !important;
+                    /* Ensure background is not overridden */
+                    background-image: none !important;
                 }
-                /* Ensure text colors within sections are applied */
-                ._section[style*="color"] {
-                    /* Text color is applied via inline style */
-                }
-                /* Ensure headings inherit section text color */
-                ._section[style*="color"] h1,
-                ._section[style*="color"] h2,
-                ._section[style*="color"] h3,
-                ._section[style*="color"] h4,
-                ._section[style*="color"] h5,
-                ._section[style*="color"] h6 {
-                    color: inherit;
-                }
-                /* Ensure paragraphs and other text elements inherit section text color */
-                ._section[style*="color"] p,
-                ._section[style*="color"] li,
-                ._section[style*="color"] span,
-                ._section[style*="color"] div {
-                    color: inherit;
+                /* Ensure inline styles are respected - use attribute selector to match any background-color value */
+                div._section[style] {
+                    /* Inline styles should already have background-color, but ensure they're applied */
                 }
                 /* Constrain embedded content (iframes, embeds) to prevent overflow */
                 iframe, embed, object {

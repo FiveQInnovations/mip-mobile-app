@@ -303,6 +303,19 @@ Add CSS rules to both apps that respect inline styles on any element:
 
 2. **iOS (`HtmlContentView.swift`)**: Added CSS rules for `._section` elements to support background colors and text color inheritance.
 
+### Android Status (2026-01-28)
+**Android section background colors are already working correctly.** The Android app's `HtmlContent.kt` component includes CSS rules for `._section` elements (lines 109-123, 229-240) that properly handle section background colors and text color inheritance.
+
+**Verified Working Example:**
+- "Doctrinal Statement" section on "What We Believe" page displays correctly on Android:
+  - Blue background (`#024d91`) is visible
+  - White text is readable and properly styled
+
+**iOS Issue:**
+- iOS still does not display section backgrounds
+- "Doctrinal Statement" section shows white text without background, making it unreadable
+- iOS implementation needs to be completed to match Android behavior
+
 ### Bug Fix: Gray Divider Lines
 **Issue**: Initial implementation applied margins (`margin-top: 16px; margin-bottom: 16px`) to ALL section divs, causing visible gray gaps between sections (body background showing through).
 

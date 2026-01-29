@@ -44,6 +44,17 @@ struct HomeView: View {
                     )
                 }
                 
+                // Debug indicator - visible change to verify app updates (always visible)
+                VStack {
+                    Text("✓ App Updated")
+                        .font(.caption)
+                        .foregroundColor(.green)
+                        .padding(.vertical, 4)
+                }
+                .frame(maxWidth: .infinity)
+                .background(Color.green.opacity(0.1))
+                .padding(.top, 16)
+                
                 // Welcome message if no content
                 if (siteMeta.homepageQuickTasks?.isEmpty ?? true) && (siteMeta.homepageFeatured?.isEmpty ?? true) {
                     VStack(spacing: 16) {
@@ -59,7 +70,17 @@ struct HomeView: View {
                             .multilineTextAlignment(.center)
                     }
                     .padding(32)
+                    .background(Color.blue.opacity(0.1))
+                    .cornerRadius(12)
+                    .padding(.horizontal, 16)
                 }
+                
+                // Debug indicator - visible change to verify app updates
+                Text("✓ App Updated")
+                    .font(.caption)
+                    .foregroundColor(.green)
+                    .padding(.top, 8)
+                    .padding(.bottom, 16)
             }
             }
             .background(Color(.systemBackground))

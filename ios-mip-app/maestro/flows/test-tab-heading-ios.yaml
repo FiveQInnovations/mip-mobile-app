@@ -1,0 +1,27 @@
+appId: com.fiveq.ffci
+---
+# Test Tab Heading Verification
+#
+# Verifies that the "Test" tab displays the expected heading:
+# "Prayer & Fruit: Black Text on White Background"
+
+- launchApp
+- waitForAnimationToEnd
+
+# Navigate to Test tab
+- tapOn:
+    text: "Test"
+    
+- waitForAnimationToEnd
+
+# Verify the screen title appears
+- assertVisible:
+    text: "Test Background"
+
+# Verify the main heading is visible
+- assertVisible:
+    text: "Prayer & Fruit: Black Text on White Background"
+
+# Take screenshot for verification
+- takeScreenshot:
+    path: "maestro/screenshots/test-tab-heading-verified"
