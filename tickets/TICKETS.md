@@ -159,6 +159,7 @@ Quick reference for active tasks. See individual files for details.
 - [228](228-mobile-api-replace-forms-with-buttons.md) - Mobile API: Replace Form Blocks with Buttons
 - [230](230-android-config-infrastructure-complete.md) - Android Configuration Infrastructure (Complete)
 - [230](done/230-android-config-infrastructure-complete.md) - Android Configuration Infrastructure (Complete)
+- [232](232-android-cover-hero-images-missing.md) - Android: Cover/Hero Images Missing (e.g. Resources tab)
 
 ---
 

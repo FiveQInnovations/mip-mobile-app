@@ -46,18 +46,31 @@ fun HtmlContent(
     }
     
     // Fix images with empty src but valid srcset - extract first URL from srcset
-    val srcsetPattern = Regex("srcset=\"(https?://[^\\s\"]+)")
-    var fixedHtml = html
-
-    srcsetPattern.find(html)?.let { match ->
-        val firstUrl = match.groupValues[1]
-        // Replace empty src="" with the found URL
-        fixedHtml = fixedHtml.replace("src=\"\"", "src=\"$firstUrl\"")
+    // Iterate through all img tags to handle each one individually
+    val imgPattern = Regex("<img[^>]+>")
+    val fixedHtml = imgPattern.replace(html) { matchResult ->
+        var imgTag = matchResult.value
+        if (imgTag.contains("src=\"\"") && imgTag.contains("srcset=\"")) {
+            val urlMatch = Regex("srcset=\"(https?://[^\\s\"]+)").find(imgTag)
+            if (urlMatch != null) {
+                val url = urlMatch.groupValues[1]
+                imgTag = imgTag.replace("src=\"\"", "src=\"$url\"")
+            }
+        }
+        imgTag
     }
 
     // Get primary color from config for CSS
     val config = AppConfig.get()
     val primaryColor = config.primaryColor
+
+    // Calculate base URL (site root) from API URL
+    val baseUrl = try {
+        val urlObj = URL(config.apiBaseUrl)
+        "${urlObj.protocol}://${urlObj.host}"
+    } catch (e: Exception) {
+        config.apiBaseUrl
+    }
 
     // Wrap HTML with basic styling
     val styledHtml = """
@@ -346,33 +359,12 @@ fun HtmlContent(
                 ._section + ._section h3:first-child {
                     margin-top: 8px;
                 }
-                ._background {
-                    position: absolute;
-                    top: 0;
-                    bottom: 0;
-                    left: -16px;
-                    right: -16px;
-                    width: calc(100% + 32px);
-                    margin-bottom: 0;
-                    border-radius: 0;
-                    overflow: hidden;
-                    z-index: -1;
-                    background-color: var(--bgColor, transparent);
-                }
-                ._background picture {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                }
-                ._background picture img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    border-radius: 0;
-                    margin: 0;
-                }
+                /* Background image block (used by hero sections) */
+                /* Match iOS behavior: it's a visible block in layout, not a behind-the-section layer */
+                ._background { position: relative; width: 100%; min-height: 200px; margin-bottom: 16px; border-radius: 8px; overflow: hidden; }
+                ._background picture { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+                ._background picture img { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 0; margin: 0; }
+                ._background > *:not(picture) { position: relative; z-index: 1; }
                 ul, ol {
                     padding-left: 24px;
                     margin: 16px 0;
@@ -799,7 +791,7 @@ fun HtmlContent(
                 }
 
                 loadDataWithBaseURL(
-                    AppConfig.get().apiBaseUrl,
+                    baseUrl,
                     styledHtml,
                     "text/html",
                     "UTF-8",
@@ -815,7 +807,7 @@ fun HtmlContent(
             
             // Load fresh content
             webView.loadDataWithBaseURL(
-                AppConfig.get().apiBaseUrl,
+                baseUrl,
                 styledHtml,
                 "text/html",
                 "UTF-8",
