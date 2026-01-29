@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [227](227-android-multi-site-config-system.md) - Android Multi-Site Configuration System
+(none)
 
 ## In Progress
 - [222](222-section-background-colors-not-appearing.md) - Section Background Colors Not Appearing in iOS App
@@ -22,6 +22,7 @@ Quick reference for active tasks. See individual files for details.
 ### 🟡 Nice to Have
 - [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
 - [229](229-ios-multi-site-config-system.md) - iOS Multi-Site Configuration System
+- [231](231-android-build-variants-multi-site.md) - Android Build Variants for Multi-Site Deployment
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
@@ -157,6 +158,8 @@ Quick reference for active tasks. See individual files for details.
 - [225](225-media-ministry-embed-too-wide.md) - Media Ministry Page - FFC's Monthly Media Embed Too Wide
 - [226](226-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing
 - [228](228-mobile-api-replace-forms-with-buttons.md) - Mobile API: Replace Form Blocks with Buttons
+- [230](230-android-config-infrastructure-complete.md) - Android Configuration Infrastructure (Complete)
+- [230](done/230-android-config-infrastructure-complete.md) - Android Configuration Infrastructure (Complete)
 
 ---
 
