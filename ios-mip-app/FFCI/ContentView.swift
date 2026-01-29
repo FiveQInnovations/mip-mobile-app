@@ -100,17 +100,30 @@ struct MainTabView: View {
     }
     
     private func iconForTab(_ iconName: String?, _ index: Int) -> String {
-        // Map icon names from API to SF Symbols
+        // Map icon names from CMS API to SF Symbols
         if let iconName = iconName?.lowercased() {
             switch iconName {
+            // CMS blueprint icon options
+            case "home":
+                return "house.fill"
+            case "star":
+                return "star.fill"
             case "book-outline", "book":
                 return "book.fill"
             case "library-outline", "library":
                 return "book.fill"
-            case "information-circle-outline", "info":
+            case "people":
+                return "person.2.fill"
+            case "person":
+                return "person.fill"
+            case "information-circle-outline", "information-circle", "info":
                 return "info.circle.fill"
+            case "hand-left", "hand":
+                return "hand.raised.fill"
             case "heart-outline", "heart":
                 return "heart.fill"
+            case "ellipse", "circle":
+                return "circle.fill"
             case "menu-outline", "menu":
                 return "line.3.horizontal"
             default:
