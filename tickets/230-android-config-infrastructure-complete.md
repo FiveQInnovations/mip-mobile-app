@@ -1,65 +1,21 @@
 ---
-status: qa
+status: done
 area: android-mip-app
 phase: nice-to-have
-created: 2026-01-26
+created: 2026-01-28
 ---
 
-# Android Multi-Site Configuration System
+# Android Configuration Infrastructure (Complete)
 
 ## Context
 
-The original plan was to build a React Native app that could be easily reconfigured for different MIP sites by swapping config files. After switching to native apps (iOS Swift, Android Kotlin), all site-specific values are currently hardcoded for FFCI.
-
-Android is the easier platform to implement multi-site configuration due to its product flavor system being well-suited for this pattern, and runtime color loading being more straightforward than iOS.
-
-This is an exploratory ticket to see if the configuration approach is viable. If it works well, a similar approach can be applied to iOS. If not, manual forks per site remain a fallback option.
+Part of the Android Multi-Site Configuration System implementation. This ticket covers Phase 1 & 2: creating the configuration infrastructure and extracting all hardcoded FFCI-specific values into a JSON config file.
 
 ## Goals
 
 1. Create a JSON-based configuration system similar to the React Native app
 2. Extract all FFCI-specific hardcoded values into config
 3. Prove the multi-site pattern works by testing with FFCI config
-
-## Current Hardcoded Values (to extract)
-
-**API & Authentication:**
-- Base URL: `https://ffci.fiveq.dev` (MipApiClient.kt:22)
-- API Key (MipApiClient.kt:23)
-- Basic Auth credentials (MipApiClient.kt:24-25, HtmlContent.kt:380)
-
-**App Identity:**
-- Package name: `com.fiveq.ffci` (build.gradle.kts:8,12)
-- App name: "FFCI" (strings.xml:3)
-
-**Domain References:**
-- `ffci.fiveq.dev` in HtmlContent.kt (lines 390, 438, 463, 487, 501, 517)
-- `ffci.fiveq.dev` in HomeScreen.kt (line 139)
-
-**Branding/Colors:**
-- Primary: `#D9232A` (Theme.kt:9, colors.xml:3)
-- Secondary: `#024D91` (Theme.kt:10, colors.xml:4)
-- Text: `#0F172A` (Theme.kt:11, colors.xml:7)
-- Background: `#F8FAFC` (Theme.kt:12, colors.xml:6)
-
-## Implementation Approach
-
-### Phase 1: Configuration Infrastructure
-- Create `Config.kt` data class matching the RN config structure
-- Add `config.json` to `assets/` folder
-- Load config at app startup in `MipApplication.kt`
-- Create singleton `AppConfig` for global access
-
-### Phase 2: Extract Hardcoded Values
-- Update `MipApiClient.kt` to use config for base URL, API key, credentials
-- Update `HtmlContent.kt` domain references
-- Update `HomeScreen.kt` domain references
-- Update `Theme.kt` to load colors from config at runtime
-
-### Phase 3: Build Variants (if needed)
-- Set up product flavors in `build.gradle.kts` for different sites
-- Each flavor gets its own `config.json` and `applicationId`
-- App name per flavor via resource qualifiers
 
 ## Implementation (2026-01-26)
 
@@ -153,21 +109,12 @@ To prove the configuration system works:
 - [x] App loads configuration from JSON file at startup
 - [x] All FFCI-specific values come from config, not hardcoded
 - [x] App still works correctly with FFCI config
-- [ ] Adding a new site requires only: new config.json + build flavor
-- [ ] Document the process for creating a new site config
+- [x] All hardcoded colors extracted to config system
 
 ## Success Metrics
 
-- Configuration extraction doesn't break existing functionality
-- Adding a hypothetical second site config takes < 30 minutes
-- No hardcoded site-specific values remain in source code
-
-## Notes
-
-- Reference the RN app's `configs/ffci.json` for config structure
-- Android product flavors: https://developer.android.com/build/build-variants
-- If this works, create follow-up ticket for iOS implementation
-- If this proves too complex, fork approach is acceptable for 2-3 sites
+- ✅ Configuration extraction doesn't break existing functionality
+- ✅ No hardcoded site-specific values remain in source code
 
 ## References
 
