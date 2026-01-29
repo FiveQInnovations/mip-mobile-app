@@ -1,11 +1,25 @@
 ---
-status: backlog
+status: done
 area: ios-mip-app
 phase: core
 created: 2026-01-26
 ---
 
 # "Purpose for Gathering" Accordion Sections Not Expandable - Design Improvement Needed
+
+## Issue Summary
+
+**Problem:** Accordion items in "Purpose for Gathering" section were not expanding and lacked visual polish. Radio buttons were visible but items remained collapsed.
+
+**Solution:** 
+- Added CSS to force accordion items open with proper spacing (removed card styling that caused readability issues on Android)
+- Added JavaScript to force all `<details>` elements open and show hidden accordion content
+- Hidden radio buttons since items are always open
+- Applied to both iOS and Android
+
+**Files Changed:**
+- `ios-mip-app/FFCI/Views/HtmlContentView.swift` - Added accordion CSS + JavaScript
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt` - Added accordion CSS + JavaScript, enabled JS
 
 ## Context
 

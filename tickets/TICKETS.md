@@ -15,9 +15,6 @@ Quick reference for active tasks. See individual files for details.
 
 ## Backlog
 
-### 🔴 Core Functionality (FFCI)
-- [223](223-purpose-for-gathering-accordion-design.md) - "Purpose for Gathering" Accordion Sections Not Expandable - Design Improvement Needed
-
 ### 🟡 Nice to Have
 - [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
 - [229](229-ios-multi-site-config-system.md) - iOS Multi-Site Configuration System
@@ -155,6 +152,7 @@ Quick reference for active tasks. See individual files for details.
 - [220](220-membership-form-button-open-browser.md) - Membership Form Button Should Open Form in Browser
 - [221](221-what-we-believe-images-not-appearing.md) - Images Not Appearing on "What We Believe" Page
 - [222](222-section-background-colors-not-appearing.md) - Section Background Colors Not Appearing in iOS App
+- [223](223-purpose-for-gathering-accordion-design.md) - "Purpose for Gathering" Accordion Sections Not Expandable - Design Improvement Needed
 - [224](224-ios-resources-red-artifacts.md) - Red Artifacts on Left Side of Resources Tab Content
 - [225](225-media-ministry-embed-too-wide.md) - Media Ministry Page - FFC's Monthly Media Embed Too Wide
 - [226](226-android-resources-excessive-spacing.md) - Android Resources Page Excessive Spacing

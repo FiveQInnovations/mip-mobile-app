@@ -250,6 +250,93 @@ struct HtmlContentView: UIViewRepresentable {
                     border-left: none;
                     padding-left: 0;
                 }
+                /* Accordion styling - force all items open and style as cards */
+                /* Target details/summary structure */
+                details {
+                    display: block !important;
+                    background: rgba(255, 255, 255, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin-bottom: 16px;
+                    margin-top: 16px;
+                }
+                /* Force all accordion items to be open */
+                details[open] {
+                    display: block !important;
+                }
+                /* Also target accordion class-based structures */
+                .accordion,
+                .accordion-item,
+                [class*="accordion"] {
+                    background: rgba(255, 255, 255, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin-bottom: 16px;
+                    margin-top: 16px;
+                }
+                /* Accordion title styling */
+                summary,
+                .accordion-title,
+                [class*="accordion-title"],
+                [class*="accordion-header"] {
+                    display: block !important;
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: inherit;
+                    margin-bottom: 12px;
+                    cursor: default;
+                    list-style: none;
+                    padding: 0;
+                }
+                /* Hide default disclosure triangle */
+                summary::-webkit-details-marker {
+                    display: none !important;
+                }
+                summary::marker {
+                    display: none !important;
+                }
+                /* Hide radio buttons in accordions - they're not needed since items are always open */
+                details input[type="radio"],
+                .accordion input[type="radio"],
+                [class*="accordion"] input[type="radio"] {
+                    display: none !important;
+                }
+                /* Accordion content styling */
+                details > *:not(summary),
+                .accordion-content,
+                [class*="accordion-content"] {
+                    display: block !important;
+                    color: inherit;
+                    font-size: 17px;
+                    line-height: 28px;
+                    margin-top: 0;
+                }
+                /* Ensure lists inside accordion have proper spacing */
+                details ul,
+                details ol,
+                .accordion ul,
+                .accordion ol,
+                [class*="accordion"] ul,
+                [class*="accordion"] ol {
+                    margin: 12px 0;
+                    padding-left: 24px;
+                }
+                details li,
+                .accordion li,
+                [class*="accordion"] li {
+                    margin: 8px 0;
+                }
+                /* Accordion items inherit text color from parent section */
+                ._section[style*="color"] details,
+                ._section[style*="color"] summary,
+                ._section[style*="color"] details > *,
+                ._section[style*="color"] .accordion,
+                ._section[style*="color"] .accordion-item,
+                ._section[style*="color"] [class*="accordion"] {
+                    color: inherit !important;
+                }
                 p { margin: 16px 0; }
                 hr { display: none; }
                 /* Base link styles - but NOT for buttons or image links */
@@ -492,6 +579,47 @@ struct HtmlContentView: UIViewRepresentable {
                         styleEl.textContent = cssRules;
                         document.head.appendChild(styleEl);
                     }
+                })();
+                
+                // Force all accordion items to be open/expanded
+                (function() {
+                    // Force all <details> elements open
+                    const detailsElements = document.querySelectorAll('details');
+                    detailsElements.forEach(function(details) {
+                        details.setAttribute('open', 'open');
+                        details.open = true;
+                    });
+                    
+                    // Show all accordion content that might be hidden
+                    // Handle radio button-based accordions
+                    const radioInputs = document.querySelectorAll('input[type="radio"][name*="accordion"], input[type="radio"][id*="accordion"]');
+                    radioInputs.forEach(function(radio) {
+                        // Find associated content and show it
+                        const radioId = radio.id;
+                        const radioName = radio.name;
+                        
+                        // Try to find content associated with this radio button
+                        if (radioId) {
+                            const content = document.querySelector('[for="' + radioId + '"] + *');
+                            if (content) {
+                                content.style.display = 'block';
+                            }
+                        }
+                        
+                        // Find content panels that might be controlled by radio buttons
+                        const panels = document.querySelectorAll('[class*="accordion-content"], [class*="panel"], [id*="panel"]');
+                        panels.forEach(function(panel) {
+                            panel.style.display = 'block';
+                            panel.classList.remove('hidden', 'collapse', 'collapsed');
+                        });
+                    });
+                    
+                    // Show any hidden accordion content
+                    const hiddenContent = document.querySelectorAll('[class*="accordion"] [style*="display: none"], [class*="accordion"] .hidden, [class*="accordion"] .collapse');
+                    hiddenContent.forEach(function(element) {
+                        element.style.display = 'block';
+                        element.classList.remove('hidden', 'collapse', 'collapsed');
+                    });
                 })();
             """) { _, _ in }
             
