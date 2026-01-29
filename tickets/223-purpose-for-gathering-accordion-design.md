@@ -9,17 +9,21 @@ created: 2026-01-26
 
 ## Issue Summary
 
-**Problem:** Accordion items in "Purpose for Gathering" section were not expanding and lacked visual polish. Radio buttons were visible but items remained collapsed.
+**Problem:** Accordion items in "Purpose for Gathering" section were not expanding and lacked visual polish. Radio buttons were visible but items remained collapsed. Additionally, blockquote elements inside colored sections had incorrect background colors on Android.
 
 **Solution:** 
-- Added CSS to force accordion items open with proper spacing (removed card styling that caused readability issues on Android)
+- Added CSS to force accordion items open with proper spacing
 - Added JavaScript to force all `<details>` elements open and show hidden accordion content
 - Hidden radio buttons since items are always open
+- Fixed blockquote backgrounds in colored sections to be transparent (inheriting section background)
+- Added JavaScript to fix inline color inheritance for blockquotes
 - Applied to both iOS and Android
 
+**CMS Fix:** Removed redundant gray `section_bg_color` from "Guiding Policies" section so the red background block renders correctly.
+
 **Files Changed:**
-- `ios-mip-app/FFCI/Views/HtmlContentView.swift` - Added accordion CSS + JavaScript
-- `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt` - Added accordion CSS + JavaScript, enabled JS
+- `ios-mip-app/FFCI/Views/HtmlContentView.swift` - Added accordion CSS + JavaScript + blockquote fixes
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt` - Added accordion CSS + JavaScript + blockquote fixes, enabled JS
 
 ## Context
 
