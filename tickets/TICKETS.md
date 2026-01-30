@@ -23,6 +23,7 @@ Quick reference for active tasks. See individual files for details.
 - [239](239-streamline-prayer-request-mobile.md) - Explore Streamlining Prayer Request Page for Mobile
 
 ### 🟡 Nice to Have
+- [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
 - [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
 - [229](229-ios-multi-site-config-system.md) - iOS Multi-Site Configuration System
 - [231](231-android-build-variants-multi-site.md) - Android Build Variants for Multi-Site Deployment
@@ -56,6 +57,15 @@ Quick reference for active tasks. See individual files for details.
 - [078](078-verification-report.md) - Ticket 078 Verification Report
 - [085](085-button-layout-verification-report.md) - Ticket 085: Button Layout Verification Report
 - [092](092-tab-bar-sync-from-kirby.md) - Ticket 092: Tab Bar Not Syncing New Tabs from Kirby
+
+## Cancelled
+- [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
+- [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
+- [013](013-speed-up-eas-android-builds.md) - Speed Up EAS Android Build Time
+- [040](040-eas-build-profiles.md) - Set Up EAS Build Profiles for Multiple Sites
+- [042](042-remove-dev-tools.md) - Remove Dev Tools Section Before Production
+- [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
+- [050](050-maestro-test-organization.md) - Research Maestro Test Organization
 
 ## Done
 - [001](done/001-api-key-auth.md) - Update RN app to use X-API-Key authentication
@@ -176,6 +186,7 @@ Quick reference for active tasks. See individual files for details.
 - `in-progress` - Currently working on this
 - `blocked` - Waiting on something else
 - `maybe` - Low priority, revisit later
+- `cancelled` - Cancelled, no longer needed
 - `done` - Completed (move to `done/` folder)
 
 ## Phases (for backlog prioritization)

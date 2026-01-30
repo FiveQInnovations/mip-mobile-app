@@ -1,7 +1,7 @@
 ---
-status: nice-to-have
+status: backlog
 area: ios-mip-app
-phase: core
+phase: nice-to-have
 created: 2026-01-24
 ---
 

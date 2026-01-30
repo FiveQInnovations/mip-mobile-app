@@ -19,13 +19,14 @@ const README_PATH = path.join(TICKETS_DIR, 'TICKETS.md');
 const DONE_DIR = path.join(TICKETS_DIR, 'done');
 
 // Status categories in order
-const STATUS_ORDER = ['qa', 'in-progress', 'backlog', 'blocked', 'maybe', 'done'];
+const STATUS_ORDER = ['qa', 'in-progress', 'backlog', 'blocked', 'maybe', 'cancelled', 'done'];
 const STATUS_LABELS = {
   'qa': 'QA',
   'in-progress': 'In Progress',
   'backlog': 'Backlog',
   'blocked': 'Blocked',
   'maybe': 'Maybe',
+  'cancelled': 'Cancelled',
   'done': 'Done',
 };
 
@@ -199,6 +200,7 @@ Quick reference for active tasks. See individual files for details.
 - \`in-progress\` - Currently working on this
 - \`blocked\` - Waiting on something else
 - \`maybe\` - Low priority, revisit later
+- \`cancelled\` - Cancelled, no longer needed
 - \`done\` - Completed (move to \`done/\` folder)
 
 ## Phases (for backlog prioritization)
