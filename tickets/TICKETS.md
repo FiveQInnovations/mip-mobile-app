@@ -41,20 +41,15 @@ Quick reference for active tasks. See individual files for details.
 - [028](028-firebase-setup.md) - Firebase Analytics Setup
 - [029](029-firebase-navigation-events.md) - Firebase Navigation Events (app_open, screen_view, content_view)
 - [031](031-firebase-external-link-event.md) - Firebase External Link Event
-- [040](040-eas-build-profiles.md) - Set Up EAS Build Profiles for Multiple Sites
 - [041](041-new-site-guide.md) - Document "Adding a New Site" Step-by-Step Guide
-- [042](042-remove-dev-tools.md) - Remove Dev Tools Section Before Production
-- [237](237-send-app-transfer-info.md) - Send App Transfer Process Info to Mike K.
-- [240](240-setup-testflight-and-invite-testers.md) - Setup TestFlight, Submit Build, and Invite Testers
+
+### Unassigned
+- [015](015-ios-browserstack-without-apple-dev-account.md) - Build and Upload iOS to BrowserStack Without Apple Developer Account
 
 ## Blocked
-- [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
-- [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
-- [015](015-ios-browserstack-without-apple-dev-account.md) - Build and Upload iOS to BrowserStack Without Apple Developer Account
 - [077](077-homepage-touch-handling.md) - Homepage Touch Handling on Real Devices
 
 ## Maybe
-- [013](013-speed-up-eas-android-builds.md) - Speed Up EAS Android Build Time
 - [033](033-maestro-collection-test.md) - Maestro Test: Collection Grid and Navigation
 - [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
@@ -170,6 +165,8 @@ Quick reference for active tasks. See individual files for details.
 - [230](done/230-android-config-infrastructure-complete.md) - Android Configuration Infrastructure (Complete)
 - [232](232-android-cover-hero-images-missing.md) - Android: Cover/Hero Images Missing (e.g. Resources tab)
 - [233](233-fix-featured-resources-carousel-scroll.md) - Fix Featured/Resources Carousel Scroll to End
+- [237](237-send-app-transfer-info.md) - Send App Transfer Process Info to Mike K.
+- [240](240-setup-testflight-and-invite-testers.md) - Setup TestFlight, Submit Build, and Invite Testers
 
 ---
 

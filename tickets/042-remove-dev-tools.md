@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: cancelled
 area: rn-mip-app
 phase: production
 created: 2026-01-02
