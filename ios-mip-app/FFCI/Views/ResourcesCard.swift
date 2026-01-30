@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ResourcesCard: View {
     let task: HomepageQuickTask
+    let cardWidth: CGFloat
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -43,7 +44,7 @@ struct ResourcesCard: View {
             }
             .padding(16)
         }
-        .frame(width: 280)
+        .frame(width: cardWidth)
         .background(Color(.systemBackground))
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)

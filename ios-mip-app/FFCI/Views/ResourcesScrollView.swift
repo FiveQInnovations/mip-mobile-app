@@ -2,7 +2,7 @@
 //  ResourcesScrollView.swift
 //  FFCI
 //
-//  Resources section with horizontal scrolling and arrow controls
+//  Resources section with horizontal scrolling and card snapping
 //
 
 import SwiftUI
@@ -10,17 +10,24 @@ import SwiftUI
 struct ResourcesScrollView: View {
     let quickTasks: [HomepageQuickTask]
     let onQuickTaskClick: (String) -> Void
-    @ObservedObject var scrollTracker: ScrollTracker
     
-    private let cardWidth: CGFloat = 280
     private let cardSpacing: CGFloat = 16
     private let horizontalPadding: CGFloat = 16
+    private let peekAmount: CGFloat = 60 // Amount of next card visible for affordance
+    private let baseCardWidth: CGFloat = 280 // Base width, will be adjusted for peek
     
-    private var estimatedContentWidth: CGFloat {
-        let count = CGFloat(quickTasks.count)
-        guard count > 0 else { return 0 }
-        let spacingWidth = max(count - 1, 0) * cardSpacing
-        return (count * cardWidth) + spacingWidth + (horizontalPadding * 2)
+    @State private var containerWidth: CGFloat = 0
+    @State private var alignedIndex: Int? = nil
+    
+    private var cardWidth: CGFloat {
+        guard containerWidth > 0 else { return baseCardWidth }
+        // Calculate card width to ensure peek: when a card is fully visible, 
+        // the next card should peek by peekAmount
+        // Available width = containerWidth - (horizontalPadding * 2)
+        // We want: cardWidth + peekAmount <= availableWidth
+        let availableWidth = containerWidth - (horizontalPadding * 2)
+        let maxCardWidth = availableWidth - peekAmount
+        return min(baseCardWidth, max(240, maxCardWidth)) // Min 240pt for readability
     }
     
     var body: some View {
@@ -32,10 +39,10 @@ struct ResourcesScrollView: View {
                 .padding(.top, 24)
                 .accessibilityIdentifier("resources-section-title")
             
-            ScrollViewReader { scrollProxy in
-                ZStack {
+            GeometryReader { geo in
+                ZStack(alignment: .trailing) {
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: cardSpacing) {
+                        LazyHStack(spacing: cardSpacing) {
                             ForEach(Array(quickTasks.enumerated()), id: \.offset) { index, task in
                                 Group {
                                     // Check externalUrl FIRST - external links should open in Safari
@@ -43,102 +50,54 @@ struct ResourcesScrollView: View {
                                     // would incorrectly use NavigationLink instead of Link
                                     if let externalUrl = task.externalUrl, let url = URL(string: externalUrl) {
                                         Link(destination: url) {
-                                            ResourcesCard(task: task)
+                                            ResourcesCard(task: task, cardWidth: cardWidth)
                                         }
                                         .buttonStyle(.plain)
                                     } else if let uuid = task.uuid, !uuid.isEmpty {
                                         NavigationLink(destination: TabPageView(uuid: uuid)) {
-                                            ResourcesCard(task: task)
+                                            ResourcesCard(task: task, cardWidth: cardWidth)
                                         }
                                         .simultaneousGesture(TapGesture().onEnded {
                                             onQuickTaskClick(uuid)
                                         })
                                         .buttonStyle(.plain)
                                     } else {
-                                        ResourcesCard(task: task)
+                                        ResourcesCard(task: task, cardWidth: cardWidth)
                                     }
                                 }
                                 .accessibilityIdentifier("resources-card-\(index)")
                                 .id(index)
                             }
                         }
-                        .padding(.horizontal, horizontalPadding)
-                        .background(
-                            GeometryReader { geo in
-                                Color.clear
-                                    .preference(key: ContentWidthPreferenceKey.self, value: geo.size.width)
-                                    .preference(key: ScrollOffsetPreferenceKey.self, value: -geo.frame(in: .named("resourcesScroll")).minX)
-                            }
+                        .padding(.leading, horizontalPadding)
+                        .padding(.trailing, horizontalPadding + peekAmount) // Extra trailing padding so last card can snap fully
+                        .scrollTargetLayout()
+                    }
+                    .scrollTargetBehavior(.viewAligned)
+                    .scrollPosition(id: $alignedIndex)
+                    .onAppear {
+                        containerWidth = geo.size.width
+                    }
+                    .onChange(of: geo.size.width) { _, newValue in
+                        containerWidth = newValue
+                    }
+                    
+                    // Optional right-edge fade that disappears at the end
+                    if let alignedIndex = alignedIndex, alignedIndex < quickTasks.count - 1, quickTasks.count > 1 {
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.clear,
+                                Color(red: 0.945, green: 0.961, blue: 0.976).opacity(0.8)
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
                         )
-                    }
-                    .coordinateSpace(name: "resourcesScroll")
-                    .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
-                        scrollTracker.updateScrollOffset(value)
-                    }
-                    .onPreferenceChange(ContentWidthPreferenceKey.self) { value in
-                        scrollTracker.contentWidth = max(value, estimatedContentWidth)
-                    }
-                    
-                    // Left scroll arrow
-                    if scrollTracker.canScrollLeft {
-                        HStack {
-                            ScrollArrowButton(direction: .left) {
-                                let targetIndex = max(0, scrollTracker.visibleIndex - 1)
-                                let itemWidth = cardWidth + cardSpacing
-                                let targetOffset = CGFloat(targetIndex) * itemWidth
-                                scrollTracker.updateScrollOffset(targetOffset)
-                                withAnimation(.easeInOut(duration: 0.3)) {
-                                    scrollProxy.scrollTo(targetIndex, anchor: .leading)
-                                }
-                            }
-                            .padding(.leading, 8)
-                            Spacer()
-                        }
-                    }
-                    
-                    // Right scroll arrow
-                    if scrollTracker.canScrollRight {
-                        HStack {
-                            Spacer()
-                            ScrollArrowButton(direction: .right) {
-                                let targetIndex = min(quickTasks.count - 1, scrollTracker.visibleIndex + 1)
-                                let itemWidth = cardWidth + cardSpacing
-                                let isLastCard = targetIndex == quickTasks.count - 1
-                                
-                                // Calculate the correct offset based on anchor type
-                                // For .trailing anchor (last card), calculate offset where card's right edge
-                                // aligns with container's right edge
-                                let targetOffset: CGFloat
-                                if isLastCard {
-                                    // maxScrollOffset = contentWidth - containerWidth
-                                    targetOffset = max(0, scrollTracker.contentWidth - scrollTracker.containerWidth)
-                                } else {
-                                    targetOffset = CGFloat(targetIndex) * itemWidth
-                                }
-                                scrollTracker.updateScrollOffset(targetOffset)
-                                
-                                withAnimation(.easeInOut(duration: 0.3)) {
-                                    let anchor: UnitPoint = isLastCard ? .trailing : .leading
-                                    scrollProxy.scrollTo(targetIndex, anchor: anchor)
-                                }
-                            }
-                            .padding(.trailing, 8)
-                        }
+                        .frame(width: 40)
+                        .allowsHitTesting(false)
                     }
                 }
-                .background(
-                    GeometryReader { geo in
-                        Color.clear
-                            .onAppear {
-                                scrollTracker.containerWidth = geo.size.width
-                                scrollTracker.contentWidth = max(scrollTracker.contentWidth, estimatedContentWidth)
-                            }
-                            .onChange(of: geo.size.width) { newValue in
-                                scrollTracker.containerWidth = newValue
-                            }
-                    }
-                )
             }
+            .frame(height: 280) // Approximate height for cards
         }
         .padding(.vertical, 16)
         .background(Color(red: 0.945, green: 0.961, blue: 0.976))

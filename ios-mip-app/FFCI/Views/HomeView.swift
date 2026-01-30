@@ -16,7 +16,6 @@ struct HomeView: View {
     let onFeaturedClick: (String) -> Void
     
     @State private var showSearch = false
-    @StateObject private var scrollTracker = ScrollTracker()
     
     var body: some View {
         NavigationStack {
@@ -39,8 +38,7 @@ struct HomeView: View {
                 if let quickTasks = siteMeta.homepageQuickTasks, !quickTasks.isEmpty {
                     ResourcesScrollView(
                         quickTasks: quickTasks,
-                        onQuickTaskClick: onQuickTaskClick,
-                        scrollTracker: scrollTracker
+                        onQuickTaskClick: onQuickTaskClick
                     )
                 }
                 

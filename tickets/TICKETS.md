@@ -11,12 +11,11 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [233](233-fix-featured-resources-carousel-scroll.md) - Fix Featured/Resources Carousel Scroll to End
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [233](233-fix-featured-resources-carousel-scroll.md) - Fix Featured/Resources Carousel Scroll to End
 - [234](234-noindex-app-only-pages.md) - Investigate noindex for App-Only Pages
 - [235](235-media-tab-categories.md) - Update Media Tab to Show Categories
 - [236](236-add-give-button-bottom-nav.md) - Add Give Button to Bottom Nav; Remove Media
