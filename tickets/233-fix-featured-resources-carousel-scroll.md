@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: done
 area: general
 phase: core
 created: 2026-01-29

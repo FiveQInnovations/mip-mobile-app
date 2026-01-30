@@ -11,7 +11,7 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-- [233](233-fix-featured-resources-carousel-scroll.md) - Fix Featured/Resources Carousel Scroll to End
+(none)
 
 ## Backlog
 
@@ -169,6 +169,7 @@ Quick reference for active tasks. See individual files for details.
 - [230](230-android-config-infrastructure-complete.md) - Android Configuration Infrastructure (Complete)
 - [230](done/230-android-config-infrastructure-complete.md) - Android Configuration Infrastructure (Complete)
 - [232](232-android-cover-hero-images-missing.md) - Android: Cover/Hero Images Missing (e.g. Resources tab)
+- [233](233-fix-featured-resources-carousel-scroll.md) - Fix Featured/Resources Carousel Scroll to End
 
 ---
 
