@@ -21,8 +21,6 @@ STEP 2: Accept the Invitation
 2. Open the email and tap the "Start Testing" button or link
 3. This will open the TestFlight app automatically, or you can manually open TestFlight and the invitation will appear
 
-Alternative: If you received a public link instead of an email, tap the link on your iPhone/iPad and it will open TestFlight automatically.
-
 STEP 3: Install the FFCI App
 
 1. Once you've accepted the invitation, open the TestFlight app on your device
@@ -41,7 +39,7 @@ IMPORTANT NOTES
 - Beta builds expire: Each beta build is available for up to 90 days. When a build expires, you'll need to install a new build if one is available.
 - Automatic updates: You can enable automatic updates in TestFlight settings so you'll always have the latest beta version.
 - Feedback: If you encounter any bugs or issues, please let us know! You can also use TestFlight's built-in feedback feature by shaking your device while using the app.
-- Production version: When the app is released to the App Store, you'll need to download the official version separately. Beta testing data won't carry over to the production app.
+- Production version: When the app is released to the App Store, you'll need to download the official version separately.
 
 TROUBLESHOOTING
 
@@ -51,13 +49,7 @@ TROUBLESHOOTING
 
 ADDITIONAL RESOURCES
 
-If you'd like more information about using TestFlight, here are some helpful official resources from Apple:
-
-- TestFlight Official Site: https://testflight.apple.com/ - Apple's official TestFlight information page for testers
-- Apple Developer TestFlight Guide: https://developer.apple.com/testflight/ - Comprehensive overview of TestFlight beta testing (includes tester information)
-- App Store Connect TestFlight Help: https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview - Detailed documentation about TestFlight features and capabilities
-
-These resources provide additional details about TestFlight features, system requirements, and best practices for beta testing.
+For more information about TestFlight, visit Apple's official site: https://testflight.apple.com/
 
 If you run into any issues or have questions, please don't hesitate to reach out!
 
