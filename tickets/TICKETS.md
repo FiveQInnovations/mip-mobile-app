@@ -19,7 +19,7 @@ Quick reference for active tasks. See individual files for details.
 - [234](234-noindex-app-only-pages.md) - Investigate noindex for App-Only Pages
 - [235](235-media-tab-categories.md) - Update Media Tab to Show Categories
 - [236](236-add-give-button-bottom-nav.md) - Add Give Button to Bottom Nav; Remove Media
-- [238](238-get-mike-bell-audio-files-and-test.md) - Get Audio Files from Mike Bell and Test with Lots of Media
+- [238](238-get-mike-bell-audio-files-and-test.md) - Import ~30 Audio Messages from Google Drive into Kirby
 - [239](239-streamline-prayer-request-mobile.md) - Explore Streamlining Prayer Request Page for Mobile
 
 ### 🟡 Nice to Have
