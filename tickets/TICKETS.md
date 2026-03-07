@@ -25,6 +25,7 @@ Quick reference for active tasks. See individual files for details.
 - [242](242-android-what-we-believe-hero-title-contrast.md) - Improve Hero Title Contrast on "What We Believe" (Android)
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
 - [244](244-android-connect-hero-title-contrast.md) - Improve Hero Title Contrast on `Connect With Us` (Android)
+- [246](246-android-resource-pages-hero-title-contrast-systemic.md) - Improve Hero Title Contrast Across Resource Subpages (Android)
 
 ### 🟡 Nice to Have
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
