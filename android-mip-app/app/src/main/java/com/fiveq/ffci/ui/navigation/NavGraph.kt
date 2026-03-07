@@ -88,9 +88,17 @@ fun NavGraph(
 
         // Search screen
         composable(Screen.Search.route) {
+            val context = LocalContext.current
             SearchScreen(
-                onResultClick = { uuid ->
-                    navController.navigate(Screen.Page.createRoute(uuid))
+                onResultClick = { result ->
+                    val resultPath = runCatching { Uri.parse(result.url).path.orEmpty() }.getOrDefault("")
+                    if (resultPath.startsWith("/forms/")) {
+                        // Form pages are web-first experiences; open externally from search.
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(result.url))
+                        context.startActivity(intent)
+                    } else {
+                        navController.navigate(Screen.Page.createRoute(result.uuid))
+                    }
                 },
                 onBackClick = {
                     navController.popBackStack()

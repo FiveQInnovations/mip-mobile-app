@@ -53,7 +53,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SearchScreen(
-    onResultClick: (String) -> Unit,
+    onResultClick: (SearchResult) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -204,7 +204,7 @@ fun SearchScreen(
                         result = result,
                         onClick = {
                             keyboardController?.hide()
-                            onResultClick(result.uuid)
+                            onResultClick(result)
                         },
                         modifier = Modifier.fillMaxWidth()
                     )
