@@ -42,7 +42,7 @@ data class SiteMeta(
     val social: List<SocialLink>? = null,
     val logo: String?,
     @Json(name = "homepage_quick_tasks") val homepageQuickTasks: List<HomepageQuickTask>? = null,
-    @Json(name = "homepage_featured") val homepageFeatured: List<HomepageFeatured>? = null
+    @Json(name = "homepage_featured") @FlexibleList val homepageFeatured: List<HomepageFeatured>? = null
 )
 
 @JsonClass(generateAdapter = true)

@@ -27,6 +27,7 @@ object MipApiClient {
     private val API_KEY get() = config.apiKey
 
     private val moshi: Moshi = Moshi.Builder()
+        .add(FlexibleListAdapterFactory())
         .addLast(KotlinJsonAdapterFactory())
         .build()
 
