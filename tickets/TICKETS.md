@@ -26,6 +26,7 @@ Quick reference for active tasks. See individual files for details.
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
 - [244](244-android-connect-hero-title-contrast.md) - Improve Hero Title Contrast on `Connect With Us` (Android)
 - [246](246-android-resource-pages-hero-title-contrast-systemic.md) - Improve Hero Title Contrast Across Resource Subpages (Android)
+- [247](247-android-content-page-cta-buttons-not-navigating.md) - Fix Non-Responsive CTA Buttons on Content Pages (Android)
 
 ### 🟡 Nice to Have
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
