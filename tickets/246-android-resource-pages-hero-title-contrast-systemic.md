@@ -37,6 +37,16 @@ This appears to be a systemic styling gap rather than a one-page issue. Some pag
   - `FAQ`
 - Comparison page with acceptable contrast:
   - `Our Story`
+- Follow-up app-only fix pass (2026-03-07):
+  - Increased shared hero image darkening gradient in Android WebView renderer
+  - Added DOM-order aware hero treatment for both patterns:
+    - `._background + ._heading`
+    - `._heading + ._background` (used on `Connect With Us` / `Media Ministry`)
+  - Added stronger dark heading plate and text shadow for hero title readability
+- Verification screenshots after pass:
+  - `/tmp/android_connect_after_contrast_tune_v2.png`
+  - `/tmp/android_what_we_believe_after_contrast_tune_v2.png`
+  - `/tmp/android_media_ministry_after_contrast_tune_v2.png`
 
 ## References
 

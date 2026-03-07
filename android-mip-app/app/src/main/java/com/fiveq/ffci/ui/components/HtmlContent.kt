@@ -385,8 +385,8 @@ fun HtmlContent(
                     inset: 0;
                     background: linear-gradient(
                         180deg,
-                        rgba(15, 23, 42, 0.40) 0%,
-                        rgba(15, 23, 42, 0.52) 100%
+                        rgba(15, 23, 42, 0.54) 0%,
+                        rgba(15, 23, 42, 0.72) 100%
                     );
                     z-index: 1;
                     pointer-events: none;
@@ -419,9 +419,29 @@ fun HtmlContent(
                 ._section ._background + ._heading {
                     margin-top: -86px;
                     padding: 18px 16px 14px;
-                    background: rgba(15, 23, 42, 0.58);
+                    background: rgba(15, 23, 42, 0.82);
                     position: relative;
                     z-index: 3;
+                }
+                ._hero-heading {
+                    padding: 18px 16px 14px;
+                    background: rgba(15, 23, 42, 0.84);
+                    position: relative;
+                    z-index: 3;
+                }
+                ._hero-heading-after-background {
+                    margin-top: -86px;
+                }
+                ._hero-heading-before-background {
+                    margin-top: 0;
+                    margin-bottom: -86px;
+                }
+                ._hero-heading h1,
+                ._hero-heading h2,
+                ._hero-heading h3,
+                ._hero-heading h4 {
+                    color: #ffffff !important;
+                    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.78);
                 }
                 ul, ol {
                     padding-left: 24px;
@@ -718,6 +738,29 @@ fun HtmlContent(
                                         if (colorMatch) {
                                             cssRules += '._section[data-section-id="section-' + index + '"] * { color: inherit !important; }\n';
                                         }
+                                    }
+                                });
+
+                                // Normalize hero heading/background pairs for both DOM orders:
+                                //   1) ._background + ._heading
+                                //   2) ._heading + ._background
+                                const heroBackgroundFirst = document.querySelectorAll('._section ._background + ._heading');
+                                heroBackgroundFirst.forEach(function(heading) {
+                                    heading.classList.add('_hero-heading');
+                                    heading.classList.add('_hero-heading-after-background');
+                                    const bg = heading.previousElementSibling;
+                                    if (bg && bg.classList.contains('_background')) {
+                                        bg.classList.add('_hero-background');
+                                    }
+                                });
+
+                                const heroHeadingFirst = document.querySelectorAll('._section ._heading + ._background');
+                                heroHeadingFirst.forEach(function(bg) {
+                                    bg.classList.add('_hero-background');
+                                    const heading = bg.previousElementSibling;
+                                    if (heading && heading.classList.contains('_heading')) {
+                                        heading.classList.add('_hero-heading');
+                                        heading.classList.add('_hero-heading-before-background');
                                     }
                                 });
                                 
