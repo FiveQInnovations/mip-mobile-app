@@ -5,21 +5,25 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -251,16 +255,39 @@ fun TabScreen(
                                     } else {
                                         section.items.take(CATEGORY_PREVIEW_COUNT)
                                     }
+                                    val sectionItemLabel = if (section.items.size == 1) "1 message" else "${section.items.size} messages"
 
-                                    Text(
-                                        text = section.category.name,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.SemiBold,
-                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                                    )
+                                    Surface(
+                                        shape = RoundedCornerShape(12.dp),
+                                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.14f),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                                    ) {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 14.dp, vertical = 10.dp)
+                                        ) {
+                                            Text(
+                                                text = section.category.name,
+                                                style = MaterialTheme.typography.titleMedium,
+                                                color = MaterialTheme.colorScheme.primary,
+                                                fontWeight = FontWeight.Bold,
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                            Text(
+                                                text = sectionItemLabel,
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = MaterialTheme.colorScheme.primary,
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                        }
+                                    }
                                     CollectionList(
                                         items = visibleItems,
-                                        onItemClick = { navigateToPage(it) }
+                                        onItemClick = { navigateToPage(it) },
+                                        modifier = Modifier.padding(start = 24.dp, end = 8.dp)
                                     )
 
                                     if (section.items.size > CATEGORY_PREVIEW_COUNT) {
@@ -277,7 +304,7 @@ fun TabScreen(
                                             color = MaterialTheme.colorScheme.primary,
                                             fontWeight = FontWeight.SemiBold,
                                             modifier = Modifier
-                                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                                .padding(start = 36.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
                                                 .clickable {
                                                     expandedCategorySlugs = if (isExpanded) {
                                                         expandedCategorySlugs - section.category.slug
@@ -287,6 +314,11 @@ fun TabScreen(
                                                 }
                                         )
                                     }
+
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                                        color = MaterialTheme.colorScheme.outlineVariant
+                                    )
                                 }
                             }
 
