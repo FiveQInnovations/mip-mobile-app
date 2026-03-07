@@ -64,13 +64,20 @@ data class AudioData(
     @Json(name = "audio_credit") val audioCredit: String?
 )
 
+data class CategoryDefinition(
+    val name: String,
+    val slug: String
+)
+
 @JsonClass(generateAdapter = true)
 data class PageDataContent(
     @Json(name = "page_content") val pageContent: String? = null,
     val audio: AudioData? = null,
     @Json(name = "audio_url") val audioUrl: String? = null,
     @Json(name = "audio_name") val audioName: String? = null,
-    @Json(name = "audio_credit") val audioCredit: String? = null
+    @Json(name = "audio_credit") val audioCredit: String? = null,
+    val categories: String? = null,
+    val content: PageDataContent? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -90,8 +97,22 @@ data class PageData(
     @Json(name = "page_content") val pageContent: String? = null,
     val children: List<CollectionChild>? = null,
     val data: PageDataContent? = null,
+    val content: PageDataContent? = null,
     @Json(name = "has_form") val hasForm: Boolean? = null
 ) {
+    private val normalizedContent: PageDataContent?
+        get() {
+            val primary = data ?: content
+            return primary?.content ?: primary
+        }
+
+    companion object {
+        private val CATEGORY_BLOCK_REGEX = Regex(
+            "name:\\s*([^\\n]+?)\\s*\\n\\s*slug:\\s*([a-z0-9-]+)",
+            setOf(RegexOption.IGNORE_CASE)
+        )
+    }
+
     // Helper to get effective page type
     val effectivePageType: String
         get() = pageType ?: type ?: "content"
@@ -102,22 +123,53 @@ data class PageData(
 
     // Helper to get audio URL from various locations
     val audioUrl: String?
-        get() = data?.audio?.audioUrl ?: data?.audioUrl
+        get() = normalizedContent?.audio?.audioUrl ?: normalizedContent?.audioUrl
 
     // Helper to get audio title
     val audioTitle: String?
-        get() = data?.audio?.audioName ?: data?.audioName ?: title
+        get() = normalizedContent?.audio?.audioName ?: normalizedContent?.audioName ?: title
 
     // Helper to get audio artist/credit
     val audioArtist: String?
-        get() = data?.audio?.audioCredit ?: data?.audioCredit
+        get() = normalizedContent?.audio?.audioCredit ?: normalizedContent?.audioCredit
 
     // Helper to get HTML content
     val htmlContent: String?
         get() = when (effectivePageType) {
             "content" -> pageContent
-            "collection-item" -> data?.pageContent
+            "collection-item" -> normalizedContent?.pageContent
             else -> null
+        }
+
+    // Individual media items currently store a single category slug in data.categories.
+    val categorySlug: String?
+        get() = normalizedContent?.categories
+            ?.lineSequence()
+            ?.map { it.trim() }
+            ?.firstOrNull { line ->
+                line.isNotBlank() &&
+                    !line.startsWith("-") &&
+                    !line.startsWith("name:") &&
+                    !line.startsWith("slug:")
+            }
+            ?.substringBefore(",")
+            ?.trim()
+            ?.takeIf { it.isNotBlank() }
+
+    // Media collection currently returns categories as a YAML-like serialized block.
+    val categoryDefinitions: List<CategoryDefinition>
+        get() {
+            val raw = normalizedContent?.categories ?: return emptyList()
+            if (!raw.contains("slug:", ignoreCase = true)) return emptyList()
+
+            return CATEGORY_BLOCK_REGEX.findAll(raw)
+                .map { match ->
+                    val rawName = match.groupValues[1].trim()
+                    val name = rawName.trim('\'', '"')
+                    val slug = match.groupValues[2].trim()
+                    CategoryDefinition(name = name, slug = slug)
+                }
+                .toList()
         }
 }
 

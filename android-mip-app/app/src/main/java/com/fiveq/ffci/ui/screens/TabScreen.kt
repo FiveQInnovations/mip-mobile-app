@@ -36,6 +36,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.fiveq.ffci.data.api.MipApiClient
+import com.fiveq.ffci.data.api.CategoryDefinition
+import com.fiveq.ffci.data.api.CollectionChild
 import com.fiveq.ffci.data.api.PageData
 import com.fiveq.ffci.data.cache.PageCache
 import com.fiveq.ffci.ui.components.AudioPlayer
@@ -43,6 +45,9 @@ import com.fiveq.ffci.ui.components.CollectionList
 import com.fiveq.ffci.ui.components.ErrorScreen
 import com.fiveq.ffci.ui.components.HtmlContent
 import com.fiveq.ffci.ui.components.LoadingScreen
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 
 private const val TAG = "TabScreen"
 
@@ -72,6 +77,8 @@ fun TabScreen(
     }
     var isRefreshing by remember { mutableStateOf(false) }
     var error by remember(currentUuid) { mutableStateOf<String?>(null) }
+    var mediaSections by remember(currentUuid) { mutableStateOf<List<MediaCategorySection>>(emptyList()) }
+    var isLoadingMediaSections by remember(currentUuid) { mutableStateOf(false) }
 
     val canGoBack = pageStack.size > 1
 
@@ -111,6 +118,26 @@ fun TabScreen(
         } finally {
             isLoading = false
             isRefreshing = false
+        }
+    }
+
+    // Build category sections for Media Resources (app-only enhancement using existing API fields).
+    LaunchedEffect(pageData?.title, pageData?.children?.size) {
+        val currentPage = pageData
+        if (currentPage == null || !shouldGroupMediaByCategory(currentPage)) {
+            mediaSections = emptyList()
+            isLoadingMediaSections = false
+            return@LaunchedEffect
+        }
+
+        isLoadingMediaSections = true
+        mediaSections = try {
+            buildMediaCategorySections(currentPage)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to build media category sections: ${e.message}", e)
+            emptyList()
+        } finally {
+            isLoadingMediaSections = false
         }
     }
 
@@ -203,10 +230,45 @@ fun TabScreen(
 
                     // Collection children
                     if (pageData!!.effectivePageType == "collection" && !pageData!!.children.isNullOrEmpty()) {
-                        CollectionList(
-                            items = pageData!!.children!!,
-                            onItemClick = { navigateToPage(it) }
-                        )
+                        val shouldGroup = shouldGroupMediaByCategory(pageData!!)
+                        when {
+                            shouldGroup && mediaSections.isNotEmpty() -> {
+                                Text(
+                                    text = "Categories",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                                )
+
+                                mediaSections.forEach { section ->
+                                    Text(
+                                        text = section.category.name,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.SemiBold,
+                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                    )
+                                    CollectionList(
+                                        items = section.items,
+                                        onItemClick = { navigateToPage(it) }
+                                    )
+                                }
+                            }
+
+                            else -> {
+                                if (shouldGroup && isLoadingMediaSections) {
+                                    LinearProgressIndicator(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                                    )
+                                }
+
+                                CollectionList(
+                                    items = pageData!!.children!!,
+                                    onItemClick = { navigateToPage(it) }
+                                )
+                            }
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(32.dp))
@@ -294,5 +356,55 @@ private fun PageContent(
         }
 
         Spacer(modifier = Modifier.height(32.dp))
+    }
+}
+
+private data class MediaCategorySection(
+    val category: CategoryDefinition,
+    val items: List<CollectionChild>
+)
+
+private fun shouldGroupMediaByCategory(pageData: PageData): Boolean {
+    return pageData.effectivePageType == "collection" &&
+        pageData.type == "audio" &&
+        pageData.categoryDefinitions.isNotEmpty() &&
+        !pageData.children.isNullOrEmpty()
+}
+
+private suspend fun buildMediaCategorySections(collectionPage: PageData): List<MediaCategorySection> = coroutineScope {
+    val categories = collectionPage.categoryDefinitions
+    val children = collectionPage.children.orEmpty()
+    if (categories.isEmpty() || children.isEmpty()) return@coroutineScope emptyList()
+
+    val categoryByChildUuid = children
+        .map { child ->
+            async {
+                val childPage = PageCache.getAnyCache(child.uuid)
+                    ?: MipApiClient.getPage(child.uuid).also { fetched ->
+                        PageCache.put(child.uuid, fetched)
+                    }
+                child.uuid to childPage.categorySlug
+            }
+        }
+        .awaitAll()
+        .toMap()
+
+    val groupedSections = categories.mapNotNull { category ->
+        val items = children.filter { categoryByChildUuid[it.uuid] == category.slug }
+        if (items.isEmpty()) null else MediaCategorySection(category = category, items = items)
+    }
+
+    val categorizedIds = groupedSections
+        .flatMap { section -> section.items.map { it.uuid } }
+        .toSet()
+    val uncategorizedItems = children.filter { it.uuid !in categorizedIds }
+
+    if (uncategorizedItems.isEmpty()) {
+        groupedSections
+    } else {
+        groupedSections + MediaCategorySection(
+            category = CategoryDefinition(name = "Other Messages", slug = "other"),
+            items = uncategorizedItems
+        )
     }
 }
