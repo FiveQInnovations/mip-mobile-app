@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [239](239-streamline-prayer-request-mobile.md) - Explore Streamlining Prayer Request Page for Mobile
+(none)
 
 ## In Progress
 (none)
@@ -181,6 +181,7 @@ Quick reference for active tasks. See individual files for details.
 - [235](235-media-tab-categories.md) - Update Media Tab to Show Categories
 - [237](237-send-app-transfer-info.md) - Send App Transfer Process Info to Mike K.
 - [238](238-get-mike-bell-audio-files-and-test.md) - Import ~30 Audio Messages from Google Drive into Kirby
+- [239](239-streamline-prayer-request-mobile.md) - Explore Streamlining Prayer Request Page for Mobile
 - [240](240-setup-testflight-and-invite-testers.md) - Setup TestFlight, Submit Build, and Invite Testers
 - [242](242-android-what-we-believe-hero-title-contrast.md) - Improve Hero Title Contrast on "What We Believe" (Android)
 - [244](244-android-connect-hero-title-contrast.md) - Improve Hero Title Contrast on `Connect With Us` (Android)
