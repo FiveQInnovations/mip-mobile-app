@@ -44,6 +44,18 @@ This appears to be a backend API/content serialization issue, not a client trans
   - `okhttp: <-- 500 Internal Server Error`
   - `TabScreen: Error loading page: Failed to fetch (500)`
 
+## Research Update (2026-03-07)
+
+- Re-tested endpoint with app auth headers (`Basic fiveq:demo` + configured `X-API-Key`).
+- `GET /mobile-api/page/2E3lFqnOR6UULQfz` now returns `400 Bad Request` (not `500`), with body:
+  - `{"status":"error","code":"error.invalidArgument",...}`
+- Related checks:
+  - `GET /mobile-api/search?q=become+member` returns `200` and still includes UUID `2E3lFqnOR6UULQfz`
+  - `GET /mobile-api/page/xhZj4ejQ65bRhrJg` returns `200` (control page works)
+- Conclusion:
+  - This is still an active backend issue for the `Become a Member` page endpoint.
+  - The problem appears isolated to page-specific API transform/serialization for UUID `2E3lFqnOR6UULQfz`, but now surfaces as `error.invalidArgument` instead of HTTP 500.
+
 ## References
 
 - Android API client: `android-mip-app/app/src/main/java/com/fiveq/ffci/data/api/MipApiClient.kt`
