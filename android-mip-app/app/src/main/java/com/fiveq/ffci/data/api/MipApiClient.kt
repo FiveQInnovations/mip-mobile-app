@@ -1,5 +1,6 @@
 package com.fiveq.ffci.data.api
 
+import android.net.Uri
 import android.util.Base64
 import android.util.Log
 import com.fiveq.ffci.config.AppConfig
@@ -20,6 +21,7 @@ class ApiException(message: String, val statusCode: Int, val url: String) : Exce
 
 object MipApiClient {
     private const val TAG = "MipApiClient"
+    private val resolvedPathCache = mutableMapOf<String, String>()
     
     // Load configuration from AppConfig singleton
     private val config get() = AppConfig.get()
@@ -111,5 +113,75 @@ object MipApiClient {
             )
         )
         return fetchJson("$BASE_URL/mobile-api/search?q=$encodedQuery", adapter)
+    }
+
+    /**
+     * Resolves a public page URL/path to a Kirby page UUID using mobile search.
+     * This keeps internal-page links in-app even when HTML links are not pre-converted to /page/{uuid}.
+     */
+    suspend fun resolvePageUuidByUrl(url: String): String? {
+        val normalizedPath = normalizePath(url) ?: return null
+        resolvedPathCache[normalizedPath]?.let { return it }
+
+        val candidateQueries = buildResolutionQueries(normalizedPath)
+        if (candidateQueries.isEmpty()) return null
+
+        for (query in candidateQueries) {
+            val results = runCatching { searchSite(query) }.getOrNull() ?: continue
+            val exactMatch = results.firstOrNull { result ->
+                normalizePath(result.url) == normalizedPath
+            }
+            if (exactMatch != null) {
+                resolvedPathCache[normalizedPath] = exactMatch.uuid
+                return exactMatch.uuid
+            }
+        }
+
+        return null
+    }
+
+    private fun normalizePath(urlOrPath: String): String? {
+        val rawPath = try {
+            Uri.parse(urlOrPath).path
+        } catch (_: Exception) {
+            null
+        } ?: if (urlOrPath.startsWith("/")) {
+            urlOrPath
+        } else {
+            return null
+        }
+
+        val trimmed = rawPath.trim()
+        if (trimmed.isBlank() || trimmed == "/") return null
+        return trimmed.trimEnd('/').lowercase()
+    }
+
+    private fun buildResolutionQueries(normalizedPath: String): List<String> {
+        val segments = normalizedPath
+            .trim('/')
+            .split("/")
+            .filter { it.isNotBlank() }
+        if (segments.isEmpty()) return emptyList()
+
+        val queries = linkedSetOf<String>()
+
+        val lastSegment = segments.last()
+            .replace("-", " ")
+            .replace("_", " ")
+            .trim()
+        if (lastSegment.length >= 3) {
+            queries.add(lastSegment)
+        }
+
+        val joined = segments
+            .joinToString(" ")
+            .replace("-", " ")
+            .replace("_", " ")
+            .trim()
+        if (joined.length >= 3) {
+            queries.add(joined)
+        }
+
+        return queries.toList()
     }
 }

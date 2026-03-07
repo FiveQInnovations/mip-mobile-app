@@ -14,9 +14,13 @@ import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import com.fiveq.ffci.config.AppConfig
+import com.fiveq.ffci.config.SiteConfig
+import com.fiveq.ffci.data.api.MipApiClient
+import kotlinx.coroutines.launch
 
 /**
  * Checks if a URL is a form page that should be opened in an external browser.
@@ -39,6 +43,14 @@ private fun formPageTargetUrl(url: String): String {
         return url
     }
     return "$url#prayer-request-response"
+}
+
+private fun toAbsoluteUrl(config: SiteConfig, url: String): String {
+    return if (url.startsWith("/")) {
+        "${config.apiBaseUrl}$url"
+    } else {
+        url
+    }
 }
 
 @Composable
@@ -78,6 +90,7 @@ fun HtmlContent(
 
     // Get primary color from config for CSS
     val config = AppConfig.get()
+    val coroutineScope = rememberCoroutineScope()
     val primaryColor = config.primaryColor
 
     // Calculate base URL (site root) from API URL
@@ -912,11 +925,7 @@ fun HtmlContent(
                                 Log.w("HtmlContent", "Invalid UUID format '/page/$uuid' - server should transform to proper UUID. Opening in browser.")
                                 try {
                                     // Resolve relative URL to full URL for browser
-                                    val fullUrl = if (url.startsWith("/")) {
-                                        "${config.apiBaseUrl}$url"
-                                    } else {
-                                        url
-                                    }
+                                val fullUrl = toAbsoluteUrl(config, url)
                                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(fullUrl))
                                     view?.context?.startActivity(intent)
                                 } catch (e: Exception) {
@@ -958,17 +967,26 @@ fun HtmlContent(
 
                         // Internal non-UUID link - open in browser
                         // These should ideally be transformed to /page/{uuid} format by the server
-                        Log.d("HtmlContent", "Opening internal link in browser: $url")
-                        try {
-                            val fullUrl = if (url.startsWith("/")) {
-                                "${config.apiBaseUrl}$url"
+                        val fullUrl = toAbsoluteUrl(config, url)
+                        Log.d("HtmlContent", "Resolving internal link for in-app navigation: $fullUrl")
+                        coroutineScope.launch {
+                            val resolvedUuid = runCatching {
+                                MipApiClient.resolvePageUuidByUrl(fullUrl)
+                            }.getOrNull()
+
+                            if (!resolvedUuid.isNullOrBlank()) {
+                                Log.d("HtmlContent", "Resolved internal URL to UUID: $resolvedUuid")
+                                onNavigate?.invoke(resolvedUuid)
                             } else {
-                                url
+                                Log.w(
+                                    "HtmlContent",
+                                    "Could not resolve internal URL to UUID; loading in WebView: $fullUrl"
+                                )
+                                runCatching { view?.loadUrl(fullUrl) }
+                                    .onFailure { e ->
+                                        Log.e("HtmlContent", "Failed to load unresolved internal URL: $fullUrl", e)
+                                    }
                             }
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(fullUrl))
-                            view?.context?.startActivity(intent)
-                        } catch (e: Exception) {
-                            Log.e("HtmlContent", "Failed to open internal link in browser: $url", e)
                         }
                         return true
                     }
