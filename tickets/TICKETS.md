@@ -20,6 +20,7 @@ Quick reference for active tasks. See individual files for details.
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
 - [249](249-ios-media-tab-categories-ui.md) - Implement Media Categories UI on iOS
 - [250](250-ios-prayer-request-anchor-jump.md) - Add iOS Prayer Request Anchor Jump
+- [251](251-ios-verify-give-tab-external-link.md) - Verify Give Tab External Link on iOS
 
 ### 🟡 Nice to Have
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
