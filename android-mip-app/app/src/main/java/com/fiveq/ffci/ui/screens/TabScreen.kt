@@ -412,8 +412,17 @@ private suspend fun buildMediaCategorySections(collectionPage: PageData): List<M
     val children = collectionPage.children.orEmpty()
     if (categories.isEmpty() || children.isEmpty()) return@coroutineScope emptyList()
 
-    val categoryByChildUuid = children
-        .map { child ->
+    val categoryByChildUuid = children.associate { child ->
+        child.uuid to child.categorySlug
+    }.toMutableMap()
+
+    val missingCategoryChildren = children.filter { child ->
+        categoryByChildUuid[child.uuid].isNullOrBlank()
+    }
+
+    if (missingCategoryChildren.isNotEmpty()) {
+        val fetchedPairs = missingCategoryChildren
+            .map { child ->
             async {
                 val childPage = PageCache.getAnyCache(child.uuid)
                     ?: MipApiClient.getPage(child.uuid).also { fetched ->
@@ -422,8 +431,12 @@ private suspend fun buildMediaCategorySections(collectionPage: PageData): List<M
                 child.uuid to childPage.categorySlug
             }
         }
-        .awaitAll()
-        .toMap()
+            .awaitAll()
+
+        fetchedPairs.forEach { (uuid, slug) ->
+            categoryByChildUuid[uuid] = slug
+        }
+    }
 
     val groupedSections = categories.mapNotNull { category ->
         val items = children.filter { categoryByChildUuid[it.uuid] == category.slug }

@@ -66,7 +66,9 @@ data class AudioData(
 
 data class CategoryDefinition(
     val name: String,
-    val slug: String
+    val slug: String,
+    val description: String? = null,
+    val count: Int? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -85,7 +87,8 @@ data class CollectionChild(
     val uuid: String,
     val title: String,
     val cover: String? = null,
-    val type: String? = null
+    val type: String? = null,
+    @Json(name = "category_slug") val categorySlug: String? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -96,6 +99,7 @@ data class PageData(
     val cover: String? = null,
     @Json(name = "page_content") val pageContent: String? = null,
     val children: List<CollectionChild>? = null,
+    val categories: List<CategoryDefinition>? = null,
     val data: PageDataContent? = null,
     val content: PageDataContent? = null,
     @Json(name = "has_form") val hasForm: Boolean? = null
@@ -159,6 +163,16 @@ data class PageData(
     // Media collection currently returns categories as a YAML-like serialized block.
     val categoryDefinitions: List<CategoryDefinition>
         get() {
+            val structured = categories
+                ?.filter { it.slug.isNotBlank() }
+                ?.map {
+                    it.copy(
+                        name = it.name.trim('\'', '"')
+                    )
+                }
+                ?: emptyList()
+            if (structured.isNotEmpty()) return structured
+
             val raw = normalizedContent?.categories ?: return emptyList()
             if (!raw.contains("slug:", ignoreCase = true)) return emptyList()
 
