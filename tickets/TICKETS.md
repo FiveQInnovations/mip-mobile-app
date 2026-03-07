@@ -16,7 +16,7 @@ Quick reference for active tasks. See individual files for details.
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [236](236-add-give-button-bottom-nav.md) - Add Give Button to Bottom Nav; Remove Media
+- [236](236-add-give-button-bottom-nav.md) - Keep Media Tab and Add Give Tab
 - [241](241-ios-homepage-featured-numeric-keyed-object.md) - Fix iOS Crash: homepage_featured Returns Numeric-Keyed Object
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
 - [249](249-ios-media-tab-categories-ui.md) - Implement Media Categories UI on iOS

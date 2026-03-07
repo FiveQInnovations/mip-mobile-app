@@ -5,31 +5,31 @@ phase: core
 created: 2026-01-29
 ---
 
-# Add Give Button to Bottom Nav; Remove Media
+# Keep Media Tab and Add Give Tab
 
 ## Context
 
-From FFCI App Build Review meeting (Jan 29, 2026). Team prefers adding Give button to bottom navigation and removing Media tab (Media can be accessed via Featured/Resources).
+Update: keep the existing Media tab in bottom navigation and add Give as an additional tab. The previous direction to remove Media is no longer in scope.
 
 ## Goals
 
-1. Add Give button to bottom navigation
-2. Remove Media from bottom navigation tabs
-3. Ensure Media remains accessible via Featured/Resources
+1. Keep Media in bottom navigation
+2. Add Give button to bottom navigation
+3. Ensure tab ordering and labels stay clear and usable with the additional tab
 
 Current donate menu item is an external link to: https://app.aplos.com/aws/give/FirefightersForChristInternational
 
 ## Acceptance Criteria
 
-- Give button appears in bottom navigation
-- Media tab removed from bottom nav
-- Media content still accessible through Featured section or Resources
-- Navigation feels balanced and intuitive
+- Media tab remains in bottom navigation
+- Give tab appears in bottom navigation
+- Both Media and Give routes open expected destinations
+- Navigation feels balanced and intuitive with the extra tab
 
 ## Notes
 
 - Current tabs: Home, Resources, Media, Connect
-- New tabs: Home, Resources, Connect, Give
+- Target tabs include both Media and Give
 - Five tabs may feel cramped; needs testing with short labels
 - Part of navigation redesign
 
