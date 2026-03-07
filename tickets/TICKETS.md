@@ -30,6 +30,7 @@ Quick reference for active tasks. See individual files for details.
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
 - [229](229-ios-multi-site-config-system.md) - iOS Multi-Site Configuration System
 - [231](231-android-build-variants-multi-site.md) - Android Build Variants for Multi-Site Deployment
+- [245](245-android-media-placeholder-description-visible.md) - Hide Placeholder Description Text in Media Item Detail (Android)
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
