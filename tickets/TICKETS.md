@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [236](236-add-give-button-bottom-nav.md) - Keep Media Tab and Add Give Tab
+(none)
 
 ## In Progress
 (none)
@@ -178,6 +178,7 @@ Quick reference for active tasks. See individual files for details.
 - [233](233-fix-featured-resources-carousel-scroll.md) - Fix Featured/Resources Carousel Scroll to End
 - [234](234-noindex-app-only-pages.md) - Investigate noindex for App-Only Pages
 - [235](235-media-tab-categories.md) - Update Media Tab to Show Categories
+- [236](236-add-give-button-bottom-nav.md) - Keep Media Tab and Add Give Tab
 - [237](237-send-app-transfer-info.md) - Send App Transfer Process Info to Mike K.
 - [238](238-get-mike-bell-audio-files-and-test.md) - Import ~30 Audio Messages from Google Drive into Kirby
 - [239](239-streamline-prayer-request-mobile.md) - Explore Streamlining Prayer Request Page for Mobile
