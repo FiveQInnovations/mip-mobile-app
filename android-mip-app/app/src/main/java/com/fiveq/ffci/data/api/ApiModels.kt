@@ -104,10 +104,12 @@ data class PageData(
     val content: PageDataContent? = null,
     @Json(name = "has_form") val hasForm: Boolean? = null
 ) {
-    private val normalizedContent: PageDataContent?
+    private val primaryContent: PageDataContent?
+        get() = data ?: content
+
+    private val nestedContent: PageDataContent?
         get() {
-            val primary = data ?: content
-            return primary?.content ?: primary
+            return primaryContent?.content
         }
 
     companion object {
@@ -127,27 +129,37 @@ data class PageData(
 
     // Helper to get audio URL from various locations
     val audioUrl: String?
-        get() = normalizedContent?.audio?.audioUrl ?: normalizedContent?.audioUrl
+        get() = primaryContent?.audio?.audioUrl
+            ?: primaryContent?.audioUrl
+            ?: nestedContent?.audio?.audioUrl
+            ?: nestedContent?.audioUrl
 
     // Helper to get audio title
     val audioTitle: String?
-        get() = normalizedContent?.audio?.audioName ?: normalizedContent?.audioName ?: title
+        get() = primaryContent?.audio?.audioName
+            ?: primaryContent?.audioName
+            ?: nestedContent?.audio?.audioName
+            ?: nestedContent?.audioName
+            ?: title
 
     // Helper to get audio artist/credit
     val audioArtist: String?
-        get() = normalizedContent?.audio?.audioCredit ?: normalizedContent?.audioCredit
+        get() = primaryContent?.audio?.audioCredit
+            ?: primaryContent?.audioCredit
+            ?: nestedContent?.audio?.audioCredit
+            ?: nestedContent?.audioCredit
 
     // Helper to get HTML content
     val htmlContent: String?
         get() = when (effectivePageType) {
             "content" -> pageContent
-            "collection-item" -> normalizedContent?.pageContent
+            "collection-item" -> primaryContent?.pageContent ?: nestedContent?.pageContent
             else -> null
         }
 
     // Individual media items currently store a single category slug in data.categories.
     val categorySlug: String?
-        get() = normalizedContent?.categories
+        get() = (nestedContent?.categories ?: primaryContent?.categories)
             ?.lineSequence()
             ?.map { it.trim() }
             ?.firstOrNull { line ->
@@ -173,7 +185,7 @@ data class PageData(
                 ?: emptyList()
             if (structured.isNotEmpty()) return structured
 
-            val raw = normalizedContent?.categories ?: return emptyList()
+            val raw = primaryContent?.categories ?: return emptyList()
             if (!raw.contains("slug:", ignoreCase = true)) return emptyList()
 
             return CATEGORY_BLOCK_REGEX.findAll(raw)
