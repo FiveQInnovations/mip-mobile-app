@@ -14,6 +14,7 @@ data class MenuPage(
 data class MenuItem(
     val label: String,
     val icon: String? = null,
+    @Json(name = "external_url") val externalUrl: String? = null,
     val page: MenuPage
 )
 

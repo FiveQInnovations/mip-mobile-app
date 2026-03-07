@@ -1,5 +1,7 @@
 package com.fiveq.ffci
 
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -35,6 +37,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.compose.rememberNavController
 import com.fiveq.ffci.data.api.MenuItem
@@ -92,6 +95,7 @@ fun MipApp() {
 @Composable
 private fun MainContent(siteData: SiteData) {
     val navController = rememberNavController()
+    val context = LocalContext.current
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
     // Filter menu to non-home tabs
@@ -122,6 +126,12 @@ private fun MainContent(siteData: SiteData) {
                     NavigationBarItem(
                         selected = isSelected,
                         onClick = {
+                            val externalUrl = menuItems.getOrNull(index - 1)?.externalUrl
+                            if (!externalUrl.isNullOrBlank()) {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(externalUrl))
+                                context.startActivity(intent)
+                                return@NavigationBarItem
+                            }
                             selectedTabIndex = index
                             navController.navigate(item.route) {
                                 // Clear entire back stack and go to this tab

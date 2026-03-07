@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [236](236-add-give-button-bottom-nav.md) - Keep Media Tab and Add Give Tab
 
 ## In Progress
-- [236](236-add-give-button-bottom-nav.md) - Keep Media Tab and Add Give Tab
+(none)
 
 ## Backlog
 
