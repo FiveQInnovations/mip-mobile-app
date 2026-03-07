@@ -1,6 +1,7 @@
 package com.fiveq.ffci.ui.screens
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,6 +51,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
 private const val TAG = "TabScreen"
+private const val CATEGORY_PREVIEW_COUNT = 3
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,6 +81,7 @@ fun TabScreen(
     var error by remember(currentUuid) { mutableStateOf<String?>(null) }
     var mediaSections by remember(currentUuid) { mutableStateOf<List<MediaCategorySection>>(emptyList()) }
     var isLoadingMediaSections by remember(currentUuid) { mutableStateOf(false) }
+    var expandedCategorySlugs by remember(currentUuid) { mutableStateOf<Set<String>>(emptySet()) }
 
     val canGoBack = pageStack.size > 1
 
@@ -127,6 +130,7 @@ fun TabScreen(
         if (currentPage == null || !shouldGroupMediaByCategory(currentPage)) {
             mediaSections = emptyList()
             isLoadingMediaSections = false
+            expandedCategorySlugs = emptySet()
             return@LaunchedEffect
         }
 
@@ -241,6 +245,13 @@ fun TabScreen(
                                 )
 
                                 mediaSections.forEach { section ->
+                                    val isExpanded = expandedCategorySlugs.contains(section.category.slug)
+                                    val visibleItems = if (isExpanded) {
+                                        section.items
+                                    } else {
+                                        section.items.take(CATEGORY_PREVIEW_COUNT)
+                                    }
+
                                     Text(
                                         text = section.category.name,
                                         style = MaterialTheme.typography.titleMedium,
@@ -248,9 +259,34 @@ fun TabScreen(
                                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                                     )
                                     CollectionList(
-                                        items = section.items,
+                                        items = visibleItems,
                                         onItemClick = { navigateToPage(it) }
                                     )
+
+                                    if (section.items.size > CATEGORY_PREVIEW_COUNT) {
+                                        val remainingCount = section.items.size - CATEGORY_PREVIEW_COUNT
+                                        val actionLabel = if (isExpanded) {
+                                            "Show less"
+                                        } else {
+                                            "Show all ($remainingCount more)"
+                                        }
+
+                                        Text(
+                                            text = actionLabel,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontWeight = FontWeight.SemiBold,
+                                            modifier = Modifier
+                                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                                .clickable {
+                                                    expandedCategorySlugs = if (isExpanded) {
+                                                        expandedCategorySlugs - section.category.slug
+                                                    } else {
+                                                        expandedCategorySlugs + section.category.slug
+                                                    }
+                                                }
+                                        )
+                                    }
                                 }
                             }
 
