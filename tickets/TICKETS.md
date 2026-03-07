@@ -9,6 +9,9 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
+- [242](242-android-what-we-believe-hero-title-contrast.md) - Improve Hero Title Contrast on "What We Believe" (Android)
+- [244](244-android-connect-hero-title-contrast.md) - Improve Hero Title Contrast on `Connect With Us` (Android)
+- [246](246-android-resource-pages-hero-title-contrast-systemic.md) - Improve Hero Title Contrast Across Resource Subpages (Android)
 
 ## In Progress
 (none)
@@ -22,10 +25,7 @@ Quick reference for active tasks. See individual files for details.
 - [238](238-get-mike-bell-audio-files-and-test.md) - Import ~30 Audio Messages from Google Drive into Kirby
 - [239](239-streamline-prayer-request-mobile.md) - Explore Streamlining Prayer Request Page for Mobile
 - [241](241-ios-homepage-featured-numeric-keyed-object.md) - Fix iOS Crash: homepage_featured Returns Numeric-Keyed Object
-- [242](242-android-what-we-believe-hero-title-contrast.md) - Improve Hero Title Contrast on "What We Believe" (Android)
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
-- [244](244-android-connect-hero-title-contrast.md) - Improve Hero Title Contrast on `Connect With Us` (Android)
-- [246](246-android-resource-pages-hero-title-contrast-systemic.md) - Improve Hero Title Contrast Across Resource Subpages (Android)
 - [247](247-android-content-page-cta-buttons-not-navigating.md) - Fix Non-Responsive CTA Buttons on Content Pages (Android)
 
 ### 🟡 Nice to Have

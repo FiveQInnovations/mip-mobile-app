@@ -364,7 +364,50 @@ fun HtmlContent(
                 ._background { position: relative; width: 100%; min-height: 200px; margin-bottom: 16px; border-radius: 8px; overflow: hidden; }
                 ._background picture { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
                 ._background picture img { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 0; margin: 0; }
-                ._background > *:not(picture) { position: relative; z-index: 1; }
+                ._background::before {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(
+                        180deg,
+                        rgba(15, 23, 42, 0.40) 0%,
+                        rgba(15, 23, 42, 0.52) 100%
+                    );
+                    z-index: 1;
+                    pointer-events: none;
+                }
+                ._background > *:not(picture) { position: relative; z-index: 2; }
+                ._background h1,
+                ._background h2,
+                ._background h3,
+                ._background h4,
+                ._background h5,
+                ._background h6,
+                ._background p,
+                ._background ._heading,
+                ._background ._text {
+                    color: #ffffff !important;
+                    text-shadow: 0 2px 6px rgba(15, 23, 42, 0.6);
+                }
+                ._section[style*="color"] ._background,
+                ._section[style*="color"] ._background * {
+                    color: #ffffff !important;
+                    text-shadow: 0 2px 6px rgba(15, 23, 42, 0.6);
+                }
+                ._section ._background + ._heading h1,
+                ._section ._background + ._heading h2,
+                ._section ._background + ._heading h3,
+                ._section ._background + ._heading h4 {
+                    color: #ffffff !important;
+                    text-shadow: 0 2px 6px rgba(15, 23, 42, 0.7);
+                }
+                ._section ._background + ._heading {
+                    margin-top: -86px;
+                    padding: 18px 16px 14px;
+                    background: rgba(15, 23, 42, 0.58);
+                    position: relative;
+                    z-index: 3;
+                }
                 ul, ol {
                     padding-left: 24px;
                     margin: 16px 0;
@@ -577,7 +620,6 @@ fun HtmlContent(
                     // Disable cache to prevent stale content
                     cacheMode = android.webkit.WebSettings.LOAD_NO_CACHE
                 }
-
                 webViewClient = object : WebViewClient() {
                     private val config = AppConfig.get()
                     private val credentials = Base64.encodeToString(
