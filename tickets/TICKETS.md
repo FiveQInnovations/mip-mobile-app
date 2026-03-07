@@ -8,7 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
 
 ## In Progress
 (none)
@@ -25,7 +25,6 @@ Quick reference for active tasks. See individual files for details.
 
 ### 🟡 Nice to Have
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
-- [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
 - [229](229-ios-multi-site-config-system.md) - iOS Multi-Site Configuration System
 - [231](231-android-build-variants-multi-site.md) - Android Build Variants for Multi-Site Deployment
 

@@ -509,6 +509,51 @@ fun HtmlContent(
                 a[class*="_button"] span {
                     color: inherit;
                 }
+
+                /* PDF download list — Tailwind classes (flex, group) are not processed
+                   in the WebView, so we must declare flexbox layout explicitly */
+                ._downloads {
+                    margin: 16px 0;
+                }
+                ._download-item {
+                    margin: 8px 0;
+                }
+                ._download-item a {
+                    display: flex !important;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 12px 14px;
+                    background-color: #f8fafc !important;
+                    border: 1px solid #e2e8f0 !important;
+                    border-bottom: 1px solid #e2e8f0 !important;
+                    border-radius: 8px;
+                    text-decoration: none !important;
+                    color: inherit !important;
+                }
+                ._download-icon {
+                    flex-shrink: 0;
+                    width: 24px;
+                    height: 24px;
+                    color: #64748b;
+                    display: flex;
+                    align-items: center;
+                }
+                ._download-icon svg {
+                    width: 24px;
+                    height: 24px;
+                    fill: #64748b;
+                }
+                ._download-title {
+                    flex: 1;
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #0f172a !important;
+                    line-height: 1.4;
+                }
+                ._download-type {
+                    display: none;
+                }
             </style>
         </head>
         <body>
