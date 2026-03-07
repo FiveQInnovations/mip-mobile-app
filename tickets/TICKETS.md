@@ -26,7 +26,6 @@ Quick reference for active tasks. See individual files for details.
 - [239](239-streamline-prayer-request-mobile.md) - Explore Streamlining Prayer Request Page for Mobile
 - [241](241-ios-homepage-featured-numeric-keyed-object.md) - Fix iOS Crash: homepage_featured Returns Numeric-Keyed Object
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
-- [247](247-android-content-page-cta-buttons-not-navigating.md) - Fix Non-Responsive CTA Buttons on Content Pages (Android)
 
 ### 🟡 Nice to Have
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
@@ -72,6 +71,7 @@ Quick reference for active tasks. See individual files for details.
 - [042](042-remove-dev-tools.md) - Remove Dev Tools Section Before Production
 - [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
 - [050](050-maestro-test-organization.md) - Research Maestro Test Organization
+- [247](247-android-content-page-cta-buttons-not-navigating.md) - Fix Non-Responsive CTA Buttons on Content Pages (Android)
 
 ## Done
 - [001](done/001-api-key-auth.md) - Update RN app to use X-API-Key authentication
