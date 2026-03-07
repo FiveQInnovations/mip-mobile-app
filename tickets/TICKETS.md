@@ -8,13 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
-- [242](242-android-what-we-believe-hero-title-contrast.md) - Improve Hero Title Contrast on "What We Believe" (Android)
-- [244](244-android-connect-hero-title-contrast.md) - Improve Hero Title Contrast on `Connect With Us` (Android)
-- [246](246-android-resource-pages-hero-title-contrast-systemic.md) - Improve Hero Title Contrast Across Resource Subpages (Android)
+(none)
 
 ## In Progress
-(none)
+- [246](246-android-resource-pages-hero-title-contrast-systemic.md) - Improve Hero Title Contrast Across Resource Subpages (Android)
 
 ## Backlog
 
@@ -156,6 +153,7 @@ Quick reference for active tasks. See individual files for details.
 - [202](202-ios-search-functionality.md) - iOS Search Functionality
 - [203](203-ios-page-caching.md) - iOS Page Caching
 - [205](205-ios-resources-scroll-arrows.md) - iOS Resources Section Scroll Arrows
+- [206](206-android-pdf-list-styling.md) - Improve PDF Download List Styling
 - [207](207-android-resources-missing-buttons.md) - Resources Page Missing Buttons/Cards
 - [208](208-android-bracket-artifacts.md) - Red Bracket Artifacts in Content
 - [209](209-ios-about-us-card-not-clickable.md) - iOS About Us Card Not Clickable on Home Screen
@@ -183,6 +181,9 @@ Quick reference for active tasks. See individual files for details.
 - [233](233-fix-featured-resources-carousel-scroll.md) - Fix Featured/Resources Carousel Scroll to End
 - [237](237-send-app-transfer-info.md) - Send App Transfer Process Info to Mike K.
 - [240](240-setup-testflight-and-invite-testers.md) - Setup TestFlight, Submit Build, and Invite Testers
+- [242](242-android-what-we-believe-hero-title-contrast.md) - Improve Hero Title Contrast on "What We Believe" (Android)
+- [244](244-android-connect-hero-title-contrast.md) - Improve Hero Title Contrast on `Connect With Us` (Android)
+- [248](248-android-media-ministry-iframe-not-rendering.md) - Fix Media Ministry Iframe Not Rendering on Android
 
 ---
 
