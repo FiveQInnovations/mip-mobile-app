@@ -385,8 +385,8 @@ fun HtmlContent(
                     inset: 0;
                     background: linear-gradient(
                         180deg,
-                        rgba(15, 23, 42, 0.54) 0%,
-                        rgba(15, 23, 42, 0.72) 100%
+                        rgba(15, 23, 42, 0.28) 0%,
+                        rgba(15, 23, 42, 0.42) 100%
                     );
                     z-index: 1;
                     pointer-events: none;
@@ -417,31 +417,36 @@ fun HtmlContent(
                     text-shadow: 0 2px 6px rgba(15, 23, 42, 0.7);
                 }
                 ._section ._background + ._heading {
-                    margin-top: -86px;
-                    padding: 18px 16px 14px;
-                    background: rgba(15, 23, 42, 0.82);
+                    margin-top: 0;
+                    margin-bottom: 10px;
+                    padding: 14px 14px 12px;
+                    background: rgba(15, 23, 42, 0.72);
+                    border-radius: 8px;
                     position: relative;
                     z-index: 3;
                 }
                 ._hero-heading {
-                    padding: 18px 16px 14px;
-                    background: rgba(15, 23, 42, 0.84);
+                    margin-top: 0;
+                    margin-bottom: 10px;
+                    padding: 14px 14px 12px;
+                    background: rgba(15, 23, 42, 0.72);
+                    border-radius: 8px;
                     position: relative;
                     z-index: 3;
-                }
-                ._hero-heading-after-background {
-                    margin-top: -86px;
-                }
-                ._hero-heading-before-background {
-                    margin-top: 0;
-                    margin-bottom: -86px;
                 }
                 ._hero-heading h1,
                 ._hero-heading h2,
                 ._hero-heading h3,
                 ._hero-heading h4 {
                     color: #ffffff !important;
-                    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.78);
+                    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.84);
+                }
+                ._hero-heading * {
+                    color: #ffffff !important;
+                    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.84);
+                }
+                ._hero-background {
+                    margin-top: 0;
                 }
                 ul, ol {
                     padding-left: 24px;
@@ -744,11 +749,26 @@ fun HtmlContent(
                                 // Normalize hero heading/background pairs for both DOM orders:
                                 //   1) ._background + ._heading
                                 //   2) ._heading + ._background
+                                function forceHeroHeadingContrast(headingEl) {
+                                    if (!headingEl) return;
+                                    headingEl.style.setProperty('color', '#ffffff', 'important');
+                                    headingEl.style.setProperty('text-shadow', '0 2px 8px rgba(0,0,0,0.84)', 'important');
+                                    headingEl.querySelectorAll('*').forEach(function(el) {
+                                        el.style.setProperty('color', '#ffffff', 'important');
+                                        el.style.setProperty('text-shadow', '0 2px 8px rgba(0,0,0,0.84)', 'important');
+                                    });
+                                }
+
                                 const heroBackgroundFirst = document.querySelectorAll('._section ._background + ._heading');
                                 heroBackgroundFirst.forEach(function(heading) {
-                                    heading.classList.add('_hero-heading');
-                                    heading.classList.add('_hero-heading-after-background');
                                     const bg = heading.previousElementSibling;
+                                    // If CMS rendered background before heading, move heading above image in-app
+                                    // so we keep full image visibility while maintaining strong title contrast.
+                                    if (bg && bg.classList.contains('_background') && bg.parentNode) {
+                                        bg.parentNode.insertBefore(heading, bg);
+                                    }
+                                    heading.classList.add('_hero-heading');
+                                    forceHeroHeadingContrast(heading);
                                     if (bg && bg.classList.contains('_background')) {
                                         bg.classList.add('_hero-background');
                                     }
@@ -760,7 +780,7 @@ fun HtmlContent(
                                     const heading = bg.previousElementSibling;
                                     if (heading && heading.classList.contains('_heading')) {
                                         heading.classList.add('_hero-heading');
-                                        heading.classList.add('_hero-heading-before-background');
+                                        forceHeroHeadingContrast(heading);
                                     }
                                 });
                                 

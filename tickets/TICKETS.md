@@ -11,7 +11,7 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-- [246](246-android-resource-pages-hero-title-contrast-systemic.md) - Improve Hero Title Contrast Across Resource Subpages (Android)
+- [238](238-get-mike-bell-audio-files-and-test.md) - Import ~30 Audio Messages from Google Drive into Kirby
 
 ## Backlog
 
@@ -19,7 +19,6 @@ Quick reference for active tasks. See individual files for details.
 - [234](234-noindex-app-only-pages.md) - Investigate noindex for App-Only Pages
 - [235](235-media-tab-categories.md) - Update Media Tab to Show Categories
 - [236](236-add-give-button-bottom-nav.md) - Add Give Button to Bottom Nav; Remove Media
-- [238](238-get-mike-bell-audio-files-and-test.md) - Import ~30 Audio Messages from Google Drive into Kirby
 - [239](239-streamline-prayer-request-mobile.md) - Explore Streamlining Prayer Request Page for Mobile
 - [241](241-ios-homepage-featured-numeric-keyed-object.md) - Fix iOS Crash: homepage_featured Returns Numeric-Keyed Object
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
@@ -183,6 +182,7 @@ Quick reference for active tasks. See individual files for details.
 - [240](240-setup-testflight-and-invite-testers.md) - Setup TestFlight, Submit Build, and Invite Testers
 - [242](242-android-what-we-believe-hero-title-contrast.md) - Improve Hero Title Contrast on "What We Believe" (Android)
 - [244](244-android-connect-hero-title-contrast.md) - Improve Hero Title Contrast on `Connect With Us` (Android)
+- [246](246-android-resource-pages-hero-title-contrast-systemic.md) - Improve Hero Title Contrast Across Resource Subpages (Android)
 - [248](248-android-media-ministry-iframe-not-rendering.md) - Fix Media Ministry Iframe Not Rendering on Android
 
 ---
