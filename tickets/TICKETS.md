@@ -11,12 +11,11 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-(none)
+- [235](235-media-tab-categories.md) - Update Media Tab to Show Categories
 
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [235](235-media-tab-categories.md) - Update Media Tab to Show Categories
 - [236](236-add-give-button-bottom-nav.md) - Add Give Button to Bottom Nav; Remove Media
 - [239](239-streamline-prayer-request-mobile.md) - Explore Streamlining Prayer Request Page for Mobile
 - [241](241-ios-homepage-featured-numeric-keyed-object.md) - Fix iOS Crash: homepage_featured Returns Numeric-Keyed Object
