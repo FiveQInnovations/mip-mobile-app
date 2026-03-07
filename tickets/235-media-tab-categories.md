@@ -42,9 +42,25 @@ All 23 media entries have been assigned a category in their `audio-item.txt` fil
 
 Category-to-entry mapping documented in `temp/media-category-mapping.md`.
 
-### App (ios-mip-app / android-mip-app) — Pending
-- Media tab needs to read and display categories from the API
-- Category navigation UI needs to be implemented
+### App (android-mip-app) — Complete
+- Media tab now groups messages under Media Resources categories instead of a flat list
+- Each category shows a 3-item preview with `Show all` / `Show less` expansion
+- Category headers now have stronger visual hierarchy (tinted rounded header + message count)
+- Message rows are indented under each category to make category vs. message distinction clearer
+- Category rendering uses API-provided category fields and avoids per-item fan-out requests
+
+### Verification (android-mip-app) — Complete
+- Built debug app with `./gradlew :app:assembleDebug`
+- Installed and launched on emulator with `adb install -r` + `adb shell monkey`
+- Verified Media tab behavior in emulator:
+  - Categories render and messages appear under the correct category
+  - `Show all` / `Show less` toggles work and reveal/hide remaining items
+  - Updated category header styling is visually distinct from message rows
+- Ran a `visual-tester` validation pass, which reported PASS for category/message hierarchy clarity
+
+### App (ios-mip-app) — Pending
+- Implement category grouping and sectioned navigation in iOS Media tab
+- Match Android behavior for 3-item preview and expand/collapse per category
 
 ## Notes
 
