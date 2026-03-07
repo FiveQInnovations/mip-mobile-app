@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: qa
 area: wsp-mobile
 phase: core
 created: 2026-03-06
@@ -24,10 +24,10 @@ This appears to be a backend API/content serialization issue, not a client trans
 
 ## Acceptance Criteria
 
-- [ ] `GET /mobile-api/page/2E3lFqnOR6UULQfz` returns `200` with valid JSON
+- [x] `GET /mobile-api/page/2E3lFqnOR6UULQfz` returns `200` with valid JSON
 - [ ] Android app opens `Become a Member` page from search without `Failed to fetch (500)`
-- [ ] No regression in `mobile-api/page` responses for other pages
-- [ ] Root cause documented (content block, snippet, or API transform issue)
+- [x] No regression in `mobile-api/page` responses for other pages
+- [x] Root cause documented (content block, snippet, or API transform issue)
 
 ## Notes
 
@@ -55,6 +55,16 @@ This appears to be a backend API/content serialization issue, not a client trans
 - Conclusion:
   - This is still an active backend issue for the `Become a Member` page endpoint.
   - The problem appears isolated to page-specific API transform/serialization for UUID `2E3lFqnOR6UULQfz`, but now surfaces as `error.invalidArgument` instead of HTTP 500.
+
+## Fix Update (2026-03-07)
+
+- Implemented and deployed a defensive fix in `wsp-mobile` (`lib/pages.php`) to prevent page-level API failure when a single section has unsupported/invalid block payload.
+- Added guards in page assembly flow so invalid section/UUID data does not fail the entire response.
+- Production verification after deploy:
+  - `GET /mobile-api/page/2E3lFqnOR6UULQfz` -> `200`
+  - `GET /mobile-api/page/xhZj4ejQ65bRhrJg` -> `200` (control)
+- Deployed plugin commit: `be17921`
+- Ticket moved to `qa` for Android client-path verification.
 
 ## References
 
