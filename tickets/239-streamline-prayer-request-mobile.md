@@ -1,6 +1,6 @@
 ---
-status: backlog
-area: wsp-mobile
+status: in-progress
+area: android-mip-app
 phase: core
 created: 2026-01-29
 ---
@@ -34,10 +34,24 @@ From FFCI App Build Review meeting (Jan 29, 2026). When users click the Prayer R
 ## Notes
 
 - Current behavior: App button opens browser → shows website page with narrative text → user scrolls to form
-- Desired behavior: App button opens browser → shows streamlined page → form is immediately accessible
+- Updated behavior (Android): App opens Prayer Request in external browser with `#prayer-request-response` anchor so users land near the form
 - Mike K. noted: "That little heading, Submitted Protocols is perfect, but all that that's written there is, that's not necessary on the app"
 - Related action item assigned to Mike K.: "Create mobile-optimized Prayer Request page in Mobile folder; link app Prayer Request to it"
-- This pattern may apply to other forms/pages accessed from the app
+- Chosen implementation for now avoids `wsp-forms` and `ws-ffci` content changes; uses app-side URL normalization only
+- iOS parity is tracked separately in `tickets/250-ios-prayer-request-anchor-jump.md`
+
+## Implementation Notes
+
+- Android change added in `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt`.
+- When a clicked form link contains `/prayer-request` and has no fragment, app appends `#prayer-request-response` before launching browser.
+- Other form links (for example chaplain request) keep existing behavior.
+
+## Verification Notes
+
+- Built and installed Android debug app successfully.
+- Confirmed no linter errors in updated Android file.
+- Manual emulator checks confirmed app launches and navigation still works after change.
+- Browser opens through existing external-link flow, now with anchor for Prayer Request links.
 
 ## References
 

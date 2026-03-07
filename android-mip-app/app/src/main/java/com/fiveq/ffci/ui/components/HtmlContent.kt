@@ -27,6 +27,20 @@ private fun isFormPage(url: String): Boolean {
     return formPaths.any { url.contains(it) }
 }
 
+/**
+ * Jump directly to the prayer form anchor to avoid extra intro copy
+ * when opening the public prayer request page in an external browser.
+ */
+private fun formPageTargetUrl(url: String): String {
+    if (!url.contains("/prayer-request")) {
+        return url
+    }
+    if (url.contains("#")) {
+        return url
+    }
+    return "$url#prayer-request-response"
+}
+
 @Composable
 fun HtmlContent(
     html: String,
@@ -915,7 +929,7 @@ fun HtmlContent(
                         // Form pages - open in external browser (matches RN behavior)
                         if (isFormPage(url)) {
                             try {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(formPageTargetUrl(url)))
                                 view?.context?.startActivity(intent)
                             } catch (e: Exception) {
                                 Log.e("HtmlContent", "Failed to open form page: $url", e)
