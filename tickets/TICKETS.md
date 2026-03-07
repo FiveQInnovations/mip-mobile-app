@@ -8,10 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-(none)
+- [239](239-streamline-prayer-request-mobile.md) - Explore Streamlining Prayer Request Page for Mobile
 
 ## In Progress
-- [239](239-streamline-prayer-request-mobile.md) - Explore Streamlining Prayer Request Page for Mobile
+(none)
 
 ## Backlog
 

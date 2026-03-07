@@ -17,6 +17,8 @@ From FFCI App Build Review meeting (Jan 29, 2026). Team prefers adding Give butt
 2. Remove Media from bottom navigation tabs
 3. Ensure Media remains accessible via Featured/Resources
 
+Current donate menu item is an external link to: https://app.aplos.com/aws/give/FirefightersForChristInternational
+
 ## Acceptance Criteria
 
 - Give button appears in bottom navigation
