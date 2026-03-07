@@ -11,7 +11,7 @@ Quick reference for active tasks. See individual files for details.
 (none)
 
 ## In Progress
-- [235](235-media-tab-categories.md) - Update Media Tab to Show Categories
+(none)
 
 ## Backlog
 
@@ -20,6 +20,7 @@ Quick reference for active tasks. See individual files for details.
 - [239](239-streamline-prayer-request-mobile.md) - Explore Streamlining Prayer Request Page for Mobile
 - [241](241-ios-homepage-featured-numeric-keyed-object.md) - Fix iOS Crash: homepage_featured Returns Numeric-Keyed Object
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
+- [249](249-ios-media-tab-categories-ui.md) - Implement Media Categories UI on iOS
 
 ### 🟡 Nice to Have
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
@@ -177,6 +178,7 @@ Quick reference for active tasks. See individual files for details.
 - [232](232-android-cover-hero-images-missing.md) - Android: Cover/Hero Images Missing (e.g. Resources tab)
 - [233](233-fix-featured-resources-carousel-scroll.md) - Fix Featured/Resources Carousel Scroll to End
 - [234](234-noindex-app-only-pages.md) - Investigate noindex for App-Only Pages
+- [235](235-media-tab-categories.md) - Update Media Tab to Show Categories
 - [237](237-send-app-transfer-info.md) - Send App Transfer Process Info to Mike K.
 - [238](238-get-mike-bell-audio-files-and-test.md) - Import ~30 Audio Messages from Google Drive into Kirby
 - [240](240-setup-testflight-and-invite-testers.md) - Setup TestFlight, Submit Build, and Invite Testers

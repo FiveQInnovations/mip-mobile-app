@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: done
 area: general
 phase: core
 created: 2026-01-29
@@ -58,9 +58,9 @@ Category-to-entry mapping documented in `temp/media-category-mapping.md`.
   - Updated category header styling is visually distinct from message rows
 - Ran a `visual-tester` validation pass, which reported PASS for category/message hierarchy clarity
 
-### App (ios-mip-app) — Pending
-- Implement category grouping and sectioned navigation in iOS Media tab
-- Match Android behavior for 3-item preview and expand/collapse per category
+### App (ios-mip-app) — Split to Follow-up Ticket
+- Remaining iOS implementation is tracked in:
+  `tickets/249-ios-media-tab-categories-ui.md`
 
 ## Notes
 
