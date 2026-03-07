@@ -4,8 +4,10 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
+import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import java.net.URL
@@ -347,6 +349,19 @@ fun HtmlContent(
                     border-radius: 8px;
                     margin: 24px 0;
                 }
+                iframe,
+                embed,
+                object {
+                    display: block;
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    border: 0;
+                    margin: 12px 0;
+                    box-sizing: border-box;
+                }
+                iframe[src*="firefighters.org"] {
+                    background: transparent;
+                }
                 ._section {
                     position: relative;
                     padding: 24px 0;
@@ -615,11 +630,16 @@ fun HtmlContent(
                 
                 settings.apply {
                     javaScriptEnabled = true
+                    domStorageEnabled = true
+                    mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+                    mediaPlaybackRequiresUserGesture = false
                     loadWithOverviewMode = true
                     useWideViewPort = true
                     // Disable cache to prevent stale content
                     cacheMode = android.webkit.WebSettings.LOAD_NO_CACHE
                 }
+                CookieManager.getInstance().setAcceptCookie(true)
+                CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
                 webViewClient = object : WebViewClient() {
                     private val config = AppConfig.get()
                     private val credentials = Base64.encodeToString(
