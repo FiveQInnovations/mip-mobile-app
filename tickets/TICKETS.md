@@ -22,6 +22,8 @@ Quick reference for active tasks. See individual files for details.
 - [238](238-get-mike-bell-audio-files-and-test.md) - Import ~30 Audio Messages from Google Drive into Kirby
 - [239](239-streamline-prayer-request-mobile.md) - Explore Streamlining Prayer Request Page for Mobile
 - [241](241-ios-homepage-featured-numeric-keyed-object.md) - Fix iOS Crash: homepage_featured Returns Numeric-Keyed Object
+- [242](242-android-what-we-believe-hero-title-contrast.md) - Improve Hero Title Contrast on "What We Believe" (Android)
+- [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
 
 ### 🟡 Nice to Have
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
