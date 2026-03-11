@@ -28,7 +28,7 @@ fi
 cd "$PROJECT_ROOT"
 
 # Find the app bundle in DerivedData
-APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "FFCI.app" -path "*/Debug-iphonesimulator/*" -type d | head -1)
+APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "FFCI.app" -path "*/Build/Products/Debug-iphonesimulator/*" -not -path "*/Index.noindex/*" -type d | head -1)
 
 # Check if app bundle exists
 if [ -z "$APP_PATH" ]; then

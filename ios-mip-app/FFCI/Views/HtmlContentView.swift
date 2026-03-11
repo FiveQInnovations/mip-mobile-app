@@ -142,6 +142,52 @@ struct HtmlContentView: UIViewRepresentable {
     let html: String
     let onNavigate: ((String) -> Void)?
     @Binding var contentHeight: CGFloat
+
+    // Run hero normalization before didFinish to avoid visible contrast flicker.
+    private static let heroContrastPreloadScript = """
+    (function() {
+        function forceHeroHeadingContrast(headingEl) {
+            if (!headingEl) return;
+            headingEl.classList.add('_hero-heading');
+            headingEl.style.setProperty('color', '#ffffff', 'important');
+            headingEl.style.setProperty('text-shadow', '0 2px 8px rgba(0,0,0,0.84)', 'important');
+            headingEl.querySelectorAll('*').forEach(function(el) {
+                el.style.setProperty('color', '#ffffff', 'important');
+                el.style.setProperty('text-shadow', '0 2px 8px rgba(0,0,0,0.84)', 'important');
+            });
+        }
+
+        function normalizeHeroContrast() {
+            const heroBackgroundFirst = document.querySelectorAll('._section ._background + ._heading');
+            heroBackgroundFirst.forEach(function(heading) {
+                const bg = heading.previousElementSibling;
+                if (bg && bg.classList.contains('_background') && bg.parentNode) {
+                    bg.parentNode.insertBefore(heading, bg);
+                }
+                forceHeroHeadingContrast(heading);
+                if (bg && bg.classList.contains('_background')) {
+                    bg.classList.add('_hero-background');
+                }
+            });
+
+            const heroHeadingFirst = document.querySelectorAll('._section ._heading + ._background');
+            heroHeadingFirst.forEach(function(bg) {
+                bg.classList.add('_hero-background');
+                const heading = bg.previousElementSibling;
+                if (heading && heading.classList.contains('_heading')) {
+                    forceHeroHeadingContrast(heading);
+                }
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', normalizeHeroContrast, { once: true });
+        } else {
+            normalizeHeroContrast();
+        }
+        window.addEventListener('load', normalizeHeroContrast, { once: true });
+    })();
+    """
     
     init(html: String, onNavigate: ((String) -> Void)?, contentHeight: Binding<CGFloat> = .constant(200)) {
         self.html = html
@@ -152,6 +198,13 @@ struct HtmlContentView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         configuration.allowsInlineMediaPlayback = true
+        configuration.userContentController.addUserScript(
+            WKUserScript(
+                source: Self.heroContrastPreloadScript,
+                injectionTime: .atDocumentStart,
+                forMainFrameOnly: true
+            )
+        )
         
         // Register custom URL scheme handler for Basic Auth resource loading
         let authHandler = AuthURLSchemeHandler()
@@ -184,10 +237,26 @@ struct HtmlContentView: UIViewRepresentable {
     private func wrapHtml(_ html: String) -> String {
         // Fix images with empty src but valid srcset
         var fixedHtml = html
-        if let srcsetMatch = html.range(of: "srcset=\"(https?://[^\\s\"]+)", options: .regularExpression),
-           let urlRange = html.range(of: "https?://[^\\s\"]+", options: .regularExpression, range: srcsetMatch) {
-            let firstUrl = String(html[urlRange])
-            fixedHtml = fixedHtml.replacingOccurrences(of: "src=\"\"", with: "src=\"\(firstUrl)\"")
+        
+        // Issue 5: Patch each image tag individually (Android parity)
+        let imgPattern = "<img[^>]+>"
+        if let imgRegex = try? NSRegularExpression(pattern: imgPattern, options: .caseInsensitive) {
+            let nsString = fixedHtml as NSString
+            let matches = imgRegex.matches(in: fixedHtml, options: [], range: NSRange(location: 0, length: nsString.length))
+            
+            for match in matches.reversed() {
+                let imgTag = nsString.substring(with: match.range)
+                guard imgTag.contains("src=\"\""), imgTag.contains("srcset=\"") else { continue }
+
+                if let srcsetRange = imgTag.range(of: "srcset=\"(https?://[^\\s\"]+)", options: .regularExpression) {
+                    let srcsetMatch = String(imgTag[srcsetRange])
+                    if let urlRange = srcsetMatch.range(of: "https?://[^\\s\"]+", options: .regularExpression) {
+                        let firstUrl = String(srcsetMatch[urlRange])
+                        let patchedTag = imgTag.replacingOccurrences(of: "src=\"\"", with: "src=\"\(firstUrl)\"")
+                        fixedHtml = (fixedHtml as NSString).replacingCharacters(in: match.range, with: patchedTag)
+                    }
+                }
+            }
         }
         
         // Replace ffci.fiveq.dev URLs with custom scheme for Basic Auth
@@ -404,7 +473,7 @@ struct HtmlContentView: UIViewRepresentable {
                 ._background { position: relative; width: 100%; min-height: 200px; margin-bottom: 16px; border-radius: 8px; overflow: hidden; }
                 ._background picture { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
                 ._background picture img { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 0; margin: 0; }
-                ._background > *:not(picture) { position: relative; z-index: 1; }
+                ._background > *:not(picture) { position: relative; z-index: 2; }
                 /* Button group - stack buttons vertically */
                 ._button-group {
                     display: flex;
@@ -496,12 +565,73 @@ struct HtmlContentView: UIViewRepresentable {
                 ._section[style*="color"] * {
                     color: inherit !important;
                 }
-                /* Constrain embedded content (iframes, embeds) to prevent overflow */
+                /* Issue 4: Tailwind Utility Classes */
+                .mb-2 { margin-bottom: 8px !important; }
+                .mb-4 { margin-bottom: 16px !important; }
+                .mb-8 { margin-bottom: 32px !important; }
+                .mb-12 { margin-bottom: 48px !important; }
+                .mt-8 { margin-top: 32px !important; }
+                .py-24 { padding-top: 96px !important; padding-bottom: 96px !important; }
+                .text-center { text-align: center; }
+                .text-left { text-align: left; }
+
+                /* Issue 1: Hero Title Contrast */
+                ._background::before {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(180deg, rgba(15,23,42,0.28) 0%, rgba(15,23,42,0.42) 100%);
+                    z-index: 1;
+                    pointer-events: none;
+                }
+                ._background h1, ._background h2, ._background h3,
+                ._background h4, ._background h5, ._background h6,
+                ._background p, ._background ._heading, ._background ._text {
+                    color: #ffffff !important;
+                    text-shadow: 0 2px 6px rgba(15,23,42,0.6);
+                }
+                ._section ._background + ._heading h1,
+                ._section ._background + ._heading h2,
+                ._section ._background + ._heading h3,
+                ._section ._background + ._heading h4 {
+                    color: #ffffff !important;
+                    text-shadow: 0 2px 6px rgba(15,23,42,0.7);
+                }
+                ._section ._background + ._heading {
+                    margin-top: 0; margin-bottom: 10px;
+                    padding: 14px 14px 12px;
+                    background: rgba(15,23,42,0.72);
+                    border-radius: 8px; position: relative; z-index: 3;
+                }
+                ._hero-heading {
+                    margin-top: 0; margin-bottom: 10px;
+                    padding: 14px 14px 12px;
+                    background: rgba(15,23,42,0.72);
+                    border-radius: 8px; position: relative; z-index: 3;
+                }
+                ._hero-heading h1, ._hero-heading h2, ._hero-heading h3, ._hero-heading h4 {
+                    color: #ffffff !important;
+                    text-shadow: 0 2px 8px rgba(0,0,0,0.84);
+                }
+                ._hero-heading * {
+                    color: #ffffff !important;
+                    text-shadow: 0 2px 8px rgba(0,0,0,0.84);
+                }
+                ._hero-background {
+                    margin-top: 0;
+                }
+
+                /* Issue 3: Iframe / Embed Responsive CSS */
                 iframe, embed, object {
-                    max-width: 100%;
-                    width: 100%;
-                    border: none;
+                    display: block;
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    border: 0;
+                    margin: 12px 0;
                     box-sizing: border-box;
+                }
+                iframe[src*="firefighters.org"] {
+                    background: transparent;
                 }
                 /* Catch-all to prevent any wide elements from overflowing */
                 * {
@@ -524,6 +654,16 @@ struct HtmlContentView: UIViewRepresentable {
         
         init(onNavigate: ((String) -> Void)?) {
             self.onNavigate = onNavigate
+        }
+
+        private func normalizedUrlForNavigation(_ url: URL) -> URL {
+            guard url.scheme?.lowercased() == "ffci-auth" else {
+                return url
+            }
+
+            var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            components?.scheme = "https"
+            return components?.url ?? url
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -663,6 +803,7 @@ struct HtmlContentView: UIViewRepresentable {
                         element.classList.remove('hidden', 'collapse', 'collapsed');
                     });
                 })();
+
             """) { _, _ in }
             
             // Calculate content height after page loads
@@ -676,10 +817,12 @@ struct HtmlContentView: UIViewRepresentable {
         }
         
         func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-            guard let url = navigationAction.request.url else {
+            guard let rawUrl = navigationAction.request.url else {
                 decisionHandler(.allow)
                 return
             }
+
+            let url = normalizedUrlForNavigation(rawUrl)
             
             let urlString = url.absoluteString
             let navigationType = navigationAction.navigationType
@@ -731,8 +874,20 @@ struct HtmlContentView: UIViewRepresentable {
                 return
             }
             
-            // Internal non-UUID links - open in browser
-            UIApplication.shared.open(url)
+            // Internal non-UUID links - try to resolve via API
+            Task { [weak webView] in
+                if let uuid = await MipApiClient.shared.resolvePageUuidByUrl(url) {
+                    logger.notice("Resolved internal link \(urlString) to UUID: \(uuid)")
+                    await MainActor.run {
+                        onNavigate?(uuid)
+                    }
+                } else {
+                    logger.notice("Failed to resolve internal link \(urlString), falling back to in-webview load")
+                    await MainActor.run {
+                        _ = webView?.load(URLRequest(url: url))
+                    }
+                }
+            }
             decisionHandler(.cancel)
         }
     }

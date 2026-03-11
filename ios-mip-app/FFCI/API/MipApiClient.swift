@@ -26,6 +26,7 @@ class MipApiClient {
     private let password = "demo"
     
     private let session: URLSession
+    private var resolvedPathCache: [String: String] = [:]
     
     private init() {
         let configuration = URLSessionConfiguration.default
@@ -178,5 +179,93 @@ class MipApiClient {
             logger.error("Network error: \(error.localizedDescription)")
             throw ApiError.networkError(error)
         }
+    }
+    
+    // Issue 2: Internal Non-UUID Links Resolution
+    func resolvePageUuidByUrl(_ url: URL) async -> String? {
+        guard let normalizedPath = normalizePath(url.absoluteString) else {
+            return nil
+        }
+
+        if let cached = resolvedPathCache[normalizedPath] {
+            return cached
+        }
+
+        let candidateQueries = buildResolutionQueries(normalizedPath)
+        if candidateQueries.isEmpty {
+            return nil
+        }
+
+        logger.notice("Resolving UUID for path: \(normalizedPath, privacy: .public)")
+
+        for query in candidateQueries {
+            guard let results = try? await searchSite(query: query) else { continue }
+            if let exactMatch = results.first(where: { normalizePath($0.url) == normalizedPath }) {
+                resolvedPathCache[normalizedPath] = exactMatch.uuid
+                return exactMatch.uuid
+            }
+        }
+
+        return nil
+    }
+    
+    private func normalizePath(_ urlOrPath: String) -> String? {
+        let rawPath: String
+        if let parsedPath = URLComponents(string: urlOrPath)?.path, !parsedPath.isEmpty {
+            rawPath = parsedPath
+        } else if urlOrPath.hasPrefix("/") {
+            rawPath = urlOrPath
+        } else {
+            return nil
+        }
+
+        let trimmed = rawPath.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty || trimmed == "/" {
+            return nil
+        }
+
+        var normalized = trimmed.lowercased()
+        while normalized.hasSuffix("/") && normalized.count > 1 {
+            normalized.removeLast()
+        }
+
+        if !normalized.hasPrefix("/") {
+            normalized = "/" + normalized
+        }
+
+        return normalized
+    }
+
+    private func buildResolutionQueries(_ normalizedPath: String) -> [String] {
+        let segments = normalizedPath
+            .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            .split(separator: "/")
+            .map(String.init)
+            .filter { !$0.isEmpty }
+
+        if segments.isEmpty {
+            return []
+        }
+
+        var queries: [String] = []
+
+        let lastSegment = segments.last?
+            .replacingOccurrences(of: "-", with: " ")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if lastSegment.count >= 3 {
+            queries.append(lastSegment)
+        }
+
+        let joined = segments
+            .joined(separator: " ")
+            .replacingOccurrences(of: "-", with: " ")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if joined.count >= 3, !queries.contains(joined) {
+            queries.append(joined)
+        }
+
+        return queries
     }
 }
