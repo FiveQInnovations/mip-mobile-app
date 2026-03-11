@@ -23,14 +23,8 @@ appId: com.fiveq.ffci
     path: "maestro/screenshots/ticket-215-collection-root-level"
 
 # Drill into a child page to trigger custom back button
-- scrollUntilVisible:
-    element:
-      text: "2nd Mile Christian"
-    direction: DOWN
-    timeout: 10000
-
 - tapOn:
-    text: "2nd Mile Christian"
+    text: "Husbands"
 - waitForAnimationToEnd
 - waitForAnimationToEnd
 
@@ -55,5 +49,5 @@ appId: com.fiveq.ffci
 
 # Verify we're back at Audio Sermons (collection root)
 - assertVisible:
-    text: "2nd Mile Christian"
-    label: "Should see 2nd Mile Christian option after going back"
+    text: "Categories"
+    label: "Should be back at Media root after going back"
