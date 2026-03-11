@@ -8,13 +8,10 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [241](241-ios-homepage-featured-numeric-keyed-object.md) - Fix iOS Crash: homepage_featured Returns Numeric-Keyed Object
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
-- [249](249-ios-media-tab-categories-ui.md) - Implement Media Categories UI on iOS
 
 ## In Progress
 - [252](252-android-internal-buttons-open-browser-regression.md) - Fix Android Regression: Internal Buttons Open Browser
-- [254](254-ios-port-android-htmlcontent-fixes.md) - Port Recent Android HtmlContent Fixes to iOS Swift
 
 ## Backlog
 
@@ -22,6 +19,7 @@ Quick reference for active tasks. See individual files for details.
 - [250](250-ios-prayer-request-anchor-jump.md) - Add iOS Prayer Request Anchor Jump
 - [251](251-ios-verify-give-tab-external-link.md) - Verify Give Tab External Link on iOS
 - [253](253-wsp-mobile-stabilize-internal-link-uuid-transform.md) - Stabilize Internal Link to UUID Transform in Mobile API
+- [255](255-ios-get-involved-hero-contrast-regression.md) - Fix iOS Get Involved Hero Contrast Regression
 
 ### 🟡 Nice to Have
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
@@ -185,10 +183,13 @@ Quick reference for active tasks. See individual files for details.
 - [238](238-get-mike-bell-audio-files-and-test.md) - Import ~30 Audio Messages from Google Drive into Kirby
 - [239](239-streamline-prayer-request-mobile.md) - Explore Streamlining Prayer Request Page for Mobile
 - [240](240-setup-testflight-and-invite-testers.md) - Setup TestFlight, Submit Build, and Invite Testers
+- [241](241-ios-homepage-featured-numeric-keyed-object.md) - Fix iOS Crash: homepage_featured Returns Numeric-Keyed Object
 - [242](242-android-what-we-believe-hero-title-contrast.md) - Improve Hero Title Contrast on "What We Believe" (Android)
 - [244](244-android-connect-hero-title-contrast.md) - Improve Hero Title Contrast on `Connect With Us` (Android)
 - [246](246-android-resource-pages-hero-title-contrast-systemic.md) - Improve Hero Title Contrast Across Resource Subpages (Android)
 - [248](248-android-media-ministry-iframe-not-rendering.md) - Fix Media Ministry Iframe Not Rendering on Android
+- [249](249-ios-media-tab-categories-ui.md) - Implement Media Categories UI on iOS
+- [254](254-ios-port-android-htmlcontent-fixes.md) - Port Recent Android HtmlContent Fixes to iOS Swift
 
 ---
 
