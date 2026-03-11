@@ -10,8 +10,11 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
 STABLE_TESTS=(
+    "maestro/flows/chaplain-resources-opens-ios.yaml"
     "maestro/flows/ticket-210-connect-tab-buttons-ios.yaml"
+    "maestro/flows/ticket-214-about-us-back-button-ios.yaml"
     "maestro/flows/ticket-215-back-button-style-consistency-ios.yaml"
+    "maestro/flows/ticket-249-media-tab-categories-ios.yaml"
 )
 
 PASSED=0
