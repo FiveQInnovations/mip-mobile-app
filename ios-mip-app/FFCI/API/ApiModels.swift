@@ -76,6 +76,55 @@ struct SiteMeta: Codable {
         case homepageQuickTasks = "homepage_quick_tasks"
         case homepageFeatured = "homepage_featured"
     }
+    
+    init(
+        title: String,
+        social: [SocialLink]?,
+        logo: String?,
+        homepageQuickTasks: [HomepageQuickTask]?,
+        homepageFeatured: [HomepageFeatured]?
+    ) {
+        self.title = title
+        self.social = social
+        self.logo = logo
+        self.homepageQuickTasks = homepageQuickTasks
+        self.homepageFeatured = homepageFeatured
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        title = try container.decode(String.self, forKey: .title)
+        social = try container.decodeIfPresent([SocialLink].self, forKey: .social)
+        logo = try container.decodeIfPresent(String.self, forKey: .logo)
+        homepageQuickTasks = try container.decodeIfPresent([HomepageQuickTask].self, forKey: .homepageQuickTasks)
+        homepageFeatured = Self.decodeHomepageFeatured(from: container)
+    }
+    
+    private static func decodeHomepageFeatured(from container: KeyedDecodingContainer<CodingKeys>) -> [HomepageFeatured]? {
+        guard container.contains(.homepageFeatured) else { return nil }
+        
+        if let isNil = try? container.decodeNil(forKey: .homepageFeatured), isNil {
+            return nil
+        }
+        
+        if let array = try? container.decode([HomepageFeatured].self, forKey: .homepageFeatured) {
+            return array
+        }
+        
+        if let object = try? container.decode([String: HomepageFeatured].self, forKey: .homepageFeatured) {
+            let numericPairs = object.compactMap { key, value -> (Int, HomepageFeatured)? in
+                guard let index = Int(key) else { return nil }
+                return (index, value)
+            }
+            
+            guard numericPairs.count == object.count else { return nil }
+            return numericPairs.sorted { $0.0 < $1.0 }.map(\.1)
+        }
+        
+        // Soft-fail malformed homepage_featured payloads.
+        return nil
+    }
 }
 
 struct SiteData: Codable {
