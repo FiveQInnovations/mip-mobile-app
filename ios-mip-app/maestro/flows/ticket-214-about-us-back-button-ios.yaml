@@ -38,8 +38,7 @@ appId: com.fiveq.ffci
 # Tap on a collection item to drill deeper
 # This increases pageStack.count to 2, so custom back button should appear
 - tapOn:
-    text: "2nd Mile Christian"
-    optional: true
+    text: "Husbands"
 - waitForAnimationToEnd
 - waitForAnimationToEnd
 
