@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run all stable iOS Maestro tests in sequence (standalone build, no Metro)
-# Usage: ./scripts/run-maestro-ios-all.sh
+# Usage: ./scripts/run-maestro-ios-all-rn.sh
 
 set -e
 
