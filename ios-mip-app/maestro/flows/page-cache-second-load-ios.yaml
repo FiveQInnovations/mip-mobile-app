@@ -6,14 +6,9 @@ appId: com.fiveq.ffci
 - launchApp
 - waitForAnimationToEnd
 
-# Open Audio Sermons collection from home
-- scrollUntilVisible:
-    element:
-      text: "Audio Sermons"
-    direction: DOWN
-    timeout: 10000
+# Open Media tab (collection) from home
 - tapOn:
-    text: "Audio Sermons"
+    text: "Media"
 - waitForAnimationToEnd
 
 # Wait for collection list to render
@@ -26,14 +21,14 @@ appId: com.fiveq.ffci
 
 # Go back to home
 - tapOn:
-    text: "Back"
+    text: "Home"
 - waitForAnimationToEnd
 
 # Re-open the same page from home
 - assertVisible:
-    text: "Audio Sermons"
+    text: "Media"
 - tapOn:
-    text: "Audio Sermons"
+    text: "Media"
 - waitForAnimationToEnd
 
 # Cached page should display on second visit

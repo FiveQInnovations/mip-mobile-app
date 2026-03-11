@@ -21,6 +21,7 @@ Quick reference for active tasks. See individual files for details.
 - [250](250-ios-prayer-request-anchor-jump.md) - Add iOS Prayer Request Anchor Jump
 - [251](251-ios-verify-give-tab-external-link.md) - Verify Give Tab External Link on iOS
 - [253](253-wsp-mobile-stabilize-internal-link-uuid-transform.md) - Stabilize Internal Link to UUID Transform in Mobile API
+- [254](254-ios-port-android-htmlcontent-fixes.md) - Port Recent Android HtmlContent Fixes to iOS Swift
 
 ### 🟡 Nice to Have
 - [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh

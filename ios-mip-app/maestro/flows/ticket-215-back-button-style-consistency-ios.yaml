@@ -12,31 +12,25 @@ appId: com.fiveq.ffci
 - launchApp
 - waitForAnimationToEnd
 
-# Navigate to Audio Sermons from home page (goes into TabPageView)
-- scrollUntilVisible:
-    element:
-      text: "Audio Sermons"
-    direction: DOWN
-    timeout: 10000
-
+# Navigate to Media tab, which loads a collection (TabPageView)
 - tapOn:
-    text: "Audio Sermons"
+    text: "Media"
 - waitForAnimationToEnd
 - waitForAnimationToEnd
 
-# Take screenshot of Audio Sermons root level (SwiftUI default back button)
+# Take screenshot of Media collection root level (SwiftUI default back button)
 - takeScreenshot:
     path: "maestro/screenshots/ticket-215-collection-root-level"
 
 # Drill into a child page to trigger custom back button
 - scrollUntilVisible:
     element:
-      text: "Fixed Husbands"
+      text: "2nd Mile Christian"
     direction: DOWN
     timeout: 10000
 
 - tapOn:
-    text: "Fixed Husbands"
+    text: "2nd Mile Christian"
 - waitForAnimationToEnd
 - waitForAnimationToEnd
 
@@ -61,5 +55,5 @@ appId: com.fiveq.ffci
 
 # Verify we're back at Audio Sermons (collection root)
 - assertVisible:
-    text: "Fixed Husbands"
-    label: "Should see Fixed Husbands option after going back"
+    text: "2nd Mile Christian"
+    label: "Should see 2nd Mile Christian option after going back"

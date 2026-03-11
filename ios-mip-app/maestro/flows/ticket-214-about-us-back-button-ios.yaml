@@ -19,16 +19,9 @@ appId: com.fiveq.ffci
 
 # === PART 1: Verify custom back button is hidden at root level ===
 
-# Scroll to find Audio Sermons (a featured item that navigates to TabPageView)
-- scrollUntilVisible:
-    element:
-      text: "Audio Sermons"
-    direction: DOWN
-    timeout: 10000
-
-# Tap on Audio Sermons to navigate into TabPageView
+# Navigate to Media tab, which loads a collection (TabPageView)
 - tapOn:
-    text: "Audio Sermons"
+    text: "Media"
 - waitForAnimationToEnd
 - waitForAnimationToEnd
 
@@ -42,10 +35,10 @@ appId: com.fiveq.ffci
 
 # === PART 2: Verify custom back button works when drilling deeper ===
 
-# Tap on a collection item to drill deeper (e.g., "Fixed Husbands" or similar)
+# Tap on a collection item to drill deeper
 # This increases pageStack.count to 2, so custom back button should appear
 - tapOn:
-    text: "Fixed Husbands"
+    text: "2nd Mile Christian"
     optional: true
 - waitForAnimationToEnd
 - waitForAnimationToEnd
