@@ -61,6 +61,7 @@ class AppState: ObservableObject {
 
 struct MainTabView: View {
     let siteData: SiteData
+    @Environment(\.openURL) private var openURL
     @State private var selectedTab = 0
     
     // Filter menu to non-home tabs
@@ -69,7 +70,10 @@ struct MainTabView: View {
     }
     
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: Binding(
+            get: { selectedTab },
+            set: { handleTabSelection($0) }
+        )) {
             // Home tab
             HomeView(
                 siteMeta: siteData.siteData,
@@ -88,7 +92,7 @@ struct MainTabView: View {
             .tag(0)
             
             // Dynamic tabs from menu
-            ForEach(Array(menuItems.enumerated()), id: \.element.page.uuid) { index, item in
+            ForEach(Array(menuItems.enumerated()), id: \.offset) { index, item in
                 TabPageView(uuid: item.page.uuid)
                     .tabItem {
                         Label(item.label, systemImage: iconForTab(item.icon, index))
@@ -97,6 +101,31 @@ struct MainTabView: View {
             }
         }
         .accentColor(Color("PrimaryColor"))
+    }
+    
+    private func handleTabSelection(_ newSelection: Int) {
+        guard let item = menuItem(forTabSelection: newSelection) else {
+            selectedTab = newSelection
+            return
+        }
+        
+        // External menu tabs should open Safari and keep the current in-app tab selected.
+        if let externalUrl = item.externalUrl,
+           let url = URL(string: externalUrl) {
+            openURL(url)
+            return
+        }
+        
+        selectedTab = newSelection
+    }
+    
+    private func menuItem(forTabSelection selection: Int) -> MenuItem? {
+        let menuIndex = selection - 1
+        guard menuIndex >= 0, menuIndex < menuItems.count else {
+            return nil
+        }
+        
+        return menuItems[menuIndex]
     }
     
     private func iconForTab(_ iconName: String?, _ index: Int) -> String {

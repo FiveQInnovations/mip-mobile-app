@@ -16,7 +16,6 @@ Quick reference for active tasks. See individual files for details.
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [251](251-ios-verify-give-tab-external-link.md) - Verify Give Tab External Link on iOS
 - [253](253-wsp-mobile-stabilize-internal-link-uuid-transform.md) - Stabilize Internal Link to UUID Transform in Mobile API
 - [255](255-ios-get-involved-hero-contrast-regression.md) - Fix iOS Get Involved Hero Contrast Regression
 
@@ -189,6 +188,7 @@ Quick reference for active tasks. See individual files for details.
 - [248](248-android-media-ministry-iframe-not-rendering.md) - Fix Media Ministry Iframe Not Rendering on Android
 - [249](249-ios-media-tab-categories-ui.md) - Implement Media Categories UI on iOS
 - [250](250-ios-prayer-request-anchor-jump.md) - Add iOS Prayer Request Anchor Jump
+- [251](251-ios-verify-give-tab-external-link.md) - Verify Give Tab External Link on iOS
 - [254](254-ios-port-android-htmlcontent-fixes.md) - Port Recent Android HtmlContent Fixes to iOS Swift
 
 ---

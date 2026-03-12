@@ -19,6 +19,14 @@ struct MenuItem: Codable {
     let label: String
     let icon: String?
     let page: MenuPage
+    let externalUrl: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case label
+        case icon
+        case page
+        case externalUrl = "external_url"
+    }
 }
 
 // MARK: - Site Meta Models
