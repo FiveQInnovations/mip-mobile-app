@@ -146,15 +146,23 @@ struct HtmlContentView: UIViewRepresentable {
     // Run hero normalization before didFinish to avoid visible contrast flicker.
     private static let heroContrastPreloadScript = """
     (function() {
-        function forceHeroHeadingContrast(headingEl) {
-            if (!headingEl) return;
-            headingEl.classList.add('_hero-heading');
-            headingEl.style.setProperty('color', '#ffffff', 'important');
-            headingEl.style.setProperty('text-shadow', '0 2px 8px rgba(0,0,0,0.84)', 'important');
-            headingEl.querySelectorAll('*').forEach(function(el) {
+        function forceHeroContrast(element, className) {
+            if (!element) return;
+            element.classList.add(className);
+            element.style.setProperty('color', '#ffffff', 'important');
+            element.style.setProperty('text-shadow', '0 2px 8px rgba(0,0,0,0.84)', 'important');
+            element.querySelectorAll('*').forEach(function(el) {
                 el.style.setProperty('color', '#ffffff', 'important');
                 el.style.setProperty('text-shadow', '0 2px 8px rgba(0,0,0,0.84)', 'important');
             });
+        }
+
+        function forceHeroHeadingContrast(headingEl) {
+            forceHeroContrast(headingEl, '_hero-heading');
+        }
+
+        function forceHeroIntroContrast(textEl) {
+            forceHeroContrast(textEl, '_hero-intro');
         }
 
         function normalizeHeroContrast() {
@@ -176,6 +184,19 @@ struct HtmlContentView: UIViewRepresentable {
                 const heading = bg.previousElementSibling;
                 if (heading && heading.classList.contains('_heading')) {
                     forceHeroHeadingContrast(heading);
+                }
+            });
+
+            const heroHeadingTextBackground = document.querySelectorAll('._section ._heading + ._text + ._background');
+            heroHeadingTextBackground.forEach(function(bg) {
+                bg.classList.add('_hero-background');
+                const introText = bg.previousElementSibling;
+                const heading = introText ? introText.previousElementSibling : null;
+                if (heading && heading.classList.contains('_heading')) {
+                    forceHeroHeadingContrast(heading);
+                }
+                if (introText && introText.classList.contains('_text')) {
+                    forceHeroIntroContrast(introText);
                 }
             });
         }
@@ -614,6 +635,16 @@ struct HtmlContentView: UIViewRepresentable {
                     text-shadow: 0 2px 8px rgba(0,0,0,0.84);
                 }
                 ._hero-heading * {
+                    color: #ffffff !important;
+                    text-shadow: 0 2px 8px rgba(0,0,0,0.84);
+                }
+                ._hero-intro {
+                    margin-top: 0; margin-bottom: 12px;
+                    padding: 12px 14px;
+                    background: rgba(15,23,42,0.68);
+                    border-radius: 8px; position: relative; z-index: 3;
+                }
+                ._hero-intro * {
                     color: #ffffff !important;
                     text-shadow: 0 2px 8px rgba(0,0,0,0.84);
                 }

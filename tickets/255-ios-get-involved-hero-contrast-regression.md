@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: qa
 area: ios-mip-app
 phase: core
 created: 2026-03-10
@@ -37,3 +37,10 @@ pages, but this page still has a noticeable readability problem.
 
 - Related iOS hero work: `tickets/254-ios-port-android-htmlcontent-fixes.md`
 - iOS renderer: `ios-mip-app/FFCI/Views/HtmlContentView.swift`
+
+## QA Notes
+
+- Manual verification PASS on simulator after search-driven navigation to `Get Involved`
+- Hero heading and intro text are readable on initial load
+- No white-on-light contrast regression observed in the hero area
+- Spot checks on previously fixed hero pages did not show regressions
