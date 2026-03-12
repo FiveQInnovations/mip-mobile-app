@@ -1,5 +1,7 @@
 #!/bin/bash
 # Run stable native iOS Maestro tests in sequence.
+# NOTE (2026-03-11): Team paused running this suite regularly because
+# Maestro launches were failing too often in simulator sessions.
 # Usage: ./scripts/run-maestro-ios-all.sh
 
 set -e
@@ -11,10 +13,10 @@ cd "$PROJECT_ROOT"
 
 STABLE_TESTS=(
     "maestro/flows/chaplain-resources-opens-ios.yaml"
-    "maestro/flows/ticket-210-connect-tab-buttons-ios.yaml"
+    "maestro/flows/ticket-211-external-links-ios.yaml"
     "maestro/flows/ticket-214-about-us-back-button-ios.yaml"
     "maestro/flows/ticket-215-back-button-style-consistency-ios.yaml"
-    "maestro/flows/ticket-249-media-tab-categories-ios.yaml"
+    "maestro/flows/ticket-254-htmlcontent-fixes-ios.yaml"
 )
 
 PASSED=0
