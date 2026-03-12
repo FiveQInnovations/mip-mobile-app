@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: done
 area: wsp-mobile
 phase: core
 created: 2026-03-07
@@ -26,6 +26,22 @@ Some content responses can fall back to raw HTML when link transformation throws
 ## Notes
 
 - This is a follow-up hardening task; Android now has an app-side fallback.
+
+## Implementation Notes
+
+- Updated `wsp-mobile/lib/pages.php` to isolate internal-link UUID transform failures per link so one bad href does not downgrade all transformed links in `page_content`.
+- Added richer transform-failure diagnostics (reason + source context + failing href metadata) to make broken content payloads actionable.
+- Preserved non-page destinations (external and form routes) so only valid internal page targets convert to `/page/{uuid}`.
+- Deployed in `wsp-mobile` and verified endpoint responses include transformed `/page/{uuid}` links while preserving external/form links.
+
+## QA (Manual iOS Simulator)
+
+- Build and run the iOS app on simulator.
+- Open a content page that includes mixed links (internal page buttons and at least one external/form link).
+- Confirm internal content links navigate in-app (no browser open for standard internal page buttons).
+- Confirm form/external links still open externally.
+- If available, verify a page with malformed/odd link markup still preserves other valid internal links as `/page/{uuid}`.
+- Ready for QA.
 
 ## References
 
