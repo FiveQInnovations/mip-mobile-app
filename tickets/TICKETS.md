@@ -9,7 +9,6 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
-- [250](250-ios-prayer-request-anchor-jump.md) - Add iOS Prayer Request Anchor Jump
 
 ## In Progress
 - [252](252-android-internal-buttons-open-browser-regression.md) - Fix Android Regression: Internal Buttons Open Browser
@@ -189,6 +188,7 @@ Quick reference for active tasks. See individual files for details.
 - [246](246-android-resource-pages-hero-title-contrast-systemic.md) - Improve Hero Title Contrast Across Resource Subpages (Android)
 - [248](248-android-media-ministry-iframe-not-rendering.md) - Fix Media Ministry Iframe Not Rendering on Android
 - [249](249-ios-media-tab-categories-ui.md) - Implement Media Categories UI on iOS
+- [250](250-ios-prayer-request-anchor-jump.md) - Add iOS Prayer Request Anchor Jump
 - [254](254-ios-port-android-htmlcontent-fixes.md) - Port Recent Android HtmlContent Fixes to iOS Swift
 
 ---
