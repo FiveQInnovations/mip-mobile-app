@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: qa
 area: ios-mip-app
 phase: core
 created: 2026-03-07
@@ -34,3 +34,9 @@ Ticket `239` identified extra narrative text above the Prayer Request form that 
 - Parent ticket: `tickets/239-streamline-prayer-request-mobile.md`
 - iOS link handling: `ios-mip-app/FFCI/Views/HtmlContentView.swift`
 - Android counterpart: `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/HtmlContent.kt`
+
+## QA Notes
+
+- Manual verification completed on iOS simulator (Maestro intentionally skipped)
+- Prayer Request opens in browser with `#prayer-request-response` and lands near the form
+- Chaplain Request and other form-link behavior remains unchanged

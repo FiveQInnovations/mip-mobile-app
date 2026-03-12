@@ -9,6 +9,7 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
+- [250](250-ios-prayer-request-anchor-jump.md) - Add iOS Prayer Request Anchor Jump
 
 ## In Progress
 - [252](252-android-internal-buttons-open-browser-regression.md) - Fix Android Regression: Internal Buttons Open Browser
@@ -16,7 +17,6 @@ Quick reference for active tasks. See individual files for details.
 ## Backlog
 
 ### 🔴 Core Functionality (FFCI)
-- [250](250-ios-prayer-request-anchor-jump.md) - Add iOS Prayer Request Anchor Jump
 - [251](251-ios-verify-give-tab-external-link.md) - Verify Give Tab External Link on iOS
 - [253](253-wsp-mobile-stabilize-internal-link-uuid-transform.md) - Stabilize Internal Link to UUID Transform in Mobile API
 - [255](255-ios-get-involved-hero-contrast-regression.md) - Fix iOS Get Involved Hero Contrast Regression

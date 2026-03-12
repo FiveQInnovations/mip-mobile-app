@@ -651,6 +651,7 @@ struct HtmlContentView: UIViewRepresentable {
         let onNavigate: ((String) -> Void)?
         weak var webView: WKWebView?
         var contentHeightBinding: Binding<CGFloat>?
+        private let prayerRequestAnchor = "prayer-request-response"
         
         init(onNavigate: ((String) -> Void)?) {
             self.onNavigate = onNavigate
@@ -664,6 +665,41 @@ struct HtmlContentView: UIViewRepresentable {
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
             components?.scheme = "https"
             return components?.url ?? url
+        }
+
+        private func isFormPage(_ url: URL) -> Bool {
+            let path = url.path.lowercased()
+            return path.contains("/prayer-request") || path.contains("/chaplain-request") || path.contains("/forms/")
+        }
+
+        private func normalizedUrlForExternalOpen(_ url: URL) -> URL {
+            let normalized = normalizedUrlForNavigation(url)
+            return normalizedFormUrlForExternalOpen(normalized)
+        }
+
+        private func normalizedFormUrlForExternalOpen(_ url: URL) -> URL {
+            guard url.path.lowercased().contains("/prayer-request") else {
+                return url
+            }
+
+            var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            let currentFragment = components?.fragment?.trimmingCharacters(in: .whitespacesAndNewlines)
+
+            // Preserve existing explicit non-empty fragments to avoid breaking deep links.
+            if let fragment = currentFragment, !fragment.isEmpty, fragment != prayerRequestAnchor {
+                return url
+            }
+
+            if currentFragment == prayerRequestAnchor {
+                return url
+            }
+
+            components?.fragment = prayerRequestAnchor
+            return components?.url ?? url
+        }
+
+        private func openInExternalBrowser(_ url: URL) {
+            UIApplication.shared.open(normalizedUrlForExternalOpen(url))
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -861,15 +897,15 @@ struct HtmlContentView: UIViewRepresentable {
             }
             
             // Form pages - open in external browser
-            if urlString.contains("/prayer-request") || urlString.contains("/chaplain-request") || urlString.contains("/forms/") {
-                UIApplication.shared.open(url)
+            if isFormPage(url) {
+                openInExternalBrowser(url)
                 decisionHandler(.cancel)
                 return
             }
             
             // External links - open in browser
             if let host = url.host, host != "ffci.fiveq.dev", !urlString.hasPrefix("/") {
-                UIApplication.shared.open(url)
+                openInExternalBrowser(url)
                 decisionHandler(.cancel)
                 return
             }
