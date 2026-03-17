@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: qa
 area: ios-mip-app
 phase: core
 created: 2026-03-14
@@ -38,4 +38,9 @@ style guide.
 
 - Related contrast work: `tickets/255-ios-get-involved-hero-contrast-regression.md`
 - Shared renderer likely involved: `ios-mip-app/FFCI/Views/HtmlContentView.swift`
+
+## QA Notes
+
+- Manual verification PASS from user after confirming updated Connect and non-Connect
+  hero pages render with crisp images and without tan hero background slabs.
 

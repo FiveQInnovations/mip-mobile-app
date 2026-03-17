@@ -146,14 +146,6 @@ struct HtmlContentView: UIViewRepresentable {
     // Run hero normalization before didFinish to avoid visible contrast flicker.
     private static let heroContrastPreloadScript = """
     (function() {
-        function normalizedText(value) {
-            return (value || '').replace(/\\s+/g, ' ').trim().toLowerCase();
-        }
-
-        function isConnectHeadingText(value) {
-            return normalizedText(value) === 'connect with us';
-        }
-
         function removeBlurEffects(element) {
             if (!element) return;
             element.style.setProperty('filter', 'none', 'important');
@@ -161,49 +153,25 @@ struct HtmlContentView: UIViewRepresentable {
             element.style.setProperty('backdrop-filter', 'none', 'important');
         }
 
-        function removeConnectHeroBlur(section) {
+        function markHeroSection(anchorElement) {
+            if (!anchorElement) return null;
+            const section = anchorElement.closest('._section');
+            if (!section) return null;
+            section.classList.add('_hero-section');
+            return section;
+        }
+
+        function normalizeHeroImageRendering(section) {
             if (!section) return;
             const blurTargets = section.querySelectorAll(
                 '._background, ._background picture, ._background img, ._hero-background, ._hero-background picture, ._hero-background img'
             );
             blurTargets.forEach(function(target) {
                 removeBlurEffects(target);
+                target.style.setProperty('opacity', '1', 'important');
+                target.style.setProperty('mix-blend-mode', 'normal', 'important');
+                target.style.setProperty('background-blend-mode', 'normal', 'important');
             });
-        }
-
-        function markConnectPage() {
-            const sections = document.querySelectorAll('._section');
-            let connectSection = null;
-
-            sections.forEach(function(section) {
-                if (connectSection) return;
-                const headingCandidates = section.querySelectorAll('h1, h2, ._heading');
-                headingCandidates.forEach(function(candidate) {
-                    if (connectSection) return;
-                    if (isConnectHeadingText(candidate.textContent)) {
-                        connectSection = section;
-                    }
-                });
-            });
-
-            if (!connectSection) return;
-
-            if (document.body) {
-                document.body.classList.add('_connect-page');
-            }
-            connectSection.classList.add('_connect-hero-section');
-
-            const connectHeading = connectSection.querySelector('._heading');
-            if (connectHeading) {
-                connectHeading.classList.add('_connect-hero-heading');
-            }
-
-            const connectBackground = connectSection.querySelector('._background');
-            if (connectBackground) {
-                connectBackground.classList.add('_connect-hero-background');
-            }
-
-            removeConnectHeroBlur(connectSection);
         }
 
         function forceHeroContrast(element, className) {
@@ -226,8 +194,6 @@ struct HtmlContentView: UIViewRepresentable {
         }
 
         function normalizeHeroContrast() {
-            markConnectPage();
-
             const heroBackgroundFirst = document.querySelectorAll('._section ._background + ._heading');
             heroBackgroundFirst.forEach(function(heading) {
                 const bg = heading.previousElementSibling;
@@ -238,6 +204,8 @@ struct HtmlContentView: UIViewRepresentable {
                 if (bg && bg.classList.contains('_background')) {
                     bg.classList.add('_hero-background');
                 }
+                const heroSection = markHeroSection(heading);
+                normalizeHeroImageRendering(heroSection);
             });
 
             const heroHeadingFirst = document.querySelectorAll('._section ._heading + ._background');
@@ -247,6 +215,8 @@ struct HtmlContentView: UIViewRepresentable {
                 if (heading && heading.classList.contains('_heading')) {
                     forceHeroHeadingContrast(heading);
                 }
+                const heroSection = markHeroSection(bg);
+                normalizeHeroImageRendering(heroSection);
             });
 
             const heroHeadingTextBackground = document.querySelectorAll('._section ._heading + ._text + ._background');
@@ -260,9 +230,9 @@ struct HtmlContentView: UIViewRepresentable {
                 if (introText && introText.classList.contains('_text')) {
                     forceHeroIntroContrast(introText);
                 }
+                const heroSection = markHeroSection(bg);
+                normalizeHeroImageRendering(heroSection);
             });
-
-            markConnectPage();
         }
 
         if (document.readyState === 'loading') {
@@ -759,9 +729,9 @@ struct HtmlContentView: UIViewRepresentable {
                 ._hero-background {
                     margin-top: 0;
                 }
-                /* Connect page hero overrides (ticket 257): scope to Connect only */
-                body._connect-page ._connect-hero-section,
-                body._connect-page ._connect-hero-section[style*="background-color"] {
+                /* Generic hero section overrides: apply to all pages consistently */
+                ._hero-section,
+                ._hero-section[style*="background-color"] {
                     background-color: transparent !important;
                     background-image: none !important;
                     width: 100% !important;
@@ -771,39 +741,25 @@ struct HtmlContentView: UIViewRepresentable {
                     padding-left: 0 !important;
                     padding-right: 0 !important;
                 }
-                body._connect-page ._connect-hero-section ._background::before,
-                body._connect-page ._connect-hero-section ._connect-hero-background::before {
+                ._hero-section ._background::before,
+                ._hero-section ._hero-background::before {
                     content: none !important;
                     display: none !important;
                     background: none !important;
                     opacity: 0 !important;
                 }
-                body._connect-page ._connect-hero-section ._background + ._heading,
-                body._connect-page ._connect-hero-section ._hero-heading,
-                body._connect-page ._connect-hero-section ._connect-hero-heading {
+                ._hero-section ._background + ._heading,
+                ._hero-section ._hero-heading {
                     background: rgba(2,77,145,0.90) !important;
                     border-left: 4px solid #D9232A;
                     padding-left: 12px;
                 }
-                body._connect-page ._connect-hero-section ._hero-intro,
-                body._connect-page ._connect-hero-section ._heading + ._text {
-                    background: rgba(255,255,255,0.92) !important;
-                    border-left: 3px solid rgba(217,35,42,0.88);
-                    border-radius: 8px;
-                }
-                body._connect-page ._connect-hero-section ._hero-intro,
-                body._connect-page ._connect-hero-section ._hero-intro *,
-                body._connect-page ._connect-hero-section ._heading + ._text,
-                body._connect-page ._connect-hero-section ._heading + ._text * {
-                    color: #0f172a !important;
-                    text-shadow: none !important;
-                }
-                body._connect-page ._connect-hero-section ._background,
-                body._connect-page ._connect-hero-section ._background picture,
-                body._connect-page ._connect-hero-section ._background img,
-                body._connect-page ._connect-hero-section ._hero-background,
-                body._connect-page ._connect-hero-section ._hero-background picture,
-                body._connect-page ._connect-hero-section ._hero-background img {
+                ._hero-section ._background,
+                ._hero-section ._background picture,
+                ._hero-section ._background img,
+                ._hero-section ._hero-background,
+                ._hero-section ._hero-background picture,
+                ._hero-section ._hero-background img {
                     background-color: #ffffff !important;
                     opacity: 1 !important;
                     filter: none !important;
@@ -908,6 +864,7 @@ struct HtmlContentView: UIViewRepresentable {
                     let cssRules = '';
                     sections.forEach(function(section, index) {
                         const styleAttr = section.getAttribute('style') || '';
+                        const isHeroSection = section.classList.contains('_hero-section');
                         
                         // Parse background-color and color from inline style
                         let bgMatch = styleAttr.match(/background-color:\\s*([^;]+)/i);
@@ -932,7 +889,11 @@ struct HtmlContentView: UIViewRepresentable {
                             
                             let rule = '._section[data-section-id="section-' + index + '"] { ';
                             if (bgMatch) {
-                                rule += 'background-color: ' + bgMatch[1].trim() + ' !important; ';
+                                if (!isHeroSection) {
+                                    rule += 'background-color: ' + bgMatch[1].trim() + ' !important; ';
+                                } else {
+                                    cssRules += '._section._hero-section[data-section-id="section-' + index + '"] { background-color: transparent !important; background-image: none !important; }\\n';
+                                }
                             }
                             if (colorMatch) {
                                 rule += 'color: ' + colorMatch[1].trim() + ' !important; ';
