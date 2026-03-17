@@ -9,7 +9,6 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
-- [257](257-ios-connect-hero-style-guide-palette.md) - Align Connect Hero Styling With Style Guide Palette
 
 ## In Progress
 - [252](252-android-internal-buttons-open-browser-regression.md) - Fix Android Regression: Internal Buttons Open Browser
@@ -190,6 +189,7 @@ Quick reference for active tasks. See individual files for details.
 - [253](253-wsp-mobile-stabilize-internal-link-uuid-transform.md) - Stabilize Internal Link to UUID Transform in Mobile API
 - [254](254-ios-port-android-htmlcontent-fixes.md) - Port Recent Android HtmlContent Fixes to iOS Swift
 - [255](255-ios-get-involved-hero-contrast-regression.md) - Fix iOS Get Involved Hero Contrast Regression
+- [257](257-ios-connect-hero-style-guide-palette.md) - Align Connect Hero Styling With Style Guide Palette
 
 ---
 
