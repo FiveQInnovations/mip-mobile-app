@@ -9,10 +9,10 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
-- [255](255-ios-get-involved-hero-contrast-regression.md) - Fix iOS Get Involved Hero Contrast Regression
 
 ## In Progress
 - [252](252-android-internal-buttons-open-browser-regression.md) - Fix Android Regression: Internal Buttons Open Browser
+- [257](257-ios-connect-hero-style-guide-palette.md) - Align Connect Hero Styling With Style Guide Palette
 
 ## Backlog
 
@@ -61,6 +61,7 @@ Quick reference for active tasks. See individual files for details.
 - [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
 - [050](050-maestro-test-organization.md) - Research Maestro Test Organization
 - [247](247-android-content-page-cta-buttons-not-navigating.md) - Fix Non-Responsive CTA Buttons on Content Pages (Android)
+- [256](256-ios-home-featured-priority-above-the-fold.md) - Prioritize Upcoming Events and Featured Chapter Above the Fold
 
 ## Done
 - [001](done/001-api-key-auth.md) - Update RN app to use X-API-Key authentication
@@ -188,6 +189,7 @@ Quick reference for active tasks. See individual files for details.
 - [251](251-ios-verify-give-tab-external-link.md) - Verify Give Tab External Link on iOS
 - [253](253-wsp-mobile-stabilize-internal-link-uuid-transform.md) - Stabilize Internal Link to UUID Transform in Mobile API
 - [254](254-ios-port-android-htmlcontent-fixes.md) - Port Recent Android HtmlContent Fixes to iOS Swift
+- [255](255-ios-get-involved-hero-contrast-regression.md) - Fix iOS Get Involved Hero Contrast Regression
 
 ---
 

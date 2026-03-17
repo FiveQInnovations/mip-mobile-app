@@ -146,6 +146,66 @@ struct HtmlContentView: UIViewRepresentable {
     // Run hero normalization before didFinish to avoid visible contrast flicker.
     private static let heroContrastPreloadScript = """
     (function() {
+        function normalizedText(value) {
+            return (value || '').replace(/\\s+/g, ' ').trim().toLowerCase();
+        }
+
+        function isConnectHeadingText(value) {
+            return normalizedText(value) === 'connect with us';
+        }
+
+        function removeBlurEffects(element) {
+            if (!element) return;
+            element.style.setProperty('filter', 'none', 'important');
+            element.style.setProperty('-webkit-filter', 'none', 'important');
+            element.style.setProperty('backdrop-filter', 'none', 'important');
+        }
+
+        function removeConnectHeroBlur(section) {
+            if (!section) return;
+            const blurTargets = section.querySelectorAll(
+                '._background, ._background picture, ._background img, ._hero-background, ._hero-background picture, ._hero-background img'
+            );
+            blurTargets.forEach(function(target) {
+                removeBlurEffects(target);
+            });
+        }
+
+        function markConnectPage() {
+            const sections = document.querySelectorAll('._section');
+            let connectSection = null;
+
+            sections.forEach(function(section) {
+                if (connectSection) return;
+                const headingCandidates = section.querySelectorAll('h1, h2, ._heading');
+                headingCandidates.forEach(function(candidate) {
+                    if (connectSection) return;
+                    if (isConnectHeadingText(candidate.textContent)) {
+                        connectSection = section;
+                    }
+                });
+            });
+
+            if (!connectSection) return;
+
+            if (document.body) {
+                document.body.classList.add('_connect-page');
+            }
+            connectSection.classList.add('_connect-hero-section');
+
+            const connectHeading = connectSection.querySelector('._heading');
+            if (connectHeading) {
+                connectHeading.classList.add('_connect-hero-heading');
+            }
+
+            const connectBackground = connectSection.querySelector('._background');
+            if (connectBackground) {
+                connectBackground.classList.add('_connect-hero-background');
+            }
+
+            removeConnectHeroBlur(connectSection);
+        }
+
         function forceHeroContrast(element, className) {
             if (!element) return;
             element.classList.add(className);
@@ -166,6 +226,8 @@ struct HtmlContentView: UIViewRepresentable {
         }
 
         function normalizeHeroContrast() {
+            markConnectPage();
+
             const heroBackgroundFirst = document.querySelectorAll('._section ._background + ._heading');
             heroBackgroundFirst.forEach(function(heading) {
                 const bg = heading.previousElementSibling;
@@ -199,6 +261,8 @@ struct HtmlContentView: UIViewRepresentable {
                     forceHeroIntroContrast(introText);
                 }
             });
+
+            markConnectPage();
         }
 
         if (document.readyState === 'loading') {
@@ -207,6 +271,7 @@ struct HtmlContentView: UIViewRepresentable {
             normalizeHeroContrast();
         }
         window.addEventListener('load', normalizeHeroContrast, { once: true });
+        setTimeout(normalizeHeroContrast, 350);
     })();
     """
     
@@ -693,6 +758,60 @@ struct HtmlContentView: UIViewRepresentable {
                 }
                 ._hero-background {
                     margin-top: 0;
+                }
+                /* Connect page hero overrides (ticket 257): scope to Connect only */
+                body._connect-page ._connect-hero-section,
+                body._connect-page ._connect-hero-section[style*="background-color"] {
+                    background-color: transparent !important;
+                    background-image: none !important;
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    margin-left: 0 !important;
+                    margin-right: 0 !important;
+                    padding-left: 0 !important;
+                    padding-right: 0 !important;
+                }
+                body._connect-page ._connect-hero-section ._background::before,
+                body._connect-page ._connect-hero-section ._connect-hero-background::before {
+                    content: none !important;
+                    display: none !important;
+                    background: none !important;
+                    opacity: 0 !important;
+                }
+                body._connect-page ._connect-hero-section ._background + ._heading,
+                body._connect-page ._connect-hero-section ._hero-heading,
+                body._connect-page ._connect-hero-section ._connect-hero-heading {
+                    background: rgba(2,77,145,0.90) !important;
+                    border-left: 4px solid #D9232A;
+                    padding-left: 12px;
+                }
+                body._connect-page ._connect-hero-section ._hero-intro,
+                body._connect-page ._connect-hero-section ._heading + ._text {
+                    background: rgba(255,255,255,0.92) !important;
+                    border-left: 3px solid rgba(217,35,42,0.88);
+                    border-radius: 8px;
+                }
+                body._connect-page ._connect-hero-section ._hero-intro,
+                body._connect-page ._connect-hero-section ._hero-intro *,
+                body._connect-page ._connect-hero-section ._heading + ._text,
+                body._connect-page ._connect-hero-section ._heading + ._text * {
+                    color: #0f172a !important;
+                    text-shadow: none !important;
+                }
+                body._connect-page ._connect-hero-section ._background,
+                body._connect-page ._connect-hero-section ._background picture,
+                body._connect-page ._connect-hero-section ._background img,
+                body._connect-page ._connect-hero-section ._hero-background,
+                body._connect-page ._connect-hero-section ._hero-background picture,
+                body._connect-page ._connect-hero-section ._hero-background img {
+                    background-color: #ffffff !important;
+                    opacity: 1 !important;
+                    filter: none !important;
+                    -webkit-filter: none !important;
+                    backdrop-filter: none !important;
+                    -webkit-backdrop-filter: none !important;
+                    mix-blend-mode: normal !important;
+                    background-blend-mode: normal !important;
                 }
 
                 /* Issue 3: Iframe / Embed Responsive CSS */
