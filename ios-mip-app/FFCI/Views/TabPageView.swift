@@ -19,11 +19,8 @@ struct TabPageView: View {
     @State private var isRefreshing = false
     @State private var error: String?
     @State private var htmlContentHeight: CGFloat = 200
-    @State private var cacheStatus: CacheStatus = .miss
     @State private var loadTask: Task<Void, Never>?
     @State private var mediaSectionsTask: Task<Void, Never>?
-    @State private var cacheSize = 0
-    @State private var lastNavigation = ""
     @State private var mediaSections: [MediaCategorySection] = []
     @State private var isLoadingMediaSections = false
     @State private var expandedCategorySlugs: Set<String> = []
@@ -176,10 +173,6 @@ struct TabPageView: View {
                         .navigationBarBackButtonHidden(canGoBack)
                     }
                 }
-                
-                #if DEBUG
-                cacheStatusIndicator
-                #endif
             }
             .task {
                 if pageStack.isEmpty {
@@ -201,7 +194,6 @@ struct TabPageView: View {
         error = nil
         htmlContentHeight = 200  // Reset to default before loading
         isRefreshing = false
-        cacheStatus = .miss
         mediaSections = []
         isLoadingMediaSections = false
         expandedCategorySlugs = []
@@ -210,7 +202,6 @@ struct TabPageView: View {
             let cached = await PageCache.shared.getAnyCache(uuid)
             let hasCache = cached != nil
             let isStale = await PageCache.shared.isExpired(uuid)
-            let currentCacheSize = await PageCache.shared.size()
             
             guard !Task.isCancelled else { return }
             
@@ -218,15 +209,12 @@ struct TabPageView: View {
                 if let cached = cached {
                     self.pageData = cached
                     self.isLoading = false
-                    self.cacheStatus = .hit
                     refreshMediaSections(for: cached)
                 } else {
                     self.pageData = nil
                     self.isLoading = true
-                    self.cacheStatus = .miss
                     refreshMediaSections(for: nil)
                 }
-                self.cacheSize = currentCacheSize
             }
             
             guard !hasCache || isStale else { return }
@@ -241,13 +229,10 @@ struct TabPageView: View {
                 let data = try await MipApiClient.shared.getPage(uuid: uuid)
                 guard !Task.isCancelled else { return }
                 await PageCache.shared.put(uuid, data: data)
-                let updatedCacheSize = await PageCache.shared.size()
                 await MainActor.run {
                     self.pageData = data
                     self.isLoading = false
                     self.isRefreshing = false
-                    self.cacheStatus = hasCache ? .hit : .miss
-                    self.cacheSize = updatedCacheSize
                     refreshMediaSections(for: data)
                     logger.notice("Page loaded: \(data.title), type: \(data.effectivePageType)")
                     logger.notice("Audio check - isAudioItem: \(data.isAudioItem), audioUrl: \(data.audioUrl ?? "nil")")
@@ -302,7 +287,6 @@ struct TabPageView: View {
     
     private func navigateToPage(uuid: String) {
         logger.notice("Navigating to page: \(uuid)")
-        lastNavigation = uuid
         pageStack.append(uuid)
     }
     
@@ -409,45 +393,6 @@ private func buildMediaCategorySections(collectionPage: PageData) async -> [Medi
         )
     ]
 }
-
-private enum CacheStatus {
-    case hit
-    case miss
-    
-    var label: String {
-        switch self {
-        case .hit:
-            return "cache-hit"
-        case .miss:
-            return "cache-miss"
-        }
-    }
-    
-    var identifier: String {
-        switch self {
-        case .hit:
-            return "page-cache-hit"
-        case .miss:
-            return "page-cache-miss"
-        }
-    }
-}
-
-#if DEBUG
-private extension TabPageView {
-    var cacheStatusIndicator: some View {
-        Text("\(cacheStatus.label) (\(cacheSize)) s\(pageStack.count) \(currentUuid.prefix(6)) \(lastNavigation.prefix(6))")
-            .font(.caption2)
-            .foregroundColor(.secondary)
-            .padding(6)
-            .background(Color(.systemBackground).opacity(0.6))
-            .cornerRadius(6)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-            .padding(8)
-            .accessibilityIdentifier(cacheStatus.identifier)
-    }
-}
-#endif
 
 #Preview {
     TabPageView(uuid: "sample-uuid")
