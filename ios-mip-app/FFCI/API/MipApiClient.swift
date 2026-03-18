@@ -8,6 +8,25 @@
 import Foundation
 import os.log
 
+enum FFCIURLConfig {
+    static let siteBaseURL = URL(string: "https://firefightersforchrist.org")!
+    static let apiBaseURL = siteBaseURL
+    static let authScheme = "ffci-auth"
+
+    static func normalizedFirstPartyHost(_ host: String?) -> String? {
+        guard let host else { return nil }
+        let normalizedHost = host.lowercased()
+        if normalizedHost == "www.firefightersforchrist.org" {
+            return "firefightersforchrist.org"
+        }
+        return normalizedHost
+    }
+
+    static func isFirstPartyHost(_ host: String?) -> Bool {
+        normalizedFirstPartyHost(host) == normalizedFirstPartyHost(siteBaseURL.host)
+    }
+}
+
 private let logger = Logger(subsystem: "com.fiveq.ffci", category: "API")
 
 enum ApiError: Error {
@@ -20,7 +39,7 @@ enum ApiError: Error {
 class MipApiClient {
     static let shared = MipApiClient()
     
-    private let baseURL = "https://ffci.fiveq.dev"
+    private let baseURL = FFCIURLConfig.apiBaseURL.absoluteString
     private let apiKey = "777359235aecc10fdfb144041dfdacfc80ca0751c7bed7b14c96f935456fc4ce"
     private let username = "fiveq"
     private let password = "demo"

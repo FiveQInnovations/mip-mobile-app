@@ -48,8 +48,11 @@ class AuthURLSchemeHandler: NSObject, WKURLSchemeHandler {
         }
         
         // Extract the original HTTPS URL from the custom scheme
-        // Custom scheme format: ffci-auth://ffci.fiveq.dev/path/to/resource
-        let originalURLString = url.absoluteString.replacingOccurrences(of: "ffci-auth://", with: "https://")
+        // Custom scheme format: ffci-auth://firefightersforchrist.org/path/to/resource
+        let originalURLString = url.absoluteString.replacingOccurrences(
+            of: "\(FFCIURLConfig.authScheme)://",
+            with: "https://"
+        )
         guard let originalURL = URL(string: originalURLString) else {
             if !isTaskStopped(urlSchemeTask) {
                 urlSchemeTask.didFailWithError(NSError(domain: "Invalid URL conversion", code: -1))
@@ -264,7 +267,7 @@ struct HtmlContentView: UIViewRepresentable {
         
         // Register custom URL scheme handler for Basic Auth resource loading
         let authHandler = AuthURLSchemeHandler()
-        configuration.setURLSchemeHandler(authHandler, forURLScheme: "ffci-auth")
+        configuration.setURLSchemeHandler(authHandler, forURLScheme: FFCIURLConfig.authScheme)
         
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
@@ -276,14 +279,14 @@ struct HtmlContentView: UIViewRepresentable {
         context.coordinator.contentHeightBinding = _contentHeight
         
         let styledHtml = wrapHtml(html)
-        webView.loadHTMLString(styledHtml, baseURL: URL(string: "https://ffci.fiveq.dev"))
+        webView.loadHTMLString(styledHtml, baseURL: FFCIURLConfig.siteBaseURL)
         
         return webView
     }
     
     func updateUIView(_ webView: WKWebView, context: Context) {
         let styledHtml = wrapHtml(html)
-        webView.loadHTMLString(styledHtml, baseURL: URL(string: "https://ffci.fiveq.dev"))
+        webView.loadHTMLString(styledHtml, baseURL: FFCIURLConfig.siteBaseURL)
     }
     
     func makeCoordinator() -> Coordinator {
@@ -315,28 +318,38 @@ struct HtmlContentView: UIViewRepresentable {
             }
         }
         
-        // Replace ffci.fiveq.dev URLs with custom scheme for Basic Auth
+        // Replace first-party site URLs with custom scheme for Basic Auth
         // This allows WKURLSchemeHandler to intercept and add auth headers
         // Handle both http:// and https:// URLs, and replace in src, srcset, and href attributes
-        let urlPattern = "(https?://ffci\\.fiveq\\.dev)"
+        let urlPattern = "(https?)://((?:www\\.)?firefightersforchrist\\.org)"
         if let regex = try? NSRegularExpression(pattern: urlPattern, options: .caseInsensitive) {
             let range = NSRange(fixedHtml.startIndex..<fixedHtml.endIndex, in: fixedHtml)
             fixedHtml = regex.stringByReplacingMatches(
                 in: fixedHtml,
                 options: [],
                 range: range,
-                withTemplate: "ffci-auth://ffci.fiveq.dev"
+                withTemplate: "\(FFCIURLConfig.authScheme)://$2"
             )
         } else {
             // Fallback to simple string replacement if regex fails
             fixedHtml = fixedHtml.replacingOccurrences(
-                of: "https://ffci.fiveq.dev",
-                with: "ffci-auth://ffci.fiveq.dev",
+                of: "https://firefightersforchrist.org",
+                with: "\(FFCIURLConfig.authScheme)://firefightersforchrist.org",
                 options: .caseInsensitive
             )
             fixedHtml = fixedHtml.replacingOccurrences(
-                of: "http://ffci.fiveq.dev",
-                with: "ffci-auth://ffci.fiveq.dev",
+                of: "http://firefightersforchrist.org",
+                with: "\(FFCIURLConfig.authScheme)://firefightersforchrist.org",
+                options: .caseInsensitive
+            )
+            fixedHtml = fixedHtml.replacingOccurrences(
+                of: "https://www.firefightersforchrist.org",
+                with: "\(FFCIURLConfig.authScheme)://www.firefightersforchrist.org",
+                options: .caseInsensitive
+            )
+            fixedHtml = fixedHtml.replacingOccurrences(
+                of: "http://www.firefightersforchrist.org",
+                with: "\(FFCIURLConfig.authScheme)://www.firefightersforchrist.org",
                 options: .caseInsensitive
             )
         }
@@ -807,7 +820,7 @@ struct HtmlContentView: UIViewRepresentable {
         }
 
         private func normalizedUrlForNavigation(_ url: URL) -> URL {
-            guard url.scheme?.lowercased() == "ffci-auth" else {
+            guard url.scheme?.lowercased() == FFCIURLConfig.authScheme else {
                 return url
             }
 
@@ -1018,10 +1031,10 @@ struct HtmlContentView: UIViewRepresentable {
             let navigationType = navigationAction.navigationType
             
             // Allow navigation to baseURL (handles initial load from loadHTMLString)
-            let baseURLString = "https://ffci.fiveq.dev"
+            let baseURLString = FFCIURLConfig.siteBaseURL.absoluteString
             if urlString == baseURLString || 
                urlString == "\(baseURLString)/" ||
-               (url.host == "ffci.fiveq.dev" && (url.path.isEmpty || url.path == "/")) {
+               (FFCIURLConfig.isFirstPartyHost(url.host) && (url.path.isEmpty || url.path == "/")) {
                 decisionHandler(.allow)
                 return
             }
@@ -1058,7 +1071,7 @@ struct HtmlContentView: UIViewRepresentable {
             }
             
             // External links - open in browser
-            if let host = url.host, host != "ffci.fiveq.dev", !urlString.hasPrefix("/") {
+            if let host = url.host, !FFCIURLConfig.isFirstPartyHost(host), !urlString.hasPrefix("/") {
                 openInExternalBrowser(url)
                 decisionHandler(.cancel)
                 return

@@ -9,6 +9,7 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
+- [258](258-ios-verify-production-domain-and-testflight.md) - Verify iOS Against Production Domain and Ship TestFlight Build
 
 ## In Progress
 - [252](252-android-internal-buttons-open-browser-regression.md) - Fix Android Regression: Internal Buttons Open Browser
