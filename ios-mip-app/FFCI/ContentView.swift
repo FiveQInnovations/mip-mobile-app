@@ -11,6 +11,7 @@ import os.log
 private let logger = Logger(subsystem: "com.fiveq.ffci", category: "UI")
 
 struct ContentView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var appState = AppState()
     
     var body: some View {
@@ -27,6 +28,11 @@ struct ContentView: View {
         }
         .task {
             appState.loadSiteData()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                MipAnalytics.logAppOpen()
+            }
         }
     }
 }
@@ -101,11 +107,15 @@ struct MainTabView: View {
             }
         }
         .accentColor(Color("BrandPrimaryColor"))
+        .onAppear {
+            logTabScreenView(for: selectedTab)
+        }
     }
     
     private func handleTabSelection(_ newSelection: Int) {
         guard let item = menuItem(forTabSelection: newSelection) else {
             selectedTab = newSelection
+            logTabScreenView(for: newSelection)
             return
         }
         
@@ -117,6 +127,20 @@ struct MainTabView: View {
         }
         
         selectedTab = newSelection
+        logTabScreenView(for: newSelection)
+    }
+    
+    /// Stable `screen_name`: `home` or `tab/<menu_page_uuid>`.
+    private func logTabScreenView(for selection: Int) {
+        if selection == 0 {
+            MipAnalytics.logScreenView(screenName: "home", screenClass: "HomeView")
+            return
+        }
+        guard let item = menuItem(forTabSelection: selection) else { return }
+        MipAnalytics.logScreenView(
+            screenName: "tab/\(item.page.uuid)",
+            screenClass: "TabPageView"
+        )
     }
     
     private func menuItem(forTabSelection selection: Int) -> MenuItem? {

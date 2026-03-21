@@ -36,6 +36,7 @@ struct SearchView: View {
             .navigationBarHidden(true)
             .onAppear {
                 isSearchFocused = true
+                MipAnalytics.logScreenView(screenName: "search", screenClass: "SearchView")
             }
             .onDisappear {
                 searchTask?.cancel()

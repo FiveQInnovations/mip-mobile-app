@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B02900022909000100000002 /* Analytics/MipAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02900012909000100000001 /* Analytics/MipAnalytics.swift */; };
 		1C63E5C62816485AA552F210 /* Views/TabPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD67E6F8F8C4C988F741931 /* Views/TabPageView.swift */; };
 		4FA7904F51F34D7589CBFF68 /* API/ApiModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0B7BA3F7D347D2993A9ECD /* API/ApiModels.swift */; };
 		6F7E8D9C0B1A2F3E4D5C6B7A /* Views/FeaturedSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6D7C8B9A0F1E2D3C4B5A69 /* Views/FeaturedSectionView.swift */; };
@@ -35,6 +36,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B02900012909000100000001 /* Analytics/MipAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics/MipAnalytics.swift; sourceTree = "<group>"; };
 		2551E3657AE192F7C883B276 /* Views/FeaturedCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/FeaturedCard.swift; sourceTree = "<group>"; };
 		3AE9115171EE4243A6AE0A2B /* Views/LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/LoadingView.swift; sourceTree = "<group>"; };
 		3D51A13CFD7348FAB546FCB6 /* Views/HtmlContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/HtmlContentView.swift; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 			children = (
 				A71111102B0000010000FFCI /* FFCIApp.swift */,
 				A71111122B0000010000FFCI /* ContentView.swift */,
+				B02900012909000100000001 /* Analytics/MipAnalytics.swift */,
 				A71111322B0000030000FFCI /* GoogleService-Info.plist */,
 				7A0B7BA3F7D347D2993A9ECD /* API/ApiModels.swift */,
 				549E27E02AE14FA3BDD30465 /* API/MipApiClient.swift */,
@@ -203,6 +206,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B02900022909000100000002 /* Analytics/MipAnalytics.swift in Sources */,
 				A71111132B0000010000FFCI /* ContentView.swift in Sources */,
 				A71111112B0000010000FFCI /* FFCIApp.swift in Sources */,
 				4FA7904F51F34D7589CBFF68 /* API/ApiModels.swift in Sources */,

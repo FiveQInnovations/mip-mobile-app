@@ -24,6 +24,8 @@ struct TabPageView: View {
     @State private var mediaSections: [MediaCategorySection] = []
     @State private var isLoadingMediaSections = false
     @State private var expandedCategorySlugs: Set<String> = []
+    /// Dedupes identical `content_view` / `screen_view` when the same page refreshes in place.
+    @State private var lastAnalyticsContentKey: String?
     
     var currentUuid: String {
         pageStack.isEmpty ? uuid : pageStack.last!
@@ -210,6 +212,7 @@ struct TabPageView: View {
                     self.pageData = cached
                     self.isLoading = false
                     refreshMediaSections(for: cached)
+                    trackPageAnalytics(pageUuid: uuid, data: cached)
                 } else {
                     self.pageData = nil
                     self.isLoading = true
@@ -234,6 +237,7 @@ struct TabPageView: View {
                     self.isLoading = false
                     self.isRefreshing = false
                     refreshMediaSections(for: data)
+                    trackPageAnalytics(pageUuid: uuid, data: data)
                     logger.notice("Page loaded: \(data.title), type: \(data.effectivePageType)")
                     logger.notice("Audio check - isAudioItem: \(data.isAudioItem), audioUrl: \(data.audioUrl ?? "nil")")
                 }
@@ -288,6 +292,18 @@ struct TabPageView: View {
     private func navigateToPage(uuid: String) {
         logger.notice("Navigating to page: \(uuid)")
         pageStack.append(uuid)
+    }
+    
+    private func trackPageAnalytics(pageUuid: String, data: PageData) {
+        let key = "\(pageUuid)|\(data.title)|\(data.effectivePageType)"
+        guard lastAnalyticsContentKey != key else { return }
+        lastAnalyticsContentKey = key
+        MipAnalytics.logScreenView(screenName: "page/\(pageUuid)", screenClass: "TabPageView")
+        MipAnalytics.logContentView(
+            pageUuid: pageUuid,
+            title: data.title,
+            contentType: data.effectivePageType
+        )
     }
     
     private func goBack() {

@@ -69,6 +69,13 @@ struct HomeView: View {
         .sheet(isPresented: $showSearch) {
             SearchView()
         }
+        .onAppear {
+            MipAnalytics.logContentView(
+                pageUuid: MipAnalytics.homePageUuid,
+                title: siteMeta.title,
+                contentType: "home"
+            )
+        }
     }
 }
 
