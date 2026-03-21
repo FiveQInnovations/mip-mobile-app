@@ -1,5 +1,5 @@
 ---
-status: maybe
+status: cancelled
 area: rn-mip-app
 phase: testing
 created: 2026-01-17

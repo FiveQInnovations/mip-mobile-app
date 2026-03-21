@@ -38,28 +38,27 @@ Quick reference for active tasks. See individual files for details.
 - [031](031-firebase-external-link-event.md) - Firebase External Link Event
 - [041](041-new-site-guide.md) - Document "Adding a New Site" Step-by-Step Guide
 
-### Unassigned
-- [015](015-ios-browserstack-without-apple-dev-account.md) - Build and Upload iOS to BrowserStack Without Apple Developer Account
-
 ## Blocked
-- [077](077-homepage-touch-handling.md) - Homepage Touch Handling on Real Devices
+(none)
 
 ## Maybe
-- [033](033-maestro-collection-test.md) - Maestro Test: Collection Grid and Navigation
-- [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
 - [038](038-cache-last-data.md) - Cache Last Successful Data for Offline Access
-- [078](078-verification-report.md) - Ticket 078 Verification Report
-- [085](085-button-layout-verification-report.md) - Ticket 085: Button Layout Verification Report
-- [092](092-tab-bar-sync-from-kirby.md) - Ticket 092: Tab Bar Not Syncing New Tabs from Kirby
 
 ## Cancelled
 - [003](003-deploy-to-real-device-eas.md) - Deploy to Real device (EAS)
 - [005](005-link-apple-account-eas.md) - Link Apple Account with EAS
 - [013](013-speed-up-eas-android-builds.md) - Speed Up EAS Android Build Time
+- [015](015-ios-browserstack-without-apple-dev-account.md) - Build and Upload iOS to BrowserStack Without Apple Developer Account
+- [033](033-maestro-collection-test.md) - Maestro Test: Collection Grid and Navigation
+- [036](036-maestro-error-handling-test.md) - Maestro Test: Error Handling
 - [040](040-eas-build-profiles.md) - Set Up EAS Build Profiles for Multiple Sites
 - [042](042-remove-dev-tools.md) - Remove Dev Tools Section Before Production
 - [045](045-android-back-button-tab-history.md) - Android Back Button Tab Navigation History
 - [050](050-maestro-test-organization.md) - Research Maestro Test Organization
+- [077](077-homepage-touch-handling.md) - Homepage Touch Handling on Real Devices
+- [078](078-verification-report.md) - Ticket 078 Verification Report
+- [085](085-button-layout-verification-report.md) - Ticket 085: Button Layout Verification Report
+- [092](092-tab-bar-sync-from-kirby.md) - Ticket 092: Tab Bar Not Syncing New Tabs from Kirby
 - [247](247-android-content-page-cta-buttons-not-navigating.md) - Fix Non-Responsive CTA Buttons on Content Pages (Android)
 - [256](256-ios-home-featured-priority-above-the-fold.md) - Prioritize Upcoming Events and Featured Chapter Above the Fold
 

@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: cancelled
 area: rn-mip-app
 created: 2026-01-21
 paused: 2026-01-21

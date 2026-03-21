@@ -1,5 +1,5 @@
 ---
-status: maybe
+status: cancelled
 area: wsp-mobile
 phase: core
 created: 2026-01-02
