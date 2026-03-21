@@ -30,12 +30,16 @@ Quick reference for active tasks. See individual files for details.
 - [034](034-maestro-video-test.md) - Maestro Test: Video Playback
 - [035](035-maestro-audio-test.md) - Maestro Test: Audio Playback
 - [039](039-c4i-site-config.md) - Create C4I Site Configuration
+- [262](262-android-firebase-media-events.md) - Firebase Media Events (Android): video_play, video_complete, audio_play
 
 ### 🟢 Production Ready
 - [028](028-firebase-setup.md) - Firebase Analytics Setup (iOS)
 - [029](029-firebase-navigation-events.md) - Firebase Navigation Events (iOS): app_open, screen_view, content_view
 - [031](031-firebase-external-link-event.md) - Firebase External Link Event (iOS)
 - [041](041-new-site-guide.md) - Document "Adding a New Site" Step-by-Step Guide
+- [259](259-android-firebase-setup.md) - Firebase Analytics Setup (Android)
+- [260](260-android-firebase-navigation-events.md) - Firebase Navigation Events (Android): app_open, screen_view, content_view
+- [261](261-android-firebase-external-link-event.md) - Firebase External Link Event (Android)
 
 ## Blocked
 (none)
