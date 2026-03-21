@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: qa
 area: android-mip-app
 phase: core
 created: 2026-03-07
