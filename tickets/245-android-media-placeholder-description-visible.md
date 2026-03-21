@@ -1,41 +1,42 @@
 ---
-status: backlog
+status: qa
 area: android-mip-app
 phase: nice-to-have
 created: 2026-03-06
 ---
 
-# Hide Placeholder Description Text in Media Item Detail (Android)
+# Hide Kirby default description on media detail (Android)
 
 ## Context
 
-In the Android Media tab, opening `Fixed Husbands` shows placeholder copy directly in the UI: `Write your description here...`.
-
-This reads like authoring placeholder text rather than intentional user-facing content and reduces polish/credibility for production users.
+On media (audio) item pages, `page_content` sometimes contains only Kirby’s default block copy: `Write your description here...`. That is meant for editors in the Panel, not end users.
 
 ## Goals
 
-1. Prevent placeholder/fallback template strings from being displayed in media detail screens
-2. Show description only when content is meaningful
-3. Keep current behavior unchanged for valid, non-placeholder descriptions
+1. Do not render description HTML when visible text is only that placeholder.
+2. When the CMS provides real copy in `page_content`, show it unchanged.
+3. Avoid layout regressions around the audio player and surrounding content.
 
 ## Acceptance Criteria
 
-- [ ] Media detail screens do not show `Write your description here...` to users
-- [ ] If description is blank/placeholder, description block is hidden (or replaced with intentional copy)
-- [ ] Items with valid descriptions still render those descriptions
-- [ ] No regressions to media player layout
+- [x] If stripped visible text is only `Write your description here...` (ASCII or Unicode ellipsis), the description block is not shown.
+- [x] Items with real `page_content` still render that HTML in the body below the player.
+- [x] No regressions to media player layout.
+
+## Implementation
+
+- `PageData.htmlContentForDisplay()` in `android-mip-app/.../ui/util/PageHtmlContent.kt` — converts HTML to plain text for comparison, then returns `null` when it matches the placeholder (case-insensitive, whitespace normalized).
+- `TabScreen` uses `htmlContentForDisplay()` instead of raw `htmlContent` when composing `HtmlContent`.
 
 ## Notes
 
-- Reproduction path:
-  1. Open app
-  2. Tap `Media`
-  3. Tap `Fixed Husbands`
-- Observed result: placeholder line appears below the player card.
-- Comparison check: `God's Power Tools` shows normal metadata and does not exhibit the same placeholder copy.
+- Reproduction path (before fix):
+  1. Open app → **Media** → **Fixed Husbands**
+  2. Placeholder line appeared under the player when only default description was set.
+- Comparison: **God's Power Tools** (or any item with real body copy) should still show description.
 
 ## References
 
-- Media detail UI: `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/screens/MediaDetailScreen.kt`
-- Data model mapping: `android-mip-app/app/src/main/java/com/fiveq/ffci/data/api/ApiModels.kt`
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/screens/TabScreen.kt`
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/util/PageHtmlContent.kt`
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/data/api/ApiModels.kt` (`PageData.htmlContent`)
