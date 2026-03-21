@@ -17,13 +17,14 @@ The spec requires navigation-related analytics events. These help understand eng
 - [x] Track `screen_view` on meaningful navigation (e.g. tab changes, pushed page context) with a stable screen name
 - [x] Track `content_view` when a page or collection item is shown (include page UUID, title, type where available)
 - [x] Wire logging into the SwiftUI navigation flow (e.g. `ContentView`, `TabPageView`, app lifecycle in `FFCIApp`)
-- [ ] Verify events in the Firebase console
+- [x] Verify events in the Firebase console
 
 ## Notes
 
 - Depends on ticket 028 (Firebase setup, iOS)
 - Per spec: `app_open`, `screen_view`, `content_view`
 - `content_view` should include page UUID, title, and type
+- **Reporting:** For “what content is used,” prioritize **`content_view`** and the **`page_title`** parameter (plus `page_uuid` / `content_type` for joins and filters). `screen_view` supports navigation structure; `app_open` supports session/foregrounding.
 - **React Native** tab/stack navigation is out of scope for this ticket
 
 ## Implementation (`ios-mip-app`)
@@ -35,4 +36,4 @@ The spec requires navigation-related analytics events. These help understand eng
 - **`SearchView`** — `screen_view` `search` when the sheet appears.
 - **`TabPageView`** — when page data loads, `screen_view` `page/<uuid>` plus `content_view` using `PageData.title` and `effectivePageType`; dedupes repeat payloads for the same uuid/title/type (e.g. stale-while-refresh).
 
-**QA:** With DebugView enabled (ticket 028), confirm `app_open`, `screen_view`, and `content_view` while switching tabs, drilling into pages, and opening search.
+**QA:** Verified in Firebase DebugView: `app_open`, `screen_view`, and `content_view` (including `page_title`, e.g. content drill-down).
