@@ -1,5 +1,5 @@
 ---
-status: qa
+status: done
 area: ios-mip-app
 phase: production
 created: 2026-03-18
