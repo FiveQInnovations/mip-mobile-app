@@ -189,7 +189,7 @@ Quick reference for active tasks. See individual files for details.
 - [254](254-ios-port-android-htmlcontent-fixes.md) - Port Recent Android HtmlContent Fixes to iOS Swift
 - [255](255-ios-get-involved-hero-contrast-regression.md) - Fix iOS Get Involved Hero Contrast Regression
 - [257](257-ios-connect-hero-style-guide-palette.md) - Align Connect Hero Styling With Style Guide Palette
-- [258](258-ios-verify-production-domain-and-testflight.md) - Verify iOS Against Production Domain and Ship TestFlight Build
+- [258](done/258-ios-verify-production-domain-and-testflight.md) - Verify iOS Against Production Domain and Ship TestFlight Build
 
 ---
 

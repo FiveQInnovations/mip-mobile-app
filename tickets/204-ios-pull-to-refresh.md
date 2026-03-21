@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: cancelled
 area: ios-mip-app
 phase: nice-to-have
 created: 2026-01-24
