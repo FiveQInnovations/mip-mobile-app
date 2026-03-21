@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: qa
 area: ios-mip-app
 phase: production
 created: 2026-01-02
@@ -13,12 +13,12 @@ The spec requires Firebase Analytics for tracking user behavior. Each site needs
 
 ## Tasks
 
-- [ ] Create Firebase project for FFCI (or add apps to existing project)
-- [ ] Add iOS app with bundle ID (`com.fiveq.ffci` or as configured) to Firebase
-- [ ] Download `GoogleService-Info.plist` and add it to the Xcode project
-- [ ] Add Firebase iOS SDK (Swift Package Manager or CocoaPods per project convention)
-- [ ] Initialize Firebase in the app entry point (e.g. `FFCIApp` / `@main`)
-- [ ] Test that the app builds and analytics sessions appear in the Firebase console
+- [x] Create Firebase project for FFCI (or add apps to existing project)
+- [x] Add iOS app with bundle ID (`com.fiveq.ffci` or as configured) to Firebase
+- [x] Download `GoogleService-Info.plist` and add it to the Xcode project
+- [x] Add Firebase iOS SDK (Swift Package Manager or CocoaPods per project convention)
+- [x] Initialize Firebase in the app entry point (e.g. `FFCIApp` / `@main`)
+- [ ] Verify analytics sessions appear in the Firebase console / GA4 during QA
 
 ## Notes
 
@@ -27,3 +27,4 @@ The spec requires Firebase Analytics for tracking user behavior. Each site needs
 - Five Q will own Firebase projects long-term
 - See Appendix B in spec for Firebase setup checklist
 - **React Native / Expo** (`rn-mip-app`) is out of scope for this ticket
+- Ready for QA: app builds and launches with Firebase initialization, but analytics console verification is still pending

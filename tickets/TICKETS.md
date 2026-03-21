@@ -8,6 +8,7 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
+- [028](028-firebase-setup.md) - Firebase Analytics Setup (iOS)
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
 - [245](245-android-media-placeholder-description-visible.md) - Hide Kirby default description on media detail (Android)
 - [252](252-android-internal-buttons-open-browser-regression.md) - Fix Android Regression: Internal Buttons Open Browser
@@ -33,13 +34,13 @@ Quick reference for active tasks. See individual files for details.
 - [262](262-android-firebase-media-events.md) - Firebase Media Events (Android): video_play, video_complete, audio_play
 
 ### 🟢 Production Ready
-- [028](028-firebase-setup.md) - Firebase Analytics Setup (iOS)
 - [029](029-firebase-navigation-events.md) - Firebase Navigation Events (iOS): app_open, screen_view, content_view
 - [031](031-firebase-external-link-event.md) - Firebase External Link Event (iOS)
 - [041](041-new-site-guide.md) - Document "Adding a New Site" Step-by-Step Guide
 - [259](259-android-firebase-setup.md) - Firebase Analytics Setup (Android)
 - [260](260-android-firebase-navigation-events.md) - Firebase Navigation Events (Android): app_open, screen_view, content_view
 - [261](261-android-firebase-external-link-event.md) - Firebase External Link Event (Android)
+- [263](263-ios-switch-to-existing-subsplash-bundle-id.md) - Switch iOS App to Existing Subsplash Bundle ID
 
 ## Blocked
 (none)
