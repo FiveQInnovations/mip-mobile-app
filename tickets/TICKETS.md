@@ -14,7 +14,7 @@ Quick reference for active tasks. See individual files for details.
 - [252](252-android-internal-buttons-open-browser-regression.md) - Fix Android Regression: Internal Buttons Open Browser
 
 ## In Progress
-(none)
+- [263](263-ios-switch-to-existing-subsplash-bundle-id.md) - Switch iOS App to Existing Subsplash Bundle ID
 
 ## Backlog
 
@@ -40,7 +40,6 @@ Quick reference for active tasks. See individual files for details.
 - [259](259-android-firebase-setup.md) - Firebase Analytics Setup (Android)
 - [260](260-android-firebase-navigation-events.md) - Firebase Navigation Events (Android): app_open, screen_view, content_view
 - [261](261-android-firebase-external-link-event.md) - Firebase External Link Event (Android)
-- [263](263-ios-switch-to-existing-subsplash-bundle-id.md) - Switch iOS App to Existing Subsplash Bundle ID
 
 ## Blocked
 (none)

@@ -1,5 +1,5 @@
 ---
-status: backlog
+status: in-progress
 area: ios-mip-app
 phase: production
 created: 2026-03-21
@@ -9,12 +9,12 @@ created: 2026-03-21
 
 ## Context
 
-Firebase was set up using the intended production bundle ID `com.fiveq.ffci`, but the current iOS app still uses the existing bundle ID `com.subsplashconsulting.F52C3B`. We do not want to change the app over immediately, but we need a follow-up task to align the app target and Firebase configuration before release.
+The iOS app target previously used `com.fiveq.ffci` while the bundled Firebase `GoogleService-Info.plist` is registered for the existing production bundle ID `com.subsplashconsulting.F52C3B`. This task aligns the Xcode target (and Maestro automation) with that bundle ID so installs, signing, and Firebase match.
 
 ## Goals
 
 1. Update the iOS app to use the existing bundle ID `com.subsplashconsulting.F52C3B`
-2. Regenerate or replace the Firebase iOS config so Analytics matches the final bundle ID
+2. Confirm Firebase iOS config (`GoogleService-Info.plist`) matches that bundle ID (already the case in-repo)
 
 ## Acceptance Criteria
 
@@ -25,8 +25,8 @@ Firebase was set up using the intended production bundle ID `com.fiveq.ffci`, bu
 
 ## Notes
 
-- A Firebase plist was downloaded for `com.fiveq.ffci`, but that should not be wired into the app until the bundle ID decision is finalized
-- Coordinate with App Store / signing implications before switching identifiers
+- The bundled `GoogleService-Info.plist` already targets `com.subsplashconsulting.F52C3B`; no plist swap was required for this alignment
+- Coordinate with App Store / signing (provisioning profiles, App ID capabilities, push if any) before shipping
 
 ## References
 

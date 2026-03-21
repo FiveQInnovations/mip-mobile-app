@@ -12,7 +12,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 TEST_FILE="${1:-maestro/flows/homepage-loads-ios.yaml}"
 
 # App bundle ID
-APP_ID="com.fiveq.ffci"
+APP_ID="com.subsplashconsulting.F52C3B"
 
 # Standard simulator ID (iPhone 16)
 SIM_ID="D9DE6784-CB62-4AC3-A686-4D445A0E7B57"
