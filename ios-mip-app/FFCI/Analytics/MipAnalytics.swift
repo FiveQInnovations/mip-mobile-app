@@ -38,6 +38,33 @@ enum MipAnalytics {
         ])
     }
 
+    /// Spec `external_link` when opening Safari / system browser (ticket 031).
+    static func logExternalLink(
+        url: URL,
+        pageUuid: String?,
+        pageTitle: String?,
+        linkLabel: String?,
+        linkSource: String
+    ) {
+        var params: [String: Any] = [
+            "link_url": truncate(url.absoluteString, maxLen: 100),
+            "link_source": truncate(linkSource, maxLen: 100)
+        ]
+        if let host = url.host, !host.isEmpty {
+            params["link_domain"] = truncate(host, maxLen: 100)
+        }
+        if let pageUuid, !pageUuid.isEmpty {
+            params["page_uuid"] = truncate(pageUuid, maxLen: 100)
+        }
+        if let pageTitle, !pageTitle.isEmpty {
+            params["page_title"] = truncate(pageTitle, maxLen: 100)
+        }
+        if let linkLabel, !linkLabel.isEmpty {
+            params["link_label"] = truncate(linkLabel, maxLen: 100)
+        }
+        Analytics.logEvent("external_link", parameters: params)
+    }
+
     private static func truncate(_ string: String, maxLen: Int) -> String {
         guard string.count > maxLen else { return string }
         return String(string.prefix(maxLen))

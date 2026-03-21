@@ -55,7 +55,9 @@ struct TabPageView: View {
                                         onNavigate: { childUuid in
                                             navigateToPage(uuid: childUuid)
                                         },
-                                        contentHeight: $htmlContentHeight
+                                        contentHeight: $htmlContentHeight,
+                                        analyticsPageUuid: currentUuid,
+                                        analyticsPageTitle: pageData.title
                                     )
                                     .frame(height: htmlContentHeight)
                                     .padding(.horizontal, 0)

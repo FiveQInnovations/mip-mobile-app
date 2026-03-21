@@ -34,7 +34,6 @@ Quick reference for active tasks. See individual files for details.
 - [262](262-android-firebase-media-events.md) - Firebase Media Events (Android): video_play, video_complete, audio_play
 
 ### 🟢 Production Ready
-- [031](031-firebase-external-link-event.md) - Firebase External Link Event (iOS)
 - [041](041-new-site-guide.md) - Document "Adding a New Site" Step-by-Step Guide
 - [259](259-android-firebase-setup.md) - Firebase Analytics Setup (Android)
 - [260](260-android-firebase-navigation-events.md) - Firebase Navigation Events (Android): app_open, screen_view, content_view
@@ -84,6 +83,7 @@ Quick reference for active tasks. See individual files for details.
 - [023](023-audio-player-component.md) - Audio Player Component
 - [028](done/028-firebase-setup.md) - Firebase Analytics Setup (iOS)
 - [029](done/029-firebase-navigation-events.md) - Firebase Navigation Events (iOS): app_open, screen_view, content_view
+- [031](done/031-firebase-external-link-event.md) - Firebase External Link Event (iOS)
 - [032](done/032-maestro-content-page-test.md) - Maestro Test: Content Page Rendering
 - [037](037-error-offline-screen.md) - Error/Offline Screen Design
 - [043](043-svg-logo-support.md) - Fix SVG Logo Support

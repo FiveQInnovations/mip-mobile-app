@@ -10,6 +10,7 @@ import SwiftUI
 struct FeaturedSectionView: View {
     let featured: [HomepageFeatured]
     let onFeaturedClick: (String) -> Void
+    @Environment(\.openURL) private var openURL
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -25,7 +26,19 @@ struct FeaturedSectionView: View {
                     // If we checked uuid first, items with BOTH uuid AND externalUrl
                     // would incorrectly use NavigationLink instead of Link
                     if let externalUrl = item.externalUrl, let url = URL(string: externalUrl) {
-                        Link(destination: url) {
+                        Button {
+                            let label = [item.title, item.description]
+                                .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+                                .first { !$0.isEmpty }
+                            MipAnalytics.logExternalLink(
+                                url: url,
+                                pageUuid: MipAnalytics.homePageUuid,
+                                pageTitle: nil,
+                                linkLabel: label,
+                                linkSource: "featured"
+                            )
+                            openURL(url)
+                        } label: {
                             FeaturedCard(featured: item)
                         }
                         .buttonStyle(.plain)

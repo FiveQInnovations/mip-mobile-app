@@ -10,6 +10,7 @@ import SwiftUI
 struct ResourcesScrollView: View {
     let quickTasks: [HomepageQuickTask]
     let onQuickTaskClick: (String) -> Void
+    @Environment(\.openURL) private var openURL
     
     private let cardSpacing: CGFloat = 16
     private let horizontalPadding: CGFloat = 16
@@ -49,7 +50,19 @@ struct ResourcesScrollView: View {
                                     // If we checked uuid first, items with BOTH uuid AND externalUrl
                                     // would incorrectly use NavigationLink instead of Link
                                     if let externalUrl = task.externalUrl, let url = URL(string: externalUrl) {
-                                        Link(destination: url) {
+                                        Button {
+                                            let label = [task.label, task.description]
+                                                .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+                                                .first { !$0.isEmpty }
+                                            MipAnalytics.logExternalLink(
+                                                url: url,
+                                                pageUuid: MipAnalytics.homePageUuid,
+                                                pageTitle: nil,
+                                                linkLabel: label,
+                                                linkSource: "quick_task"
+                                            )
+                                            openURL(url)
+                                        } label: {
                                             ResourcesCard(task: task, cardWidth: cardWidth)
                                         }
                                         .buttonStyle(.plain)

@@ -145,6 +145,9 @@ struct HtmlContentView: UIViewRepresentable {
     let html: String
     let onNavigate: ((String) -> Void)?
     @Binding var contentHeight: CGFloat
+    /// Page context for `external_link` when opening links from HTML (ticket 031).
+    let analyticsPageUuid: String
+    let analyticsPageTitle: String
 
     // Run hero normalization before didFinish to avoid visible contrast flicker.
     private static let heroContrastPreloadScript = """
@@ -248,10 +251,18 @@ struct HtmlContentView: UIViewRepresentable {
     })();
     """
     
-    init(html: String, onNavigate: ((String) -> Void)?, contentHeight: Binding<CGFloat> = .constant(200)) {
+    init(
+        html: String,
+        onNavigate: ((String) -> Void)?,
+        contentHeight: Binding<CGFloat> = .constant(200),
+        analyticsPageUuid: String = "",
+        analyticsPageTitle: String = ""
+    ) {
         self.html = html
         self.onNavigate = onNavigate
         self._contentHeight = contentHeight
+        self.analyticsPageUuid = analyticsPageUuid
+        self.analyticsPageTitle = analyticsPageTitle
     }
     
     func makeUIView(context: Context) -> WKWebView {
@@ -285,12 +296,18 @@ struct HtmlContentView: UIViewRepresentable {
     }
     
     func updateUIView(_ webView: WKWebView, context: Context) {
+        context.coordinator.analyticsPageUuid = analyticsPageUuid
+        context.coordinator.analyticsPageTitle = analyticsPageTitle
         let styledHtml = wrapHtml(html)
         webView.loadHTMLString(styledHtml, baseURL: FFCIURLConfig.siteBaseURL)
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(onNavigate: onNavigate)
+        Coordinator(
+            onNavigate: onNavigate,
+            analyticsPageUuid: analyticsPageUuid,
+            analyticsPageTitle: analyticsPageTitle
+        )
     }
     
     private func wrapHtml(_ html: String) -> String {
@@ -814,9 +831,17 @@ struct HtmlContentView: UIViewRepresentable {
         weak var webView: WKWebView?
         var contentHeightBinding: Binding<CGFloat>?
         private let prayerRequestAnchor = "prayer-request-response"
+        var analyticsPageUuid: String
+        var analyticsPageTitle: String
         
-        init(onNavigate: ((String) -> Void)?) {
+        init(
+            onNavigate: ((String) -> Void)?,
+            analyticsPageUuid: String,
+            analyticsPageTitle: String
+        ) {
             self.onNavigate = onNavigate
+            self.analyticsPageUuid = analyticsPageUuid
+            self.analyticsPageTitle = analyticsPageTitle
         }
 
         private func normalizedUrlForNavigation(_ url: URL) -> URL {
@@ -860,8 +885,16 @@ struct HtmlContentView: UIViewRepresentable {
             return components?.url ?? url
         }
 
-        private func openInExternalBrowser(_ url: URL) {
-            UIApplication.shared.open(normalizedUrlForExternalOpen(url))
+        private func openInExternalBrowser(_ url: URL, linkLabel: String? = nil) {
+            let normalized = normalizedUrlForExternalOpen(url)
+            MipAnalytics.logExternalLink(
+                url: normalized,
+                pageUuid: analyticsPageUuid.isEmpty ? nil : analyticsPageUuid,
+                pageTitle: analyticsPageTitle.isEmpty ? nil : analyticsPageTitle,
+                linkLabel: linkLabel,
+                linkSource: "html_content"
+            )
+            UIApplication.shared.open(normalized)
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {

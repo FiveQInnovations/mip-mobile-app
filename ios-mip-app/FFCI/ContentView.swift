@@ -122,6 +122,13 @@ struct MainTabView: View {
         // External menu tabs should open Safari and keep the current in-app tab selected.
         if let externalUrl = item.externalUrl,
            let url = URL(string: externalUrl) {
+            MipAnalytics.logExternalLink(
+                url: url,
+                pageUuid: item.page.uuid,
+                pageTitle: nil,
+                linkLabel: item.label,
+                linkSource: "menu_tab"
+            )
             openURL(url)
             return
         }
