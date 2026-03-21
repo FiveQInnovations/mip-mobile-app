@@ -9,7 +9,7 @@ Quick reference for active tasks. See individual files for details.
 
 ## QA
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
-- [258](258-ios-verify-production-domain-and-testflight.md) - Verify iOS Against Production Domain and Ship TestFlight Build
+- [245](245-android-media-placeholder-description-visible.md) - Hide Kirby default description on media detail (Android)
 
 ## In Progress
 - [252](252-android-internal-buttons-open-browser-regression.md) - Fix Android Regression: Internal Buttons Open Browser
@@ -17,10 +17,8 @@ Quick reference for active tasks. See individual files for details.
 ## Backlog
 
 ### 🟡 Nice to Have
-- [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
 - [229](229-ios-multi-site-config-system.md) - iOS Multi-Site Configuration System
 - [231](231-android-build-variants-multi-site.md) - Android Build Variants for Multi-Site Deployment
-- [245](245-android-media-placeholder-description-visible.md) - Hide Placeholder Description Text in Media Item Detail (Android)
 
 ### 🟣 C4I Phase
 - [021](021-native-video-player.md) - Native Video Player Component
@@ -59,6 +57,7 @@ Quick reference for active tasks. See individual files for details.
 - [078](078-verification-report.md) - Ticket 078 Verification Report
 - [085](085-button-layout-verification-report.md) - Ticket 085: Button Layout Verification Report
 - [092](092-tab-bar-sync-from-kirby.md) - Ticket 092: Tab Bar Not Syncing New Tabs from Kirby
+- [204](204-ios-pull-to-refresh.md) - iOS Pull-to-Refresh
 - [247](247-android-content-page-cta-buttons-not-navigating.md) - Fix Non-Responsive CTA Buttons on Content Pages (Android)
 - [256](256-ios-home-featured-priority-above-the-fold.md) - Prioritize Upcoming Events and Featured Chapter Above the Fold
 
@@ -190,6 +189,7 @@ Quick reference for active tasks. See individual files for details.
 - [254](254-ios-port-android-htmlcontent-fixes.md) - Port Recent Android HtmlContent Fixes to iOS Swift
 - [255](255-ios-get-involved-hero-contrast-regression.md) - Fix iOS Get Involved Hero Contrast Regression
 - [257](257-ios-connect-hero-style-guide-palette.md) - Align Connect Hero Styling With Style Guide Palette
+- [258](258-ios-verify-production-domain-and-testflight.md) - Verify iOS Against Production Domain and Ship TestFlight Build
 
 ---
 
@@ -211,8 +211,11 @@ Quick reference for active tasks. See individual files for details.
 
 ## Areas
 - `rn-mip-app` - React Native mobile app
+- `ios-mip-app` - Native Swift iOS app
+- `android-mip-app` - Native Kotlin/Android app
 - `wsp-mobile` - Kirby plugin for mobile API
-- `ws-ffci-copy` - Kirby site configuration
+- `ws-ffci` - FFCI Kirby site (content, blueprints, local or production)
 - `astro-prototype` - Astro PWA prototype
+- `tickets` - Ticket system, templates, and generators (`tickets/`)
 - `general` - Cross-cutting or repo-level tasks
 

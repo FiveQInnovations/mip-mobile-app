@@ -50,6 +50,7 @@ import com.fiveq.ffci.ui.components.CollectionList
 import com.fiveq.ffci.ui.components.ErrorScreen
 import com.fiveq.ffci.ui.components.HtmlContent
 import com.fiveq.ffci.ui.components.LoadingScreen
+import com.fiveq.ffci.ui.util.htmlContentForDisplay
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -226,8 +227,8 @@ fun TabScreen(
                         )
                     }
 
-                    // HTML content
-                    val htmlContent = pageData!!.htmlContent
+                    // HTML content (omit Kirby default description placeholder)
+                    val htmlContent = pageData!!.htmlContentForDisplay()
                     if (!htmlContent.isNullOrBlank()) {
                         HtmlContent(
                             html = htmlContent,
@@ -403,8 +404,8 @@ private fun PageContent(
             )
         }
 
-        // HTML content
-        val htmlContent = pageData.htmlContent
+        // HTML content (omit Kirby default description placeholder)
+        val htmlContent = pageData.htmlContentForDisplay()
         if (htmlContent != null) {
             HtmlContent(
                 html = htmlContent,
