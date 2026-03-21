@@ -1,6 +1,6 @@
 ---
 status: done
-area: ws-ffci-copy
+area: ws-ffci
 created: 2026-01-02
 completed: 2026-01-02
 ---

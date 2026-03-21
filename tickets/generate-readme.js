@@ -212,9 +212,12 @@ Quick reference for active tasks. See individual files for details.
 
 ## Areas
 - \`rn-mip-app\` - React Native mobile app
+- \`ios-mip-app\` - Native Swift iOS app
+- \`android-mip-app\` - Native Kotlin/Android app
 - \`wsp-mobile\` - Kirby plugin for mobile API
-- \`ws-ffci-copy\` - Kirby site configuration
+- \`ws-ffci\` - FFCI Kirby site (content, blueprints, local or production)
 - \`astro-prototype\` - Astro PWA prototype
+- \`tickets\` - Ticket system, templates, and generators (\`tickets/\`)
 - \`general\` - Cross-cutting or repo-level tasks
 
 `;

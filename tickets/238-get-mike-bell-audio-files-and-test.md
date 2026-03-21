@@ -1,6 +1,6 @@
 ---
 status: done
-area: ws-ffci-copy
+area: ws-ffci
 phase: core
 created: 2026-01-29
 ---

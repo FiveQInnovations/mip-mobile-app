@@ -67,7 +67,7 @@ Why this ticket exists and any relevant background.
 | `android-mip-app` | Native Android Jetpack Compose app |
 | `ios-mip-app` | Native iOS SwiftUI app |
 | `wsp-mobile` | Kirby plugin for mobile API |
-| `ws-ffci-copy` | Kirby site configuration |
+| `ws-ffci` | FFCI Kirby site (content, blueprints, local or production) |
 | `astro-prototype` | Astro PWA prototype |
 | `general` | Cross-cutting or repo-level tasks |
 
