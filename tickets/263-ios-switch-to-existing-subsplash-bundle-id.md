@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: qa
 area: ios-mip-app
 phase: production
 created: 2026-03-21
@@ -26,7 +26,11 @@ The iOS app target previously used `com.fiveq.ffci` while the bundled Firebase `
 ## Notes
 
 - The bundled `GoogleService-Info.plist` already targets `com.subsplashconsulting.F52C3B`; no plist swap was required for this alignment
-- Coordinate with App Store / signing (provisioning profiles, App ID capabilities, push if any) before shipping
+- Xcode target bundle ID now matches `com.subsplashconsulting.F52C3B` in Debug and Release
+- iOS Maestro flows and `ios-mip-app/scripts/run-maestro-ios.sh` were updated to use `com.subsplashconsulting.F52C3B`
+- Firebase Analytics initializes and the app builds, installs, and launches on the iPhone 16 simulator
+- Versioning was updated locally to `MARKETING_VERSION = 7.0` and `CURRENT_PROJECT_VERSION = 1000`
+- Next step: upload the app to App Store Connect manually and verify signing, App ID ownership, and any release-specific capabilities there
 
 ## References
 

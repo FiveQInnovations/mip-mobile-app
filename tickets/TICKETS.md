@@ -12,9 +12,10 @@ Quick reference for active tasks. See individual files for details.
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
 - [245](245-android-media-placeholder-description-visible.md) - Hide Kirby default description on media detail (Android)
 - [252](252-android-internal-buttons-open-browser-regression.md) - Fix Android Regression: Internal Buttons Open Browser
+- [263](263-ios-switch-to-existing-subsplash-bundle-id.md) - Switch iOS App to Existing Subsplash Bundle ID
 
 ## In Progress
-- [263](263-ios-switch-to-existing-subsplash-bundle-id.md) - Switch iOS App to Existing Subsplash Bundle ID
+(none)
 
 ## Backlog
 
