@@ -93,15 +93,15 @@ struct TabPageView: View {
                                                     HStack(alignment: .firstTextBaseline) {
                                                         Text(section.category.name)
                                                             .font(.headline.weight(.semibold))
-                                                            .foregroundColor(Color("PrimaryColor"))
+                                                            .foregroundColor(Color("BrandPrimaryColor"))
                                                         Spacer()
                                                         Text("\(section.items.count) \(section.items.count == 1 ? "message" : "messages")")
                                                             .font(.caption.weight(.semibold))
-                                                            .foregroundColor(Color("PrimaryColor"))
+                                                            .foregroundColor(Color("BrandPrimaryColor"))
                                                     }
                                                     .padding(.horizontal, 14)
                                                     .padding(.vertical, 10)
-                                                    .background(Color("PrimaryColor").opacity(0.14))
+                                                    .background(Color("BrandPrimaryColor").opacity(0.14))
                                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                                                     .accessibilityIdentifier("media-category-header-\(section.category.slug)")
                                                     
@@ -123,7 +123,7 @@ struct TabPageView: View {
                                                         }) {
                                                             Text(isExpanded ? "Show less" : "Show all")
                                                                 .font(.subheadline.weight(.semibold))
-                                                                .foregroundColor(Color("PrimaryColor"))
+                                                                .foregroundColor(Color("BrandPrimaryColor"))
                                                         }
                                                         .buttonStyle(PlainButtonStyle())
                                                         .padding(.leading, 26)
@@ -164,7 +164,7 @@ struct TabPageView: View {
                                             Image(systemName: "chevron.left")
                                             Text("Back")
                                         }
-                                        .foregroundColor(Color("PrimaryColor"))
+                                        .foregroundColor(Color("BrandPrimaryColor"))
                                     }
                                     .accessibilityIdentifier("page-back-button")
                                 }

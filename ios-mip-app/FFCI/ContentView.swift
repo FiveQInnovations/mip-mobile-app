@@ -100,7 +100,7 @@ struct MainTabView: View {
                     .tag(index + 1)
             }
         }
-        .accentColor(Color("PrimaryColor"))
+        .accentColor(Color("BrandPrimaryColor"))
     }
     
     private func handleTabSelection(_ newSelection: Int) {

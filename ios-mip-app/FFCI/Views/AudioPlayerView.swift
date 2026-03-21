@@ -253,7 +253,7 @@ struct AudioPlayerView: View {
                     }) {
                         ZStack {
                             Circle()
-                                .fill(Color("PrimaryColor"))
+                                .fill(Color("BrandPrimaryColor"))
                                 .frame(width: 64, height: 64)
                             
                             if playerState.isLoading {

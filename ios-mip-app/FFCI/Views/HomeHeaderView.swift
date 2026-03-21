@@ -27,7 +27,7 @@ struct HomeHeaderView: View {
                 Button(action: onSearchTap) {
                     Image(systemName: "magnifyingglass")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(Color("PrimaryColor"))
+                        .foregroundColor(Color("BrandPrimaryColor"))
                         .frame(width: 44, height: 44)
                 }
                 .accessibilityIdentifier("search-button")

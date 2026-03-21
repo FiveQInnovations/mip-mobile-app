@@ -33,7 +33,7 @@ struct ErrorView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
-                    .background(Color("PrimaryColor"))
+                    .background(Color("BrandPrimaryColor"))
                     .cornerRadius(8)
             }
         }

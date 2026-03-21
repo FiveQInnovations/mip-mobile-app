@@ -51,7 +51,7 @@ struct SearchView: View {
             Button(action: { dismiss() }) {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(Color("PrimaryColor"))
+                    .foregroundColor(Color("BrandPrimaryColor"))
                     .frame(width: 44, height: 44)
             }
             .accessibilityIdentifier("search-back-button")
