@@ -8,7 +8,6 @@ Quick reference for active tasks. See individual files for details.
 > ```
 
 ## QA
-- [029](029-firebase-navigation-events.md) - Firebase Navigation Events (iOS): app_open, screen_view, content_view
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
 - [245](245-android-media-placeholder-description-visible.md) - Hide Kirby default description on media detail (Android)
 - [252](252-android-internal-buttons-open-browser-regression.md) - Fix Android Regression: Internal Buttons Open Browser
@@ -84,6 +83,7 @@ Quick reference for active tasks. See individual files for details.
 - [018](018-chaplain-request-form-handling.md) - Chaplain Request Form Handling
 - [023](023-audio-player-component.md) - Audio Player Component
 - [028](done/028-firebase-setup.md) - Firebase Analytics Setup (iOS)
+- [029](done/029-firebase-navigation-events.md) - Firebase Navigation Events (iOS): app_open, screen_view, content_view
 - [032](done/032-maestro-content-page-test.md) - Maestro Test: Content Page Rendering
 - [037](037-error-offline-screen.md) - Error/Offline Screen Design
 - [043](043-svg-logo-support.md) - Fix SVG Logo Support
