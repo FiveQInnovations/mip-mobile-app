@@ -1,23 +1,25 @@
 ---
 status: backlog
-area: rn-mip-app
+area: ios-mip-app
 phase: production
 created: 2026-01-02
 ---
 
-# Firebase External Link Event
+# Firebase External Link Event (iOS)
 
 ## Context
-The spec requires tracking when users tap external links. This helps understand which external resources users find valuable.
+
+The spec requires tracking when users open external URLs (e.g. Safari). This helps show which external resources users use. This ticket is for **ios-mip-app**; Android later.
 
 ## Tasks
-- [ ] Track `external_link` event when opening URLs in browser
-- [ ] Include link URL and context (page UUID, link text)
-- [ ] Integrate event into HTMLContentRenderer external link handler
-- [ ] Integrate event into any other external link handlers
-- [ ] Test events appear in Firebase console
+
+- [ ] Track `external_link` when opening a URL outside the app (Safari / `openURL`)
+- [ ] Include link URL and context (page UUID, link label or href text when available)
+- [ ] Integrate in `HtmlContentView` link handling and any other external-link paths (e.g. menu tabs, featured/quick actions that use `openURL`)
+- [ ] Verify events in the Firebase console
 
 ## Notes
-- Depends on ticket 028 (Firebase setup)
-- Per spec required event: `external_link`
-- Currently HTMLContentRenderer opens external links via Linking.openURL
+
+- Depends on ticket 028 (Firebase setup, iOS)
+- Per spec: `external_link`
+- **React Native** `HTMLContentRenderer` / `Linking.openURL` is out of scope for this ticket

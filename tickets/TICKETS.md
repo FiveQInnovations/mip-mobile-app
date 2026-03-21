@@ -32,9 +32,9 @@ Quick reference for active tasks. See individual files for details.
 - [039](039-c4i-site-config.md) - Create C4I Site Configuration
 
 ### 🟢 Production Ready
-- [028](028-firebase-setup.md) - Firebase Analytics Setup
-- [029](029-firebase-navigation-events.md) - Firebase Navigation Events (app_open, screen_view, content_view)
-- [031](031-firebase-external-link-event.md) - Firebase External Link Event
+- [028](028-firebase-setup.md) - Firebase Analytics Setup (iOS)
+- [029](029-firebase-navigation-events.md) - Firebase Navigation Events (iOS): app_open, screen_view, content_view
+- [031](031-firebase-external-link-event.md) - Firebase External Link Event (iOS)
 - [041](041-new-site-guide.md) - Document "Adding a New Site" Step-by-Step Guide
 
 ## Blocked
