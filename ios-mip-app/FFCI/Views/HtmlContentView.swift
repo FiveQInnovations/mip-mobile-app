@@ -285,6 +285,7 @@ struct HtmlContentView: UIViewRepresentable {
         webView.scrollView.isScrollEnabled = false
         webView.isOpaque = false
         webView.backgroundColor = .clear
+        webView.accessibilityIdentifier = "html-content-view"
         
         context.coordinator.webView = webView
         context.coordinator.contentHeightBinding = _contentHeight
