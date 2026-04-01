@@ -19,6 +19,7 @@ struct FeaturedSectionView: View {
                 .fontWeight(.bold)
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
+                .accessibilityIdentifier("featured-section-title")
             
             ForEach(featured, id: \.uuid) { item in
                 Group {

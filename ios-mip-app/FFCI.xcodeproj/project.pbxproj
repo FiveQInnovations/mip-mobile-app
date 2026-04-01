@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B02900022909000100000002 /* Analytics/MipAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02900012909000100000001 /* Analytics/MipAnalytics.swift */; };
+		A71200012C00000100000001 /* FFCIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71200022C00000100000001 /* FFCIUITests.swift */; };
 		1C63E5C62816485AA552F210 /* Views/TabPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD67E6F8F8C4C988F741931 /* Views/TabPageView.swift */; };
 		4FA7904F51F34D7589CBFF68 /* API/ApiModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0B7BA3F7D347D2993A9ECD /* API/ApiModels.swift */; };
 		6F7E8D9C0B1A2F3E4D5C6B7A /* Views/FeaturedSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6D7C8B9A0F1E2D3C4B5A69 /* Views/FeaturedSectionView.swift */; };
@@ -35,6 +36,16 @@
 		FF736214FB3841A888026BD1 /* Views/HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40900D8851BD40D591DC5640 /* Views/HomeView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A71200092C00000100000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A71111012B0000010000FFCI /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A71111082B0000010000FFCI;
+			remoteInfo = FFCI;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		B02900012909000100000001 /* Analytics/MipAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics/MipAnalytics.swift; sourceTree = "<group>"; };
 		2551E3657AE192F7C883B276 /* Views/FeaturedCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/FeaturedCard.swift; sourceTree = "<group>"; };
@@ -51,6 +62,8 @@
 		A1B2C3D4E5F6A7B8C9D0E1F2 /* Views/AudioPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/AudioPlayerView.swift; sourceTree = "<group>"; };
 		A2B3C4D5E6F7A8B9C0D1E2F3A4B5 /* Views/ScrollPreferenceKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ScrollPreferenceKeys.swift; sourceTree = "<group>"; };
 		A7111109B0000010000FFCI /* FFCI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FFCI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A71200022C00000100000001 /* FFCIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCIUITests.swift; sourceTree = "<group>"; };
+		A71200032C00000100000001 /* FFCIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FFCIUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A71111102B0000010000FFCI /* FFCIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCIApp.swift; sourceTree = "<group>"; };
 		A71111122B0000010000FFCI /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A71111142B0000020000FFCI /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -73,6 +86,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A71200052C00000100000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -80,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				A7111111B0000010000FFCI /* FFCI */,
+				A71200042C00000100000001 /* FFCIUITests */,
 				A7111110B0000010000FFCI /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,8 +109,17 @@
 			isa = PBXGroup;
 			children = (
 				A7111109B0000010000FFCI /* FFCI.app */,
+				A71200032C00000100000001 /* FFCIUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A71200042C00000100000001 /* FFCIUITests */ = {
+			isa = PBXGroup;
+			children = (
+				A71200022C00000100000001 /* FFCIUITests.swift */,
+			);
+			path = FFCIUITests;
 			sourceTree = "<group>";
 		};
 		A7111111B0000010000FFCI /* FFCI */ = {
@@ -152,6 +182,24 @@
 			productReference = A7111109B0000010000FFCI /* FFCI.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A71200082C00000100000001 /* FFCIUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A712000D2C00000100000001 /* Build configuration list for PBXNativeTarget "FFCIUITests" */;
+			buildPhases = (
+				A71200072C00000100000001 /* Sources */,
+				A71200052C00000100000001 /* Frameworks */,
+				A71200062C00000100000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A712000A2C00000100000001 /* PBXTargetDependency */,
+			);
+			name = FFCIUITests;
+			productName = FFCIUITests;
+			productReference = A71200032C00000100000001 /* FFCIUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -164,6 +212,10 @@
 				TargetAttributes = {
 					A71111082B0000010000FFCI = {
 						CreatedOnToolsVersion = 15.0;
+					};
+					A71200082C00000100000001 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = A71111082B0000010000FFCI;
 					};
 				};
 			};
@@ -184,6 +236,7 @@
 			projectRoot = "";
 			targets = (
 				A71111082B0000010000FFCI /* FFCI */,
+				A71200082C00000100000001 /* FFCIUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -196,6 +249,13 @@
 				A71111312B0000030000FFCI /* GoogleService-Info.plist in Resources */,
 				A71111182B0000020000FFCI /* Preview Assets.xcassets in Resources */,
 				A71111152B0000020000FFCI /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A71200062C00000100000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,7 +291,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A71200072C00000100000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A71200012C00000100000001 /* FFCIUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A712000A2C00000100000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A71111082B0000010000FFCI /* FFCI */;
+			targetProxy = A71200092C00000100000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		A7111120B0000020000FFCI /* Debug */ = {
@@ -419,6 +495,40 @@
 			};
 			name = Release;
 		};
+		A712000B2C00000100000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FMQL3T3P7W;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.subsplashconsulting.F52C3B.ui.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = FFCI;
+			};
+			name = Debug;
+		};
+		A712000C2C00000100000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FMQL3T3P7W;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.subsplashconsulting.F52C3B.ui.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = FFCI;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -436,6 +546,15 @@
 			buildConfigurations = (
 				A7111123B0000020000FFCI /* Debug */,
 				A7111124B0000020000FFCI /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A712000D2C00000100000001 /* Build configuration list for PBXNativeTarget "FFCIUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A712000B2C00000100000001 /* Debug */,
+				A712000C2C00000100000001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
