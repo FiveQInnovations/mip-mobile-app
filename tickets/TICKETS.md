@@ -11,7 +11,6 @@ Quick reference for active tasks. See individual files for details.
 - [243](243-become-a-member-page-api-500.md) - Fix `Become a Member` Page Failing with API 500
 - [245](245-android-media-placeholder-description-visible.md) - Hide Kirby default description on media detail (Android)
 - [252](252-android-internal-buttons-open-browser-regression.md) - Fix Android Regression: Internal Buttons Open Browser
-- [263](263-ios-switch-to-existing-subsplash-bundle-id.md) - Switch iOS App to Existing Subsplash Bundle ID
 
 ## In Progress
 (none)
@@ -196,6 +195,7 @@ Quick reference for active tasks. See individual files for details.
 - [255](255-ios-get-involved-hero-contrast-regression.md) - Fix iOS Get Involved Hero Contrast Regression
 - [257](257-ios-connect-hero-style-guide-palette.md) - Align Connect Hero Styling With Style Guide Palette
 - [258](done/258-ios-verify-production-domain-and-testflight.md) - Verify iOS Against Production Domain and Ship TestFlight Build
+- [263](263-ios-switch-to-existing-subsplash-bundle-id.md) - Switch iOS App to Existing Subsplash Bundle ID
 
 ---
 
