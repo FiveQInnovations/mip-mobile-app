@@ -100,4 +100,36 @@ final class FFCIUITests: XCTestCase {
 
         addScreenshot(named: "Connect page")
     }
+
+    func testSearchShowsResults() throws {
+        let app = launchApp()
+
+        let searchButton = app.buttons["search-button"].firstMatch
+        XCTAssertTrue(searchButton.waitForExistence(timeout: 45), "Expected the search button to appear on the home screen.")
+        searchButton.tap()
+
+        let searchInput = app.textFields["search-input"].firstMatch
+        XCTAssertTrue(searchInput.waitForExistence(timeout: 20), "Expected the search input to appear after opening search.")
+
+        searchInput.tap()
+        searchInput.typeText("Become a Member")
+
+        let searchResultRow = app.buttons["search-result-row"].firstMatch
+        let searchResultText = app.staticTexts["Become a Member"].firstMatch
+
+        XCTAssertTrue(
+            searchResultRow.waitForExistence(timeout: 20),
+            "Expected at least one search result to appear."
+        )
+        XCTAssertTrue(
+            searchResultText.waitForExistence(timeout: 10),
+            "Expected the search results to include Become a Member."
+        )
+        XCTAssertFalse(
+            app.staticTexts["No results found"].exists,
+            "Expected search results instead of the empty state."
+        )
+
+        addScreenshot(named: "Search results")
+    }
 }

@@ -2,3 +2,4 @@ temp/
 
 # macOS
 .DS_Store
+ios-mip-app/build-ui-tests/
