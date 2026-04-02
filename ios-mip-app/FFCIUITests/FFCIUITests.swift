@@ -19,6 +19,24 @@ final class FFCIUITests: XCTestCase {
         add(attachment)
     }
 
+    private func waitForTabButton(in app: XCUIApplication, named name: String, timeout: TimeInterval) -> XCUIElement? {
+        let candidates = [
+            app.tabBars.buttons[name].firstMatch,
+            app.navigationBars.buttons[name].firstMatch,
+            app.buttons[name].firstMatch
+        ]
+
+        let deadline = Date().addingTimeInterval(timeout)
+        repeat {
+            if let candidate = candidates.first(where: \.exists) {
+                return candidate
+            }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.25))
+        } while Date() < deadline
+
+        return candidates.first(where: \.exists)
+    }
+
     func testHomeScreenShowsFeaturedAndCapturesScreenshot() throws {
         let app = launchApp()
 
@@ -37,8 +55,10 @@ final class FFCIUITests: XCTestCase {
     func testMediaTabShowsMediaResourcesAndCategories() throws {
         let app = launchApp()
 
-        let mediaTab = app.tabBars.buttons["Media"]
-        XCTAssertTrue(mediaTab.waitForExistence(timeout: 45), "Expected the Media tab to appear.")
+        guard let mediaTab = waitForTabButton(in: app, named: "Media", timeout: 45) else {
+            XCTFail("Expected the Media tab to appear.")
+            return
+        }
         mediaTab.tap()
 
         let mediaResourcesTitle = app.navigationBars["Media Resources"].firstMatch
@@ -60,8 +80,10 @@ final class FFCIUITests: XCTestCase {
     func testResourcesTabShowsResourcesList() throws {
         let app = launchApp()
 
-        let resourcesTab = app.tabBars.buttons["Resources"]
-        XCTAssertTrue(resourcesTab.waitForExistence(timeout: 45), "Expected the Resources tab to appear.")
+        guard let resourcesTab = waitForTabButton(in: app, named: "Resources", timeout: 45) else {
+            XCTFail("Expected the Resources tab to appear.")
+            return
+        }
         resourcesTab.tap()
 
         let resourcesTitle = app.navigationBars["Resources"].firstMatch
@@ -82,8 +104,10 @@ final class FFCIUITests: XCTestCase {
     func testConnectTabShowsConnectPage() throws {
         let app = launchApp()
 
-        let connectTab = app.tabBars.buttons["Connect"]
-        XCTAssertTrue(connectTab.waitForExistence(timeout: 45), "Expected the Connect tab to appear.")
+        guard let connectTab = waitForTabButton(in: app, named: "Connect", timeout: 45) else {
+            XCTFail("Expected the Connect tab to appear.")
+            return
+        }
         connectTab.tap()
 
         let connectTitle = app.navigationBars["Connect With Us"].firstMatch
