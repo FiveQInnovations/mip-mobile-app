@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SiteBaseURL</key>
+	<string>https://firefightersforchrist.org</string>
+	<key>ApiKey</key>
+	<string>777359235aecc10fdfb144041dfdacfc80ca0751c7bed7b14c96f935456fc4ce</string>
+	<key>BasicAuthUsername</key>
+	<string>fiveq</string>
+	<key>BasicAuthPassword</key>
+	<string>demo</string>
+	<key>AuthScheme</key>
+	<string>ffci-auth</string>
+	<key>FirstPartyHosts</key>
+	<array>
+		<string>firefightersforchrist.org</string>
+	</array>
+</dict>
+</plist>

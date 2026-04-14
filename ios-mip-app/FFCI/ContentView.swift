@@ -8,7 +8,7 @@
 import SwiftUI
 import os.log
 
-private let logger = Logger(subsystem: "com.fiveq.ffci", category: "UI")
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.fiveq.mip", category: "UI")
 
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase

@@ -1,8 +1,8 @@
 //
-//  FFCIApp.swift
-//  FFCI
+//  C4IApp.swift
+//  C4I
 //
-//  Firefighters for Christ International
+//  Christians for Israel - Mobile App
 //
 
 import SwiftUI
@@ -10,7 +10,7 @@ import FirebaseAnalytics
 import FirebaseCore
 
 @main
-struct FFCIApp: App {
+struct C4IApp: App {
     init() {
         if Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil {
             FirebaseApp.configure()

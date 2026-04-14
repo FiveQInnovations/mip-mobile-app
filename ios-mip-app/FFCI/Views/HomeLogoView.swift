@@ -17,7 +17,7 @@ struct HomeLogoView: View {
                 // Process logo URL - prepend base URL if relative
                 let logoUrl = logo.starts(with: "http://") || logo.starts(with: "https://")
                     ? logo
-                    : "\(FFCIURLConfig.siteBaseURL.absoluteString)\(logo)"
+                    : "\(SiteConfig.shared.siteBaseURL.absoluteString)\(logo)"
                 
                 SVGImageView(url: logoUrl)
                     .frame(width: 240, height: 144) // 5:3 aspect ratio, reduced from 280x168

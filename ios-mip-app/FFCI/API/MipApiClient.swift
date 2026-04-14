@@ -1,33 +1,14 @@
 //
 //  MipApiClient.swift
-//  FFCI
+//  MIP Mobile App
 //
-//  Firefighters for Christ International - API Client
+//  API Client - reads connection details from SiteConfig.plist
 //
 
 import Foundation
 import os.log
 
-enum FFCIURLConfig {
-    static let siteBaseURL = URL(string: "https://firefightersforchrist.org")!
-    static let apiBaseURL = siteBaseURL
-    static let authScheme = "ffci-auth"
-
-    static func normalizedFirstPartyHost(_ host: String?) -> String? {
-        guard let host else { return nil }
-        let normalizedHost = host.lowercased()
-        if normalizedHost == "www.firefightersforchrist.org" {
-            return "firefightersforchrist.org"
-        }
-        return normalizedHost
-    }
-
-    static func isFirstPartyHost(_ host: String?) -> Bool {
-        normalizedFirstPartyHost(host) == normalizedFirstPartyHost(siteBaseURL.host)
-    }
-}
-
-private let logger = Logger(subsystem: "com.fiveq.ffci", category: "API")
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.fiveq.mip", category: "API")
 
 enum ApiError: Error {
     case invalidResponse
@@ -38,16 +19,14 @@ enum ApiError: Error {
 
 class MipApiClient {
     static let shared = MipApiClient()
-    
-    private let baseURL = FFCIURLConfig.apiBaseURL.absoluteString
-    private let apiKey = "777359235aecc10fdfb144041dfdacfc80ca0751c7bed7b14c96f935456fc4ce"
-    private let username = "fiveq"
-    private let password = "demo"
-    
+
+    private let config = SiteConfig.shared
+    private let baseURL: String
     private let session: URLSession
     private var resolvedPathCache: [String: String] = [:]
-    
+
     private init() {
+        self.baseURL = config.apiBaseURL.absoluteString
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 30
         configuration.timeoutIntervalForResource = 30
@@ -56,18 +35,16 @@ class MipApiClient {
     
     private func createRequest(url: URL) -> URLRequest {
         var request = URLRequest(url: url)
-        
-        // Basic Auth
-        let credentials = "\(username):\(password)"
+
+        let credentials = "\(config.basicAuthUsername):\(config.basicAuthPassword)"
         if let credentialsData = credentials.data(using: .utf8) {
             let base64Credentials = credentialsData.base64EncodedString()
             request.setValue("Basic \(base64Credentials)", forHTTPHeaderField: "Authorization")
         }
-        
-        // API Key
-        request.setValue(apiKey, forHTTPHeaderField: "X-API-Key")
+
+        request.setValue(config.apiKey, forHTTPHeaderField: "X-API-Key")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         return request
     }
     
