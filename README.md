@@ -1,273 +1,220 @@
-# MIP Mobile App - FFCI
+# MIP Mobile Apps
 
-React Native mobile app for FFCI (Firefighters for Christ International) built with Expo, pulling content from the Kirby CMS website via KQL API.
+This repo contains native mobile apps for the MIP mobile platform, plus the original Astro prototype that proved the API and content model before the project moved native.
 
-## Project Overview
+The important shift: this is no longer a React Native/Expo project. It started that way, but audio player reliability and native behavior pushed the project toward separate Swift and Kotlin apps. Cursor agents made that switch practical: the native apps were rebuilt quickly, tested repeatedly, and the iOS app is deployed to TestFlight and the App Store.
 
-This project builds a reusable mobile app template that displays content from Kirby CMS websites (MIP platform) via REST API. The app will be deployed to both iOS and Android app stores.
+If you are a React Native developer coming into this repo, think of it less as "learn all native development first" and more as "use native project conventions, strong testing hooks, and specialized agents to keep the feedback loop short."
 
-**Client**: FFCI (ws-ffci)  
-**Timeline**: Target launch late February / early March 2025  
-**Urgency**: FFCI's current SubSplash app expires January 15, 2025
-
-## Current App Reference
-
-The existing FFCI app is built on the SubSplash platform:
-- **iOS App Store**: https://apps.apple.com/us/app/firefighters-for-christ/id1461816552
-- **Platform**: SubSplash (version 6.3.1 as of September 2023)
-- **Developer**: FIREFIGHTERS FOR CHRIST INTERNATIONAL
-
-## Quick Links
-
-- **[Mobile App Specification](docs/mobile-app-specification.md)** - Complete technical specification
-- **[Deployment Quick Guide](docs/deployment-quick-guide.md)** - Workflow for adding features and deploying to BrowserStack
-- **[iOS XCUI Test Guide](docs/ios-xcuitest-guide.md)** - Native iOS UI testing for RN developers
-- **[Expo MCP Server Setup](tickets/014-setup-expo-mcp-server.md)** - Guide for setting up Expo MCP Server with Cursor
-- **[FFCI Strategy Meeting](meetings/ffci-mobile-app-strategy.md)** - December 8, 2025 planning meeting
-- **[Local Development Guide](docs/guide-to-running-locally.md)** - How to run the FFCI site locally
-- **[KQL/Headless Reference](docs/kirby-headless-cef.md)** - Example of KQL API setup
-- **[Scope Additions](docs/scope-additions.md)** - Additional scope beyond original job posting
-
-## Project Structure
+## Current Shape
 
 ```
 mip-mobile-app/
-├── rn-mip-app/              # React Native mobile app (main project)
-│   ├── app/                 # Expo Router app directory
-│   ├── components/          # React components
-│   ├── lib/                 # API and utilities
-│   ├── maestro/             # Maestro UI tests
-│   └── scripts/             # Deployment scripts
-├── astro-prototype/         # Astro PWA prototype (separate project)
-├── docs/                    # Documentation
-│   ├── mobile-app-specification.md
-│   ├── deployment-quick-guide.md
-│   ├── guide-to-running-locally.md
-│   └── ...
-├── meetings/                 # Meeting notes
-├── tickets/                  # Development tickets
+├── ios-mip-app/          # Native iOS app in Swift/SwiftUI
+├── android-mip-app/      # Native Android app in Kotlin/Jetpack Compose
+├── astro-prototype/      # Original Astro PWA/API prototype
+├── tickets/              # Markdown ticket system
+├── docs/                 # Focused reference docs that survived cleanup
+└── .cursor/              # Project agents, skills, and rules
 ```
 
-## Technical Stack
+## Project History
 
-- **Framework**: React Native with Expo (managed workflow)
-- **Navigation**: Expo Router
-- **Deployment**: Expo EAS Build + EAS Submit + EAS Update (OTA)
-- **Testing**: Maestro UI testing
-- **Backend**: Kirby CMS with KQL API
-- **Analytics**: Firebase Analytics
+The project began with `astro-prototype/`. That app was useful because it proved the Kirby mobile API, menu structure, page rendering, collection rendering, and basic media flows without needing an app store build.
 
-## Continuous Native Generation (CNG)
+The next phase was React Native. That got the project closer to the final product, but the audio player became expensive to stabilize. Rather than keep layering workarounds onto a cross-platform abstraction, the project moved to native apps:
 
-This project uses **Continuous Native Generation (CNG)**, which means the native iOS and Android projects are generated on-demand from configuration files rather than being manually maintained.
+- `ios-mip-app/` is Swift/SwiftUI.
+- `android-mip-app/` is Kotlin/Jetpack Compose.
+- Shared behavior comes from the Kirby mobile API and from cross-platform implementation patterns, not from shared UI code.
 
-### What is CNG?
+That tradeoff worked well here. Native app code gave better control over platform behavior, and agents made the extra platform surface area manageable.
 
-CNG is a process where native projects (`ios/` and `android/` directories) are automatically generated from:
-- Your `app.json`/`app.config.js` configuration
-- Your `package.json` dependencies
-- Config plugins (for custom native modifications)
-- Expo's prebuild template
+## Apps
 
-When you run `npx expo run:ios`, `npx expo run:android`, or build with EAS, Expo automatically runs `npx expo prebuild` to generate fresh native projects.
+### iOS: `ios-mip-app/`
 
-### Important: Do Not Modify Native Folders
+The iOS app is a native SwiftUI project. FFCI is the main shipped app, and the C4I target proves the same codebase can create another app quickly with per-site configuration.
 
-⚠️ **Do not manually edit files in the `ios/` or `android/` directories.** These folders are generated artifacts (similar to `node_modules`) and will be overwritten the next time prebuild runs.
+Key files:
 
-- ✅ **Do**: Modify `app.json`/`app.config.js` for configuration changes
-- ✅ **Do**: Use config plugins for native customizations
-- ✅ **Do**: Use Expo Modules API for custom native code
-- ❌ **Don't**: Edit files directly in `ios/` or `android/` folders
+- `ios-mip-app/FFCI.xcodeproj/` - Xcode project with FFCI and C4I schemes.
+- `ios-mip-app/FFCI/FFCIApp.swift` - FFCI app entry point.
+- `ios-mip-app/C4I/C4IApp.swift` - C4I app entry point.
+- `ios-mip-app/FFCI/API/SiteConfig.swift` - loads per-target `SiteConfig.plist`.
+- `ios-mip-app/FFCI/API/MipApiClient.swift` - mobile API client.
+- `ios-mip-app/FFCI/Views/` - SwiftUI screens and components.
+- `ios-mip-app/FFCIUITests/FFCIUITests.swift` - XCUI tests for FFCI.
+- `ios-mip-app/C4IUITests/C4IUITests.swift` - XCUI tests for C4I.
 
-### Benefits of CNG
+React Native mental model: SwiftUI views are closer to React components than UIKit view controllers. State lives in Swift properties and observable objects instead of hooks, and navigation is platform-native.
 
-- **Easier upgrades**: Upgrade React Native/Expo SDK by updating dependencies and running `npx expo prebuild --clean`
-- **Less code to maintain**: Only commit what's unique to your app, not boilerplate
-- **Automatic native module linking**: Expo handles linking via autolinking
-- **Cleaner git history**: Native folders are in `.gitignore` (like `node_modules`)
+### Android: `android-mip-app/`
 
-For more information, see the [Expo CNG documentation](https://docs.expo.dev/workflow/continuous-native-generation/).
+The Android app is native Kotlin with Jetpack Compose.
 
-## Local Development Setup
+Key files:
 
-### Prerequisites
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/MainActivity.kt` - Android entry point.
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/MipApp.kt` - main Compose app shell.
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/config/AppConfig.kt` - app/site config.
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/data/api/MipApiClient.kt` - mobile API client.
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/screens/` - Compose screens.
+- `android-mip-app/app/src/main/java/com/fiveq/ffci/ui/components/` - Compose components, including HTML and audio.
 
-- **Node.js 20.18.0** (managed via `mise`)
-- **EAS CLI**: `npm install -g eas-cli`
-- Docker and DDEV (for Kirby CMS site)
-- Bitbucket SSH access (for Composer dependencies)
-- iOS Simulator (for mobile app testing)
+Android was especially strong for command-line exploration. `adb` can dump the UI hierarchy, tap coordinates, scroll, capture screenshots, and inspect logs without needing much IDE interaction. That made agent-driven verification very effective.
 
-### Setting Up the FFCI Site Locally
+### Astro Prototype: `astro-prototype/`
 
-The FFCI site (`ws-ffci/`) needs to be running locally so you can:
+The Astro prototype is not the production app. Keep it as historical context and as a lightweight API/content experiment bed.
 
-1. Test KQL API queries
-2. See the content structure
-3. Configure mobile settings in the Panel
+It proved:
 
-**Steps:**
+- `/mobile-api` shape and menu data.
+- Content page rendering.
+- Collection and media rendering.
+- Early navigation ideas.
+- Cypress-based test ideas.
 
-1. Navigate to the FFCI site:
-   ```bash
-   cd sites/ws-ffci
-   ```
+The Cypress tests were useful early, then became flaky enough that they stopped being the main verification strategy. Do not treat the Astro test suite as the source of truth for current mobile behavior.
 
-2. Configure DDEV:
-   ```bash
-   ddev config --docroot www --omit-containers db
-   ```
+## Testing Recommendations
 
-3. Authenticate with Bitbucket (required for Composer):
-   ```bash
-   ddev auth ssh
-   ```
+Use native tests and platform tools before reaching for cross-platform UI automation.
 
-4. Install dependencies:
-   ```bash
-   ddev composer install
-   ddev npm install
-   ddev composer update
-   ddev exec gulp
-   ```
+For iOS, prefer XCUI tests. Maestro was easy to start with, but became flaky over time around simulator state, app launch, and app detection. XCUI testing was enabled late in the project and proved faster and more stable for the important smoke and screenshot flows.
 
-5. Start the site:
-   ```bash
-   ddev start
-   ddev list  # Click the URL to open the site
-   ```
+Start here:
 
-See [guide-to-running-locally.md](docs/guide-to-running-locally.md) for troubleshooting.
+- `docs/ios-xcuitest-guide.md`
+- `ios-mip-app/FFCIUITests/FFCIUITests.swift`
+- `ios-mip-app/C4IUITests/C4IUITests.swift`
 
-### Running the Mobile App Locally
+For Android, use Gradle plus `adb`:
 
-1. Navigate to the React Native app:
-   ```bash
-   cd rn-mip-app
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install --legacy-peer-deps
-   ```
-
-3. Start Metro bundler with iOS Simulator:
-   ```bash
-   mise exec -- bash -c "export LANG=en_US.UTF-8 && npx expo start --ios --clear"
-   ```
-
-4. Run Maestro tests:
-   ```bash
-   npm run test:maestro:ios
-   ```
-
-See [deployment-quick-guide.md](docs/deployment-quick-guide.md) for the complete development workflow.
-
-### Installing the Mobile Plugin
-
-The `wsp-mobile` plugin provides the mobile API endpoints (`/mobile-api/*`) and Panel configuration. It needs to be installed on the FFCI site.
-
-**Option 1: Symlink (for development)**
 ```bash
-cd sites/ws-ffci
-ln -s ../../plugins/wsp-mobile site/plugins/wsp-mobile
+cd android-mip-app
+./gradlew compileDebugKotlin
+./gradlew installDebug
+adb shell am start -n com.fiveq.ffci/.MainActivity
+adb shell uiautomator dump /sdcard/window_dump.xml
+adb exec-out screencap -p > /tmp/android-verification.png
 ```
 
-**Option 2: Add to composer.json (production)**
-Add to `sites/ws-ffci/composer.json`:
-```json
-{
-  "require": {
-    "fiveq/wsp-mobile": "dev-master"
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "git@bitbucket.org:fiveqwasap/wsp-mobile.git"
-    }
-  ]
-}
+The Android workflow is documented in:
+
+- `.cursor/skills/android-build/SKILL.md`
+- `.cursor/skills/android-feature-workflow/SKILL.md`
+
+## Use The Agents
+
+This repo is built to be worked by Cursor agents. The fastest path is usually not "one developer manually searches everything, edits everything, and tests everything." The better path is to split the work:
+
+1. Scout the ticket.
+2. Implement on the correct platform.
+3. Build and verify with platform-specific tools.
+4. Ask for human QA before marking work complete.
+
+Important agents:
+
+- `.cursor/agents/scout-ticket.md` - researches a ticket, maps code locations, and writes findings into the ticket.
+- `.cursor/agents/implement-ios-swift.md` - handles Swift/iOS implementation work.
+- `.cursor/agents/add-swift-file-xcode.md` - adds new Swift files to `project.pbxproj` correctly.
+- `.cursor/agents/visual-tester.md` - reviews screenshots and visual quality.
+- `.cursor/agents/implement-wsp-mobile.md` - handles Kirby mobile API plugin work.
+- `.cursor/agents/implement-ws-ffci.md` - handles FFCI Kirby site work.
+
+Important skills:
+
+- `.cursor/skills/create-ticket/SKILL.md` - how to create tickets and regenerate the index.
+- `.cursor/skills/android-build/SKILL.md` - Android build/install/log/screenshot loop.
+- `.cursor/skills/android-feature-workflow/SKILL.md` - Android feature workflow.
+- `.cursor/skills/ios-simulator/SKILL.md` - standard simulator and screenshot commands.
+- `.cursor/skills/manager-ios-swift-manual/SKILL.md` - iOS manager workflow for agent coordination and manual QA.
+
+The project also has repo rules in `.cursor/rules/`. The most important ones for day-to-day agent work are:
+
+- `.cursor/rules/ticket-status-workflow.mdc`
+- `.cursor/rules/ios-build-standards.mdc`
+
+Read those before asking an agent to move tickets or run iOS build work.
+
+## Ticket System
+
+Tickets live in `tickets/` and are indexed by `tickets/TICKETS.md`.
+
+The workflow is:
+
+```
+backlog -> in-progress -> qa -> done
 ```
 
-Then run `ddev composer update`.
+Agents may move work to `qa` when it is ready for review. Only the human reviewer should move tickets to `done`.
 
-### Accessing the Mobile API
+To add or edit tickets, follow `.cursor/skills/create-ticket/SKILL.md` and regenerate the index:
 
-Once the plugin is installed and the site is running:
-
-- **KQL Endpoint**: `POST /mobile-api/kql` (or `GET /mobile-api/kql?q=<base64-encoded-query>`)
-- **Menu API**: `GET /mobile-api/menu`
-- **Page API**: `GET /mobile-api/page/<uuid>`
-- **Site Data**: `GET /mobile-api`
-
-See [kirby-headless-cef.md](docs/kirby-headless-cef.md) for KQL query examples.
-
-
-### Deploying API changes
-- Commit changes on a feature branch in wsp-mobile.
-- When ready, merge into master locally
-- Push changes to origin master
-- Server should auto-update about every 10 minutes
-- You can manually trigger an update with: `curl "https://api.fiveq.dev/api/proxy/ffci/composer-update?api_key=$MIP_API_TOKEN"`
-
-### Configuring Mobile Settings
-
-1. Log into the Kirby Panel at `/panel`
-2. Go to Site Settings → Mobile tab
-3. Configure:
-   - App Name
-   - Mobile Logo
-   - Homepage Type (content/collection/navigation)
-   - Mobile Main Menu structure
-
-## Adding Features & Deployment
-
-When adding new features or making changes to the mobile app, follow the **[Deployment Quick Guide](docs/deployment-quick-guide.md)** for the complete workflow:
-
-1. Make code changes
-2. Test locally on iOS Simulator
-3. Run Maestro tests
-4. Build Android preview APK with EAS
-5. Upload to BrowserStack for testing
-6. Commit changes
-
-**Important for Cursor AI:** When asking Cursor to follow the deployment guide, explicitly request a plan first:
-```
-Create a Plan to follow the guide: @docs/deployment-quick-guide.md
+```bash
+node tickets/generate-readme.js
 ```
 
-This ensures the agent tests locally before building, which saves time and build minutes. Without explicitly creating a plan, the agent may skip local testing and jump straight to EAS builds.
+Ticket `area` values matter because they route work to the right place:
 
-## Key Requirements
+- `ios-mip-app` - Swift/SwiftUI app.
+- `android-mip-app` - Kotlin/Jetpack Compose app.
+- `wsp-mobile` - Kirby mobile API plugin.
+- `ws-ffci` - FFCI Kirby site.
+- `astro-prototype` - historical prototype.
+- `general` - cross-cutting repo work.
 
-### Phase 1: Core App (Current Scope)
+## Working Style For A React Native Developer
 
-- Pull content from FFCI website via KQL API
-- Display brochure pages (About Us, etc.)
-- Basic contact forms
-- Video/audio collections (if available on site)
-- Native navigation (tabs/drawer from CMS menu)
+Do not try to recreate React Native patterns inside SwiftUI or Compose. Use the platform's normal patterns, then lean on the other native app as a reference.
 
-### Phase 2: Custom Features (Future)
+Good cross-platform workflow:
 
-- Bible integration
-- In-app notes
-- Additional custom features from current SubSplash app
+- For an iOS ticket, check the Android implementation for behavior and data assumptions.
+- For an Android ticket, check the iOS implementation for behavior and edge cases.
+- Use React Native history only as a last-resort reference, not as the primary source.
+- Keep API behavior in `wsp-mobile` when both apps would otherwise duplicate awkward parsing or guessing.
+- Add stable accessibility identifiers when a UI path matters enough to test.
 
-**Note**: Phase 1 focuses on website-based content only. Custom features will be addressed separately.
+## Common Commands
 
-## API Authentication
+iOS XCUI test example:
 
-The mobile app uses **Bearer Token authentication** for KQL API access. The token will be provided by Five Q and should be stored securely in app configuration.
+```bash
+xcodebuild \
+  -project "/Users/anthony/mip-mobile-app/ios-mip-app/FFCI.xcodeproj" \
+  -scheme FFCI \
+  -destination 'id=D9DE6784-CB62-4AC3-A686-4D445A0E7B57' \
+  -derivedDataPath "/Users/anthony/mip-mobile-app/ios-mip-app/build-ui-tests" \
+  test
+```
 
-See the [mobile-app-specification.md](docs/mobile-app-specification.md) for detailed API integration requirements.
+Android build example:
 
-## Contact & Timeline
+```bash
+cd android-mip-app
+./gradlew compileDebugKotlin
+./gradlew installDebug
+```
 
-- **Project Manager**: Mike Kaczorowski
-- **Technical Lead**: Anthony Elliott
-- **Target Launch**: Late February / Early March 2025
-- **Urgent Deadline**: FFCI's SubSplash app expires January 15, 2025
+Astro prototype example:
 
-See [tickets/TICKETS.md](tickets/TICKETS.md) for active development tickets and progress tracking.
+```bash
+cd astro-prototype
+npm install
+npm run dev
+```
+
+## Practical Guidance
+
+Use agents more than feels natural at first. This repo has enough platform-specific details that focused agents usually beat a single broad pass:
+
+- `scout-ticket` reduces wandering.
+- iOS agents avoid common Xcode project mistakes.
+- Android skills keep the build/install/log loop consistent.
+- Visual testing catches design regressions that normal assertions miss.
+- Ticket status rules keep the human review step intact.
+
+The native split is not a failure of the earlier prototype work. The Astro prototype and React Native phase answered important questions. The current repo is the result of those answers: native apps, API-driven content, target-based multi-site reuse, and agent-assisted development as the normal way to move quickly.
