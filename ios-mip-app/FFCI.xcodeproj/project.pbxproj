@@ -45,6 +45,8 @@
 		A71111312B0000030000FFCI /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A71111322B0000030000FFCI /* GoogleService-Info.plist */; };
 		A71200012C00000100000001 /* FFCIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71200022C00000100000001 /* FFCIUITests.swift */; };
 		A8B9C0D1E2F3A4B5C6D7E8F9 /* AudioPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* AudioPlayerView.swift */; };
+		A9B8C7D6E5F401234567890B /* VimeoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B8C7D6E5F401234567890A /* VimeoPlayerView.swift */; };
+		A9B8C7D6E5F401234567890C /* VimeoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B8C7D6E5F401234567890A /* VimeoPlayerView.swift */; };
 		AE8809E43AA7BF55D211F2A9 /* ScrollPreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B3C4D5E6F7A8B9C0D1E2F3A4B5 /* ScrollPreferenceKeys.swift */; };
 		B02900022909000100000002 /* MipAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02900012909000100000001 /* MipAnalytics.swift */; };
 		B11C4FC93C6D79D2EB738115 /* AudioPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* AudioPlayerView.swift */; };
@@ -112,6 +114,7 @@
 		A71111322B0000030000FFCI /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A71200022C00000100000001 /* FFCIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCIUITests.swift; sourceTree = "<group>"; };
 		A71200032C00000100000001 /* FFCIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FFCIUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A9B8C7D6E5F401234567890A /* VimeoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VimeoPlayerView.swift; sourceTree = "<group>"; };
 		AFA82B5B2AD8BE776317DFAD /* SiteConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SiteConfig.swift; path = SiteConfig.swift; sourceTree = "<group>"; };
 		B02900012909000100000001 /* MipAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MipAnalytics.swift; sourceTree = "<group>"; };
 		BA5592C6F1E333F7C2D926A9 /* HomeHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeaderView.swift; sourceTree = "<group>"; };
@@ -289,6 +292,7 @@
 				A2B3C4D5E6F7A8B9C0D1E2F3A4B5 /* ScrollPreferenceKeys.swift */,
 				A1B2C3D4E5F60718293A4B5C /* SearchView.swift */,
 				DBD67E6F8F8C4C988F741931 /* TabPageView.swift */,
+				A9B8C7D6E5F401234567890A /* VimeoPlayerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -501,6 +505,7 @@
 				B87470190E9FDFCF330D7768 /* HomeHeaderView.swift in Sources */,
 				C8D9E0F1A2B3C4D5E6F7A8B9C0D1E2 /* HomeLogoView.swift in Sources */,
 				DDA9617514A9B69CA9983945 /* SiteConfig.swift in Sources */,
+				A9B8C7D6E5F401234567890B /* VimeoPlayerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -539,6 +544,7 @@
 				D30AD9A05EF749918847A60F /* HomeHeaderView.swift in Sources */,
 				947CEE1CFDBA0F1C84771CBE /* HomeLogoView.swift in Sources */,
 				8F654420F65C0B49E06D245E /* SiteConfig.swift in Sources */,
+				A9B8C7D6E5F401234567890C /* VimeoPlayerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -48,6 +48,18 @@ struct TabPageView: View {
                     } else if let pageData = pageData {
                         ScrollView {
                             VStack(alignment: .leading, spacing: 16) {
+                                // Vimeo player for video items
+                                if pageData.isVideoItem, let videoUrl = pageData.videoUrl {
+                                    VimeoPlayerView(
+                                        url: videoUrl,
+                                        embedHtml: pageData.videoEmbedHtml
+                                    )
+                                    .aspectRatio(16.0 / 9.0, contentMode: .fit)
+                                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                                    .padding(.horizontal, 16)
+                                    .padding(.top, 16)
+                                }
+                                
                                 // HTML content
                                 if let htmlContent = pageData.htmlContent, !htmlContent.isEmpty {
                                     HtmlContentView(
@@ -242,6 +254,7 @@ struct TabPageView: View {
                     trackPageAnalytics(pageUuid: uuid, data: data)
                     logger.notice("Page loaded: \(data.title), type: \(data.effectivePageType)")
                     logger.notice("Audio check - isAudioItem: \(data.isAudioItem), audioUrl: \(data.audioUrl ?? "nil")")
+                    logger.notice("Video check - isVideoItem: \(data.isVideoItem), videoUrl: \(data.videoUrl ?? "nil")")
                 }
             } catch is CancellationError {
                 await MainActor.run {
