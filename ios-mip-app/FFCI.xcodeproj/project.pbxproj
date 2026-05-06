@@ -9,6 +9,13 @@
 /* Begin PBXBuildFile section */
 		101ED9219AF1391DD48076AB /* SiteConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 11F56EDA5C681DEFFB898D84 /* SiteConfig.plist */; };
 		10BCBDFD955489821B691CAE /* SiteConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = E6A3FF941F2E2C006E52951B /* SiteConfig.plist */; };
+		A91100000000000000000002 /* AppProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91100000000000000000001 /* AppProfile.swift */; };
+		A91100000000000000000003 /* AppProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91100000000000000000001 /* AppProfile.swift */; };
+		C4A100000000000000000002 /* C4IProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A100000000000000000001 /* C4IProfile.swift */; };
+		C4A200000000000000000002 /* C4IHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A200000000000000000001 /* C4IHomeView.swift */; };
+		C4A300000000000000000002 /* C4IHomeContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A300000000000000000001 /* C4IHomeContent.swift */; };
+		C4A400000000000000000002 /* C4IHomeCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A400000000000000000001 /* C4IHomeCards.swift */; };
+		C4A500000000000000000002 /* C4IMoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A500000000000000000001 /* C4IMoreView.swift */; };
 		1863866797842B24243899E5 /* SearchCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F60718293A4B5C6D7E /* SearchCache.swift */; };
 		1B1090C340E5417C0B92A5DC /* MipApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 549E27E02AE14FA3BDD30465 /* MipApiClient.swift */; };
 		1C63E5C62816485AA552F210 /* TabPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD67E6F8F8C4C988F741931 /* TabPageView.swift */; };
@@ -89,6 +96,12 @@
 /* Begin PBXFileReference section */
 		04DCFF956A7460315C50345D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		11F56EDA5C681DEFFB898D84 /* SiteConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = SiteConfig.plist; sourceTree = "<group>"; };
+		A91100000000000000000001 /* AppProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppProfile.swift; sourceTree = "<group>"; };
+		C4A100000000000000000001 /* C4IProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IProfile.swift; sourceTree = "<group>"; };
+		C4A200000000000000000001 /* C4IHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IHomeView.swift; sourceTree = "<group>"; };
+		C4A300000000000000000001 /* C4IHomeContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IHomeContent.swift; sourceTree = "<group>"; };
+		C4A400000000000000000001 /* C4IHomeCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IHomeCards.swift; sourceTree = "<group>"; };
+		C4A500000000000000000001 /* C4IMoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IMoreView.swift; sourceTree = "<group>"; };
 		2551E3657AE192F7C883B276 /* FeaturedCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedCard.swift; sourceTree = "<group>"; };
 		3AE9115171EE4243A6AE0A2B /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		3D51A13CFD7348FAB546FCB6 /* HtmlContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlContentView.swift; sourceTree = "<group>"; };
@@ -167,6 +180,11 @@
 			isa = PBXGroup;
 			children = (
 				6E4848A650EC15A8AB4632E5 /* C4IApp.swift */,
+				C4A100000000000000000001 /* C4IProfile.swift */,
+				C4A200000000000000000001 /* C4IHomeView.swift */,
+				C4A300000000000000000001 /* C4IHomeContent.swift */,
+				C4A400000000000000000001 /* C4IHomeCards.swift */,
+				C4A500000000000000000001 /* C4IMoreView.swift */,
 				11F56EDA5C681DEFFB898D84 /* SiteConfig.plist */,
 				04DCFF956A7460315C50345D /* Assets.xcassets */,
 			);
@@ -238,6 +256,7 @@
 		SHARED0000000000000000001 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				A91100000000000000000001 /* AppProfile.swift */,
 				A71111122B0000010000FFCI /* ContentView.swift */,
 				SHARED0000000000000000002 /* API */,
 				SHARED0000000000000000003 /* Analytics */,
@@ -483,6 +502,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B02900022909000100000002 /* MipAnalytics.swift in Sources */,
+				A91100000000000000000002 /* AppProfile.swift in Sources */,
 				A71111132B0000010000FFCI /* ContentView.swift in Sources */,
 				A71111112B0000010000FFCI /* FFCIApp.swift in Sources */,
 				4FA7904F51F34D7589CBFF68 /* ApiModels.swift in Sources */,
@@ -522,6 +542,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				95605F0FDA07AA1D5D1A9EF8 /* C4IApp.swift in Sources */,
+				C4A100000000000000000002 /* C4IProfile.swift in Sources */,
+				C4A200000000000000000002 /* C4IHomeView.swift in Sources */,
+				C4A300000000000000000002 /* C4IHomeContent.swift in Sources */,
+				C4A400000000000000000002 /* C4IHomeCards.swift in Sources */,
+				C4A500000000000000000002 /* C4IMoreView.swift in Sources */,
+				A91100000000000000000003 /* AppProfile.swift in Sources */,
 				2C3A07D4A91450B4DC686D2F /* ContentView.swift in Sources */,
 				6B6F529DC87091FD132E1975 /* MipAnalytics.swift in Sources */,
 				C084C0CAC462C7AF983A86D3 /* ApiModels.swift in Sources */,
