@@ -14,12 +14,18 @@ struct HomeHeaderView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                // Maltese cross icon on the left
-                Image("HeaderLogo")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 32, height: 32)
-                    .accessibilityLabel("Firefighters for Christ Logo")
+                if C4IAppProfile.isCurrentSite {
+                    Text(siteMeta.title)
+                        .font(.title2.weight(.bold))
+                        .foregroundColor(Color("BrandSecondaryColor"))
+                        .accessibilityLabel("Christians for Israel Logo")
+                } else {
+                    Image("HeaderLogo")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 32, height: 32)
+                        .accessibilityLabel("Firefighters for Christ Logo")
+                }
                 
                 Spacer()
                 
