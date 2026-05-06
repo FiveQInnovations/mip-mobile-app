@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AppProfile {
     let headerLogo: HeaderLogo
+    let htmlContentTheme: HtmlContentTheme
     let homeView: ((SiteMeta) -> AnyView)?
     let tabs: (SiteData) -> [AppTab]
 }
@@ -16,6 +17,7 @@ struct AppProfile {
 extension AppProfile {
     static let standard = AppProfile(
         headerLogo: .asset(name: "HeaderLogo", accessibilityLabel: "Firefighters for Christ Logo"),
+        htmlContentTheme: .standard,
         homeView: nil,
         tabs: { siteData in
             var tabs = [
@@ -83,6 +85,33 @@ extension AppProfile {
         default:
             return "line.3.horizontal"
         }
+    }
+}
+
+struct HtmlContentTheme: Equatable {
+    let primaryHex: String
+    let secondaryHex: String
+    let primaryRgb: String
+    let secondaryRgb: String
+}
+
+extension HtmlContentTheme {
+    static let standard = HtmlContentTheme(
+        primaryHex: "#D9232A",
+        secondaryHex: "#024D91",
+        primaryRgb: "217, 35, 42",
+        secondaryRgb: "2, 77, 145"
+    )
+}
+
+private struct HtmlContentThemeKey: EnvironmentKey {
+    static let defaultValue = HtmlContentTheme.standard
+}
+
+extension EnvironmentValues {
+    var htmlContentTheme: HtmlContentTheme {
+        get { self[HtmlContentThemeKey.self] }
+        set { self[HtmlContentThemeKey.self] = newValue }
     }
 }
 

@@ -32,6 +32,7 @@ struct ContentView: View {
                 MainTabView(siteData: siteData, profile: profile)
             }
         }
+        .environment(\.htmlContentTheme, profile.htmlContentTheme)
         .task {
             appState.loadSiteData()
         }

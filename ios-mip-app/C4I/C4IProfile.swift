@@ -18,6 +18,12 @@ enum C4IAppProfile {
 
     static let profile = AppProfile(
         headerLogo: .text("Christians for Israel", accessibilityLabel: "Christians for Israel Logo"),
+        htmlContentTheme: HtmlContentTheme(
+            primaryHex: "#2D6090",
+            secondaryHex: "#193654",
+            primaryRgb: "45, 96, 144",
+            secondaryRgb: "25, 54, 84"
+        ),
         homeView: { siteMeta in
             AnyView(C4IHomeView(siteMeta: siteMeta))
         },

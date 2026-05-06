@@ -145,6 +145,8 @@ struct HtmlContentView: UIViewRepresentable {
     let analyticsPageUuid: String
     let analyticsPageTitle: String
 
+    @Environment(\.htmlContentTheme) private var theme
+
     // Run hero normalization before didFinish to avoid visible contrast flicker.
     private static let heroContrastPreloadScript = """
     (function() {
@@ -364,7 +366,7 @@ struct HtmlContentView: UIViewRepresentable {
                 }
                 h1 { font-size: 34px; font-weight: 700; margin-top: 36px; margin-bottom: 20px; color: #0f172a; letter-spacing: -1px; line-height: 40px; }
                 h2 { font-size: 28px; font-weight: 700; margin-top: 32px; margin-bottom: 16px; color: #0f172a; letter-spacing: -0.6px; line-height: 34px; }
-                h3 { font-size: 23px; font-weight: 700; margin-top: 28px; margin-bottom: 12px; color: #024D91; line-height: 30px; padding-left: 12px; border-left: 3px solid #D9232A; }
+                h3 { font-size: 23px; font-weight: 700; margin-top: 28px; margin-bottom: 12px; color: \(theme.secondaryHex); line-height: 30px; padding-left: 12px; border-left: 3px solid \(theme.primaryHex); }
                 /* Headings and text inside colored sections inherit text color */
                 ._section[style*="color"] h1,
                 ._section[style*="color"] h2,
@@ -381,7 +383,7 @@ struct HtmlContentView: UIViewRepresentable {
                 ._section[style*="color"] ._blockquote * {
                     color: inherit !important;
                 }
-                /* Remove red border from h3 in colored sections */
+                /* Remove accent border from h3 in colored sections */
                 ._section[style*="color"] h3 {
                     border-left: none;
                     padding-left: 0;
@@ -477,19 +479,19 @@ struct HtmlContentView: UIViewRepresentable {
                 hr { display: none; }
                 /* Base link styles - but NOT for buttons or image links */
                 a:not([class*="_button"]):not([class*="_image-link"]):not([class*="image-link"]) {
-                    color: #D9232A;
+                    color: \(theme.primaryHex);
                     text-decoration: none;
                     font-weight: 600;
-                    background: rgba(217, 35, 42, 0.08);
+                    background: rgba(\(theme.primaryRgb), 0.08);
                     padding: 4px 6px;
-                    border-bottom: 2px solid #D9232A;
+                    border-bottom: 2px solid \(theme.primaryHex);
                     border-radius: 4px;
                 }
                 /* Ensure buttons NEVER get base link styles */
                 a[class*="_button"] {
                     /* Styles are defined separately below */
                 }
-                /* Remove red styling from image links - they shouldn't have borders/backgrounds */
+                /* Remove themed styling from image links - they shouldn't have borders/backgrounds */
                 a._image-link,
                 a[class*="_image-link"],
                 a[class*="image-link"] {
@@ -503,7 +505,7 @@ struct HtmlContentView: UIViewRepresentable {
                     border-radius: 0 !important;
                     display: block;
                 }
-                /* Specifically target any decorative elements that might show red */
+                /* Specifically target any decorative elements that might show themed chrome */
                 ._button-group + a:not([class*="_button"]),
                 a:not([class*="_button"]) + ._button-group,
                 ._button-group ~ a:not([class*="_button"]) {
@@ -565,29 +567,29 @@ struct HtmlContentView: UIViewRepresentable {
                     border-bottom: none !important;
                     box-sizing: border-box;
                     margin: 8px 0 !important;
-                    background: rgba(217, 35, 42, 0.08);
-                    /* Reset all inherited styles that might cause red artifacts */
+                    background: rgba(\(theme.primaryRgb), 0.08);
+                    /* Reset all inherited styles that might cause themed artifacts */
                     background-image: none !important;
                     background-position: initial !important;
                     background-repeat: initial !important;
                     background-attachment: initial !important;
                     background-size: initial !important;
                 }
-                /* Primary button - red background */
+                /* Primary button */
                 a[class*="_button-priority"] {
-                    background-color: #D9232A !important;
+                    background-color: \(theme.primaryHex) !important;
                     color: white !important;
                     border: none !important;
                 }
                 /* Secondary button - outline style */
                 a[class*="_button-secondary"] {
                     background-color: transparent !important;
-                    color: #D9232A !important;
-                    border: 2px solid #D9232A;
+                    color: \(theme.primaryHex) !important;
+                    border: 2px solid \(theme.primaryHex);
                 }
                 /* Regular button */
                 a[class*="_button"]:not([class*="_button-priority"]):not([class*="_button-secondary"]) {
-                    background-color: #D9232A !important;
+                    background-color: \(theme.primaryHex) !important;
                     color: white !important;
                     border: none !important;
                 }
@@ -756,8 +758,8 @@ struct HtmlContentView: UIViewRepresentable {
                 }
                 ._hero-section ._background + ._heading,
                 ._hero-section ._hero-heading {
-                    background: rgba(2,77,145,0.90) !important;
-                    border-left: 4px solid #D9232A;
+                    background: rgba(\(theme.secondaryRgb),0.90) !important;
+                    border-left: 4px solid \(theme.primaryHex);
                     padding-left: 12px;
                 }
                 ._hero-section ._background,
