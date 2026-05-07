@@ -14,6 +14,7 @@ private let categoryPreviewCount = 3
 struct TabPageView: View {
     let uuid: String
     private let externalPageStack: Binding<[String]>?
+    @Environment(\.openURL) private var openURL
     @State private var localPageStack: [String] = []
     @State private var pageData: PageData?
     @State private var isLoading = true
@@ -68,6 +69,19 @@ struct TabPageView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 14))
                                     .padding(.horizontal, 16)
                                     .padding(.top, 16)
+
+                                    if let url = URL(string: videoUrl) {
+                                        Button {
+                                            openURL(url)
+                                        } label: {
+                                            Label("Open in Vimeo", systemImage: "arrow.up.forward.app")
+                                                .font(.subheadline.weight(.semibold))
+                                                .foregroundColor(Color("BrandPrimaryColor"))
+                                        }
+                                        .buttonStyle(.plain)
+                                        .padding(.horizontal, 16)
+                                        .accessibilityIdentifier("open-vimeo-button")
+                                    }
                                 }
                                 
                                 // HTML content

@@ -86,9 +86,44 @@ struct VimeoPlayerView: UIViewRepresentable {
     }
 
     private var iframeHtml: String? {
+        guard let src = vimeoEmbedUrl else { return nil }
+        return "<iframe src=\"\(htmlEscaped(src))\" allow=\"autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share\" allowfullscreen></iframe>"
+    }
+
+    private var vimeoEmbedUrl: String? {
         guard let videoId = vimeoVideoId else { return nil }
-        let src = "https://player.vimeo.com/video/\(videoId)?playsinline=1&title=0&byline=0&portrait=0"
-        return "<iframe src=\"\(src)\" allow=\"autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share\" allowfullscreen></iframe>"
+
+        let sourceComponents = URLComponents(string: url)
+        var embedComponents = URLComponents(string: "https://player.vimeo.com/video/\(videoId)")
+        var queryItems = sourceComponents?.queryItems?.filter { item in
+            // Preserve Vimeo's unlisted video hash while replacing player chrome options.
+            item.name == "h"
+        } ?? []
+
+        let playerOptions = [
+            URLQueryItem(name: "playsinline", value: "1"),
+            URLQueryItem(name: "controls", value: "1"),
+            URLQueryItem(name: "fullscreen", value: "1"),
+            URLQueryItem(name: "pip", value: "1"),
+            URLQueryItem(name: "speed", value: "1"),
+            URLQueryItem(name: "quality_selector", value: "1"),
+            URLQueryItem(name: "cc", value: "1"),
+            URLQueryItem(name: "chapters", value: "1"),
+            URLQueryItem(name: "transcript", value: "1"),
+            URLQueryItem(name: "title", value: "0"),
+            URLQueryItem(name: "byline", value: "0"),
+            URLQueryItem(name: "portrait", value: "0")
+        ]
+
+        queryItems.append(contentsOf: playerOptions)
+        embedComponents?.queryItems = queryItems
+        return embedComponents?.string
+    }
+
+    private func htmlEscaped(_ value: String) -> String {
+        value
+            .replacingOccurrences(of: "&", with: "&amp;")
+            .replacingOccurrences(of: "\"", with: "&quot;")
     }
 
     private var sanitizedEmbedHtml: String? {
