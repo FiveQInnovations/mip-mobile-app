@@ -88,6 +88,13 @@ xcodebuild -project ios-mip-app/MIP-iOS.xcodeproj -scheme FFCI -destination 'pla
 - If `iPhone 16` is unavailable, inspect installed simulators with `xcrun simctl list devices available` and use an available iOS simulator.
 - UI tests depend on live app content and can take time to load; preserve existing generous waits unless replacing them with a more reliable synchronization point.
 - When changing shared code, prefer building both `C4I` and `FFCI`. When changing only target-specific code, build at least that target.
+- Do not use React Native or Expo commands for this native iOS app, including `expo run:ios` or `npm run build:ios:release`; use `xcodebuild`.
+- For UI changes, prefer build plus simulator launch evidence when feasible.
+- If a build fails, report the exact `xcodebuild` error and stop before UI verification.
+- If UI tests fail, report which tests failed, relevant screenshots/logs, and whether accessibility identifiers are missing.
+- For visual or layout changes, verify on simulator with screenshots when feasible.
+- Check spacing, alignment, hierarchy, consistency, readability, and behavior against acceptance criteria.
+- Provide specific visual feedback, not vague statements like "looks wrong".
 
 ## Dependencies And Xcode Files
 
@@ -95,12 +102,27 @@ xcodebuild -project ios-mip-app/MIP-iOS.xcodeproj -scheme FFCI -destination 'pla
 - Avoid manual edits to `project.pbxproj` unless necessary. Prefer Xcode-generated project changes when adding files, targets, packages, assets, or build settings.
 - If manually editing project files, keep changes minimal and verify with `xcodebuild -list` or a targeted build.
 - Do not move bundled plist files between targets without verifying target membership and runtime lookup behavior.
+- When creating a new Swift file, ensure it is included in `MIP-iOS.xcodeproj` target sources before building.
+- Prefer adding files through Xcode when possible. If editing `project.pbxproj` manually, follow `docs/how-to-add-swift-file-to-xcode-project.md`, use unique 24-character hex UUIDs, update the file reference, build file, group children, and sources build phase, then verify with `xcodebuild`.
+
+## Ticket Workflow
+
+- Ticket status flow is `backlog` -> `in-progress` -> `qa` -> `done`.
+- Agents may move tickets to `qa` when work is complete, but must not move tickets to `done`; only the user marks tickets done.
+- When a ticket is ready for review, note what was built, tested, and any known risks.
 
 ## Security
 
 - Treat `SiteConfig.plist`, Firebase plist files, auth headers, API keys, and backend URLs as sensitive unless the user explicitly says otherwise.
 - Never add real credentials to examples, tests, docs, or logs.
 - Before committing, inspect changes for secrets and unrelated generated files.
+
+## Commits
+
+- Do not commit changes unless explicitly asked.
+- When committing is explicitly requested, stage only files relevant to the current task.
+- Do not stage unrelated untracked files or generated artifacts.
+- Check paths before `git add`, especially when tickets or multiple project areas are present.
 
 ## Pull Requests And Reviews
 
