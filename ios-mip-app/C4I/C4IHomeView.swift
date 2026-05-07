@@ -15,6 +15,7 @@ struct C4IHomeView: View {
     var latestEpisodesLoader: (String) async throws -> [CollectionChild] = C4ILatestEpisodesLoader.live
     
     @Environment(\.openURL) private var openURL
+    @Environment(\.pageRouter) private var pageRouter
     @State private var showSearch = false
     @State private var latestEpisodes: [CollectionChild] = []
     @State private var isLoadingEpisodes = false
@@ -69,7 +70,9 @@ struct C4IHomeView: View {
             }
             
             HStack(spacing: 12) {
-                NavigationLink(destination: TabPageView(uuid: C4IAppProfile.ministriesUuid)) {
+                Button {
+                    routeToPage(C4IAppProfile.ministriesUuid, in: C4IAppProfile.ministriesUuid)
+                } label: {
                     Text("Our Ministries")
                         .font(.headline)
                         .foregroundColor(Color("BrandPrimaryColor"))
@@ -78,8 +81,11 @@ struct C4IHomeView: View {
                         .background(Color.white)
                         .clipShape(Capsule())
                 }
+                .buttonStyle(.plain)
                 
-                NavigationLink(destination: TabPageView(uuid: C4IAppProfile.watchUuid)) {
+                Button {
+                    routeToPage(C4IAppProfile.watchUuid, in: C4IAppProfile.watchUuid)
+                } label: {
                     Text("Watch Episodes")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -87,6 +93,7 @@ struct C4IHomeView: View {
                         .padding(.vertical, 12)
                         .overlay(Capsule().stroke(Color.white.opacity(0.7), lineWidth: 1))
                 }
+                .buttonStyle(.plain)
             }
         }
         .padding(20)
@@ -104,7 +111,9 @@ struct C4IHomeView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 14) {
                     ForEach(ministries) { ministry in
-                        NavigationLink(destination: TabPageView(uuid: ministry.uuid)) {
+                        Button {
+                            routeToPage(ministry.uuid, in: C4IAppProfile.ministriesUuid)
+                        } label: {
                             C4IMinistryCard(card: ministry)
                         }
                         .buttonStyle(.plain)
@@ -130,7 +139,9 @@ struct C4IHomeView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 28)
             } else if latestEpisodes.isEmpty {
-                NavigationLink(destination: TabPageView(uuid: C4IAppProfile.watchUuid)) {
+                Button {
+                    routeToPage(C4IAppProfile.watchUuid, in: C4IAppProfile.watchUuid)
+                } label: {
                     C4IWatchFallbackCard()
                 }
                 .buttonStyle(.plain)
@@ -138,7 +149,9 @@ struct C4IHomeView: View {
             } else {
                 VStack(spacing: 12) {
                     ForEach(latestEpisodes, id: \.uuid) { episode in
-                        NavigationLink(destination: TabPageView(uuid: episode.uuid)) {
+                        Button {
+                            routeToPage(episode.uuid, in: C4IAppProfile.watchUuid)
+                        } label: {
                             C4IEpisodeCard(episode: episode)
                         }
                         .buttonStyle(.plain)
@@ -147,7 +160,9 @@ struct C4IHomeView: View {
                 .padding(.horizontal, 16)
             }
             
-            NavigationLink(destination: TabPageView(uuid: C4IAppProfile.watchUuid)) {
+            Button {
+                routeToPage(C4IAppProfile.watchUuid, in: C4IAppProfile.watchUuid)
+            } label: {
                 Text("Browse All Episodes")
                     .font(.headline)
                     .foregroundColor(.white)
@@ -156,6 +171,7 @@ struct C4IHomeView: View {
                     .background(Color("BrandPrimaryColor"))
                     .clipShape(RoundedRectangle(cornerRadius: 14))
             }
+            .buttonStyle(.plain)
             .padding(.horizontal, 16)
             .padding(.top, 2)
         }
@@ -228,6 +244,10 @@ struct C4IHomeView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, 16)
+    }
+    
+    private func routeToPage(_ uuid: String, in tabRootUuid: String) {
+        _ = pageRouter.openPage(uuid, tabRootUuid)
     }
     
     @ViewBuilder

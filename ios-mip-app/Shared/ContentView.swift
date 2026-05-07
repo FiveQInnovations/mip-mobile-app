@@ -79,6 +79,7 @@ struct MainTabView: View {
     @Environment(\.openURL) private var openURL
     @State private var selectedTab = 0
     @State private var previousSelectedTab = 0
+    @State private var pageStacks: [Int: [String]] = [:]
     
     private var tabs: [AppTab] {
         profile.tabs(siteData)
@@ -98,6 +99,9 @@ struct MainTabView: View {
             }
         }
         .accentColor(Color("BrandPrimaryColor"))
+        .environment(\.pageRouter, PageRouter { uuid, preferredTabRootUuid in
+            routePage(uuid: uuid, preferredTabRootUuid: preferredTabRootUuid)
+        })
         .onAppear {
             logTabScreenView(for: selectedTab)
         }
@@ -118,12 +122,24 @@ struct MainTabView: View {
                 }
             )
         case .page(let uuid):
-            TabPageView(uuid: uuid)
+            TabPageView(uuid: uuid, pageStack: pageStackBinding(for: tab, rootUuid: uuid))
         case .external:
             Color.clear
         case .custom(let view):
             view
         }
+    }
+    
+    private func pageStackBinding(for tab: AppTab, rootUuid: String) -> Binding<[String]> {
+        Binding(
+            get: {
+                let stack = pageStacks[tab.id] ?? [rootUuid]
+                return stack.isEmpty ? [rootUuid] : stack
+            },
+            set: { newStack in
+                pageStacks[tab.id] = newStack.isEmpty ? [rootUuid] : newStack
+            }
+        )
     }
     
     private func handleTabSelection(_ newSelection: Int) {
@@ -147,6 +163,27 @@ struct MainTabView: View {
         selectedTab = newSelection
         previousSelectedTab = newSelection
         logTabScreenView(for: tab)
+    }
+
+    private func routePage(uuid: String, preferredTabRootUuid: String?) -> Bool {
+        if let preferredTabRootUuid,
+           let tab = tabs.first(where: { $0.pageRootUuid == preferredTabRootUuid }) {
+            selectedTab = tab.id
+            previousSelectedTab = tab.id
+            pageStacks[tab.id] = uuid == preferredTabRootUuid ? [preferredTabRootUuid] : [preferredTabRootUuid, uuid]
+            logTabScreenView(for: tab)
+            return true
+        }
+
+        if let tab = tabs.first(where: { $0.pageRootUuid == uuid }) {
+            selectedTab = tab.id
+            previousSelectedTab = tab.id
+            pageStacks[tab.id] = [uuid]
+            logTabScreenView(for: tab)
+            return true
+        }
+
+        return false
     }
 
     private func logTabScreenView(for selection: Int) {

@@ -14,6 +14,21 @@ struct AppProfile {
     let tabs: (SiteData) -> [AppTab]
 }
 
+struct PageRouter {
+    let openPage: (_ uuid: String, _ preferredTabRootUuid: String?) -> Bool
+}
+
+private struct PageRouterKey: EnvironmentKey {
+    static let defaultValue = PageRouter { _, _ in false }
+}
+
+extension EnvironmentValues {
+    var pageRouter: PageRouter {
+        get { self[PageRouterKey.self] }
+        set { self[PageRouterKey.self] = newValue }
+    }
+}
+
 extension AppProfile {
     static let standard = AppProfile(
         headerLogo: .asset(name: "HeaderLogo", accessibilityLabel: "Firefighters for Christ Logo"),
@@ -127,6 +142,16 @@ struct AppTab: Identifiable {
     let destination: AppTabDestination
     let screenName: String?
     let screenClass: String
+}
+
+extension AppTab {
+    var pageRootUuid: String? {
+        if case .page(let uuid) = destination {
+            return uuid
+        }
+
+        return nil
+    }
 }
 
 enum AppTabDestination {
