@@ -77,7 +77,7 @@ Add testable IDs to SwiftUI views:
 
 ```bash
 cd ios-mip-app
-xcodebuild -project FFCI.xcodeproj -scheme FFCI \
+xcodebuild -project MIP-iOS.xcodeproj -scheme FFCI \
   -destination "id=D9DE6784-CB62-4AC3-A686-4D445A0E7B57" \
   -configuration Debug build
 ```
@@ -145,7 +145,7 @@ Files modified:
 | Purpose | Location |
 |---------|----------|
 | SwiftUI Views | `ios-mip-app/FFCI/Views/*.swift` |
-| Xcode Project | `ios-mip-app/FFCI.xcodeproj/project.pbxproj` |
+| Xcode Project | `ios-mip-app/MIP-iOS.xcodeproj/project.pbxproj` |
 | Maestro Flows | `ios-mip-app/maestro/flows/*.yaml` |
 | Run Script | `ios-mip-app/scripts/run-maestro-ios.sh` |
 
