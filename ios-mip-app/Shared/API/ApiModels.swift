@@ -159,6 +159,15 @@ struct AudioData: Codable {
     }
 }
 
+struct VideoUrlData: Codable {
+    let value: String?
+}
+
+struct VideoData: Codable {
+    let source: String?
+    let url: VideoUrlData?
+}
+
 struct CategoryDefinition: Codable {
     let name: String
     let slug: String
@@ -172,6 +181,9 @@ struct NestedPageDataContent: Codable {
     let audioUrl: String?
     let audioName: String?
     let audioCredit: String?
+    let videoSource: String?
+    let videoUrl: String?
+    let videoEmbed: String?
     let categories: String?
     
     enum CodingKeys: String, CodingKey {
@@ -180,6 +192,9 @@ struct NestedPageDataContent: Codable {
         case audioUrl = "audio_url"
         case audioName = "audio_name"
         case audioCredit = "audio_credit"
+        case videoSource = "video_source"
+        case videoUrl = "video_url"
+        case videoEmbed = "video_embed"
         case categories
     }
 }
@@ -187,18 +202,26 @@ struct NestedPageDataContent: Codable {
 struct PageDataContent: Codable {
     let pageContent: String?
     let audio: AudioData?
+    let video: VideoData?
     let audioUrl: String?
     let audioName: String?
     let audioCredit: String?
+    let videoSource: String?
+    let videoUrl: String?
+    let videoEmbed: String?
     let categories: String?
     let content: NestedPageDataContent?
     
     enum CodingKeys: String, CodingKey {
         case pageContent = "page_content"
         case audio
+        case video
         case audioUrl = "audio_url"
         case audioName = "audio_name"
         case audioCredit = "audio_credit"
+        case videoSource = "video_source"
+        case videoUrl = "video_url"
+        case videoEmbed = "video_embed"
         case categories
         case content
     }
@@ -208,9 +231,13 @@ struct PageDataContent: Codable {
         
         pageContent = try container.decodeIfPresent(String.self, forKey: .pageContent)
         audio = try container.decodeIfPresent(AudioData.self, forKey: .audio)
+        video = try container.decodeIfPresent(VideoData.self, forKey: .video)
         audioUrl = try container.decodeIfPresent(String.self, forKey: .audioUrl)
         audioName = try container.decodeIfPresent(String.self, forKey: .audioName)
         audioCredit = try container.decodeIfPresent(String.self, forKey: .audioCredit)
+        videoSource = try container.decodeIfPresent(String.self, forKey: .videoSource)
+        videoUrl = try container.decodeIfPresent(String.self, forKey: .videoUrl)
+        videoEmbed = try container.decodeIfPresent(String.self, forKey: .videoEmbed)
         content = try container.decodeIfPresent(NestedPageDataContent.self, forKey: .content)
         categories = Self.decodeCategoriesString(from: container)
     }
@@ -394,6 +421,11 @@ struct PageData: Codable {
         return effectivePageType == "collection-item" && type == "audio"
     }
     
+    // Helper to check if this is a video item
+    var isVideoItem: Bool {
+        return effectivePageType == "collection-item" && type == "video"
+    }
+    
     // Helper to get audio URL from various locations
     var audioUrl: String? {
         return primaryContent?.audio?.audioUrl
@@ -417,6 +449,19 @@ struct PageData: Codable {
             ?? primaryContent?.audioCredit
             ?? nestedContent?.audio?.audioCredit
             ?? nestedContent?.audioCredit
+    }
+    
+    // Helper to get video URL from various locations
+    var videoUrl: String? {
+        return primaryContent?.video?.url?.value
+            ?? primaryContent?.videoUrl
+            ?? nestedContent?.videoUrl
+    }
+    
+    // Helper to get optional video embed markup from various locations
+    var videoEmbedHtml: String? {
+        return primaryContent?.videoEmbed
+            ?? nestedContent?.videoEmbed
     }
     
     // Helper to get HTML content

@@ -38,7 +38,7 @@ The iOS app is a native SwiftUI project. FFCI is the main shipped app, and the C
 
 Key files:
 
-- `ios-mip-app/FFCI.xcodeproj/` - Xcode project with FFCI and C4I schemes.
+- `ios-mip-app/MIP-iOS.xcodeproj/` - Xcode project with FFCI and C4I schemes.
 - `ios-mip-app/FFCI/FFCIApp.swift` - FFCI app entry point.
 - `ios-mip-app/C4I/C4IApp.swift` - C4I app entry point.
 - `ios-mip-app/FFCI/API/SiteConfig.swift` - loads per-target `SiteConfig.plist`.
@@ -184,7 +184,7 @@ iOS XCUI test example:
 
 ```bash
 xcodebuild \
-  -project "/Users/anthony/mip-mobile-app/ios-mip-app/FFCI.xcodeproj" \
+  -project "/Users/anthony/mip-mobile-app/ios-mip-app/MIP-iOS.xcodeproj" \
   -scheme FFCI \
   -destination 'id=D9DE6784-CB62-4AC3-A686-4D445A0E7B57' \
   -derivedDataPath "/Users/anthony/mip-mobile-app/ios-mip-app/build-ui-tests" \

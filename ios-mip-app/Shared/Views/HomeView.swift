@@ -12,19 +12,28 @@ private let logger = Logger(subsystem: "com.fiveq.ffci", category: "HomeView")
 
 struct HomeView: View {
     let siteMeta: SiteMeta
+    let profile: AppProfile
     let onQuickTaskClick: (String) -> Void
     let onFeaturedClick: (String) -> Void
     
     @State private var showSearch = false
     
     var body: some View {
+        if let homeView = profile.homeView {
+            homeView(siteMeta)
+        } else {
+            defaultHomeView
+        }
+    }
+    
+    private var defaultHomeView: some View {
         NavigationStack {
             VStack(spacing: 0) {
             ScrollView {
             VStack(spacing: 0) {
                 
                 // Header with logo and search button
-                HomeHeaderView(siteMeta: siteMeta, onSearchTap: { showSearch = true })
+                HomeHeaderView(siteMeta: siteMeta, logo: profile.headerLogo, onSearchTap: { showSearch = true })
                 
                 // Logo section - main homepage logo
                 HomeLogoView(siteMeta: siteMeta)
@@ -89,6 +98,7 @@ struct HomeView: View {
             homepageQuickTasks: nil,
             homepageFeatured: nil
         ),
+        profile: .standard,
         onQuickTaskClick: { _ in },
         onFeaturedClick: { _ in }
     )

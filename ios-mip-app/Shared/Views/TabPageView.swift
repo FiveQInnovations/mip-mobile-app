@@ -13,7 +13,9 @@ private let categoryPreviewCount = 3
 
 struct TabPageView: View {
     let uuid: String
-    @State private var pageStack: [String] = []
+    private let externalPageStack: Binding<[String]>?
+    @Environment(\.openURL) private var openURL
+    @State private var localPageStack: [String] = []
     @State private var pageData: PageData?
     @State private var isLoading = true
     @State private var isRefreshing = false
@@ -27,12 +29,21 @@ struct TabPageView: View {
     /// Dedupes identical `content_view` / `screen_view` when the same page refreshes in place.
     @State private var lastAnalyticsContentKey: String?
     
+    init(uuid: String, pageStack: Binding<[String]>? = nil) {
+        self.uuid = uuid
+        self.externalPageStack = pageStack
+    }
+    
+    private var pageStack: Binding<[String]> {
+        externalPageStack ?? $localPageStack
+    }
+    
     var currentUuid: String {
-        pageStack.isEmpty ? uuid : pageStack.last!
+        pageStack.wrappedValue.isEmpty ? uuid : pageStack.wrappedValue.last!
     }
     
     var canGoBack: Bool {
-        pageStack.count > 1
+        pageStack.wrappedValue.count > 1
     }
     
     var body: some View {
@@ -48,6 +59,31 @@ struct TabPageView: View {
                     } else if let pageData = pageData {
                         ScrollView {
                             VStack(alignment: .leading, spacing: 16) {
+                                // Vimeo player for video items
+                                if pageData.isVideoItem, let videoUrl = pageData.videoUrl {
+                                    VimeoPlayerView(
+                                        url: videoUrl,
+                                        embedHtml: pageData.videoEmbedHtml
+                                    )
+                                    .aspectRatio(16.0 / 9.0, contentMode: .fit)
+                                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                                    .padding(.horizontal, 16)
+                                    .padding(.top, 16)
+
+                                    if let url = URL(string: videoUrl) {
+                                        Button {
+                                            openURL(url)
+                                        } label: {
+                                            Label("Open in Vimeo", systemImage: "arrow.up.forward.app")
+                                                .font(.subheadline.weight(.semibold))
+                                                .foregroundColor(Color("BrandPrimaryColor"))
+                                        }
+                                        .buttonStyle(.plain)
+                                        .padding(.horizontal, 16)
+                                        .accessibilityIdentifier("open-vimeo-button")
+                                    }
+                                }
+                                
                                 // HTML content
                                 if let htmlContent = pageData.htmlContent, !htmlContent.isEmpty {
                                     HtmlContentView(
@@ -179,8 +215,8 @@ struct TabPageView: View {
                 }
             }
             .task {
-                if pageStack.isEmpty {
-                    pageStack = [uuid]
+                if pageStack.wrappedValue.isEmpty {
+                    pageStack.wrappedValue = [uuid]
                 }
                 loadPage(uuid: currentUuid)
             }
@@ -242,6 +278,7 @@ struct TabPageView: View {
                     trackPageAnalytics(pageUuid: uuid, data: data)
                     logger.notice("Page loaded: \(data.title), type: \(data.effectivePageType)")
                     logger.notice("Audio check - isAudioItem: \(data.isAudioItem), audioUrl: \(data.audioUrl ?? "nil")")
+                    logger.notice("Video check - isVideoItem: \(data.isVideoItem), videoUrl: \(data.videoUrl ?? "nil")")
                 }
             } catch is CancellationError {
                 await MainActor.run {
@@ -293,7 +330,7 @@ struct TabPageView: View {
     
     private func navigateToPage(uuid: String) {
         logger.notice("Navigating to page: \(uuid)")
-        pageStack.append(uuid)
+        pageStack.wrappedValue.append(uuid)
     }
     
     private func trackPageAnalytics(pageUuid: String, data: PageData) {
@@ -309,8 +346,8 @@ struct TabPageView: View {
     }
     
     private func goBack() {
-        if !pageStack.isEmpty {
-            pageStack.removeLast()
+        if !pageStack.wrappedValue.isEmpty {
+            pageStack.wrappedValue.removeLast()
         }
     }
 }
