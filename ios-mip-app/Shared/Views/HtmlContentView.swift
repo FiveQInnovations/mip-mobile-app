@@ -200,25 +200,73 @@ struct HtmlContentView: UIViewRepresentable {
             });
         }
 
-        function markPartnerAgencySections() {
+        function markImageCardSections() {
+            function styleValue(element, property) {
+                if (!element) return '';
+                const target = property.toLowerCase();
+                const styleAttr = element.getAttribute('style') || '';
+                const parts = styleAttr.split(';');
+                for (let i = 0; i < parts.length; i++) {
+                    const colon = parts[i].indexOf(':');
+                    if (colon === -1) continue;
+                    const name = parts[i].slice(0, colon).trim().toLowerCase();
+                    if (name === target) {
+                        return parts[i].slice(colon + 1).trim();
+                    }
+                }
+                return '';
+            }
+
+            function imageCardBackgroundFor(section) {
+                return styleValue(section, 'background-color')
+                    || styleValue(section.querySelector(':scope > ._background-empty'), '--bgColor')
+                    || styleValue(section.querySelector(':scope > ._background'), '--bgColor')
+                    || '#D9232A';
+            }
+
+            function imageCardHeadingColorFor(section, heading) {
+                return styleValue(section, 'color')
+                    || styleValue(heading, '--theme-content')
+                    || styleValue(section, '--theme-content')
+                    || '#ffffff';
+            }
+
+            function isImageOnlySection(section) {
+                const imageLinks = section.querySelectorAll(':scope > a._image-link');
+                if (imageLinks.length === 0) return false;
+                return !section.querySelector(':scope > ._heading, :scope > ._text, :scope > ._button-group, :scope > ._background');
+            }
+
             document.querySelectorAll('._section').forEach(function(section) {
                 const heading = section.querySelector(':scope > ._heading');
-                const headingText = heading ? heading.textContent.trim().replace(/\\s+/g, ' ') : '';
-                if (headingText !== 'Our Partner Agencies') return;
+                const decorativeBackgrounds = section.querySelectorAll(':scope > ._background-empty');
+                const hasBodyContent = section.querySelector(':scope > ._text, :scope > ._button-group, :scope > a._image-link, :scope > figure._image');
+                if (!heading || decorativeBackgrounds.length === 0 || hasBodyContent) return;
 
-                        section.classList.add('_partner-agencies-heading-section');
-                        section.querySelectorAll(':scope > ._heading, :scope > ._heading *').forEach(function(el) {
-                            el.style.setProperty('color', '#ffffff', 'important');
-                            el.style.setProperty('text-shadow', 'none', 'important');
-                        });
-                        let sibling = section.nextElementSibling;
-                while (sibling && sibling.classList && sibling.classList.contains('_section')) {
-                    const imageLinks = sibling.querySelectorAll(':scope > a._image-link');
-                    const hasOtherContent = sibling.querySelector(':scope > ._heading, :scope > ._text, :scope > ._button-group, :scope > ._background');
-                    if (imageLinks.length === 0 || hasOtherContent) break;
-                    sibling.classList.add('_partner-agencies-grid-section');
+                let sibling = section.nextElementSibling;
+                let imageSections = [];
+                while (sibling && sibling.classList && sibling.classList.contains('_section') && isImageOnlySection(sibling)) {
+                    imageSections.push(sibling);
                     sibling = sibling.nextElementSibling;
                 }
+                if (imageSections.length === 0) return;
+
+                const imageCardBackground = imageCardBackgroundFor(section);
+                const imageCardHeadingColor = imageCardHeadingColorFor(section, heading);
+
+                section.classList.add('_image-card-heading-section');
+                section.style.setProperty('--image-card-bg', imageCardBackground);
+                section.style.setProperty('--image-card-heading-color', imageCardHeadingColor);
+                section.style.setProperty('background-color', imageCardBackground, 'important');
+                section.querySelectorAll(':scope > ._heading, :scope > ._heading *').forEach(function(el) {
+                    el.style.setProperty('color', imageCardHeadingColor, 'important');
+                    el.style.setProperty('text-shadow', 'none', 'important');
+                });
+                imageSections.forEach(function(imageSection) {
+                    imageSection.classList.add('_image-card-grid-section');
+                    imageSection.style.setProperty('--image-card-bg', imageCardBackground);
+                    imageSection.style.setProperty('background-color', imageCardBackground, 'important');
+                });
             });
         }
 
@@ -244,7 +292,7 @@ struct HtmlContentView: UIViewRepresentable {
         function normalizeHeroContrast() {
             collapseDecorativeBackgrounds();
             markPairedCtaSections();
-            markPartnerAgencySections();
+            markImageCardSections();
 
             const heroBackgroundFirst = document.querySelectorAll('._section ._background + ._heading');
             heroBackgroundFirst.forEach(function(heading) {
@@ -649,10 +697,10 @@ struct HtmlContentView: UIViewRepresentable {
                     color: #ffffff !important;
                     text-shadow: none !important;
                 }
-                ._partner-agencies-heading-section,
-                ._partner-agencies-heading-section[style*="background-color"],
-                ._partner-agencies-grid-section {
-                    background-color: #D9232A !important;
+                ._image-card-heading-section,
+                ._image-card-heading-section[style*="background-color"],
+                ._image-card-grid-section {
+                    background-color: var(--image-card-bg, #D9232A) !important;
                     background-image: none !important;
                     width: calc(100% + 32px) !important;
                     max-width: none !important;
@@ -660,20 +708,20 @@ struct HtmlContentView: UIViewRepresentable {
                     margin-right: -16px !important;
                     box-sizing: border-box !important;
                 }
-                ._partner-agencies-heading-section {
+                ._image-card-heading-section {
                     padding: 48px 16px 20px !important;
                     margin-top: 32px !important;
                     margin-bottom: 0 !important;
                 }
-                ._partner-agencies-heading-section h1,
-                ._partner-agencies-heading-section h2,
-                ._partner-agencies-heading-section h3,
-                ._partner-agencies-heading-section h4,
-                ._partner-agencies-heading-section * {
-                    color: #ffffff !important;
+                ._image-card-heading-section h1,
+                ._image-card-heading-section h2,
+                ._image-card-heading-section h3,
+                ._image-card-heading-section h4,
+                ._image-card-heading-section * {
+                    color: var(--image-card-heading-color, #ffffff) !important;
                     text-shadow: none !important;
                 }
-                ._partner-agencies-grid-section {
+                ._image-card-grid-section {
                     display: grid !important;
                     grid-template-columns: 1fr;
                     gap: 12px;
@@ -681,14 +729,14 @@ struct HtmlContentView: UIViewRepresentable {
                     margin-top: 0 !important;
                     margin-bottom: 0 !important;
                 }
-                ._partner-agencies-grid-section + ._partner-agencies-grid-section {
+                ._image-card-grid-section + ._image-card-grid-section {
                     padding-top: 12px !important;
                 }
-                ._partner-agencies-grid-section:last-of-type {
+                ._image-card-grid-section:last-of-type {
                     padding-bottom: 48px !important;
                     margin-bottom: 32px !important;
                 }
-                ._partner-agencies-grid-section > a._image-link {
+                ._image-card-grid-section > a._image-link {
                     display: flex !important;
                     min-height: 220px;
                     align-items: center;
@@ -700,12 +748,12 @@ struct HtmlContentView: UIViewRepresentable {
                     margin: 0 !important;
                     box-shadow: none !important;
                 }
-                ._partner-agencies-grid-section figure,
-                ._partner-agencies-grid-section picture {
+                ._image-card-grid-section figure,
+                ._image-card-grid-section picture {
                     margin: 0 !important;
                     width: 100%;
                 }
-                ._partner-agencies-grid-section img {
+                ._image-card-grid-section img {
                     display: block;
                     max-width: 220px !important;
                     max-height: 150px;
@@ -715,7 +763,7 @@ struct HtmlContentView: UIViewRepresentable {
                     margin: 0 auto !important;
                     border-radius: 0 !important;
                 }
-                ._partner-agencies-grid-section figcaption {
+                ._image-card-grid-section figcaption {
                     color: #64748b !important;
                     text-align: center;
                     margin-top: 12px;
@@ -856,11 +904,11 @@ struct HtmlContentView: UIViewRepresentable {
                 ._section[style*="color"] * {
                     color: inherit !important;
                 }
-                ._partner-agencies-heading-section,
-                ._partner-agencies-heading-section[style*="background-color"],
-                ._partner-agencies-grid-section,
-                ._partner-agencies-grid-section[style*="background-color"] {
-                    background-color: #D9232A !important;
+                ._image-card-heading-section,
+                ._image-card-heading-section[style*="background-color"],
+                ._image-card-grid-section,
+                ._image-card-grid-section[style*="background-color"] {
+                    background-color: var(--image-card-bg, #D9232A) !important;
                     background-image: none !important;
                     width: calc(100% + 32px) !important;
                     max-width: none !important;
@@ -868,33 +916,33 @@ struct HtmlContentView: UIViewRepresentable {
                     margin-right: -16px !important;
                     box-sizing: border-box !important;
                 }
-                ._partner-agencies-heading-section,
-                ._partner-agencies-heading-section[style*="background-color"] {
+                ._image-card-heading-section,
+                ._image-card-heading-section[style*="background-color"] {
                     padding: 48px 16px 20px !important;
                     margin-top: 32px !important;
                     margin-bottom: 0 !important;
                 }
-                ._partner-agencies-heading-section ._heading,
-                ._partner-agencies-heading-section ._heading *,
-                ._partner-agencies-heading-section h1,
-                ._partner-agencies-heading-section h2,
-                ._partner-agencies-heading-section h3,
-                ._partner-agencies-heading-section h4 {
-                    color: #ffffff !important;
+                ._image-card-heading-section ._heading,
+                ._image-card-heading-section ._heading *,
+                ._image-card-heading-section h1,
+                ._image-card-heading-section h2,
+                ._image-card-heading-section h3,
+                ._image-card-heading-section h4 {
+                    color: var(--image-card-heading-color, #ffffff) !important;
                     text-shadow: none !important;
                 }
-                ._partner-agencies-heading-section + ._partner-agencies-grid-section,
-                ._partner-agencies-heading-section + ._partner-agencies-grid-section[style*="background-color"] {
+                ._image-card-heading-section + ._image-card-grid-section,
+                ._image-card-heading-section + ._image-card-grid-section[style*="background-color"] {
                     margin-top: 0 !important;
                     margin-bottom: 0 !important;
                     padding-top: 0 !important;
                 }
-                ._partner-agencies-grid-section + ._partner-agencies-grid-section,
-                ._partner-agencies-grid-section[style*="background-color"] + ._partner-agencies-grid-section[style*="background-color"] {
+                ._image-card-grid-section + ._image-card-grid-section,
+                ._image-card-grid-section[style*="background-color"] + ._image-card-grid-section[style*="background-color"] {
                     padding-top: 12px !important;
                 }
-                ._partner-agencies-grid-section,
-                ._partner-agencies-grid-section[style*="background-color"] {
+                ._image-card-grid-section,
+                ._image-card-grid-section[style*="background-color"] {
                     display: grid !important;
                     grid-template-columns: 1fr;
                     gap: 12px;
@@ -1129,29 +1177,75 @@ struct HtmlContentView: UIViewRepresentable {
                         }
                     });
 
+                    function styleValue(element, property) {
+                        if (!element) return '';
+                        const target = property.toLowerCase();
+                        const styleAttr = element.getAttribute('style') || '';
+                        const parts = styleAttr.split(';');
+                        for (let i = 0; i < parts.length; i++) {
+                            const colon = parts[i].indexOf(':');
+                            if (colon === -1) continue;
+                            const name = parts[i].slice(0, colon).trim().toLowerCase();
+                            if (name === target) {
+                                return parts[i].slice(colon + 1).trim();
+                            }
+                        }
+                        return '';
+                    }
+
+                    function imageCardBackgroundFor(section) {
+                        return styleValue(section, 'background-color')
+                            || styleValue(section.querySelector(':scope > ._background-empty'), '--bgColor')
+                            || styleValue(section.querySelector(':scope > ._background'), '--bgColor')
+                            || '#D9232A';
+                    }
+
+                    function imageCardHeadingColorFor(section, heading) {
+                        return styleValue(section, 'color')
+                            || styleValue(heading, '--theme-content')
+                            || styleValue(section, '--theme-content')
+                            || '#ffffff';
+                    }
+
+                    function isImageOnlySection(section) {
+                        const imageLinks = section.querySelectorAll(':scope > a._image-link');
+                        if (imageLinks.length === 0) return false;
+                        return !section.querySelector(':scope > ._heading, :scope > ._text, :scope > ._button-group, :scope > ._background');
+                    }
+
                     document.querySelectorAll('._section').forEach(function(section) {
                         const heading = section.querySelector(':scope > ._heading');
-                        const headingText = heading ? heading.textContent.trim().replace(/\\s+/g, ' ') : '';
-                        if (headingText !== 'Our Partner Agencies') return;
+                        const decorativeBackgrounds = section.querySelectorAll(':scope > ._background-empty');
+                        const hasBodyContent = section.querySelector(':scope > ._text, :scope > ._button-group, :scope > a._image-link, :scope > figure._image');
+                        if (!heading || decorativeBackgrounds.length === 0 || hasBodyContent) return;
 
-                        section.classList.add('_partner-agencies-heading-section');
-                        section.style.setProperty('background-color', '#D9232A', 'important');
-                        section.style.setProperty('margin-bottom', '0', 'important');
-                        section.querySelectorAll(':scope > ._heading, :scope > ._heading *').forEach(function(el) {
-                            el.style.setProperty('color', '#ffffff', 'important');
-                            el.style.setProperty('text-shadow', 'none', 'important');
-                        });
                         let sibling = section.nextElementSibling;
-                        while (sibling && sibling.classList && sibling.classList.contains('_section')) {
-                            const imageLinks = sibling.querySelectorAll(':scope > a._image-link');
-                            const hasOtherContent = sibling.querySelector(':scope > ._heading, :scope > ._text, :scope > ._button-group, :scope > ._background');
-                            if (imageLinks.length === 0 || hasOtherContent) break;
-                            sibling.classList.add('_partner-agencies-grid-section');
-                            sibling.style.setProperty('background-color', '#D9232A', 'important');
-                            sibling.style.setProperty('margin-top', '0', 'important');
-                            sibling.style.setProperty('margin-bottom', '0', 'important');
+                        let imageSections = [];
+                        while (sibling && sibling.classList && sibling.classList.contains('_section') && isImageOnlySection(sibling)) {
+                            imageSections.push(sibling);
                             sibling = sibling.nextElementSibling;
                         }
+                        if (imageSections.length === 0) return;
+
+                        const imageCardBackground = imageCardBackgroundFor(section);
+                        const imageCardHeadingColor = imageCardHeadingColorFor(section, heading);
+
+                        section.classList.add('_image-card-heading-section');
+                        section.style.setProperty('--image-card-bg', imageCardBackground);
+                        section.style.setProperty('--image-card-heading-color', imageCardHeadingColor);
+                        section.style.setProperty('background-color', imageCardBackground, 'important');
+                        section.style.setProperty('margin-bottom', '0', 'important');
+                        section.querySelectorAll(':scope > ._heading, :scope > ._heading *').forEach(function(el) {
+                            el.style.setProperty('color', imageCardHeadingColor, 'important');
+                            el.style.setProperty('text-shadow', 'none', 'important');
+                        });
+                        imageSections.forEach(function(imageSection) {
+                            imageSection.classList.add('_image-card-grid-section');
+                            imageSection.style.setProperty('--image-card-bg', imageCardBackground);
+                            imageSection.style.setProperty('background-color', imageCardBackground, 'important');
+                            imageSection.style.setProperty('margin-top', '0', 'important');
+                            imageSection.style.setProperty('margin-bottom', '0', 'important');
+                        });
                     });
 
                     const sections = document.querySelectorAll('._section');
@@ -1163,7 +1257,7 @@ struct HtmlContentView: UIViewRepresentable {
                         const styleAttr = section.getAttribute('style') || '';
                         const isHeroSection = section.classList.contains('_hero-section');
                         const isPairedCtaSection = section.classList.contains('_paired-cta-section');
-                        const isPartnerAgenciesSection = section.classList.contains('_partner-agencies-heading-section') || section.classList.contains('_partner-agencies-grid-section');
+                        const isImageCardSection = section.classList.contains('_image-card-heading-section') || section.classList.contains('_image-card-grid-section');
                         
                         // Parse background-color and color from inline style
                         let bgMatch = styleAttr.match(/background-color:\\s*([^;]+)/i);
@@ -1190,8 +1284,8 @@ struct HtmlContentView: UIViewRepresentable {
                             if (bgMatch) {
                                 if (isPairedCtaSection) {
                                     rule += 'background-color: #f1f1f1 !important; ';
-                                } else if (isPartnerAgenciesSection) {
-                                    rule += 'background-color: #D9232A !important; ';
+                                } else if (isImageCardSection) {
+                                    rule += 'background-color: var(--image-card-bg, #D9232A) !important; ';
                                 } else if (!isHeroSection) {
                                     rule += 'background-color: ' + bgMatch[1].trim() + ' !important; ';
                                 } else {
