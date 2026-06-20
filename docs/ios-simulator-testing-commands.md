@@ -96,6 +96,65 @@ xcrun simctl io booted screenshot /tmp/screenshot.png && open /tmp/screenshot.pn
 
 ---
 
+## Manual Simulator Gestures
+
+When Maestro cannot scroll a WebView and `simctl` has no touch primitive for the action, post real mouse events to the Simulator window with CoreGraphics. This has worked for scrolling the FFCI iOS app in the Simulator.
+
+### Get Simulator Window Bounds
+```bash
+osascript -e 'tell application "System Events" to tell process "Simulator" to get position of window 1 & size of window 1'
+```
+
+The output is `x, y, width, height`. If the Simulator is on a secondary display, `x` may be negative. Use those numbers to aim at the device content area, not the Simulator title bar.
+
+### Scroll by Human-Style Drag
+This example drags upward through the middle of an iPhone 17 Simulator window whose bounds were approximately `-1342, 33, 384, 828`.
+
+```bash
+swift - <<'SWIFT'
+import Cocoa
+
+let app = NSRunningApplication.runningApplications(withBundleIdentifier: "com.apple.iphonesimulator").first!
+app.activate(options: [.activateIgnoringOtherApps])
+Thread.sleep(forTimeInterval: 0.2)
+
+let src = CGEventSource(stateID: .combinedSessionState)
+
+func post(_ type: CGEventType, _ point: CGPoint) {
+    CGEvent(mouseEventSource: src, mouseType: type, mouseCursorPosition: point, mouseButton: .left)?
+        .post(tap: .cghidEventTap)
+}
+
+let x = -1150.0
+let startY = 690.0
+let endY = 300.0
+
+post(.leftMouseDown, CGPoint(x: x, y: startY))
+for i in 1...40 {
+    let t = CGFloat(i) / 40.0
+    let y = startY + (endY - startY) * Double(t)
+    post(.leftMouseDragged, CGPoint(x: x, y: y))
+    usleep(12_000)
+}
+post(.leftMouseUp, CGPoint(x: x, y: endY))
+SWIFT
+```
+
+Adjust `x`, `startY`, and `endY` for the current Simulator window. To scroll farther down the page, drag upward: start lower on the screen and end higher on the screen.
+
+### Verify the Gesture Actually Worked
+Take screenshots before and after the drag and inspect them.
+
+```bash
+xcrun simctl io booted screenshot /tmp/before-scroll.png
+# run the drag script
+xcrun simctl io booted screenshot /tmp/after-scroll.png
+```
+
+In one June 2026 verification session, a CoreGraphics scroll-wheel event did not move the app, but the click-drag event above did. Prefer the drag gesture for WebView pages unless a later test proves a simpler method works.
+
+---
+
 ## Process Management
 
 ### Check Running Expo/Metro Processes
