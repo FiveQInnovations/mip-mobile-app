@@ -176,6 +176,52 @@ struct HtmlContentView: UIViewRepresentable {
             });
         }
 
+        function collapseDecorativeBackgrounds() {
+            document.querySelectorAll('._background').forEach(function(bg) {
+                const hasMedia = bg.querySelector('picture, img, video, iframe, embed, object, source');
+                if (!hasMedia && bg.textContent.trim() === '') {
+                    bg.classList.add('_background-empty');
+                }
+            });
+        }
+
+        function markPairedCtaSections() {
+            document.querySelectorAll('._section').forEach(function(section) {
+                const headings = section.querySelectorAll(':scope > ._heading');
+                const buttonGroups = section.querySelectorAll(':scope > ._button-group');
+                const emptyBackgrounds = section.querySelectorAll(':scope > ._background-empty');
+                if (headings.length === 2 && buttonGroups.length === 2 && emptyBackgrounds.length >= 1) {
+                    section.classList.add('_paired-cta-section');
+                    headings[0].classList.add('_paired-cta-card-start');
+                    headings[1].classList.add('_paired-cta-card-start');
+                    buttonGroups[0].classList.add('_paired-cta-card-end');
+                    buttonGroups[1].classList.add('_paired-cta-card-end');
+                }
+            });
+        }
+
+        function markPartnerAgencySections() {
+            document.querySelectorAll('._section').forEach(function(section) {
+                const heading = section.querySelector(':scope > ._heading');
+                const headingText = heading ? heading.textContent.trim().replace(/\\s+/g, ' ') : '';
+                if (headingText !== 'Our Partner Agencies') return;
+
+                        section.classList.add('_partner-agencies-heading-section');
+                        section.querySelectorAll(':scope > ._heading, :scope > ._heading *').forEach(function(el) {
+                            el.style.setProperty('color', '#ffffff', 'important');
+                            el.style.setProperty('text-shadow', 'none', 'important');
+                        });
+                        let sibling = section.nextElementSibling;
+                while (sibling && sibling.classList && sibling.classList.contains('_section')) {
+                    const imageLinks = sibling.querySelectorAll(':scope > a._image-link');
+                    const hasOtherContent = sibling.querySelector(':scope > ._heading, :scope > ._text, :scope > ._button-group, :scope > ._background');
+                    if (imageLinks.length === 0 || hasOtherContent) break;
+                    sibling.classList.add('_partner-agencies-grid-section');
+                    sibling = sibling.nextElementSibling;
+                }
+            });
+        }
+
         function forceHeroContrast(element, className) {
             if (!element) return;
             element.classList.add(className);
@@ -196,9 +242,14 @@ struct HtmlContentView: UIViewRepresentable {
         }
 
         function normalizeHeroContrast() {
+            collapseDecorativeBackgrounds();
+            markPairedCtaSections();
+            markPartnerAgencySections();
+
             const heroBackgroundFirst = document.querySelectorAll('._section ._background + ._heading');
             heroBackgroundFirst.forEach(function(heading) {
                 const bg = heading.previousElementSibling;
+                if (bg && bg.classList.contains('_background-empty')) return;
                 if (bg && bg.classList.contains('_background') && bg.parentNode) {
                     bg.parentNode.insertBefore(heading, bg);
                 }
@@ -212,6 +263,7 @@ struct HtmlContentView: UIViewRepresentable {
 
             const heroHeadingFirst = document.querySelectorAll('._section ._heading + ._background');
             heroHeadingFirst.forEach(function(bg) {
+                if (bg.classList.contains('_background-empty')) return;
                 bg.classList.add('_hero-background');
                 const heading = bg.previousElementSibling;
                 if (heading && heading.classList.contains('_heading')) {
@@ -223,6 +275,7 @@ struct HtmlContentView: UIViewRepresentable {
 
             const heroHeadingTextBackground = document.querySelectorAll('._section ._heading + ._text + ._background');
             heroHeadingTextBackground.forEach(function(bg) {
+                if (bg.classList.contains('_background-empty')) return;
                 bg.classList.add('_hero-background');
                 const introText = bg.previousElementSibling;
                 const heading = introText ? introText.previousElementSibling : null;
@@ -533,9 +586,142 @@ struct HtmlContentView: UIViewRepresentable {
                     display: block !important;
                 }
                 ._background { position: relative; width: 100%; min-height: 200px; margin-bottom: 16px; border-radius: 8px; overflow: hidden; }
+                ._background-empty {
+                    display: none !important;
+                    min-height: 0 !important;
+                    height: 0 !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
                 ._background picture { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
                 ._background picture img { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 0; margin: 0; }
                 ._background > *:not(picture) { position: relative; z-index: 2; }
+                ._paired-cta-section,
+                ._paired-cta-section[style*="background-color"] {
+                    background-color: #f1f1f1 !important;
+                    padding: 32px 16px !important;
+                    margin-top: 32px !important;
+                    margin-bottom: 32px !important;
+                    display: block !important;
+                }
+                ._paired-cta-section ._paired-cta-card-start,
+                ._paired-cta-section ._paired-cta-card-end {
+                    background-color: #ffffff !important;
+                    border-left: 1px solid #d9d9d9;
+                    border-right: 1px solid #d9d9d9;
+                    margin: 0 !important;
+                    padding-left: 24px;
+                    padding-right: 24px;
+                }
+                ._paired-cta-section ._paired-cta-card-start {
+                    border-top: 1px solid #d9d9d9;
+                    border-radius: 8px 8px 0 0;
+                    padding-top: 56px;
+                    padding-bottom: 12px;
+                }
+                ._paired-cta-section ._paired-cta-card-end {
+                    border-bottom: 1px solid #d9d9d9;
+                    border-radius: 0 0 8px 8px;
+                    padding-top: 16px;
+                    padding-bottom: 56px;
+                    align-items: center;
+                    margin-bottom: 20px !important;
+                }
+                ._paired-cta-section h1,
+                ._paired-cta-section h2,
+                ._paired-cta-section h3,
+                ._paired-cta-section h4,
+                ._paired-cta-section p {
+                    color: #262626 !important;
+                    text-shadow: none !important;
+                }
+                ._paired-cta-section ._paired-cta-card-end a[class*="_button"] {
+                    width: auto !important;
+                    min-width: 180px;
+                    max-width: 100%;
+                    padding: 14px 24px;
+                    min-height: 48px;
+                    margin-left: auto !important;
+                    margin-right: auto !important;
+                }
+                ._paired-cta-section ._paired-cta-card-end a[class*="_button"],
+                ._paired-cta-section ._paired-cta-card-end a[class*="_button"] span {
+                    color: #ffffff !important;
+                    text-shadow: none !important;
+                }
+                ._partner-agencies-heading-section,
+                ._partner-agencies-heading-section[style*="background-color"],
+                ._partner-agencies-grid-section {
+                    background-color: #D9232A !important;
+                    background-image: none !important;
+                    width: calc(100% + 32px) !important;
+                    max-width: none !important;
+                    margin-left: -16px !important;
+                    margin-right: -16px !important;
+                    box-sizing: border-box !important;
+                }
+                ._partner-agencies-heading-section {
+                    padding: 48px 16px 20px !important;
+                    margin-top: 32px !important;
+                    margin-bottom: 0 !important;
+                }
+                ._partner-agencies-heading-section h1,
+                ._partner-agencies-heading-section h2,
+                ._partner-agencies-heading-section h3,
+                ._partner-agencies-heading-section h4,
+                ._partner-agencies-heading-section * {
+                    color: #ffffff !important;
+                    text-shadow: none !important;
+                }
+                ._partner-agencies-grid-section {
+                    display: grid !important;
+                    grid-template-columns: 1fr;
+                    gap: 12px;
+                    padding: 0 24px 24px !important;
+                    margin-top: 0 !important;
+                    margin-bottom: 0 !important;
+                }
+                ._partner-agencies-grid-section + ._partner-agencies-grid-section {
+                    padding-top: 12px !important;
+                }
+                ._partner-agencies-grid-section:last-of-type {
+                    padding-bottom: 48px !important;
+                    margin-bottom: 32px !important;
+                }
+                ._partner-agencies-grid-section > a._image-link {
+                    display: flex !important;
+                    min-height: 220px;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: #ffffff !important;
+                    border: 1px solid #d9d9d9 !important;
+                    border-radius: 8px !important;
+                    padding: 28px 20px !important;
+                    margin: 0 !important;
+                    box-shadow: none !important;
+                }
+                ._partner-agencies-grid-section figure,
+                ._partner-agencies-grid-section picture {
+                    margin: 0 !important;
+                    width: 100%;
+                }
+                ._partner-agencies-grid-section img {
+                    display: block;
+                    max-width: 220px !important;
+                    max-height: 150px;
+                    width: auto !important;
+                    height: auto !important;
+                    object-fit: contain;
+                    margin: 0 auto !important;
+                    border-radius: 0 !important;
+                }
+                ._partner-agencies-grid-section figcaption {
+                    color: #64748b !important;
+                    text-align: center;
+                    margin-top: 12px;
+                    font-size: 16px;
+                    line-height: 22px;
+                }
                 /* Button group - stack buttons vertically */
                 ._button-group {
                     display: flex;
@@ -573,9 +759,9 @@ struct HtmlContentView: UIViewRepresentable {
                     background-attachment: initial !important;
                     background-size: initial !important;
                 }
-                /* Primary button - red background */
+                /* Priority buttons match the website's blue action style */
                 a[class*="_button-priority"] {
-                    background-color: #D9232A !important;
+                    background-color: #024D91 !important;
                     color: white !important;
                     border: none !important;
                 }
@@ -669,6 +855,49 @@ struct HtmlContentView: UIViewRepresentable {
                 /* This ensures ALL descendants inherit the color from the section's inline style */
                 ._section[style*="color"] * {
                     color: inherit !important;
+                }
+                ._partner-agencies-heading-section,
+                ._partner-agencies-heading-section[style*="background-color"],
+                ._partner-agencies-grid-section,
+                ._partner-agencies-grid-section[style*="background-color"] {
+                    background-color: #D9232A !important;
+                    background-image: none !important;
+                    width: calc(100% + 32px) !important;
+                    max-width: none !important;
+                    margin-left: -16px !important;
+                    margin-right: -16px !important;
+                    box-sizing: border-box !important;
+                }
+                ._partner-agencies-heading-section,
+                ._partner-agencies-heading-section[style*="background-color"] {
+                    padding: 48px 16px 20px !important;
+                    margin-top: 32px !important;
+                    margin-bottom: 0 !important;
+                }
+                ._partner-agencies-heading-section ._heading,
+                ._partner-agencies-heading-section ._heading *,
+                ._partner-agencies-heading-section h1,
+                ._partner-agencies-heading-section h2,
+                ._partner-agencies-heading-section h3,
+                ._partner-agencies-heading-section h4 {
+                    color: #ffffff !important;
+                    text-shadow: none !important;
+                }
+                ._partner-agencies-heading-section + ._partner-agencies-grid-section,
+                ._partner-agencies-heading-section + ._partner-agencies-grid-section[style*="background-color"] {
+                    margin-top: 0 !important;
+                    margin-bottom: 0 !important;
+                    padding-top: 0 !important;
+                }
+                ._partner-agencies-grid-section + ._partner-agencies-grid-section,
+                ._partner-agencies-grid-section[style*="background-color"] + ._partner-agencies-grid-section[style*="background-color"] {
+                    padding-top: 12px !important;
+                }
+                ._partner-agencies-grid-section,
+                ._partner-agencies-grid-section[style*="background-color"] {
+                    display: grid !important;
+                    grid-template-columns: 1fr;
+                    gap: 12px;
                 }
                 /* Issue 4: Tailwind Utility Classes */
                 .mb-2 { margin-bottom: 8px !important; }
@@ -879,6 +1108,52 @@ struct HtmlContentView: UIViewRepresentable {
             // Solution: Create a <style> block with explicit CSS rules for each section
             webView.evaluateJavaScript("""
                 (function() {
+                    document.querySelectorAll('._background').forEach(function(bg) {
+                        const hasMedia = bg.querySelector('picture, img, video, iframe, embed, object, source');
+                        if (!hasMedia && bg.textContent.trim() === '') {
+                            bg.classList.add('_background-empty');
+                        }
+                    });
+
+                    document.querySelectorAll('._section').forEach(function(section) {
+                        const headings = section.querySelectorAll(':scope > ._heading');
+                        const buttonGroups = section.querySelectorAll(':scope > ._button-group');
+                        const emptyBackgrounds = section.querySelectorAll(':scope > ._background-empty');
+                        if (headings.length === 2 && buttonGroups.length === 2 && emptyBackgrounds.length >= 1) {
+                            section.classList.add('_paired-cta-section');
+                            section.style.setProperty('background-color', '#f1f1f1', 'important');
+                            headings[0].classList.add('_paired-cta-card-start');
+                            headings[1].classList.add('_paired-cta-card-start');
+                            buttonGroups[0].classList.add('_paired-cta-card-end');
+                            buttonGroups[1].classList.add('_paired-cta-card-end');
+                        }
+                    });
+
+                    document.querySelectorAll('._section').forEach(function(section) {
+                        const heading = section.querySelector(':scope > ._heading');
+                        const headingText = heading ? heading.textContent.trim().replace(/\\s+/g, ' ') : '';
+                        if (headingText !== 'Our Partner Agencies') return;
+
+                        section.classList.add('_partner-agencies-heading-section');
+                        section.style.setProperty('background-color', '#D9232A', 'important');
+                        section.style.setProperty('margin-bottom', '0', 'important');
+                        section.querySelectorAll(':scope > ._heading, :scope > ._heading *').forEach(function(el) {
+                            el.style.setProperty('color', '#ffffff', 'important');
+                            el.style.setProperty('text-shadow', 'none', 'important');
+                        });
+                        let sibling = section.nextElementSibling;
+                        while (sibling && sibling.classList && sibling.classList.contains('_section')) {
+                            const imageLinks = sibling.querySelectorAll(':scope > a._image-link');
+                            const hasOtherContent = sibling.querySelector(':scope > ._heading, :scope > ._text, :scope > ._button-group, :scope > ._background');
+                            if (imageLinks.length === 0 || hasOtherContent) break;
+                            sibling.classList.add('_partner-agencies-grid-section');
+                            sibling.style.setProperty('background-color', '#D9232A', 'important');
+                            sibling.style.setProperty('margin-top', '0', 'important');
+                            sibling.style.setProperty('margin-bottom', '0', 'important');
+                            sibling = sibling.nextElementSibling;
+                        }
+                    });
+
                     const sections = document.querySelectorAll('._section');
                     if (sections.length === 0) return;
                     
@@ -887,6 +1162,8 @@ struct HtmlContentView: UIViewRepresentable {
                     sections.forEach(function(section, index) {
                         const styleAttr = section.getAttribute('style') || '';
                         const isHeroSection = section.classList.contains('_hero-section');
+                        const isPairedCtaSection = section.classList.contains('_paired-cta-section');
+                        const isPartnerAgenciesSection = section.classList.contains('_partner-agencies-heading-section') || section.classList.contains('_partner-agencies-grid-section');
                         
                         // Parse background-color and color from inline style
                         let bgMatch = styleAttr.match(/background-color:\\s*([^;]+)/i);
@@ -911,7 +1188,11 @@ struct HtmlContentView: UIViewRepresentable {
                             
                             let rule = '._section[data-section-id="section-' + index + '"] { ';
                             if (bgMatch) {
-                                if (!isHeroSection) {
+                                if (isPairedCtaSection) {
+                                    rule += 'background-color: #f1f1f1 !important; ';
+                                } else if (isPartnerAgenciesSection) {
+                                    rule += 'background-color: #D9232A !important; ';
+                                } else if (!isHeroSection) {
                                     rule += 'background-color: ' + bgMatch[1].trim() + ' !important; ';
                                 } else {
                                     cssRules += '._section._hero-section[data-section-id="section-' + index + '"] { background-color: transparent !important; background-image: none !important; }\\n';
