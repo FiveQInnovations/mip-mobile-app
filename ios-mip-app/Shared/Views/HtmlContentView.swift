@@ -404,6 +404,7 @@ struct HtmlContentView: UIViewRepresentable {
         context.coordinator.contentHeightBinding = _contentHeight
         
         let styledHtml = wrapHtml(html)
+        context.coordinator.loadedHtml = styledHtml
         webView.loadHTMLString(styledHtml, baseURL: SiteConfig.shared.siteBaseURL)
         
         return webView
@@ -413,6 +414,8 @@ struct HtmlContentView: UIViewRepresentable {
         context.coordinator.analyticsPageUuid = analyticsPageUuid
         context.coordinator.analyticsPageTitle = analyticsPageTitle
         let styledHtml = wrapHtml(html)
+        guard context.coordinator.loadedHtml != styledHtml else { return }
+        context.coordinator.loadedHtml = styledHtml
         webView.loadHTMLString(styledHtml, baseURL: SiteConfig.shared.siteBaseURL)
     }
     
@@ -1172,6 +1175,7 @@ struct HtmlContentView: UIViewRepresentable {
         let onNavigate: ((String) -> Void)?
         weak var webView: WKWebView?
         var contentHeightBinding: Binding<CGFloat>?
+        var loadedHtml: String?
         private let prayerRequestAnchor = "prayer-request-response"
         var analyticsPageUuid: String
         var analyticsPageTitle: String
@@ -1596,12 +1600,42 @@ struct HtmlContentView: UIViewRepresentable {
 
             """) { _, _ in }
             
-            // Calculate content height after page loads
-            webView.evaluateJavaScript("document.body.scrollHeight") { [weak self] result, error in
-                if let height = result as? CGFloat, height > 0 {
-                    DispatchQueue.main.async {
-                        self?.contentHeightBinding?.wrappedValue = height
+            updateContentHeight(for: webView)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self, weak webView] in
+                guard let webView else { return }
+                self?.updateContentHeight(for: webView)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self, weak webView] in
+                guard let webView else { return }
+                self?.updateContentHeight(for: webView)
+            }
+        }
+
+        private func updateContentHeight(for webView: WKWebView) {
+            webView.evaluateJavaScript("""
+                (function() {
+                    const body = document.body;
+                    const doc = document.documentElement;
+                    const height = Math.max(
+                        body ? body.scrollHeight : 0,
+                        body ? body.offsetHeight : 0,
+                        doc ? doc.clientHeight : 0,
+                        doc ? doc.scrollHeight : 0,
+                        doc ? doc.offsetHeight : 0
+                    );
+                    return Math.ceil(height + 48);
+                })();
+            """) { [weak self] result, _ in
+                guard let rawHeight = result as? NSNumber else { return }
+                let height = CGFloat(truncating: rawHeight)
+                guard height > 0 else { return }
+
+                DispatchQueue.main.async {
+                    if let currentHeight = self?.contentHeightBinding?.wrappedValue,
+                       abs(currentHeight - height) < 8 {
+                        return
                     }
+                    self?.contentHeightBinding?.wrappedValue = height
                 }
             }
         }
