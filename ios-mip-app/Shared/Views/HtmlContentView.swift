@@ -1339,6 +1339,103 @@ struct HtmlContentView: UIViewRepresentable {
 
                     const sections = document.querySelectorAll('._section');
                     if (sections.length === 0) return;
+
+                    function parseCssColor(value) {
+                        if (!value) return null;
+                        const color = value.trim().toLowerCase();
+                        if (color === 'transparent') return null;
+                        let hex = color.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+                        if (hex) {
+                            let raw = hex[1];
+                            if (raw.length === 3) {
+                                raw = raw.split('').map(function(ch) { return ch + ch; }).join('');
+                            }
+                            return {
+                                r: parseInt(raw.slice(0, 2), 16),
+                                g: parseInt(raw.slice(2, 4), 16),
+                                b: parseInt(raw.slice(4, 6), 16)
+                            };
+                        }
+                        let rgb = color.match(/^rgba?\\(\\s*([\\d.]+)\\s*,\\s*([\\d.]+)\\s*,\\s*([\\d.]+)(?:\\s*,\\s*([\\d.]+))?/i);
+                        if (rgb) {
+                            if (rgb[4] !== undefined && Number(rgb[4]) === 0) return null;
+                            return {
+                                r: Number(rgb[1]),
+                                g: Number(rgb[2]),
+                                b: Number(rgb[3])
+                            };
+                        }
+                        return null;
+                    }
+
+                    function luminance(channel) {
+                        const value = channel / 255;
+                        return value <= 0.03928 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4);
+                    }
+
+                    function relativeLuminance(color) {
+                        return 0.2126 * luminance(color.r) + 0.7152 * luminance(color.g) + 0.0722 * luminance(color.b);
+                    }
+
+                    function contrastRatio(first, second) {
+                        const lighter = Math.max(relativeLuminance(first), relativeLuminance(second));
+                        const darker = Math.min(relativeLuminance(first), relativeLuminance(second));
+                        return (lighter + 0.05) / (darker + 0.05);
+                    }
+
+                    function readableTextColor(backgroundValue, declaredValue) {
+                        const background = parseCssColor(backgroundValue);
+                        if (!background) return null;
+
+                        const fallbackText = parseCssColor('#334155');
+                        const declaredText = parseCssColor(declaredValue) || fallbackText;
+                        if (contrastRatio(background, declaredText) >= 4.5) {
+                            return declaredValue ? declaredValue.trim() : null;
+                        }
+
+                        const white = parseCssColor('#ffffff');
+                        const dark = parseCssColor('#0f172a');
+                        return contrastRatio(background, white) >= contrastRatio(background, dark) ? '#ffffff' : '#0f172a';
+                    }
+
+                    function effectiveBackgroundColor(section, bgMatch) {
+                        if (bgMatch && bgMatch[1]) {
+                            const inlineValue = bgMatch[1].trim();
+                            if (parseCssColor(inlineValue)) return inlineValue;
+                        }
+
+                        const computedValue = window.getComputedStyle(section).backgroundColor;
+                        if (parseCssColor(computedValue)) return computedValue;
+
+                        const bgElement = section.querySelector(':scope > ._background, :scope > ._background-empty');
+                        if (bgElement) {
+                            const bgStyle = window.getComputedStyle(bgElement);
+                            if (parseCssColor(bgStyle.backgroundColor)) return bgStyle.backgroundColor;
+                        }
+
+                        return bgMatch && bgMatch[1] ? bgMatch[1].trim() : '';
+                    }
+
+                    function effectiveTextColor(section, colorMatch) {
+                        if (colorMatch && colorMatch[1]) {
+                            const inlineValue = colorMatch[1].trim();
+                            if (parseCssColor(inlineValue)) return inlineValue;
+                        }
+
+                        const textElement = section.querySelector('h1, h2, h3, h4, h5, h6, p, li, a:not([class*="_button"]):not([class*="_image-link"]), ._heading, ._text, ._blockquote');
+                        const computedValue = window.getComputedStyle(textElement || section).color;
+                        return parseCssColor(computedValue) ? computedValue : '';
+                    }
+
+                    function forceReadableSectionText(section, color) {
+                        if (!color) return;
+                        section.style.setProperty('color', color, 'important');
+                        section.querySelectorAll('h1, h2, h3, h4, h5, h6, p, li, a:not([class*="_button"]):not([class*="_image-link"]), ._heading, ._heading *, ._text, ._text *, ._blockquote, ._blockquote *').forEach(function(el) {
+                            if (el.closest('._button-group')) return;
+                            el.style.setProperty('color', color, 'important');
+                            el.style.setProperty('text-shadow', 'none', 'important');
+                        });
+                    }
                     
                     // Build CSS rules for each section with background-color
                     let cssRules = '';
@@ -1365,9 +1462,15 @@ struct HtmlContentView: UIViewRepresentable {
                             }
                         }
                         
-                        if (bgMatch || colorMatch) {
+                        const bgValue = effectiveBackgroundColor(section, bgMatch);
+                        const colorValue = effectiveTextColor(section, colorMatch);
+
+                        if (bgValue || colorValue) {
                             // Add a unique data attribute to target this specific section
                             section.setAttribute('data-section-id', 'section-' + index);
+                            const readableColor = (!isHeroSection && !isPairedCtaSection && !isImageCardSection)
+                                ? readableTextColor(bgValue, colorValue)
+                                : null;
                             
                             let rule = '._section[data-section-id="section-' + index + '"] { ';
                             if (bgMatch) {
@@ -1376,19 +1479,25 @@ struct HtmlContentView: UIViewRepresentable {
                                 } else if (isImageCardSection) {
                                     rule += 'background-color: var(--image-card-bg, #D9232A) !important; ';
                                 } else if (!isHeroSection) {
-                                    rule += 'background-color: ' + bgMatch[1].trim() + ' !important; ';
+                                    rule += 'background-color: ' + bgValue + ' !important; ';
                                 } else {
                                     cssRules += '._section._hero-section[data-section-id="section-' + index + '"] { background-color: transparent !important; background-image: none !important; }\\n';
                                 }
                             }
-                            if (colorMatch) {
-                                rule += 'color: ' + colorMatch[1].trim() + ' !important; ';
+                            if (readableColor) {
+                                section.setAttribute('data-readable-text-color', readableColor);
+                                rule += 'color: ' + readableColor + ' !important; ';
+                            } else if (colorMatch) {
+                                rule += 'color: ' + colorValue + ' !important; ';
                             }
                             rule += '}\\n';
                             cssRules += rule;
                             
                             // Also add child text color inheritance
-                            if (colorMatch) {
+                            if (readableColor) {
+                                forceReadableSectionText(section, readableColor);
+                                cssRules += '._section[data-section-id="section-' + index + '"] h1, ._section[data-section-id="section-' + index + '"] h2, ._section[data-section-id="section-' + index + '"] h3, ._section[data-section-id="section-' + index + '"] h4, ._section[data-section-id="section-' + index + '"] h5, ._section[data-section-id="section-' + index + '"] h6, ._section[data-section-id="section-' + index + '"] p, ._section[data-section-id="section-' + index + '"] li, ._section[data-section-id="section-' + index + '"] a:not([class*="_button"]):not([class*="_image-link"]), ._section[data-section-id="section-' + index + '"] ._heading, ._section[data-section-id="section-' + index + '"] ._heading *, ._section[data-section-id="section-' + index + '"] ._text, ._section[data-section-id="section-' + index + '"] ._text *, ._section[data-section-id="section-' + index + '"] ._blockquote, ._section[data-section-id="section-' + index + '"] ._blockquote * { color: inherit !important; text-shadow: none !important; }\\n';
+                            } else if (colorMatch) {
                                 cssRules += '._section[data-section-id="section-' + index + '"] * { color: inherit !important; }\\n';
                             }
                         }
@@ -1412,6 +1521,10 @@ struct HtmlContentView: UIViewRepresentable {
                             el.style.setProperty('color', colorMatch[1].trim(), 'important');
                         }
                     });
+
+                    document.querySelectorAll('._section[data-readable-text-color]').forEach(function(section) {
+                        forceReadableSectionText(section, section.getAttribute('data-readable-text-color'));
+                    });
                     
                     // Fix blockquote elements inside colored sections
                     const blockquotes = document.querySelectorAll('._section ._blockquote');
@@ -1420,8 +1533,9 @@ struct HtmlContentView: UIViewRepresentable {
                         if (section) {
                             const sectionStyle = section.getAttribute('style') || '';
                             const colorMatch = sectionStyle.match(/(?:^|;)\\s*color:\\s*([^;]+)/i);
-                            if (colorMatch) {
-                                const color = colorMatch[1].trim();
+                            const readableColor = section.getAttribute('data-readable-text-color');
+                            if (readableColor || colorMatch) {
+                                const color = readableColor || colorMatch[1].trim();
                                 bq.style.setProperty('color', color, 'important');
                                 // Also fix all children
                                 bq.querySelectorAll('*').forEach(function(child) {
