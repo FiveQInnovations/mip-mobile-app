@@ -1619,11 +1619,10 @@ struct HtmlContentView: UIViewRepresentable {
                     const height = Math.max(
                         body ? body.scrollHeight : 0,
                         body ? body.offsetHeight : 0,
-                        doc ? doc.clientHeight : 0,
                         doc ? doc.scrollHeight : 0,
                         doc ? doc.offsetHeight : 0
                     );
-                    return Math.ceil(height + 48);
+                    return Math.ceil(height + 24);
                 })();
             """) { [weak self] result, _ in
                 guard let rawHeight = result as? NSNumber else { return }
