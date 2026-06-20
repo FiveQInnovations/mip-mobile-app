@@ -294,6 +294,23 @@ struct HtmlContentView: UIViewRepresentable {
             markPairedCtaSections();
             markImageCardSections();
 
+            const heroContentBeforeBackground = document.querySelectorAll('._section ._heading + ._text + ._button-group + ._background, ._section ._heading + ._button-group + ._background');
+            heroContentBeforeBackground.forEach(function(bg) {
+                if (bg.classList.contains('_background-empty')) return;
+                bg.classList.add('_hero-background');
+                const section = markHeroSection(bg);
+                section.classList.add('_hero-overlay-section');
+                const heading = section.querySelector(':scope > ._heading');
+                const introText = section.querySelector(':scope > ._text');
+                if (heading) {
+                    forceHeroHeadingContrast(heading);
+                }
+                if (introText) {
+                    forceHeroIntroContrast(introText);
+                }
+                normalizeHeroImageRendering(section);
+            });
+
             const heroBackgroundFirst = document.querySelectorAll('._section ._background + ._heading');
             heroBackgroundFirst.forEach(function(heading) {
                 const bg = heading.previousElementSibling;
@@ -1051,6 +1068,78 @@ struct HtmlContentView: UIViewRepresentable {
                     -webkit-backdrop-filter: none !important;
                     mix-blend-mode: normal !important;
                     background-blend-mode: normal !important;
+                }
+                ._hero-overlay-section,
+                ._hero-overlay-section[style*="background-color"] {
+                    min-height: 520px;
+                    display: flex !important;
+                    flex-direction: column;
+                    justify-content: center;
+                    overflow: hidden;
+                    padding: 76px 16px 64px !important;
+                    margin-left: -16px !important;
+                    margin-right: -16px !important;
+                    width: calc(100% + 32px) !important;
+                    max-width: none !important;
+                    background-color: #0f172a !important;
+                }
+                ._hero-overlay-section > :not(._hero-background):not(._background) {
+                    position: relative;
+                    z-index: 2;
+                }
+                ._hero-overlay-section ._background,
+                ._hero-overlay-section ._hero-background {
+                    position: absolute !important;
+                    inset: 0;
+                    width: 100% !important;
+                    height: 100% !important;
+                    min-height: 0 !important;
+                    margin: 0 !important;
+                    border-radius: 0 !important;
+                    z-index: 0;
+                    background-color: #0f172a !important;
+                }
+                ._hero-overlay-section ._background::before,
+                ._hero-overlay-section ._hero-background::before {
+                    content: "" !important;
+                    display: block !important;
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(180deg, rgba(15,23,42,0.58) 0%, rgba(15,23,42,0.66) 100%) !important;
+                    opacity: 1 !important;
+                    z-index: 1;
+                    pointer-events: none;
+                }
+                ._hero-overlay-section ._background picture,
+                ._hero-overlay-section ._hero-background picture,
+                ._hero-overlay-section ._background img,
+                ._hero-overlay-section ._hero-background img {
+                    position: absolute !important;
+                    inset: 0;
+                    width: 100% !important;
+                    height: 100% !important;
+                    object-fit: cover !important;
+                    border-radius: 0 !important;
+                    margin: 0 !important;
+                }
+                ._hero-overlay-section ._hero-heading,
+                ._hero-overlay-section ._hero-intro {
+                    background: transparent !important;
+                    border-left: 0 !important;
+                    border-radius: 0 !important;
+                    padding-left: 0 !important;
+                    padding-right: 0 !important;
+                    text-align: center;
+                }
+                ._hero-overlay-section ._hero-heading {
+                    margin-bottom: 16px !important;
+                }
+                ._hero-overlay-section ._hero-intro {
+                    margin-bottom: 22px !important;
+                }
+                ._hero-overlay-section ._button-group {
+                    position: relative;
+                    z-index: 2;
                 }
 
                 /* Issue 3: Iframe / Embed Responsive CSS */
