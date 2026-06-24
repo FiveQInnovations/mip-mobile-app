@@ -116,8 +116,9 @@ fun HtmlContent(
                     font-size: 17px;
                     line-height: 28px;
                     color: #334155;
-                    padding: 0 16px;
+                    padding: 0 16px 96px;
                     margin: 0;
+                    box-sizing: border-box;
                 }
                 h1 {
                     font-size: 34px;

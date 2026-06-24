@@ -340,7 +340,7 @@ fun TabScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(96.dp))
                 }
             }
         }
@@ -424,7 +424,7 @@ private fun PageContent(
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(96.dp))
     }
 }
 

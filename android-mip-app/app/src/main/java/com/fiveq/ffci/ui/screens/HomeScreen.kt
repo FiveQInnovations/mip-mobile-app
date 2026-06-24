@@ -79,7 +79,7 @@ fun HomeScreen(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
-        contentPadding = PaddingValues(bottom = 16.dp)
+        contentPadding = PaddingValues(bottom = 96.dp)
     ) {
         // Header (iOS-style: white background, app icon top-left, search top-right)
         item {
