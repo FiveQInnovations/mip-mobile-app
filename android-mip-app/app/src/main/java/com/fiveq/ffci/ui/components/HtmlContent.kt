@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
  * Matches the React Native implementation pattern.
  */
 private fun isFormPage(url: String): Boolean {
-    val formPaths = listOf("/prayer-request", "/chaplain-request", "/forms/")
+    val formPaths = listOf("/prayer-request", "/chaplain-request", "/forms/", "/contact-form")
     return formPaths.any { url.contains(it) }
 }
 
@@ -36,6 +36,14 @@ private fun isFormPage(url: String): Boolean {
  * when opening the public prayer request page in an external browser.
  */
 private fun formPageTargetUrl(url: String): String {
+    val path = runCatching { Uri.parse(url).path?.trimEnd('/') }.getOrNull()
+    if (path == "/contact-form") {
+        return Uri.parse(url)
+            .buildUpon()
+            .path("/forms/contact-form")
+            .build()
+            .toString()
+    }
     if (!url.contains("/prayer-request")) {
         return url
     }
@@ -1030,7 +1038,8 @@ fun HtmlContent(
                         // Form pages - open in external browser (matches RN behavior)
                         if (isFormPage(url)) {
                             try {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(formPageTargetUrl(url)))
+                                val fullUrl = toAbsoluteUrl(config, url)
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(formPageTargetUrl(fullUrl)))
                                 view?.context?.startActivity(intent)
                             } catch (e: Exception) {
                                 Log.e("HtmlContent", "Failed to open form page: $url", e)
