@@ -742,6 +742,80 @@ fun HtmlContent(
                         view?.evaluateJavascript("""
                             (function() {
                                 let cssRules = '';
+
+                                function colorToRgb(value) {
+                                    if (!value) return null;
+                                    const color = value.trim().toLowerCase();
+
+                                    const hex = color.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+                                    if (hex) {
+                                        let raw = hex[1];
+                                        if (raw.length === 3) {
+                                            raw = raw.split('').map(function(ch) { return ch + ch; }).join('');
+                                        }
+                                        return {
+                                            r: parseInt(raw.substring(0, 2), 16),
+                                            g: parseInt(raw.substring(2, 4), 16),
+                                            b: parseInt(raw.substring(4, 6), 16),
+                                            a: 1
+                                        };
+                                    }
+
+                                    const rgb = color.match(/^rgba?\(([^)]+)\)$/);
+                                    if (rgb) {
+                                        const parts = rgb[1].split(',').map(function(part) { return part.trim(); });
+                                        return {
+                                            r: parseFloat(parts[0]),
+                                            g: parseFloat(parts[1]),
+                                            b: parseFloat(parts[2]),
+                                            a: parts[3] === undefined ? 1 : parseFloat(parts[3])
+                                        };
+                                    }
+
+                                    return null;
+                                }
+
+                                function relativeLuminance(rgb) {
+                                    function channel(value) {
+                                        const normalized = value / 255;
+                                        return normalized <= 0.03928
+                                            ? normalized / 12.92
+                                            : Math.pow((normalized + 0.055) / 1.055, 2.4);
+                                    }
+
+                                    return 0.2126 * channel(rgb.r) + 0.7152 * channel(rgb.g) + 0.0722 * channel(rgb.b);
+                                }
+
+                                function readableTextColor(backgroundColor) {
+                                    const rgb = colorToRgb(backgroundColor);
+                                    if (!rgb || rgb.a < 0.6) return null;
+                                    return relativeLuminance(rgb) > 0.55 ? '#0f172a' : '#ffffff';
+                                }
+
+                                function sectionBackgroundColor(section) {
+                                    const styleAttr = section.getAttribute('style') || '';
+                                    const bgMatch = styleAttr.match(/background-color:\s*([^;]+)/i);
+                                    if (bgMatch) return bgMatch[1].trim();
+
+                                    const bgElement = section.querySelector('._background[style*="--bgColor"]');
+                                    if (!bgElement) return null;
+
+                                    const bgStyle = bgElement.getAttribute('style') || '';
+                                    const bgColorVar = bgStyle.match(/--bgColor:\s*([^;]+)/i);
+                                    return bgColorVar ? bgColorVar[1].trim() : null;
+                                }
+
+                                function applyReadableSectionContrast(section) {
+                                    const textColor = readableTextColor(sectionBackgroundColor(section));
+                                    if (textColor !== '#0f172a') return;
+
+                                    section.style.setProperty('color', textColor, 'important');
+                                    section.querySelectorAll('h1,h2,h3,h4,h5,h6,p,li,summary,blockquote,span,strong,em,i,._heading,._text,._blockquote').forEach(function(el) {
+                                        if (el.closest('a[class*="_button"]') || el.closest('._background')) return;
+                                        el.style.setProperty('color', textColor, 'important');
+                                        el.style.setProperty('text-shadow', 'none', 'important');
+                                    });
+                                }
                                 
                                 // Fix sections with inline styles
                                 const sections = document.querySelectorAll('._section');
@@ -842,6 +916,10 @@ fun HtmlContent(
                                     if (colorMatch) {
                                         el.style.setProperty('color', colorMatch[1].trim(), 'important');
                                     }
+                                });
+
+                                sections.forEach(function(section) {
+                                    applyReadableSectionContrast(section);
                                 });
                                 
                                 // Fix blockquote elements inside colored sections
