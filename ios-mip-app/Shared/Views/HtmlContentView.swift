@@ -11,6 +11,7 @@ import Foundation
 import os.log
 
 private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.fiveq.mip", category: "HtmlContent")
+private let formLinkBridgeScheme = "mip-form-link"
 
 // Custom URL scheme handler for Basic Auth resource loading
 class AuthURLSchemeHandler: NSObject, WKURLSchemeHandler {
@@ -364,6 +365,48 @@ struct HtmlContentView: UIViewRepresentable {
         setTimeout(normalizeHeroContrast, 350);
     })();
     """
+
+    private static let formLinkBridgeScript = """
+    (function() {
+        if (window.__mipFormLinkBridgeInstalled) return;
+        window.__mipFormLinkBridgeInstalled = true;
+
+        function isFormUrl(href) {
+            try {
+                const url = new URL(href, document.baseURI);
+                const path = (url.pathname || '').toLowerCase();
+                const hash = (url.hash || '').toLowerCase();
+                return path.indexOf('/prayer-request') !== -1
+                    || path.indexOf('/chaplain-request') !== -1
+                    || path.indexOf('/forms/') !== -1
+                    || hash.endsWith('-response');
+            } catch (error) {
+                return false;
+            }
+        }
+
+        function openFormLink(anchor, event) {
+            if (!anchor || !anchor.href || !isFormUrl(anchor.href)) return false;
+
+            event.preventDefault();
+            event.stopPropagation();
+            if (event.stopImmediatePropagation) {
+                event.stopImmediatePropagation();
+            }
+
+            window.webkit.messageHandlers.mipFormLink.postMessage({
+                url: anchor.href,
+                label: (anchor.innerText || anchor.getAttribute('aria-label') || '').trim()
+            });
+            return true;
+        }
+
+        document.addEventListener('click', function(event) {
+            const anchor = event.target && event.target.closest ? event.target.closest('a[href]') : null;
+            openFormLink(anchor, event);
+        }, true);
+    })();
+    """
     
     init(
         html: String,
@@ -389,12 +432,21 @@ struct HtmlContentView: UIViewRepresentable {
                 forMainFrameOnly: true
             )
         )
+        configuration.userContentController.addUserScript(
+            WKUserScript(
+                source: Self.formLinkBridgeScript,
+                injectionTime: .atDocumentEnd,
+                forMainFrameOnly: true
+            )
+        )
+        configuration.userContentController.add(context.coordinator, name: "mipFormLink")
         
         let authHandler = AuthURLSchemeHandler()
         configuration.setURLSchemeHandler(authHandler, forURLScheme: SiteConfig.shared.authScheme)
         
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
+        webView.uiDelegate = context.coordinator
         webView.scrollView.isScrollEnabled = false
         webView.isOpaque = false
         webView.backgroundColor = .clear
@@ -408,6 +460,10 @@ struct HtmlContentView: UIViewRepresentable {
         webView.loadHTMLString(styledHtml, baseURL: SiteConfig.shared.siteBaseURL)
         
         return webView
+    }
+
+    static func dismantleUIView(_ uiView: WKWebView, coordinator: Coordinator) {
+        uiView.configuration.userContentController.removeScriptMessageHandler(forName: "mipFormLink")
     }
     
     func updateUIView(_ webView: WKWebView, context: Context) {
@@ -467,6 +523,8 @@ struct HtmlContentView: UIViewRepresentable {
                 )
             }
         }
+
+        fixedHtml = rewriteFormLinksForExternalOpen(fixedHtml)
         
         return """
         <!DOCTYPE html>
@@ -1170,8 +1228,68 @@ struct HtmlContentView: UIViewRepresentable {
         </html>
         """
     }
+
+    private func rewriteFormLinksForExternalOpen(_ html: String) -> String {
+        let pattern = #"href="([^"]+)""#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else {
+            return html
+        }
+
+        var rewrittenHtml = html
+        let nsString = html as NSString
+        let matches = regex.matches(in: html, options: [], range: NSRange(location: 0, length: nsString.length))
+
+        for match in matches.reversed() {
+            guard match.numberOfRanges >= 2 else { continue }
+            let rawHref = nsString.substring(with: match.range(at: 1))
+            guard let externalUrl = externalFormUrl(fromHref: rawHref),
+                  let bridgedUrl = bridgedFormUrl(for: externalUrl) else {
+                continue
+            }
+
+            let replacement = "href=\"\(bridgedUrl.absoluteString)\""
+            rewrittenHtml = (rewrittenHtml as NSString).replacingCharacters(in: match.range, with: replacement)
+        }
+
+        return rewrittenHtml
+    }
+
+    private func externalFormUrl(fromHref href: String) -> URL? {
+        let decodedHref = href
+            .replacingOccurrences(of: "&amp;", with: "&")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard let rawUrl = URL(string: decodedHref, relativeTo: SiteConfig.shared.siteBaseURL)?.absoluteURL else {
+            return nil
+        }
+
+        var components = URLComponents(url: rawUrl, resolvingAgainstBaseURL: false)
+        if rawUrl.scheme?.lowercased() == SiteConfig.shared.authScheme {
+            components?.scheme = "https"
+        }
+
+        guard let normalized = components?.url else { return nil }
+        let path = normalized.path.lowercased()
+        let fragment = normalized.fragment?.lowercased()
+        let isFormUrl = path.contains("/prayer-request") ||
+            path.contains("/chaplain-request") ||
+            path.contains("/forms/") ||
+            fragment?.hasSuffix("-response") == true
+
+        return isFormUrl ? normalized : nil
+    }
+
+    private func bridgedFormUrl(for externalUrl: URL) -> URL? {
+        var components = URLComponents()
+        components.scheme = formLinkBridgeScheme
+        components.host = "open"
+        components.queryItems = [
+            URLQueryItem(name: "url", value: externalUrl.absoluteString)
+        ]
+        return components.url
+    }
     
-    class Coordinator: NSObject, WKNavigationDelegate {
+    class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
         let onNavigate: ((String) -> Void)?
         weak var webView: WKWebView?
         var contentHeightBinding: Binding<CGFloat>?
@@ -1198,6 +1316,18 @@ struct HtmlContentView: UIViewRepresentable {
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
             components?.scheme = "https"
             return components?.url ?? url
+        }
+
+        private func bridgedExternalFormUrl(from url: URL) -> URL? {
+            guard url.scheme?.lowercased() == formLinkBridgeScheme,
+                  let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                  let target = components.queryItems?.first(where: { $0.name == "url" })?.value,
+                  let targetUrl = URL(string: target) else {
+                return nil
+            }
+
+            let normalized = normalizedUrlForNavigation(targetUrl)
+            return isFormPage(normalized) ? normalized : nil
         }
 
         private func isFormPage(_ url: URL) -> Bool {
@@ -1245,6 +1375,55 @@ struct HtmlContentView: UIViewRepresentable {
                 linkSource: "html_content"
             )
             UIApplication.shared.open(normalized)
+        }
+
+        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+            guard message.name == "mipFormLink",
+                  let body = message.body as? [String: Any],
+                  let urlString = body["url"] as? String,
+                  let rawUrl = URL(string: urlString) else {
+                return
+            }
+
+            let url = normalizedUrlForNavigation(rawUrl)
+            if let bridgedUrl = bridgedExternalFormUrl(from: rawUrl) {
+                logger.notice("Opening bridged form link in external browser: \(bridgedUrl.absoluteString)")
+                openInExternalBrowser(bridgedUrl, linkLabel: body["label"] as? String)
+                return
+            }
+
+            guard isFormPage(url) else { return }
+
+            logger.notice("Opening bridged form link in external browser: \(url.absoluteString)")
+            openInExternalBrowser(url, linkLabel: body["label"] as? String)
+        }
+
+        func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+            guard navigationAction.targetFrame == nil,
+                  let rawUrl = navigationAction.request.url else {
+                return nil
+            }
+
+            let url = normalizedUrlForNavigation(rawUrl)
+            if let bridgedUrl = bridgedExternalFormUrl(from: rawUrl) {
+                logger.notice("Opening form bridge target in external browser: \(bridgedUrl.absoluteString)")
+                openInExternalBrowser(bridgedUrl)
+                return nil
+            }
+
+            if isFormPage(url) {
+                logger.notice("Opening form target in external browser: \(url.absoluteString)")
+                openInExternalBrowser(url)
+                return nil
+            }
+
+            if let host = url.host, !SiteConfig.shared.isFirstPartyHost(host) {
+                openInExternalBrowser(url)
+                return nil
+            }
+
+            webView.load(URLRequest(url: url))
+            return nil
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -1649,6 +1828,13 @@ struct HtmlContentView: UIViewRepresentable {
                 return
             }
 
+            if let bridgedUrl = bridgedExternalFormUrl(from: rawUrl) {
+                logger.notice("Opening form bridge target in external browser: \(bridgedUrl.absoluteString)")
+                openInExternalBrowser(bridgedUrl)
+                decisionHandler(.cancel)
+                return
+            }
+
             let url = normalizedUrlForNavigation(rawUrl)
             
             let urlString = url.absoluteString
@@ -1662,7 +1848,14 @@ struct HtmlContentView: UIViewRepresentable {
                 return
             }
             
-            // Only intercept user-clicked links (.linkActivated)
+            // Form pages - open in external browser
+            if isFormPage(url) {
+                openInExternalBrowser(url)
+                decisionHandler(.cancel)
+                return
+            }
+
+            // Only intercept other user-clicked links (.linkActivated)
             if navigationType != .linkActivated {
                 decisionHandler(.allow)
                 return
@@ -1684,13 +1877,6 @@ struct HtmlContentView: UIViewRepresentable {
                         return
                     }
                 }
-            }
-            
-            // Form pages - open in external browser
-            if isFormPage(url) {
-                openInExternalBrowser(url)
-                decisionHandler(.cancel)
-                return
             }
             
             if let host = url.host, !SiteConfig.shared.isFirstPartyHost(host), !urlString.hasPrefix("/") {
