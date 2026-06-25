@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
  */
 private fun isFormPage(url: String): Boolean {
     val formPaths = listOf("/prayer-request", "/chaplain-request", "/forms/", "/contact-form")
-    return formPaths.any { url.contains(it) }
+    return formPaths.any { url.contains(it) } || url.contains("#contact-form-response")
 }
 
 /**
@@ -40,7 +40,8 @@ private fun formPageTargetUrl(url: String): String {
     if (path == "/contact-form") {
         return Uri.parse(url)
             .buildUpon()
-            .path("/forms/contact-form")
+            .path("/about/contact-us")
+            .fragment("contact-form-response")
             .build()
             .toString()
     }
