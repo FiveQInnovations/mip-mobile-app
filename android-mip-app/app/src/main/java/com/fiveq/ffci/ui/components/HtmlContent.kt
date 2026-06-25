@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
  * Matches the React Native implementation pattern.
  */
 private fun isFormPage(url: String): Boolean {
-    val formPaths = listOf("/prayer-request", "/chaplain-request", "/forms/", "/contact-form")
+    val formPaths = listOf("/prayer-request", "/chaplain-request", "/forms/")
     return formPaths.any { url.contains(it) } || url.contains("#contact-form-response")
 }
 
@@ -36,15 +36,6 @@ private fun isFormPage(url: String): Boolean {
  * when opening the public prayer request page in an external browser.
  */
 private fun formPageTargetUrl(url: String): String {
-    val path = runCatching { Uri.parse(url).path?.trimEnd('/') }.getOrNull()
-    if (path == "/contact-form") {
-        return Uri.parse(url)
-            .buildUpon()
-            .path("/about/contact-us")
-            .fragment("contact-form-response")
-            .build()
-            .toString()
-    }
     if (!url.contains("/prayer-request")) {
         return url
     }
