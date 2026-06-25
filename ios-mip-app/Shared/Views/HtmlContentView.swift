@@ -1202,7 +1202,11 @@ struct HtmlContentView: UIViewRepresentable {
 
         private func isFormPage(_ url: URL) -> Bool {
             let path = url.path.lowercased()
-            return path.contains("/prayer-request") || path.contains("/chaplain-request") || path.contains("/forms/")
+            let fragment = url.fragment?.lowercased()
+            return path.contains("/prayer-request") ||
+                path.contains("/chaplain-request") ||
+                path.contains("/forms/") ||
+                fragment?.hasSuffix("-response") == true
         }
 
         private func normalizedUrlForExternalOpen(_ url: URL) -> URL {

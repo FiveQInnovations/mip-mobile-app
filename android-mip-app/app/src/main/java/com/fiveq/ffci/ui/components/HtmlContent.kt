@@ -28,7 +28,8 @@ import kotlinx.coroutines.launch
  */
 private fun isFormPage(url: String): Boolean {
     val formPaths = listOf("/prayer-request", "/chaplain-request", "/forms/")
-    return formPaths.any { url.contains(it) } || url.contains("#contact-form-response")
+    val fragment = runCatching { Uri.parse(url).fragment?.lowercase() }.getOrNull()
+    return formPaths.any { url.contains(it) } || fragment?.endsWith("-response") == true
 }
 
 /**
