@@ -3,6 +3,7 @@ package com.fiveq.ffci.ui.navigation
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
@@ -10,6 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.fiveq.ffci.analytics.MipAnalytics
 import com.fiveq.ffci.data.api.MenuItem
 import com.fiveq.ffci.data.api.SiteMeta
 import com.fiveq.ffci.ui.screens.HomeScreen
@@ -48,6 +50,13 @@ fun NavGraph(
                 siteMeta = siteMeta,
                 onQuickTaskClick = { uuid, externalUrl ->
                     if (!externalUrl.isNullOrEmpty()) {
+                        MipAnalytics.logExternalLink(
+                            context = context,
+                            url = externalUrl,
+                            pageUuid = MipAnalytics.HOME_PAGE_UUID,
+                            linkLabel = uuid,
+                            linkSource = "quick_task"
+                        )
                         // Open external URL in browser
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(externalUrl))
                         context.startActivity(intent)
@@ -57,6 +66,13 @@ fun NavGraph(
                 },
                 onFeaturedClick = { uuid, externalUrl ->
                     if (!externalUrl.isNullOrEmpty()) {
+                        MipAnalytics.logExternalLink(
+                            context = context,
+                            url = externalUrl,
+                            pageUuid = MipAnalytics.HOME_PAGE_UUID,
+                            linkLabel = uuid,
+                            linkSource = "featured"
+                        )
                         // Open external URL in browser
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(externalUrl))
                         context.startActivity(intent)
@@ -89,10 +105,21 @@ fun NavGraph(
         // Search screen
         composable(Screen.Search.route) {
             val context = LocalContext.current
+            LaunchedEffect(Unit) {
+                MipAnalytics.logScreenView(context, "search", "SearchScreen")
+            }
             SearchScreen(
                 onResultClick = { result ->
                     val resultPath = runCatching { Uri.parse(result.url).path.orEmpty() }.getOrDefault("")
                     if (resultPath.startsWith("/forms/")) {
+                        MipAnalytics.logExternalLink(
+                            context = context,
+                            url = result.url,
+                            pageUuid = result.uuid,
+                            pageTitle = result.title,
+                            linkLabel = result.title,
+                            linkSource = "search_result"
+                        )
                         // Form pages are web-first experiences; open externally from search.
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(result.url))
                         context.startActivity(intent)

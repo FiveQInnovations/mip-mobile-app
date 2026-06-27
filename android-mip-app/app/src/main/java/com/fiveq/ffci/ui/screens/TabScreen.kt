@@ -37,9 +37,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.fiveq.ffci.analytics.MipAnalytics
 import com.fiveq.ffci.data.api.MipApiClient
 import com.fiveq.ffci.data.api.CategoryDefinition
 import com.fiveq.ffci.data.api.CollectionChild
@@ -89,6 +91,8 @@ fun TabScreen(
     var expandedCategorySlugs by remember(currentUuid) { mutableStateOf<Set<String>>(emptySet()) }
 
     val canGoBack = pageStack.size > 1
+    val context = LocalContext.current
+    var lastAnalyticsKey by remember { mutableStateOf<String?>(null) }
 
     // Background refresh when UUID changes (RN pattern: stale-while-revalidate)
     LaunchedEffect(currentUuid) {
@@ -148,6 +152,21 @@ fun TabScreen(
         } finally {
             isLoadingMediaSections = false
         }
+    }
+
+    LaunchedEffect(currentUuid, pageData?.title, pageData?.effectivePageType) {
+        val data = pageData ?: return@LaunchedEffect
+        val analyticsKey = "$currentUuid|${data.title}|${data.effectivePageType}"
+        if (lastAnalyticsKey == analyticsKey) return@LaunchedEffect
+
+        lastAnalyticsKey = analyticsKey
+        MipAnalytics.logScreenView(context, "page/$currentUuid", "TabScreen")
+        MipAnalytics.logContentView(
+            context = context,
+            pageUuid = currentUuid,
+            title = data.title,
+            contentType = data.effectivePageType
+        )
     }
 
     fun navigateToPage(pageUuid: String) {

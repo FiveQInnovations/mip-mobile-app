@@ -5,6 +5,7 @@ import android.util.Base64
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.decode.SvgDecoder
+import com.fiveq.ffci.analytics.MipAnalytics
 import com.fiveq.ffci.config.AppConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -15,6 +16,8 @@ class MipApplication : Application(), ImageLoaderFactory {
         super.onCreate()
         // Initialize config before any other components access it
         AppConfig.initialize(this)
+        MipAnalytics.setAnalyticsCollectionEnabled(this, true)
+        MipAnalytics.logAppOpen(this)
     }
 
     override fun newImageLoader(): ImageLoader {

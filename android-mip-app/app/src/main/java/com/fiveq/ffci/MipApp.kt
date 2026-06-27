@@ -42,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.compose.rememberNavController
+import com.fiveq.ffci.analytics.MipAnalytics
 import com.fiveq.ffci.data.api.MenuItem
 import com.fiveq.ffci.data.api.MipApiClient
 import com.fiveq.ffci.data.api.SiteData
@@ -103,6 +104,10 @@ private fun MainContent(siteData: SiteData) {
     // Filter menu to non-home tabs
     val menuItems = siteData.menu.filter { it.page.uuid != "__home__" }
 
+    LaunchedEffect(Unit) {
+        MipAnalytics.logScreenView(context, "home", "HomeScreen")
+    }
+
     // Create tab items with icons from API
     val tabItems = buildList {
         add(TabItem("Home", Icons.Default.Home, null, Screen.Home.route))
@@ -130,11 +135,30 @@ private fun MainContent(siteData: SiteData) {
                         onClick = {
                             val externalUrl = menuItems.getOrNull(index - 1)?.externalUrl
                             if (!externalUrl.isNullOrBlank()) {
+                                MipAnalytics.logExternalLink(
+                                    context = context,
+                                    url = externalUrl,
+                                    pageUuid = menuItems.getOrNull(index - 1)?.page?.uuid,
+                                    pageTitle = item.label,
+                                    linkLabel = item.label,
+                                    linkSource = "menu_tab"
+                                )
                                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(externalUrl))
                                 context.startActivity(intent)
                                 return@NavigationBarItem
                             }
                             selectedTabIndex = index
+                            if (index == 0) {
+                                MipAnalytics.logScreenView(context, "home", "HomeScreen")
+                            } else {
+                                menuItems.getOrNull(index - 1)?.let { menuItem ->
+                                    MipAnalytics.logScreenView(
+                                        context,
+                                        "tab/${menuItem.page.uuid}",
+                                        "TabScreen"
+                                    )
+                                }
+                            }
                             navController.navigate(item.route) {
                                 // Clear entire back stack and go to this tab
                                 popUpTo(0) { inclusive = true }

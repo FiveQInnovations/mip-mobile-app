@@ -13,6 +13,10 @@ val localProperties = Properties().apply {
     }
 }
 
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}
+
 val hasReleaseSigning = listOf(
     "ffciReleaseStoreFile",
     "ffciReleaseStorePassword",
@@ -97,6 +101,10 @@ dependencies {
     // Image loading
     implementation(libs.coil.compose)
     implementation(libs.coil.svg)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 
     // Debug
     debugImplementation(libs.androidx.ui.tooling)
