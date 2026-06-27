@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "761905070545",
+    "project_id": "ffci-1176a",
+    "storage_bucket": "ffci-1176a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761905070545:android:73cd67766f22baba5f20f0",
+        "android_client_info": {
+          "package_name": "com.subsplashconsulting.s_F52C3B"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYpud9afuHJchNmG_Wq71QPqU92NLUzK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
