@@ -13,8 +13,18 @@ val localProperties = Properties().apply {
     }
 }
 
-if (file("google-services.json").exists()) {
+val googleServicesFile = file("google-services.json")
+val requestedReleaseBuild = gradle.startParameter.taskNames.any {
+    it.contains("Release", ignoreCase = true)
+}
+
+if (googleServicesFile.exists()) {
     apply(plugin = "com.google.gms.google-services")
+} else if (requestedReleaseBuild) {
+    throw GradleException(
+        "Missing app/google-services.json. Add the Firebase Android config for " +
+            "com.subsplashconsulting.s_F52C3B before building a release."
+    )
 }
 
 val hasReleaseSigning = listOf(
