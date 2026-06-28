@@ -42,7 +42,7 @@ android {
         applicationId = "com.subsplashconsulting.s_F52C3B"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2026062702
+        versionCode = 2026062703
         versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
