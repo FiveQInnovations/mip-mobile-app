@@ -81,7 +81,7 @@ object PageCache {
             
             // Evict oldest entries if cache is too large
             while (cache.size > MAX_CACHE_SIZE && accessOrder.isNotEmpty()) {
-                val oldest = accessOrder.removeFirst()
+                val oldest = accessOrder.removeAt(0)
                 cache.remove(oldest)
                 Log.d(TAG, "Evicted oldest entry: $oldest")
             }
