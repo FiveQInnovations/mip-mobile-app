@@ -5,14 +5,9 @@ final class FFCIUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    private func launchApp(useLocalAPI: Bool = false) -> XCUIApplication {
+    private func launchProductionApp() -> XCUIApplication {
         let app = XCUIApplication()
-        if useLocalAPI {
-            app.launchEnvironment["FFCI_API_BASE_URL_OVERRIDE"] = "https://ws-ffci.ddev.site:55013"
-        } else if let apiBaseURLOverride = ProcessInfo.processInfo.environment["FFCI_API_BASE_URL_OVERRIDE"],
-           !apiBaseURLOverride.isEmpty {
-            app.launchEnvironment["FFCI_API_BASE_URL_OVERRIDE"] = apiBaseURLOverride
-        }
+        app.launchEnvironment["FFCI_API_BASE_URL_OVERRIDE"] = ""
         app.launch()
         return app
     }
@@ -222,7 +217,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testHomeScreenShowsFeaturedAndCapturesScreenshot() throws {
-        let app = launchApp()
+        let app = launchProductionApp()
 
         let featuredByIdentifier = app.staticTexts["featured-section-title"]
         let featuredByLabel = app.staticTexts["Featured"]
@@ -237,7 +232,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testTappingMediaTabOpensSafari() throws {
-        let app = launchApp()
+        let app = launchProductionApp()
 
         guard let mediaTab = waitForTabButton(in: app, named: "Media", timeout: 45) else {
             XCTFail("Expected the Media tab to appear.")
@@ -248,7 +243,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testPartnershipsTabStillShowsItsIntroductionAfterSwitchingTabs() throws {
-        let app = launchApp(useLocalAPI: true)
+        let app = launchProductionApp()
 
         guard let partnershipsTab = waitForTabButton(in: app, named: "Partnerships", timeout: 45) else {
             XCTFail("Expected the Partnerships tab to appear.")
@@ -295,7 +290,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testConnectTabStillShowsContactDetailsAfterSwitchingTabs() throws {
-        let app = launchApp(useLocalAPI: true)
+        let app = launchProductionApp()
 
         guard let connectTab = waitForTabButton(in: app, named: "Connect", timeout: 45) else {
             XCTFail("Expected the Connect tab to appear.")
@@ -342,7 +337,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testSearchShowsResults() throws {
-        let app = launchApp()
+        let app = launchProductionApp()
 
         let searchButton = app.buttons["search-button"].firstMatch
         XCTAssertTrue(searchButton.waitForExistence(timeout: 45), "Expected the search button to appear on the home screen.")
@@ -374,7 +369,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testTappingPrayerRequestOnContactUsOpensSafari() throws {
-        let app = launchApp(useLocalAPI: true)
+        let app = launchProductionApp()
 
         guard let prayerControl = contactUsControl(
             labeled: "Submit a Prayer Request",
@@ -390,7 +385,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testTappingContactFormOnContactUsOpensSafari() throws {
-        let app = launchApp(useLocalAPI: true)
+        let app = launchProductionApp()
 
         guard let contactControl = contactUsControl(
             labeled: "Contact Form",
@@ -406,7 +401,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testRequestAChaplainAtBottomOfContactUsCanBeReachedAndOpened() throws {
-        let app = launchApp(useLocalAPI: true)
+        let app = launchProductionApp()
 
         guard let chaplainControl = contactUsControl(
             labeled: "Request a Chaplain",
@@ -422,7 +417,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testSelectingChaplainRequestFromSearchOpensSafari() throws {
-        let app = launchApp(useLocalAPI: true)
+        let app = launchProductionApp()
 
         let searchButton = app.buttons["search-button"].firstMatch
         guard searchButton.waitForExistence(timeout: 45) else {
@@ -458,7 +453,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testTappingMembershipFormOpensSafari() throws {
-        let app = launchApp(useLocalAPI: true)
+        let app = launchProductionApp()
 
         guard let htmlContentView = openPageFromSearch(
             in: app,
@@ -480,7 +475,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testTappingStartAChapterFormOpensSafari() throws {
-        let app = launchApp(useLocalAPI: true)
+        let app = launchProductionApp()
 
         guard let htmlContentView = openPageFromSearch(
             in: app,
@@ -502,7 +497,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testTappingContactUsToStartAChapterOpensSafari() throws {
-        let app = launchApp(useLocalAPI: true)
+        let app = launchProductionApp()
 
         guard let htmlContentView = openPageFromSearch(
             in: app,
