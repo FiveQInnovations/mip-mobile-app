@@ -54,6 +54,34 @@ private fun toAbsoluteUrl(config: SiteConfig, url: String): String {
     }
 }
 
+/**
+ * WebView does not route target="_blank" links through the existing
+ * shouldOverrideUrlLoading callback. Keep browser-bound links in the current
+ * WebView so that callback can intentionally hand them off to the user's
+ * browser. This includes forms hosted by third-party providers whose paths do
+ * not follow the site's form URL conventions.
+ */
+private fun normalizeBrowserLinkTargets(html: String): String {
+    val anchorPattern = Regex("""<a\b[^>]*>""", RegexOption.IGNORE_CASE)
+    val hrefPattern = Regex("""\bhref\s*=\s*(["'])(.*?)\1""", RegexOption.IGNORE_CASE)
+    val blankTargetPattern = Regex(
+        """\s+target\s*=\s*(["'])_blank\1""",
+        RegexOption.IGNORE_CASE
+    )
+
+    return anchorPattern.replace(html) { anchorMatch ->
+        val anchor = anchorMatch.value
+        val href = hrefPattern.find(anchor)?.groupValues?.get(2) ?: return@replace anchor
+
+        val hasExternalHost = runCatching { Uri.parse(href).host != null }.getOrDefault(false)
+        if (isFormPage(href) || hasExternalHost) {
+            blankTargetPattern.replace(anchor, "")
+        } else {
+            anchor
+        }
+    }
+}
+
 @Composable
 fun HtmlContent(
     html: String,
@@ -77,7 +105,7 @@ fun HtmlContent(
     // Fix images with empty src but valid srcset - extract first URL from srcset
     // Iterate through all img tags to handle each one individually
     val imgPattern = Regex("<img[^>]+>")
-    val fixedHtml = imgPattern.replace(html) { matchResult ->
+    val imageFixedHtml = imgPattern.replace(html) { matchResult ->
         var imgTag = matchResult.value
         if (imgTag.contains("src=\"\"") && imgTag.contains("srcset=\"")) {
             val urlMatch = Regex("srcset=\"(https?://[^\\s\"]+)").find(imgTag)
@@ -88,6 +116,7 @@ fun HtmlContent(
         }
         imgTag
     }
+    val fixedHtml = normalizeBrowserLinkTargets(imageFixedHtml)
 
     // Get primary color from config for CSS
     val config = AppConfig.get()

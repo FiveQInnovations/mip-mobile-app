@@ -12,6 +12,7 @@ private let logger = Logger(subsystem: "com.fiveq.ffci", category: "SearchView")
 
 struct SearchView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
     @FocusState private var isSearchFocused: Bool
     
     @State private var query = ""
@@ -126,13 +127,49 @@ struct SearchView: View {
     private var resultsList: some View {
         List {
             ForEach(results, id: \.uuid) { result in
-                NavigationLink(destination: TabPageView(uuid: result.uuid)) {
-                    SearchResultRow(result: result)
+                if let formUrl = formWebsiteUrl(for: result) {
+                    Button {
+                        MipAnalytics.logExternalLink(
+                            url: formUrl,
+                            pageUuid: result.uuid,
+                            pageTitle: result.title,
+                            linkLabel: result.title,
+                            linkSource: "search_result"
+                        )
+                        openURL(formUrl)
+                    } label: {
+                        SearchResultRow(result: result)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("search-result-row")
+                } else {
+                    NavigationLink(destination: TabPageView(uuid: result.uuid)) {
+                        SearchResultRow(result: result)
+                    }
+                    .accessibilityIdentifier("search-result-row")
                 }
-                .accessibilityIdentifier("search-result-row")
             }
         }
         .listStyle(.plain)
+    }
+
+    private func formWebsiteUrl(for result: SearchResult) -> URL? {
+        if result.navigation?.behavior == "external",
+           let externalUrl = result.navigation?.url,
+           let url = URL(string: externalUrl) {
+            return url
+        }
+
+        guard let url = URL(string: result.url) else {
+            return nil
+        }
+
+        let path = url.path.lowercased()
+        guard path == "/forms" || path.hasPrefix("/forms/") else {
+            return nil
+        }
+
+        return url
     }
     
     private func handleQueryChange(_ newQuery: String) {

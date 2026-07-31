@@ -13,6 +13,11 @@ val localProperties = Properties().apply {
     }
 }
 
+val debugApiBaseUrlOverride = providers
+    .gradleProperty("ffciApiBaseUrlOverride")
+    .orElse("")
+    .get()
+
 val hasReleaseSigning = listOf(
     "ffciReleaseStoreFile",
     "ffciReleaseStorePassword",
@@ -46,7 +51,15 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField(
+                "String",
+                "API_BASE_URL_OVERRIDE",
+                "\"${debugApiBaseUrlOverride.replace("\"", "\\\"")}\""
+            )
+        }
         release {
+            buildConfigField("String", "API_BASE_URL_OVERRIDE", "\"\"")
             if (hasReleaseSigning) {
                 signingConfig = signingConfigs.getByName("release")
             }
@@ -56,6 +69,9 @@ android {
                 "proguard-rules.pro"
             )
         }
+    }
+    buildFeatures {
+        buildConfig = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -100,4 +116,12 @@ dependencies {
 
     // Debug
     debugImplementation(libs.androidx.ui.tooling)
+
+    // Instrumented regression tests
+    androidTestImplementation(libs.androidx.test.core.ktx)
+    androidTestImplementation(libs.androidx.test.ext.junit.ktx)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.espresso.web)
+    androidTestImplementation(libs.androidx.test.uiautomator)
 }

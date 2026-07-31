@@ -270,6 +270,7 @@ struct PageData: Codable {
     let data: PageDataContent?
     let content: PageDataContent?
     let hasForm: Bool?
+    let navigation: ExternalNavigation?
     
     enum CodingKeys: String, CodingKey {
         case pageType = "page_type"
@@ -282,6 +283,7 @@ struct PageData: Codable {
         case data
         case content
         case hasForm = "has_form"
+        case navigation
     }
     
     init(from decoder: Decoder) throws {
@@ -297,6 +299,7 @@ struct PageData: Codable {
         data = try container.decodeIfPresent(PageDataContent.self, forKey: .data)
         content = try container.decodeIfPresent(PageDataContent.self, forKey: .content)
         hasForm = try container.decodeIfPresent(Bool.self, forKey: .hasForm)
+        navigation = try container.decodeIfPresent(ExternalNavigation.self, forKey: .navigation)
     }
     
     private static func decodeCategoryDefinitions(from container: KeyedDecodingContainer<CodingKeys>) -> [CategoryDefinition]? {
@@ -478,9 +481,15 @@ struct PageData: Codable {
 
 // MARK: - Search Models
 
+struct ExternalNavigation: Codable {
+    let behavior: String
+    let url: String
+}
+
 struct SearchResult: Codable {
     let uuid: String
     let title: String
     let description: String?
     let url: String
+    let navigation: ExternalNavigation?
 }

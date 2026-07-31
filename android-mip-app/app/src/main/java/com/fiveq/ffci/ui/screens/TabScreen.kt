@@ -1,5 +1,7 @@
 package com.fiveq.ffci.ui.screens
 
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
@@ -37,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -64,6 +67,8 @@ fun TabScreen(
     uuid: String,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     // Navigation stack for drilling into collections
     val pageStack = remember { mutableStateListOf(uuid) }
     val currentUuid = pageStack.last()
@@ -126,6 +131,20 @@ fun TabScreen(
         } finally {
             isLoading = false
             isRefreshing = false
+        }
+    }
+
+    // CMS link-to pages are browser-only destinations. Honor the API contract
+    // here as a final safety net for menus, featured content, and internal links.
+    LaunchedEffect(currentUuid, pageData?.navigation) {
+        val externalNavigation = pageData?.navigation
+            ?.takeIf { it.behavior == "external" }
+            ?: return@LaunchedEffect
+
+        runCatching {
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(externalNavigation.url)))
+        }.onFailure { exception ->
+            Log.e(TAG, "Failed to open external page navigation: ${externalNavigation.url}", exception)
         }
     }
 

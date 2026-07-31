@@ -2,6 +2,7 @@ package com.fiveq.ffci.config
 
 import android.content.Context
 import android.util.Log
+import com.fiveq.ffci.BuildConfig
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
@@ -40,8 +41,13 @@ object AppConfig {
         val moshi = Moshi.Builder()
             .addLast(KotlinJsonAdapterFactory())
             .build()
-        config = moshi.adapter(SiteConfig::class.java).fromJson(json)
+        val bundledConfig = moshi.adapter(SiteConfig::class.java).fromJson(json)
             ?: throw IllegalStateException("Failed to parse config.json")
+        config = if (BuildConfig.API_BASE_URL_OVERRIDE.isNotBlank()) {
+            bundledConfig.copy(apiBaseUrl = BuildConfig.API_BASE_URL_OVERRIDE)
+        } else {
+            bundledConfig
+        }
         Log.d(TAG, "Loaded config for site: ${config.siteId}")
     }
     
