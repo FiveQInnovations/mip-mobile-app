@@ -454,6 +454,7 @@ struct HtmlContentView: UIViewRepresentable {
         
         context.coordinator.webView = webView
         context.coordinator.contentHeightBinding = _contentHeight
+        context.coordinator.observeContentSize(of: webView)
         
         let styledHtml = wrapHtml(html)
         context.coordinator.loadedHtml = styledHtml
@@ -463,10 +464,12 @@ struct HtmlContentView: UIViewRepresentable {
     }
 
     static func dismantleUIView(_ uiView: WKWebView, coordinator: Coordinator) {
+        coordinator.stopObservingContentSize()
         uiView.configuration.userContentController.removeScriptMessageHandler(forName: "mipFormLink")
     }
     
     func updateUIView(_ webView: WKWebView, context: Context) {
+        context.coordinator.contentHeightBinding = _contentHeight
         context.coordinator.analyticsPageUuid = analyticsPageUuid
         context.coordinator.analyticsPageTitle = analyticsPageTitle
         let styledHtml = wrapHtml(html)
@@ -1294,6 +1297,7 @@ struct HtmlContentView: UIViewRepresentable {
         weak var webView: WKWebView?
         var contentHeightBinding: Binding<CGFloat>?
         var loadedHtml: String?
+        private var contentSizeObservation: NSKeyValueObservation?
         private let prayerRequestAnchor = "prayer-request-response"
         var analyticsPageUuid: String
         var analyticsPageTitle: String
@@ -1306,6 +1310,18 @@ struct HtmlContentView: UIViewRepresentable {
             self.onNavigate = onNavigate
             self.analyticsPageUuid = analyticsPageUuid
             self.analyticsPageTitle = analyticsPageTitle
+        }
+
+        func observeContentSize(of webView: WKWebView) {
+            contentSizeObservation = webView.scrollView.observe(\.contentSize, options: [.new]) { [weak self] _, change in
+                guard let height = change.newValue?.height, height > 0 else { return }
+                self?.setContentHeight(height)
+            }
+        }
+
+        func stopObservingContentSize() {
+            contentSizeObservation?.invalidate()
+            contentSizeObservation = nil
         }
 
         private func normalizedUrlForNavigation(_ url: URL) -> URL {
@@ -1783,42 +1799,18 @@ struct HtmlContentView: UIViewRepresentable {
 
             """) { _, _ in }
             
-            updateContentHeight(for: webView)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self, weak webView] in
-                guard let webView else { return }
-                self?.updateContentHeight(for: webView)
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self, weak webView] in
-                guard let webView else { return }
-                self?.updateContentHeight(for: webView)
-            }
         }
 
-        private func updateContentHeight(for webView: WKWebView) {
-            webView.evaluateJavaScript("""
-                (function() {
-                    const body = document.body;
-                    const doc = document.documentElement;
-                    const height = Math.max(
-                        body ? body.scrollHeight : 0,
-                        body ? body.offsetHeight : 0,
-                        doc ? doc.scrollHeight : 0,
-                        doc ? doc.offsetHeight : 0
-                    );
-                    return Math.ceil(height + 24);
-                })();
-            """) { [weak self] result, _ in
-                guard let rawHeight = result as? NSNumber else { return }
-                let height = CGFloat(truncating: rawHeight)
-                guard height > 0 else { return }
+        private func setContentHeight(_ height: CGFloat) {
+            guard height > 0 else { return }
 
-                DispatchQueue.main.async {
-                    if let currentHeight = self?.contentHeightBinding?.wrappedValue,
-                       abs(currentHeight - height) < 8 {
-                        return
-                    }
-                    self?.contentHeightBinding?.wrappedValue = height
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                if let currentHeight = contentHeightBinding?.wrappedValue,
+                   abs(currentHeight - height) < 8 {
+                    return
                 }
+                contentHeightBinding?.wrappedValue = height
             }
         }
         

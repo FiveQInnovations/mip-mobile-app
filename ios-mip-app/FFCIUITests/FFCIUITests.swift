@@ -148,6 +148,16 @@ final class FFCIUITests: XCTestCase {
         return isReadyToTap ? control : nil
     }
 
+    private func contactUsControl(
+        labeled label: String,
+        in app: XCUIApplication
+    ) -> XCUIElement? {
+        guard let htmlContentView = openContactUs(in: app) else {
+            return nil
+        }
+        return formControl(labeled: label, in: htmlContentView, app: app)
+    }
+
     private func assertOpensSafari(
         control: XCUIElement,
         screenshotName: String,
@@ -380,12 +390,10 @@ final class FFCIUITests: XCTestCase {
     func testTappingPrayerRequestOnContactUsOpensSafari() throws {
         let app = launchApp(useLocalAPI: true)
 
-        guard let htmlContentView = openContactUs(in: app),
-              let prayerControl = formControl(
-                labeled: "Submit a Prayer Request",
-                in: htmlContentView,
-                app: app
-              ) else {
+        guard let prayerControl = contactUsControl(
+            labeled: "Submit a Prayer Request",
+            in: app
+        ) else {
             return
         }
 
@@ -398,18 +406,32 @@ final class FFCIUITests: XCTestCase {
     func testTappingContactFormOnContactUsOpensSafari() throws {
         let app = launchApp(useLocalAPI: true)
 
-        guard let htmlContentView = openContactUs(in: app),
-              let contactControl = formControl(
-                labeled: "Contact Form",
-                in: htmlContentView,
-                app: app
-              ) else {
+        guard let contactControl = contactUsControl(
+            labeled: "Contact Form",
+            in: app
+        ) else {
             return
         }
 
         assertOpensSafari(
             control: contactControl,
             screenshotName: "Contact Form in Safari"
+        )
+    }
+
+    func testRequestAChaplainAtBottomOfContactUsCanBeReachedAndOpened() throws {
+        let app = launchApp(useLocalAPI: true)
+
+        guard let chaplainControl = contactUsControl(
+            labeled: "Request a Chaplain",
+            in: app
+        ) else {
+            return
+        }
+
+        assertOpensSafari(
+            control: chaplainControl,
+            screenshotName: "Request a Chaplain in Safari"
         )
     }
 
