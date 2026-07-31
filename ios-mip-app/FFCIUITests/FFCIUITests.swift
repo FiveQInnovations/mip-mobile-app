@@ -236,29 +236,15 @@ final class FFCIUITests: XCTestCase {
         addScreenshot(named: "Home screen with Featured")
     }
 
-    func testMediaTabShowsMediaResourcesAndCategories() throws {
+    func testTappingMediaTabOpensSafari() throws {
         let app = launchApp()
 
         guard let mediaTab = waitForTabButton(in: app, named: "Media", timeout: 45) else {
             XCTFail("Expected the Media tab to appear.")
             return
         }
-        mediaTab.tap()
 
-        let mediaResourcesTitle = app.navigationBars["Media Resources"].firstMatch
-        let categoriesByIdentifier = app.staticTexts["media-categories-title"]
-        let categoriesByLabel = app.staticTexts["Categories"]
-
-        XCTAssertTrue(
-            mediaResourcesTitle.waitForExistence(timeout: 20) || app.staticTexts["Media Resources"].waitForExistence(timeout: 5),
-            "Expected Media Resources to appear after opening the Media tab."
-        )
-        XCTAssertTrue(
-            categoriesByIdentifier.waitForExistence(timeout: 20) || categoriesByLabel.waitForExistence(timeout: 5),
-            "Expected Categories to appear on the Media screen."
-        )
-
-        addScreenshot(named: "Media Resources with Categories")
+        assertOpensSafari(control: mediaTab, screenshotName: "Media website in Safari")
     }
 
     func testPartnershipsTabStillShowsItsIntroductionAfterSwitchingTabs() throws {
