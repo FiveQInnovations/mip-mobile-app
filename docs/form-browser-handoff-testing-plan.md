@@ -39,7 +39,31 @@ to Safari. Some initial Contact and Start a Chapter failures were test-harness
 false negatives caused by XCUI reporting offscreen WebView links as hittable;
 the tests now scroll controls into the visible safe area before tapping.
 
-All six cases pass against the fixed local API:
+The regression suite selects its backend once through
+`FFCI_UI_TEST_API_BASE_URL`. With no value it uses the app's published site
+configuration; providing a value runs the same behavior tests against a local
+or test CMS without changing test source:
+
+```sh
+cd ios-mip-app
+FFCI_UI_TEST_API_BASE_URL=https://ws-ffci.ddev.site:55013 xcodebuild test \
+  -project FFCI.xcodeproj \
+  -scheme FFCI \
+  -destination 'id=0CFBE144-D9CC-4887-8B51-EDE9013AE912' \
+  -only-testing:FFCIUITests/FFCIUITests
+```
+
+The DDEV root CA must be trusted by the booted simulator:
+
+```sh
+xcrun simctl keychain booted add-root-cert \
+  "$HOME/Library/Application Support/mkcert/rootCA.pem"
+```
+
+`FFCIProductionSmokeTests` always clears the override and protects four stable
+published journeys: Home content, Connect content, Prayer Request in Safari,
+and the Start a Chapter hero action in Safari. Run it after an API or CMS
+deployment and before archiving a release:
 
 ```sh
 cd ios-mip-app
@@ -47,20 +71,7 @@ xcodebuild test \
   -project FFCI.xcodeproj \
   -scheme FFCI \
   -destination 'id=0CFBE144-D9CC-4887-8B51-EDE9013AE912' \
-  -only-testing:FFCIUITests/FFCIUITests/testTappingContactFormOnContactUsOpensSafari \
-  -only-testing:FFCIUITests/FFCIUITests/testTappingPrayerRequestOnContactUsOpensSafari \
-  -only-testing:FFCIUITests/FFCIUITests/testSelectingChaplainRequestFromSearchOpensSafari \
-  -only-testing:FFCIUITests/FFCIUITests/testTappingMembershipFormOpensSafari \
-  -only-testing:FFCIUITests/FFCIUITests/testTappingContactUsToStartAChapterOpensSafari \
-  -only-testing:FFCIUITests/FFCIUITests/testTappingStartAChapterFormOpensSafari
-```
-
-The launch helper supplies the local debug API override. The DDEV root CA must
-be trusted by the booted simulator:
-
-```sh
-xcrun simctl keychain booted add-root-cert \
-  "$HOME/Library/Application Support/mkcert/rootCA.pem"
+  -only-testing:FFCIUITests/FFCIProductionSmokeTests
 ```
 
 Final result bundle:

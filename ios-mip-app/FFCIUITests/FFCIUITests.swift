@@ -1,18 +1,27 @@
 import XCTest
 
-final class FFCIUITests: XCTestCase {
+class FFCIUITestCase: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
     }
 
-    private func launchProductionApp() -> XCUIApplication {
+    func launchApp() -> XCUIApplication {
+        let app = XCUIApplication()
+        let configuredBaseURL = ProcessInfo.processInfo.environment["FFCI_UI_TEST_API_BASE_URL"]?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        app.launchEnvironment["FFCI_API_BASE_URL_OVERRIDE"] = configuredBaseURL ?? ""
+        app.launch()
+        return app
+    }
+
+    func launchProductionApp() -> XCUIApplication {
         let app = XCUIApplication()
         app.launchEnvironment["FFCI_API_BASE_URL_OVERRIDE"] = ""
         app.launch()
         return app
     }
 
-    private func addScreenshot(named name: String) {
+    func addScreenshot(named name: String) {
         let screenshot = XCUIScreen.main.screenshot()
         let attachment = XCTAttachment(screenshot: screenshot)
         attachment.name = name
@@ -20,7 +29,7 @@ final class FFCIUITests: XCTestCase {
         add(attachment)
     }
 
-    private func waitForTabButton(in app: XCUIApplication, named name: String, timeout: TimeInterval) -> XCUIElement? {
+    func waitForTabButton(in app: XCUIApplication, named name: String, timeout: TimeInterval) -> XCUIElement? {
         let candidates = [
             app.tabBars.buttons[name].firstMatch,
             app.navigationBars.buttons[name].firstMatch,
@@ -38,7 +47,7 @@ final class FFCIUITests: XCTestCase {
         return candidates.first(where: \.exists)
     }
 
-    private func openContactUs(in app: XCUIApplication) -> XCUIElement? {
+    func openContactUs(in app: XCUIApplication) -> XCUIElement? {
         guard let connectTab = waitForTabButton(in: app, named: "Connect", timeout: 45) else {
             XCTFail("Expected the Connect tab to appear.")
             return nil
@@ -59,7 +68,7 @@ final class FFCIUITests: XCTestCase {
         return htmlContentView.exists ? htmlContentView : nil
     }
 
-    private func openPageFromSearch(
+    func openPageFromSearch(
         in app: XCUIApplication,
         query: String,
         title: String
@@ -100,7 +109,7 @@ final class FFCIUITests: XCTestCase {
         return htmlContentView.exists ? htmlContentView : nil
     }
 
-    private func formControl(
+    func formControl(
         labeled label: String,
         in htmlContentView: XCUIElement,
         app: XCUIApplication
@@ -143,7 +152,7 @@ final class FFCIUITests: XCTestCase {
         return isReadyToTap ? control : nil
     }
 
-    private func contactUsControl(
+    func contactUsControl(
         labeled label: String,
         in app: XCUIApplication
     ) -> XCUIElement? {
@@ -153,7 +162,7 @@ final class FFCIUITests: XCTestCase {
         return formControl(labeled: label, in: htmlContentView, app: app)
     }
 
-    private func assertOpensSafari(
+    func assertOpensSafari(
         control: XCUIElement,
         screenshotName: String,
         file: StaticString = #filePath,
@@ -175,7 +184,7 @@ final class FFCIUITests: XCTestCase {
         }
     }
 
-    private func assertPageContentBecomesVisible(
+    func assertPageContentBecomesVisible(
         containing text: String,
         in htmlContentView: XCUIElement,
         app: XCUIApplication,
@@ -216,8 +225,11 @@ final class FFCIUITests: XCTestCase {
         XCTFail("Expected page content containing \(text) to become visible when scrolling.", file: file, line: line)
     }
 
+}
+
+final class FFCIUITests: FFCIUITestCase {
     func testHomeScreenShowsFeaturedAndCapturesScreenshot() throws {
-        let app = launchProductionApp()
+        let app = launchApp()
 
         let featuredByIdentifier = app.staticTexts["featured-section-title"]
         let featuredByLabel = app.staticTexts["Featured"]
@@ -232,7 +244,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testTappingMediaTabOpensSafari() throws {
-        let app = launchProductionApp()
+        let app = launchApp()
 
         guard let mediaTab = waitForTabButton(in: app, named: "Media", timeout: 45) else {
             XCTFail("Expected the Media tab to appear.")
@@ -243,7 +255,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testPartnershipsTabStillShowsItsIntroductionAfterSwitchingTabs() throws {
-        let app = launchProductionApp()
+        let app = launchApp()
 
         guard let partnershipsTab = waitForTabButton(in: app, named: "Partnerships", timeout: 45) else {
             XCTFail("Expected the Partnerships tab to appear.")
@@ -290,7 +302,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testConnectTabStillShowsContactDetailsAfterSwitchingTabs() throws {
-        let app = launchProductionApp()
+        let app = launchApp()
 
         guard let connectTab = waitForTabButton(in: app, named: "Connect", timeout: 45) else {
             XCTFail("Expected the Connect tab to appear.")
@@ -337,7 +349,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testSearchShowsResults() throws {
-        let app = launchProductionApp()
+        let app = launchApp()
 
         let searchButton = app.buttons["search-button"].firstMatch
         XCTAssertTrue(searchButton.waitForExistence(timeout: 45), "Expected the search button to appear on the home screen.")
@@ -369,7 +381,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testTappingPrayerRequestOnContactUsOpensSafari() throws {
-        let app = launchProductionApp()
+        let app = launchApp()
 
         guard let prayerControl = contactUsControl(
             labeled: "Submit a Prayer Request",
@@ -385,7 +397,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testTappingContactFormOnContactUsOpensSafari() throws {
-        let app = launchProductionApp()
+        let app = launchApp()
 
         guard let contactControl = contactUsControl(
             labeled: "Contact Form",
@@ -401,7 +413,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testRequestAChaplainAtBottomOfContactUsCanBeReachedAndOpened() throws {
-        let app = launchProductionApp()
+        let app = launchApp()
 
         guard let chaplainControl = contactUsControl(
             labeled: "Request a Chaplain",
@@ -417,7 +429,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testSelectingChaplainRequestFromSearchOpensSafari() throws {
-        let app = launchProductionApp()
+        let app = launchApp()
 
         let searchButton = app.buttons["search-button"].firstMatch
         guard searchButton.waitForExistence(timeout: 45) else {
@@ -453,7 +465,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testTappingMembershipFormOpensSafari() throws {
-        let app = launchProductionApp()
+        let app = launchApp()
 
         guard let htmlContentView = openPageFromSearch(
             in: app,
@@ -475,7 +487,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testTappingStartAChapterFormOpensSafari() throws {
-        let app = launchProductionApp()
+        let app = launchApp()
 
         guard let htmlContentView = openPageFromSearch(
             in: app,
@@ -497,7 +509,7 @@ final class FFCIUITests: XCTestCase {
     }
 
     func testTappingContactUsToStartAChapterOpensSafari() throws {
-        let app = launchProductionApp()
+        let app = launchApp()
 
         guard let htmlContentView = openPageFromSearch(
             in: app,
@@ -515,6 +527,69 @@ final class FFCIUITests: XCTestCase {
         assertOpensSafari(
             control: chapterControl,
             screenshotName: "Contact Us to Start a Chapter in Safari"
+        )
+    }
+}
+
+final class FFCIProductionSmokeTests: FFCIUITestCase {
+    func testPublishedHomeShowsFeaturedContent() throws {
+        let app = launchProductionApp()
+        let featuredByIdentifier = app.staticTexts["featured-section-title"]
+        let featuredByLabel = app.staticTexts["Featured"]
+
+        XCTAssertTrue(
+            featuredByIdentifier.waitForExistence(timeout: 45) ||
+                featuredByLabel.waitForExistence(timeout: 5),
+            "Expected the published home screen to show Featured content."
+        )
+    }
+
+    func testPublishedConnectPageShowsContactDetails() throws {
+        let app = launchProductionApp()
+        guard let htmlContentView = openContactUs(in: app) else {
+            return
+        }
+
+        assertPageContentBecomesVisible(
+            containing: "Mailing Address",
+            in: htmlContentView,
+            app: app
+        )
+    }
+
+    func testPublishedPrayerRequestOpensInSafari() throws {
+        let app = launchProductionApp()
+        guard let prayerControl = contactUsControl(
+            labeled: "Submit a Prayer Request",
+            in: app
+        ) else {
+            return
+        }
+
+        assertOpensSafari(
+            control: prayerControl,
+            screenshotName: "Published Prayer Request in Safari"
+        )
+    }
+
+    func testPublishedStartAChapterContactOpensInSafari() throws {
+        let app = launchProductionApp()
+        guard let htmlContentView = openPageFromSearch(
+            in: app,
+            query: "Start a Chapter",
+            title: "Start a Chapter"
+        ),
+        let chapterControl = formControl(
+            labeled: "Contact Us to Start a Chapter",
+            in: htmlContentView,
+            app: app
+        ) else {
+            return
+        }
+
+        assertOpensSafari(
+            control: chapterControl,
+            screenshotName: "Published Start a Chapter contact in Safari"
         )
     }
 }
