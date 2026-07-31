@@ -33,8 +33,8 @@ android {
         applicationId = "com.subsplashconsulting.s_F52C3B"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2026062701
-        versionName = "2.0.0"
+        versionCode = 2026073101
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
