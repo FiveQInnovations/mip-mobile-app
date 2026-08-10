@@ -119,7 +119,7 @@ From the repo root:
 
 ```bash
 xcodebuild \
-  -project "/Users/anthony/mip-mobile-app/ios-mip-app/FFCI.xcodeproj" \
+  -project "/Users/anthony/mip-mobile-app/ios-mip-app/MIP-iOS.xcodeproj" \
   -scheme FFCI \
   -destination 'id=D9DE6784-CB62-4AC3-A686-4D445A0E7B57' \
   -derivedDataPath "/Users/anthony/mip-mobile-app/ios-mip-app/build-ui-tests" \
@@ -131,7 +131,7 @@ To run multiple screenshot tests together:
 
 ```bash
 xcodebuild \
-  -project "/Users/anthony/mip-mobile-app/ios-mip-app/FFCI.xcodeproj" \
+  -project "/Users/anthony/mip-mobile-app/ios-mip-app/MIP-iOS.xcodeproj" \
   -scheme FFCI \
   -destination 'id=D9DE6784-CB62-4AC3-A686-4D445A0E7B57' \
   -derivedDataPath "/Users/anthony/mip-mobile-app/ios-mip-app/build-ui-tests" \

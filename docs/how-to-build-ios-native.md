@@ -26,7 +26,7 @@ Using a consistent simulator prevents issues with stale builds on wrong devices.
 
 ```bash
 cd ios-mip-app
-xcodebuild -project FFCI.xcodeproj \
+xcodebuild -project MIP-iOS.xcodeproj \
   -scheme FFCI \
   -destination 'id=D9DE6784-CB62-4AC3-A686-4D445A0E7B57' \
   -configuration Debug \
@@ -303,7 +303,7 @@ struct ItemListView: View {
 
 ```bash
 cd ios-mip-app
-xcodebuild -project FFCI.xcodeproj \
+xcodebuild -project MIP-iOS.xcodeproj \
   -scheme FFCI \
   -destination 'id=D9DE6784-CB62-4AC3-A686-4D445A0E7B57' \
   -configuration Debug \
@@ -314,7 +314,7 @@ xcodebuild -project FFCI.xcodeproj \
 
 ```bash
 cd ios-mip-app
-xcodebuild -project FFCI.xcodeproj \
+xcodebuild -project MIP-iOS.xcodeproj \
   -scheme FFCI \
   -destination 'id=D9DE6784-CB62-4AC3-A686-4D445A0E7B57' \
   -configuration Release \
@@ -325,7 +325,7 @@ xcodebuild -project FFCI.xcodeproj \
 
 ```bash
 cd ios-mip-app
-xcodebuild -project FFCI.xcodeproj \
+xcodebuild -project MIP-iOS.xcodeproj \
   -scheme FFCI \
   clean build
 ```
@@ -484,7 +484,7 @@ The `run-maestro-ios.sh` script:
 ```bash
 # Build the app first
 cd ios-mip-app
-xcodebuild -project FFCI.xcodeproj -scheme FFCI -destination 'id=D9DE6784-CB62-4AC3-A686-4D445A0E7B57' -configuration Debug build
+xcodebuild -project MIP-iOS.xcodeproj -scheme FFCI -destination 'id=D9DE6784-CB62-4AC3-A686-4D445A0E7B57' -configuration Debug build
 ```
 
 **Test fails with "No booted iOS simulator found":**
@@ -511,7 +511,7 @@ lsof -ti :7001 | xargs kill -9
 ### Open Project in Xcode
 
 ```bash
-open ios-mip-app/FFCI.xcodeproj
+open ios-mip-app/MIP-iOS.xcodeproj
 ```
 
 From within Xcode:
@@ -552,7 +552,7 @@ Color("SecondaryColor")
 
 ```
 ios-mip-app/
-├── FFCI.xcodeproj/          # Xcode project file
+├── MIP-iOS.xcodeproj/          # Xcode project file
 ├── FFCI/
 │   ├── FFCIApp.swift        # App entry point (@main)
 │   ├── ContentView.swift    # Main view
@@ -569,7 +569,7 @@ ios-mip-app/
 
 ## Adding New Swift Files
 
-**IMPORTANT:** When creating a new Swift file, you must manually add it to the Xcode project file (`FFCI.xcodeproj/project.pbxproj`) or it won't be compiled.
+**IMPORTANT:** When creating a new Swift file, you must manually add it to the Xcode project file (`MIP-iOS.xcodeproj/project.pbxproj`) or it won't be compiled.
 
 ### Symptoms of Missing File Registration
 
@@ -583,7 +583,7 @@ ios-mip-app/
 
 1. Open the project in Xcode:
    ```bash
-   open ios-mip-app/FFCI.xcodeproj
+   open ios-mip-app/MIP-iOS.xcodeproj
    ```
 
 2. Right-click the `FFCI` folder in the Project Navigator
@@ -594,7 +594,7 @@ ios-mip-app/
 
 #### Option 2: Manual Edit (If Xcode Not Available)
 
-If you create a file manually (e.g., via editor), you must edit `FFCI.xcodeproj/project.pbxproj`:
+If you create a file manually (e.g., via editor), you must edit `MIP-iOS.xcodeproj/project.pbxproj`:
 
 1. **Generate unique IDs** (24 hex characters):
    - File reference ID: `A1B2C3D4E5F6A7B8C9D0E1F2`
@@ -626,7 +626,7 @@ After adding a file, verify it's included:
 
 ```bash
 # Check if file appears in project
-grep -i "AudioPlayerView" ios-mip-app/FFCI.xcodeproj/project.pbxproj
+grep -i "AudioPlayerView" ios-mip-app/MIP-iOS.xcodeproj/project.pbxproj
 
 # Should see at least 3 matches:
 # 1. PBXFileReference
@@ -640,8 +640,8 @@ After manually editing `project.pbxproj`, always clean and rebuild:
 
 ```bash
 cd ios-mip-app
-rm -rf ~/Library/Developer/Xcode/DerivedData/FFCI-*
-xcodebuild -project FFCI.xcodeproj -scheme FFCI clean build
+rm -rf ~/Library/Developer/Xcode/DerivedData/MIP-iOS-*
+xcodebuild -project MIP-iOS.xcodeproj -scheme FFCI clean build
 ```
 
 ---
@@ -652,11 +652,11 @@ xcodebuild -project FFCI.xcodeproj -scheme FFCI clean build
 
 ```bash
 # Clean DerivedData
-rm -rf ~/Library/Developer/Xcode/DerivedData/FFCI-*
+rm -rf ~/Library/Developer/Xcode/DerivedData/MIP-iOS-*
 
 # Rebuild
 cd ios-mip-app
-xcodebuild -project FFCI.xcodeproj -scheme FFCI clean build
+xcodebuild -project MIP-iOS.xcodeproj -scheme FFCI clean build
 ```
 
 ### App Won't Launch
@@ -695,11 +695,11 @@ open -a Simulator
 
 1. **Check if file is in project:**
    ```bash
-   grep -i "YourFileName" ios-mip-app/FFCI.xcodeproj/project.pbxproj
+   grep -i "YourFileName" ios-mip-app/MIP-iOS.xcodeproj/project.pbxproj
    ```
 
 2. **If missing, add it:**
-   - Open project in Xcode: `open ios-mip-app/FFCI.xcodeproj`
+   - Open project in Xcode: `open ios-mip-app/MIP-iOS.xcodeproj`
    - Right-click `FFCI` folder → "Add Files to FFCI..."
    - Select your Swift file
    - Ensure "Add to targets: FFCI" is checked
@@ -707,8 +707,8 @@ open -a Simulator
 3. **Clean and rebuild:**
    ```bash
    cd ios-mip-app
-   rm -rf ~/Library/Developer/Xcode/DerivedData/FFCI-*
-   xcodebuild -project FFCI.xcodeproj -scheme FFCI clean build
+   rm -rf ~/Library/Developer/Xcode/DerivedData/MIP-iOS-*
+   xcodebuild -project MIP-iOS.xcodeproj -scheme FFCI clean build
    ```
 
 See [Adding New Swift Files](#adding-new-swift-files) section for detailed instructions.

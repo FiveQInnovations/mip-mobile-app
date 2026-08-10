@@ -17,7 +17,7 @@
                BlueprintIdentifier = "E394380DC2F30370D51112F7"
                BuildableName = "C4I.app"
                BlueprintName = "C4I"
-               ReferencedContainer = "container:FFCI.xcodeproj">
+               ReferencedContainer = "container:MIP-iOS.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -31,7 +31,7 @@
                BlueprintIdentifier = "75470296396E269E2F240CC1"
                BuildableName = "C4IUITests.xctest"
                BlueprintName = "C4IUITests"
-               ReferencedContainer = "container:FFCI.xcodeproj">
+               ReferencedContainer = "container:MIP-iOS.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,7 +50,7 @@
                BlueprintIdentifier = "75470296396E269E2F240CC1"
                BuildableName = "C4IUITests.xctest"
                BlueprintName = "C4IUITests"
-               ReferencedContainer = "container:FFCI.xcodeproj">
+               ReferencedContainer = "container:MIP-iOS.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -72,7 +72,7 @@
             BlueprintIdentifier = "E394380DC2F30370D51112F7"
             BuildableName = "C4I.app"
             BlueprintName = "C4I"
-            ReferencedContainer = "container:FFCI.xcodeproj">
+            ReferencedContainer = "container:MIP-iOS.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -89,7 +89,7 @@
             BlueprintIdentifier = "E394380DC2F30370D51112F7"
             BuildableName = "C4I.app"
             BlueprintName = "C4I"
-            ReferencedContainer = "container:FFCI.xcodeproj">
+            ReferencedContainer = "container:MIP-iOS.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

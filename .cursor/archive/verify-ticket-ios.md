@@ -72,7 +72,7 @@ Follow the full process below.
 cd ios-mip-app
 
 # Build Debug configuration
-xcodebuild -project FFCI.xcodeproj -scheme FFCI \
+xcodebuild -project MIP-iOS.xcodeproj -scheme FFCI \
   -destination "id=D9DE6784-CB62-4AC3-A686-4D445A0E7B57" \
   -configuration Debug build
 ```
@@ -88,7 +88,7 @@ After build succeeds:
 ```bash
 # Install the app
 xcrun simctl install D9DE6784-CB62-4AC3-A686-4D445A0E7B57 \
-  ~/Library/Developer/Xcode/DerivedData/FFCI-*/Build/Products/Debug-iphonesimulator/FFCI.app
+  ~/Library/Developer/Xcode/DerivedData/MIP-iOS-*/Build/Products/Debug-iphonesimulator/FFCI.app
 
 # Launch the app
 xcrun simctl launch D9DE6784-CB62-4AC3-A686-4D445A0E7B57 com.fiveq.ffci
@@ -240,7 +240,7 @@ xcrun simctl boot $SIMULATOR_UDID
 xcrun simctl shutdown $SIMULATOR_UDID
 
 # Build iOS app
-xcodebuild -project ios-mip-app/FFCI.xcodeproj -scheme FFCI \
+xcodebuild -project ios-mip-app/MIP-iOS.xcodeproj -scheme FFCI \
   -destination "id=$SIMULATOR_UDID" \
   -configuration Debug build
 
@@ -267,7 +267,7 @@ bash ios-mip-app/scripts/run-maestro-ios.sh ios-mip-app/maestro/flows/test.yaml
 | Purpose | Location |
 |---------|----------|
 | SwiftUI Views | `ios-mip-app/FFCI/Views/*.swift` |
-| Xcode Project | `ios-mip-app/FFCI.xcodeproj/project.pbxproj` |
+| Xcode Project | `ios-mip-app/MIP-iOS.xcodeproj/project.pbxproj` |
 | Maestro Flows | `ios-mip-app/maestro/flows/*.yaml` |
 | Run Script | `ios-mip-app/scripts/run-maestro-ios.sh` |
 

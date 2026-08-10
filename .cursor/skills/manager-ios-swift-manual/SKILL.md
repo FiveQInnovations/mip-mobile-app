@@ -153,7 +153,7 @@ SIMULATOR_UDID="D9DE6784-CB62-4AC3-A686-4D445A0E7B57"
 
 # Build iOS app (Debug)
 cd ios-mip-app
-xcodebuild -project FFCI.xcodeproj -scheme FFCI \
+xcodebuild -project MIP-iOS.xcodeproj -scheme FFCI \
   -destination "id=$SIMULATOR_UDID" \
   -configuration Debug clean build
 

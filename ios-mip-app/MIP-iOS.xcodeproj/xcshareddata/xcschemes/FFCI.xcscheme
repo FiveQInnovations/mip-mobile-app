@@ -17,7 +17,7 @@
                BlueprintIdentifier = "A71111082B0000010000FFCI"
                BuildableName = "FFCI.app"
                BlueprintName = "FFCI"
-               ReferencedContainer = "container:FFCI.xcodeproj">
+               ReferencedContainer = "container:MIP-iOS.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -31,7 +31,7 @@
                BlueprintIdentifier = "A71200082C00000100000001"
                BuildableName = "FFCIUITests.xctest"
                BlueprintName = "FFCIUITests"
-               ReferencedContainer = "container:FFCI.xcodeproj">
+               ReferencedContainer = "container:MIP-iOS.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,7 +50,7 @@
                BlueprintIdentifier = "A71200082C00000100000001"
                BuildableName = "FFCIUITests.xctest"
                BlueprintName = "FFCIUITests"
-               ReferencedContainer = "container:FFCI.xcodeproj">
+               ReferencedContainer = "container:MIP-iOS.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -72,7 +72,7 @@
             BlueprintIdentifier = "A71111082B0000010000FFCI"
             BuildableName = "FFCI.app"
             BlueprintName = "FFCI"
-            ReferencedContainer = "container:FFCI.xcodeproj">
+            ReferencedContainer = "container:MIP-iOS.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -95,7 +95,7 @@
             BlueprintIdentifier = "A71111082B0000010000FFCI"
             BuildableName = "FFCI.app"
             BlueprintName = "FFCI"
-            ReferencedContainer = "container:FFCI.xcodeproj">
+            ReferencedContainer = "container:MIP-iOS.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

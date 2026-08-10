@@ -33,7 +33,7 @@ model: fast
 
 ### 1. Add Swift File to project.pbxproj
 
-**Project file location:** `ios-mip-app/FFCI.xcodeproj/project.pbxproj`
+**Project file location:** `ios-mip-app/MIP-iOS.xcodeproj/project.pbxproj`
 
 **Required steps (all four must be completed):**
 

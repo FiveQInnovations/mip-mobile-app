@@ -20,7 +20,7 @@ struct C4IApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(profile: C4IAppProfile.profile)
         }
     }
 }
