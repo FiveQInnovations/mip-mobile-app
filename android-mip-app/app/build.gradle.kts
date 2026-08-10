@@ -1,31 +1,77 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use(::load)
+    }
+}
+
+val debugApiBaseUrlOverride = providers
+    .gradleProperty("ffciApiBaseUrlOverride")
+    .orElse("")
+    .get()
+
+val hasReleaseSigning = listOf(
+    "ffciReleaseStoreFile",
+    "ffciReleaseStorePassword",
+    "ffciReleaseKeyAlias",
+    "ffciReleaseKeyPassword"
+).all { !localProperties.getProperty(it).isNullOrBlank() }
+
 android {
     namespace = "com.fiveq.ffci"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.fiveq.ffci"
+        applicationId = "com.subsplashconsulting.s_F52C3B"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2026073102
+        versionName = "2.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(localProperties.getProperty("ffciReleaseStoreFile"))
+                storePassword = localProperties.getProperty("ffciReleaseStorePassword")
+                keyAlias = localProperties.getProperty("ffciReleaseKeyAlias")
+                keyPassword = localProperties.getProperty("ffciReleaseKeyPassword")
+            }
+        }
+    }
+
     buildTypes {
+        debug {
+            buildConfigField(
+                "String",
+                "API_BASE_URL_OVERRIDE",
+                "\"${debugApiBaseUrlOverride.replace("\"", "\\\"")}\""
+            )
+        }
         release {
+            buildConfigField("String", "API_BASE_URL_OVERRIDE", "\"\"")
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
+    }
+    buildFeatures {
+        buildConfig = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -70,4 +116,12 @@ dependencies {
 
     // Debug
     debugImplementation(libs.androidx.ui.tooling)
+
+    // Instrumented regression tests
+    androidTestImplementation(libs.androidx.test.core.ktx)
+    androidTestImplementation(libs.androidx.test.ext.junit.ktx)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.espresso.web)
+    androidTestImplementation(libs.androidx.test.uiautomator)
 }

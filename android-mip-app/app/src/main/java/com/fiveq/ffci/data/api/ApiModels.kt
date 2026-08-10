@@ -103,7 +103,8 @@ data class PageData(
     val categories: List<CategoryDefinition>? = null,
     val data: PageDataContent? = null,
     val content: PageDataContent? = null,
-    @Json(name = "has_form") val hasForm: Boolean? = null
+    @Json(name = "has_form") val hasForm: Boolean? = null,
+    val navigation: ExternalNavigation? = null
 ) {
     private val primaryContent: PageDataContent?
         get() = data ?: content
@@ -201,9 +202,16 @@ data class PageData(
 }
 
 @JsonClass(generateAdapter = true)
+data class ExternalNavigation(
+    val behavior: String,
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
 data class SearchResult(
     val uuid: String,
     val title: String,
     val description: String?,
-    val url: String
+    val url: String,
+    val navigation: ExternalNavigation? = null
 )

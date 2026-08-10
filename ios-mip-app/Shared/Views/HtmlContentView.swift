@@ -11,6 +11,7 @@ import Foundation
 import os.log
 
 private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.fiveq.mip", category: "HtmlContent")
+private let formLinkBridgeScheme = "mip-form-link"
 
 // Custom URL scheme handler for Basic Auth resource loading
 class AuthURLSchemeHandler: NSObject, WKURLSchemeHandler {
@@ -176,6 +177,100 @@ struct HtmlContentView: UIViewRepresentable {
             });
         }
 
+        function collapseDecorativeBackgrounds() {
+            document.querySelectorAll('._background').forEach(function(bg) {
+                const hasMedia = bg.querySelector('picture, img, video, iframe, embed, object, source');
+                if (!hasMedia && bg.textContent.trim() === '') {
+                    bg.classList.add('_background-empty');
+                }
+            });
+        }
+
+        function markPairedCtaSections() {
+            document.querySelectorAll('._section').forEach(function(section) {
+                const headings = section.querySelectorAll(':scope > ._heading');
+                const buttonGroups = section.querySelectorAll(':scope > ._button-group');
+                const emptyBackgrounds = section.querySelectorAll(':scope > ._background-empty');
+                if (headings.length === 2 && buttonGroups.length === 2 && emptyBackgrounds.length >= 1) {
+                    section.classList.add('_paired-cta-section');
+                    headings[0].classList.add('_paired-cta-card-start');
+                    headings[1].classList.add('_paired-cta-card-start');
+                    buttonGroups[0].classList.add('_paired-cta-card-end');
+                    buttonGroups[1].classList.add('_paired-cta-card-end');
+                }
+            });
+        }
+
+        function markImageCardSections() {
+            function styleValue(element, property) {
+                if (!element) return '';
+                const target = property.toLowerCase();
+                const styleAttr = element.getAttribute('style') || '';
+                const parts = styleAttr.split(';');
+                for (let i = 0; i < parts.length; i++) {
+                    const colon = parts[i].indexOf(':');
+                    if (colon === -1) continue;
+                    const name = parts[i].slice(0, colon).trim().toLowerCase();
+                    if (name === target) {
+                        return parts[i].slice(colon + 1).trim();
+                    }
+                }
+                return '';
+            }
+
+            function imageCardBackgroundFor(section) {
+                return styleValue(section, 'background-color')
+                    || styleValue(section.querySelector(':scope > ._background-empty'), '--bgColor')
+                    || styleValue(section.querySelector(':scope > ._background'), '--bgColor')
+                    || '#D9232A';
+            }
+
+            function imageCardHeadingColorFor(section, heading) {
+                return styleValue(section, 'color')
+                    || styleValue(heading, '--theme-content')
+                    || styleValue(section, '--theme-content')
+                    || '#ffffff';
+            }
+
+            function isImageOnlySection(section) {
+                const imageLinks = section.querySelectorAll(':scope > a._image-link');
+                if (imageLinks.length === 0) return false;
+                return !section.querySelector(':scope > ._heading, :scope > ._text, :scope > ._button-group, :scope > ._background');
+            }
+
+            document.querySelectorAll('._section').forEach(function(section) {
+                const heading = section.querySelector(':scope > ._heading');
+                const decorativeBackgrounds = section.querySelectorAll(':scope > ._background-empty');
+                const hasBodyContent = section.querySelector(':scope > ._text, :scope > ._button-group, :scope > a._image-link, :scope > figure._image');
+                if (!heading || decorativeBackgrounds.length === 0 || hasBodyContent) return;
+
+                let sibling = section.nextElementSibling;
+                let imageSections = [];
+                while (sibling && sibling.classList && sibling.classList.contains('_section') && isImageOnlySection(sibling)) {
+                    imageSections.push(sibling);
+                    sibling = sibling.nextElementSibling;
+                }
+                if (imageSections.length === 0) return;
+
+                const imageCardBackground = imageCardBackgroundFor(section);
+                const imageCardHeadingColor = imageCardHeadingColorFor(section, heading);
+
+                section.classList.add('_image-card-heading-section');
+                section.style.setProperty('--image-card-bg', imageCardBackground);
+                section.style.setProperty('--image-card-heading-color', imageCardHeadingColor);
+                section.style.setProperty('background-color', imageCardBackground, 'important');
+                section.querySelectorAll(':scope > ._heading, :scope > ._heading *').forEach(function(el) {
+                    el.style.setProperty('color', imageCardHeadingColor, 'important');
+                    el.style.setProperty('text-shadow', 'none', 'important');
+                });
+                imageSections.forEach(function(imageSection) {
+                    imageSection.classList.add('_image-card-grid-section');
+                    imageSection.style.setProperty('--image-card-bg', imageCardBackground);
+                    imageSection.style.setProperty('background-color', imageCardBackground, 'important');
+                });
+            });
+        }
+
         function forceHeroContrast(element, className) {
             if (!element) return;
             element.classList.add(className);
@@ -196,9 +291,31 @@ struct HtmlContentView: UIViewRepresentable {
         }
 
         function normalizeHeroContrast() {
+            collapseDecorativeBackgrounds();
+            markPairedCtaSections();
+            markImageCardSections();
+
+            const heroContentBeforeBackground = document.querySelectorAll('._section ._heading + ._text + ._button-group + ._background, ._section ._heading + ._button-group + ._background');
+            heroContentBeforeBackground.forEach(function(bg) {
+                if (bg.classList.contains('_background-empty')) return;
+                bg.classList.add('_hero-background');
+                const section = markHeroSection(bg);
+                section.classList.add('_hero-overlay-section');
+                const heading = section.querySelector(':scope > ._heading');
+                const introText = section.querySelector(':scope > ._text');
+                if (heading) {
+                    forceHeroHeadingContrast(heading);
+                }
+                if (introText) {
+                    forceHeroIntroContrast(introText);
+                }
+                normalizeHeroImageRendering(section);
+            });
+
             const heroBackgroundFirst = document.querySelectorAll('._section ._background + ._heading');
             heroBackgroundFirst.forEach(function(heading) {
                 const bg = heading.previousElementSibling;
+                if (bg && bg.classList.contains('_background-empty')) return;
                 if (bg && bg.classList.contains('_background') && bg.parentNode) {
                     bg.parentNode.insertBefore(heading, bg);
                 }
@@ -212,6 +329,7 @@ struct HtmlContentView: UIViewRepresentable {
 
             const heroHeadingFirst = document.querySelectorAll('._section ._heading + ._background');
             heroHeadingFirst.forEach(function(bg) {
+                if (bg.classList.contains('_background-empty')) return;
                 bg.classList.add('_hero-background');
                 const heading = bg.previousElementSibling;
                 if (heading && heading.classList.contains('_heading')) {
@@ -223,6 +341,7 @@ struct HtmlContentView: UIViewRepresentable {
 
             const heroHeadingTextBackground = document.querySelectorAll('._section ._heading + ._text + ._background');
             heroHeadingTextBackground.forEach(function(bg) {
+                if (bg.classList.contains('_background-empty')) return;
                 bg.classList.add('_hero-background');
                 const introText = bg.previousElementSibling;
                 const heading = introText ? introText.previousElementSibling : null;
@@ -244,6 +363,48 @@ struct HtmlContentView: UIViewRepresentable {
         }
         window.addEventListener('load', normalizeHeroContrast, { once: true });
         setTimeout(normalizeHeroContrast, 350);
+    })();
+    """
+
+    private static let formLinkBridgeScript = """
+    (function() {
+        if (window.__mipFormLinkBridgeInstalled) return;
+        window.__mipFormLinkBridgeInstalled = true;
+
+        function isFormUrl(href) {
+            try {
+                const url = new URL(href, document.baseURI);
+                const path = (url.pathname || '').toLowerCase();
+                const hash = (url.hash || '').toLowerCase();
+                return path.indexOf('/prayer-request') !== -1
+                    || path.indexOf('/chaplain-request') !== -1
+                    || path.indexOf('/forms/') !== -1
+                    || hash.endsWith('-response');
+            } catch (error) {
+                return false;
+            }
+        }
+
+        function openFormLink(anchor, event) {
+            if (!anchor || !anchor.href || !isFormUrl(anchor.href)) return false;
+
+            event.preventDefault();
+            event.stopPropagation();
+            if (event.stopImmediatePropagation) {
+                event.stopImmediatePropagation();
+            }
+
+            window.webkit.messageHandlers.mipFormLink.postMessage({
+                url: anchor.href,
+                label: (anchor.innerText || anchor.getAttribute('aria-label') || '').trim()
+            });
+            return true;
+        }
+
+        document.addEventListener('click', function(event) {
+            const anchor = event.target && event.target.closest ? event.target.closest('a[href]') : null;
+            openFormLink(anchor, event);
+        }, true);
     })();
     """
     
@@ -271,12 +432,21 @@ struct HtmlContentView: UIViewRepresentable {
                 forMainFrameOnly: true
             )
         )
+        configuration.userContentController.addUserScript(
+            WKUserScript(
+                source: Self.formLinkBridgeScript,
+                injectionTime: .atDocumentEnd,
+                forMainFrameOnly: true
+            )
+        )
+        configuration.userContentController.add(context.coordinator, name: "mipFormLink")
         
         let authHandler = AuthURLSchemeHandler()
         configuration.setURLSchemeHandler(authHandler, forURLScheme: SiteConfig.shared.authScheme)
         
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
+        webView.uiDelegate = context.coordinator
         webView.scrollView.isScrollEnabled = false
         webView.isOpaque = false
         webView.backgroundColor = .clear
@@ -284,17 +454,27 @@ struct HtmlContentView: UIViewRepresentable {
         
         context.coordinator.webView = webView
         context.coordinator.contentHeightBinding = _contentHeight
+        context.coordinator.observeContentSize(of: webView)
         
         let styledHtml = wrapHtml(html)
+        context.coordinator.loadedHtml = styledHtml
         webView.loadHTMLString(styledHtml, baseURL: SiteConfig.shared.siteBaseURL)
         
         return webView
     }
+
+    static func dismantleUIView(_ uiView: WKWebView, coordinator: Coordinator) {
+        coordinator.stopObservingContentSize()
+        uiView.configuration.userContentController.removeScriptMessageHandler(forName: "mipFormLink")
+    }
     
     func updateUIView(_ webView: WKWebView, context: Context) {
+        context.coordinator.contentHeightBinding = _contentHeight
         context.coordinator.analyticsPageUuid = analyticsPageUuid
         context.coordinator.analyticsPageTitle = analyticsPageTitle
         let styledHtml = wrapHtml(html)
+        guard context.coordinator.loadedHtml != styledHtml else { return }
+        context.coordinator.loadedHtml = styledHtml
         webView.loadHTMLString(styledHtml, baseURL: SiteConfig.shared.siteBaseURL)
     }
     
@@ -346,6 +526,8 @@ struct HtmlContentView: UIViewRepresentable {
                 )
             }
         }
+
+        fixedHtml = rewriteFormLinksForExternalOpen(fixedHtml)
         
         return """
         <!DOCTYPE html>
@@ -533,9 +715,142 @@ struct HtmlContentView: UIViewRepresentable {
                     display: block !important;
                 }
                 ._background { position: relative; width: 100%; min-height: 200px; margin-bottom: 16px; border-radius: 8px; overflow: hidden; }
+                ._background-empty {
+                    display: none !important;
+                    min-height: 0 !important;
+                    height: 0 !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
                 ._background picture { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
                 ._background picture img { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 0; margin: 0; }
                 ._background > *:not(picture) { position: relative; z-index: 2; }
+                ._paired-cta-section,
+                ._paired-cta-section[style*="background-color"] {
+                    background-color: #f1f1f1 !important;
+                    padding: 32px 16px !important;
+                    margin-top: 32px !important;
+                    margin-bottom: 32px !important;
+                    display: block !important;
+                }
+                ._paired-cta-section ._paired-cta-card-start,
+                ._paired-cta-section ._paired-cta-card-end {
+                    background-color: #ffffff !important;
+                    border-left: 1px solid #d9d9d9;
+                    border-right: 1px solid #d9d9d9;
+                    margin: 0 !important;
+                    padding-left: 24px;
+                    padding-right: 24px;
+                }
+                ._paired-cta-section ._paired-cta-card-start {
+                    border-top: 1px solid #d9d9d9;
+                    border-radius: 8px 8px 0 0;
+                    padding-top: 56px;
+                    padding-bottom: 12px;
+                }
+                ._paired-cta-section ._paired-cta-card-end {
+                    border-bottom: 1px solid #d9d9d9;
+                    border-radius: 0 0 8px 8px;
+                    padding-top: 16px;
+                    padding-bottom: 56px;
+                    align-items: center;
+                    margin-bottom: 20px !important;
+                }
+                ._paired-cta-section h1,
+                ._paired-cta-section h2,
+                ._paired-cta-section h3,
+                ._paired-cta-section h4,
+                ._paired-cta-section p {
+                    color: #262626 !important;
+                    text-shadow: none !important;
+                }
+                ._paired-cta-section ._paired-cta-card-end a[class*="_button"] {
+                    width: auto !important;
+                    min-width: 180px;
+                    max-width: 100%;
+                    padding: 14px 24px;
+                    min-height: 48px;
+                    margin-left: auto !important;
+                    margin-right: auto !important;
+                }
+                ._paired-cta-section ._paired-cta-card-end a[class*="_button"],
+                ._paired-cta-section ._paired-cta-card-end a[class*="_button"] span {
+                    color: #ffffff !important;
+                    text-shadow: none !important;
+                }
+                ._image-card-heading-section,
+                ._image-card-heading-section[style*="background-color"],
+                ._image-card-grid-section {
+                    background-color: var(--image-card-bg, #D9232A) !important;
+                    background-image: none !important;
+                    width: calc(100% + 32px) !important;
+                    max-width: none !important;
+                    margin-left: -16px !important;
+                    margin-right: -16px !important;
+                    box-sizing: border-box !important;
+                }
+                ._image-card-heading-section {
+                    padding: 48px 16px 20px !important;
+                    margin-top: 32px !important;
+                    margin-bottom: 0 !important;
+                }
+                ._image-card-heading-section h1,
+                ._image-card-heading-section h2,
+                ._image-card-heading-section h3,
+                ._image-card-heading-section h4,
+                ._image-card-heading-section * {
+                    color: var(--image-card-heading-color, #ffffff) !important;
+                    text-shadow: none !important;
+                }
+                ._image-card-grid-section {
+                    display: grid !important;
+                    grid-template-columns: 1fr;
+                    gap: 12px;
+                    padding: 0 24px 24px !important;
+                    margin-top: 0 !important;
+                    margin-bottom: 0 !important;
+                }
+                ._image-card-grid-section + ._image-card-grid-section {
+                    padding-top: 12px !important;
+                }
+                ._image-card-grid-section:last-of-type {
+                    padding-bottom: 48px !important;
+                    margin-bottom: 32px !important;
+                }
+                ._image-card-grid-section > a._image-link {
+                    display: flex !important;
+                    min-height: 220px;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: #ffffff !important;
+                    border: 1px solid #d9d9d9 !important;
+                    border-radius: 8px !important;
+                    padding: 28px 20px !important;
+                    margin: 0 !important;
+                    box-shadow: none !important;
+                }
+                ._image-card-grid-section figure,
+                ._image-card-grid-section picture {
+                    margin: 0 !important;
+                    width: 100%;
+                }
+                ._image-card-grid-section img {
+                    display: block;
+                    max-width: 220px !important;
+                    max-height: 150px;
+                    width: auto !important;
+                    height: auto !important;
+                    object-fit: contain;
+                    margin: 0 auto !important;
+                    border-radius: 0 !important;
+                }
+                ._image-card-grid-section figcaption {
+                    color: #64748b !important;
+                    text-align: center;
+                    margin-top: 12px;
+                    font-size: 16px;
+                    line-height: 22px;
+                }
                 /* Button group - stack buttons vertically */
                 ._button-group {
                     display: flex;
@@ -573,9 +888,9 @@ struct HtmlContentView: UIViewRepresentable {
                     background-attachment: initial !important;
                     background-size: initial !important;
                 }
-                /* Primary button - red background */
+                /* Priority buttons match the website's blue action style */
                 a[class*="_button-priority"] {
-                    background-color: #D9232A !important;
+                    background-color: #024D91 !important;
                     color: white !important;
                     border: none !important;
                 }
@@ -669,6 +984,49 @@ struct HtmlContentView: UIViewRepresentable {
                 /* This ensures ALL descendants inherit the color from the section's inline style */
                 ._section[style*="color"] * {
                     color: inherit !important;
+                }
+                ._image-card-heading-section,
+                ._image-card-heading-section[style*="background-color"],
+                ._image-card-grid-section,
+                ._image-card-grid-section[style*="background-color"] {
+                    background-color: var(--image-card-bg, #D9232A) !important;
+                    background-image: none !important;
+                    width: calc(100% + 32px) !important;
+                    max-width: none !important;
+                    margin-left: -16px !important;
+                    margin-right: -16px !important;
+                    box-sizing: border-box !important;
+                }
+                ._image-card-heading-section,
+                ._image-card-heading-section[style*="background-color"] {
+                    padding: 48px 16px 20px !important;
+                    margin-top: 32px !important;
+                    margin-bottom: 0 !important;
+                }
+                ._image-card-heading-section ._heading,
+                ._image-card-heading-section ._heading *,
+                ._image-card-heading-section h1,
+                ._image-card-heading-section h2,
+                ._image-card-heading-section h3,
+                ._image-card-heading-section h4 {
+                    color: var(--image-card-heading-color, #ffffff) !important;
+                    text-shadow: none !important;
+                }
+                ._image-card-heading-section + ._image-card-grid-section,
+                ._image-card-heading-section + ._image-card-grid-section[style*="background-color"] {
+                    margin-top: 0 !important;
+                    margin-bottom: 0 !important;
+                    padding-top: 0 !important;
+                }
+                ._image-card-grid-section + ._image-card-grid-section,
+                ._image-card-grid-section[style*="background-color"] + ._image-card-grid-section[style*="background-color"] {
+                    padding-top: 12px !important;
+                }
+                ._image-card-grid-section,
+                ._image-card-grid-section[style*="background-color"] {
+                    display: grid !important;
+                    grid-template-columns: 1fr;
+                    gap: 12px;
                 }
                 /* Issue 4: Tailwind Utility Classes */
                 .mb-2 { margin-bottom: 8px !important; }
@@ -775,6 +1133,78 @@ struct HtmlContentView: UIViewRepresentable {
                     mix-blend-mode: normal !important;
                     background-blend-mode: normal !important;
                 }
+                ._hero-overlay-section,
+                ._hero-overlay-section[style*="background-color"] {
+                    min-height: 520px;
+                    display: flex !important;
+                    flex-direction: column;
+                    justify-content: center;
+                    overflow: hidden;
+                    padding: 76px 16px 64px !important;
+                    margin-left: -16px !important;
+                    margin-right: -16px !important;
+                    width: calc(100% + 32px) !important;
+                    max-width: none !important;
+                    background-color: #0f172a !important;
+                }
+                ._hero-overlay-section > :not(._hero-background):not(._background) {
+                    position: relative;
+                    z-index: 2;
+                }
+                ._hero-overlay-section ._background,
+                ._hero-overlay-section ._hero-background {
+                    position: absolute !important;
+                    inset: 0;
+                    width: 100% !important;
+                    height: 100% !important;
+                    min-height: 0 !important;
+                    margin: 0 !important;
+                    border-radius: 0 !important;
+                    z-index: 0;
+                    background-color: #0f172a !important;
+                }
+                ._hero-overlay-section ._background::before,
+                ._hero-overlay-section ._hero-background::before {
+                    content: "" !important;
+                    display: block !important;
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(180deg, rgba(15,23,42,0.58) 0%, rgba(15,23,42,0.66) 100%) !important;
+                    opacity: 1 !important;
+                    z-index: 1;
+                    pointer-events: none;
+                }
+                ._hero-overlay-section ._background picture,
+                ._hero-overlay-section ._hero-background picture,
+                ._hero-overlay-section ._background img,
+                ._hero-overlay-section ._hero-background img {
+                    position: absolute !important;
+                    inset: 0;
+                    width: 100% !important;
+                    height: 100% !important;
+                    object-fit: cover !important;
+                    border-radius: 0 !important;
+                    margin: 0 !important;
+                }
+                ._hero-overlay-section ._hero-heading,
+                ._hero-overlay-section ._hero-intro {
+                    background: transparent !important;
+                    border-left: 0 !important;
+                    border-radius: 0 !important;
+                    padding-left: 0 !important;
+                    padding-right: 0 !important;
+                    text-align: center;
+                }
+                ._hero-overlay-section ._hero-heading {
+                    margin-bottom: 16px !important;
+                }
+                ._hero-overlay-section ._hero-intro {
+                    margin-bottom: 22px !important;
+                }
+                ._hero-overlay-section ._button-group {
+                    position: relative;
+                    z-index: 2;
+                }
 
                 /* Issue 3: Iframe / Embed Responsive CSS */
                 iframe, embed, object {
@@ -801,11 +1231,73 @@ struct HtmlContentView: UIViewRepresentable {
         </html>
         """
     }
+
+    private func rewriteFormLinksForExternalOpen(_ html: String) -> String {
+        let pattern = #"href="([^"]+)""#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else {
+            return html
+        }
+
+        var rewrittenHtml = html
+        let nsString = html as NSString
+        let matches = regex.matches(in: html, options: [], range: NSRange(location: 0, length: nsString.length))
+
+        for match in matches.reversed() {
+            guard match.numberOfRanges >= 2 else { continue }
+            let rawHref = nsString.substring(with: match.range(at: 1))
+            guard let externalUrl = externalFormUrl(fromHref: rawHref),
+                  let bridgedUrl = bridgedFormUrl(for: externalUrl) else {
+                continue
+            }
+
+            let replacement = "href=\"\(bridgedUrl.absoluteString)\""
+            rewrittenHtml = (rewrittenHtml as NSString).replacingCharacters(in: match.range, with: replacement)
+        }
+
+        return rewrittenHtml
+    }
+
+    private func externalFormUrl(fromHref href: String) -> URL? {
+        let decodedHref = href
+            .replacingOccurrences(of: "&amp;", with: "&")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard let rawUrl = URL(string: decodedHref, relativeTo: SiteConfig.shared.siteBaseURL)?.absoluteURL else {
+            return nil
+        }
+
+        var components = URLComponents(url: rawUrl, resolvingAgainstBaseURL: false)
+        if rawUrl.scheme?.lowercased() == SiteConfig.shared.authScheme {
+            components?.scheme = "https"
+        }
+
+        guard let normalized = components?.url else { return nil }
+        let path = normalized.path.lowercased()
+        let fragment = normalized.fragment?.lowercased()
+        let isFormUrl = path.contains("/prayer-request") ||
+            path.contains("/chaplain-request") ||
+            path.contains("/forms/") ||
+            fragment?.hasSuffix("-response") == true
+
+        return isFormUrl ? normalized : nil
+    }
+
+    private func bridgedFormUrl(for externalUrl: URL) -> URL? {
+        var components = URLComponents()
+        components.scheme = formLinkBridgeScheme
+        components.host = "open"
+        components.queryItems = [
+            URLQueryItem(name: "url", value: externalUrl.absoluteString)
+        ]
+        return components.url
+    }
     
-    class Coordinator: NSObject, WKNavigationDelegate {
+    class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
         let onNavigate: ((String) -> Void)?
         weak var webView: WKWebView?
         var contentHeightBinding: Binding<CGFloat>?
+        var loadedHtml: String?
+        private var contentSizeObservation: NSKeyValueObservation?
         private let prayerRequestAnchor = "prayer-request-response"
         var analyticsPageUuid: String
         var analyticsPageTitle: String
@@ -820,6 +1312,18 @@ struct HtmlContentView: UIViewRepresentable {
             self.analyticsPageTitle = analyticsPageTitle
         }
 
+        func observeContentSize(of webView: WKWebView) {
+            contentSizeObservation = webView.scrollView.observe(\.contentSize, options: [.new]) { [weak self] _, change in
+                guard let height = change.newValue?.height, height > 0 else { return }
+                self?.setContentHeight(height)
+            }
+        }
+
+        func stopObservingContentSize() {
+            contentSizeObservation?.invalidate()
+            contentSizeObservation = nil
+        }
+
         private func normalizedUrlForNavigation(_ url: URL) -> URL {
             guard url.scheme?.lowercased() == SiteConfig.shared.authScheme else {
                 return url
@@ -830,9 +1334,25 @@ struct HtmlContentView: UIViewRepresentable {
             return components?.url ?? url
         }
 
+        private func bridgedExternalFormUrl(from url: URL) -> URL? {
+            guard url.scheme?.lowercased() == formLinkBridgeScheme,
+                  let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                  let target = components.queryItems?.first(where: { $0.name == "url" })?.value,
+                  let targetUrl = URL(string: target) else {
+                return nil
+            }
+
+            let normalized = normalizedUrlForNavigation(targetUrl)
+            return isFormPage(normalized) ? normalized : nil
+        }
+
         private func isFormPage(_ url: URL) -> Bool {
             let path = url.path.lowercased()
-            return path.contains("/prayer-request") || path.contains("/chaplain-request") || path.contains("/forms/")
+            let fragment = url.fragment?.lowercased()
+            return path.contains("/prayer-request") ||
+                path.contains("/chaplain-request") ||
+                path.contains("/forms/") ||
+                fragment?.hasSuffix("-response") == true
         }
 
         private func normalizedUrlForExternalOpen(_ url: URL) -> URL {
@@ -872,6 +1392,55 @@ struct HtmlContentView: UIViewRepresentable {
             )
             UIApplication.shared.open(normalized)
         }
+
+        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+            guard message.name == "mipFormLink",
+                  let body = message.body as? [String: Any],
+                  let urlString = body["url"] as? String,
+                  let rawUrl = URL(string: urlString) else {
+                return
+            }
+
+            let url = normalizedUrlForNavigation(rawUrl)
+            if let bridgedUrl = bridgedExternalFormUrl(from: rawUrl) {
+                logger.notice("Opening bridged form link in external browser: \(bridgedUrl.absoluteString)")
+                openInExternalBrowser(bridgedUrl, linkLabel: body["label"] as? String)
+                return
+            }
+
+            guard isFormPage(url) else { return }
+
+            logger.notice("Opening bridged form link in external browser: \(url.absoluteString)")
+            openInExternalBrowser(url, linkLabel: body["label"] as? String)
+        }
+
+        func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+            guard navigationAction.targetFrame == nil,
+                  let rawUrl = navigationAction.request.url else {
+                return nil
+            }
+
+            let url = normalizedUrlForNavigation(rawUrl)
+            if let bridgedUrl = bridgedExternalFormUrl(from: rawUrl) {
+                logger.notice("Opening form bridge target in external browser: \(bridgedUrl.absoluteString)")
+                openInExternalBrowser(bridgedUrl)
+                return nil
+            }
+
+            if isFormPage(url) {
+                logger.notice("Opening form target in external browser: \(url.absoluteString)")
+                openInExternalBrowser(url)
+                return nil
+            }
+
+            if let host = url.host, !SiteConfig.shared.isFirstPartyHost(host) {
+                openInExternalBrowser(url)
+                return nil
+            }
+
+            webView.load(URLRequest(url: url))
+            return nil
+        }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             // Fix WKWebView not rendering background colors from inline styles
@@ -879,14 +1448,205 @@ struct HtmlContentView: UIViewRepresentable {
             // Solution: Create a <style> block with explicit CSS rules for each section
             webView.evaluateJavaScript("""
                 (function() {
+                    document.querySelectorAll('._background').forEach(function(bg) {
+                        const hasMedia = bg.querySelector('picture, img, video, iframe, embed, object, source');
+                        if (!hasMedia && bg.textContent.trim() === '') {
+                            bg.classList.add('_background-empty');
+                        }
+                    });
+
+                    document.querySelectorAll('._section').forEach(function(section) {
+                        const headings = section.querySelectorAll(':scope > ._heading');
+                        const buttonGroups = section.querySelectorAll(':scope > ._button-group');
+                        const emptyBackgrounds = section.querySelectorAll(':scope > ._background-empty');
+                        if (headings.length === 2 && buttonGroups.length === 2 && emptyBackgrounds.length >= 1) {
+                            section.classList.add('_paired-cta-section');
+                            section.style.setProperty('background-color', '#f1f1f1', 'important');
+                            headings[0].classList.add('_paired-cta-card-start');
+                            headings[1].classList.add('_paired-cta-card-start');
+                            buttonGroups[0].classList.add('_paired-cta-card-end');
+                            buttonGroups[1].classList.add('_paired-cta-card-end');
+                        }
+                    });
+
+                    function styleValue(element, property) {
+                        if (!element) return '';
+                        const target = property.toLowerCase();
+                        const styleAttr = element.getAttribute('style') || '';
+                        const parts = styleAttr.split(';');
+                        for (let i = 0; i < parts.length; i++) {
+                            const colon = parts[i].indexOf(':');
+                            if (colon === -1) continue;
+                            const name = parts[i].slice(0, colon).trim().toLowerCase();
+                            if (name === target) {
+                                return parts[i].slice(colon + 1).trim();
+                            }
+                        }
+                        return '';
+                    }
+
+                    function imageCardBackgroundFor(section) {
+                        return styleValue(section, 'background-color')
+                            || styleValue(section.querySelector(':scope > ._background-empty'), '--bgColor')
+                            || styleValue(section.querySelector(':scope > ._background'), '--bgColor')
+                            || '#D9232A';
+                    }
+
+                    function imageCardHeadingColorFor(section, heading) {
+                        return styleValue(section, 'color')
+                            || styleValue(heading, '--theme-content')
+                            || styleValue(section, '--theme-content')
+                            || '#ffffff';
+                    }
+
+                    function isImageOnlySection(section) {
+                        const imageLinks = section.querySelectorAll(':scope > a._image-link');
+                        if (imageLinks.length === 0) return false;
+                        return !section.querySelector(':scope > ._heading, :scope > ._text, :scope > ._button-group, :scope > ._background');
+                    }
+
+                    document.querySelectorAll('._section').forEach(function(section) {
+                        const heading = section.querySelector(':scope > ._heading');
+                        const decorativeBackgrounds = section.querySelectorAll(':scope > ._background-empty');
+                        const hasBodyContent = section.querySelector(':scope > ._text, :scope > ._button-group, :scope > a._image-link, :scope > figure._image');
+                        if (!heading || decorativeBackgrounds.length === 0 || hasBodyContent) return;
+
+                        let sibling = section.nextElementSibling;
+                        let imageSections = [];
+                        while (sibling && sibling.classList && sibling.classList.contains('_section') && isImageOnlySection(sibling)) {
+                            imageSections.push(sibling);
+                            sibling = sibling.nextElementSibling;
+                        }
+                        if (imageSections.length === 0) return;
+
+                        const imageCardBackground = imageCardBackgroundFor(section);
+                        const imageCardHeadingColor = imageCardHeadingColorFor(section, heading);
+
+                        section.classList.add('_image-card-heading-section');
+                        section.style.setProperty('--image-card-bg', imageCardBackground);
+                        section.style.setProperty('--image-card-heading-color', imageCardHeadingColor);
+                        section.style.setProperty('background-color', imageCardBackground, 'important');
+                        section.style.setProperty('margin-bottom', '0', 'important');
+                        section.querySelectorAll(':scope > ._heading, :scope > ._heading *').forEach(function(el) {
+                            el.style.setProperty('color', imageCardHeadingColor, 'important');
+                            el.style.setProperty('text-shadow', 'none', 'important');
+                        });
+                        imageSections.forEach(function(imageSection) {
+                            imageSection.classList.add('_image-card-grid-section');
+                            imageSection.style.setProperty('--image-card-bg', imageCardBackground);
+                            imageSection.style.setProperty('background-color', imageCardBackground, 'important');
+                            imageSection.style.setProperty('margin-top', '0', 'important');
+                            imageSection.style.setProperty('margin-bottom', '0', 'important');
+                        });
+                    });
+
                     const sections = document.querySelectorAll('._section');
                     if (sections.length === 0) return;
+
+                    function parseCssColor(value) {
+                        if (!value) return null;
+                        const color = value.trim().toLowerCase();
+                        if (color === 'transparent') return null;
+                        let hex = color.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+                        if (hex) {
+                            let raw = hex[1];
+                            if (raw.length === 3) {
+                                raw = raw.split('').map(function(ch) { return ch + ch; }).join('');
+                            }
+                            return {
+                                r: parseInt(raw.slice(0, 2), 16),
+                                g: parseInt(raw.slice(2, 4), 16),
+                                b: parseInt(raw.slice(4, 6), 16)
+                            };
+                        }
+                        let rgb = color.match(/^rgba?\\(\\s*([\\d.]+)\\s*,\\s*([\\d.]+)\\s*,\\s*([\\d.]+)(?:\\s*,\\s*([\\d.]+))?/i);
+                        if (rgb) {
+                            if (rgb[4] !== undefined && Number(rgb[4]) === 0) return null;
+                            return {
+                                r: Number(rgb[1]),
+                                g: Number(rgb[2]),
+                                b: Number(rgb[3])
+                            };
+                        }
+                        return null;
+                    }
+
+                    function luminance(channel) {
+                        const value = channel / 255;
+                        return value <= 0.03928 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4);
+                    }
+
+                    function relativeLuminance(color) {
+                        return 0.2126 * luminance(color.r) + 0.7152 * luminance(color.g) + 0.0722 * luminance(color.b);
+                    }
+
+                    function contrastRatio(first, second) {
+                        const lighter = Math.max(relativeLuminance(first), relativeLuminance(second));
+                        const darker = Math.min(relativeLuminance(first), relativeLuminance(second));
+                        return (lighter + 0.05) / (darker + 0.05);
+                    }
+
+                    function readableTextColor(backgroundValue, declaredValue) {
+                        const background = parseCssColor(backgroundValue);
+                        if (!background) return null;
+
+                        const fallbackText = parseCssColor('#334155');
+                        const declaredText = parseCssColor(declaredValue) || fallbackText;
+                        if (contrastRatio(background, declaredText) >= 4.5) {
+                            return declaredValue ? declaredValue.trim() : null;
+                        }
+
+                        const white = parseCssColor('#ffffff');
+                        const dark = parseCssColor('#0f172a');
+                        return contrastRatio(background, white) >= contrastRatio(background, dark) ? '#ffffff' : '#0f172a';
+                    }
+
+                    function effectiveBackgroundColor(section, bgMatch) {
+                        if (bgMatch && bgMatch[1]) {
+                            const inlineValue = bgMatch[1].trim();
+                            if (parseCssColor(inlineValue)) return inlineValue;
+                        }
+
+                        const computedValue = window.getComputedStyle(section).backgroundColor;
+                        if (parseCssColor(computedValue)) return computedValue;
+
+                        const bgElement = section.querySelector(':scope > ._background, :scope > ._background-empty');
+                        if (bgElement) {
+                            const bgStyle = window.getComputedStyle(bgElement);
+                            if (parseCssColor(bgStyle.backgroundColor)) return bgStyle.backgroundColor;
+                        }
+
+                        return bgMatch && bgMatch[1] ? bgMatch[1].trim() : '';
+                    }
+
+                    function effectiveTextColor(section, colorMatch) {
+                        if (colorMatch && colorMatch[1]) {
+                            const inlineValue = colorMatch[1].trim();
+                            if (parseCssColor(inlineValue)) return inlineValue;
+                        }
+
+                        const textElement = section.querySelector('h1, h2, h3, h4, h5, h6, p, li, a:not([class*="_button"]):not([class*="_image-link"]), ._heading, ._text, ._blockquote');
+                        const computedValue = window.getComputedStyle(textElement || section).color;
+                        return parseCssColor(computedValue) ? computedValue : '';
+                    }
+
+                    function forceReadableSectionText(section, color) {
+                        if (!color) return;
+                        section.style.setProperty('color', color, 'important');
+                        section.querySelectorAll('h1, h2, h3, h4, h5, h6, p, li, a:not([class*="_button"]):not([class*="_image-link"]), ._heading, ._heading *, ._text, ._text *, ._blockquote, ._blockquote *').forEach(function(el) {
+                            if (el.closest('._button-group')) return;
+                            el.style.setProperty('color', color, 'important');
+                            el.style.setProperty('text-shadow', 'none', 'important');
+                        });
+                    }
                     
                     // Build CSS rules for each section with background-color
                     let cssRules = '';
                     sections.forEach(function(section, index) {
                         const styleAttr = section.getAttribute('style') || '';
                         const isHeroSection = section.classList.contains('_hero-section');
+                        const isPairedCtaSection = section.classList.contains('_paired-cta-section');
+                        const isImageCardSection = section.classList.contains('_image-card-heading-section') || section.classList.contains('_image-card-grid-section');
                         
                         // Parse background-color and color from inline style
                         let bgMatch = styleAttr.match(/background-color:\\s*([^;]+)/i);
@@ -905,26 +1665,42 @@ struct HtmlContentView: UIViewRepresentable {
                             }
                         }
                         
-                        if (bgMatch || colorMatch) {
+                        const bgValue = effectiveBackgroundColor(section, bgMatch);
+                        const colorValue = effectiveTextColor(section, colorMatch);
+
+                        if (bgValue || colorValue) {
                             // Add a unique data attribute to target this specific section
                             section.setAttribute('data-section-id', 'section-' + index);
+                            const readableColor = (!isHeroSection && !isPairedCtaSection && !isImageCardSection)
+                                ? readableTextColor(bgValue, colorValue)
+                                : null;
                             
                             let rule = '._section[data-section-id="section-' + index + '"] { ';
                             if (bgMatch) {
-                                if (!isHeroSection) {
-                                    rule += 'background-color: ' + bgMatch[1].trim() + ' !important; ';
+                                if (isPairedCtaSection) {
+                                    rule += 'background-color: #f1f1f1 !important; ';
+                                } else if (isImageCardSection) {
+                                    rule += 'background-color: var(--image-card-bg, #D9232A) !important; ';
+                                } else if (!isHeroSection) {
+                                    rule += 'background-color: ' + bgValue + ' !important; ';
                                 } else {
                                     cssRules += '._section._hero-section[data-section-id="section-' + index + '"] { background-color: transparent !important; background-image: none !important; }\\n';
                                 }
                             }
-                            if (colorMatch) {
-                                rule += 'color: ' + colorMatch[1].trim() + ' !important; ';
+                            if (readableColor) {
+                                section.setAttribute('data-readable-text-color', readableColor);
+                                rule += 'color: ' + readableColor + ' !important; ';
+                            } else if (colorMatch) {
+                                rule += 'color: ' + colorValue + ' !important; ';
                             }
                             rule += '}\\n';
                             cssRules += rule;
                             
                             // Also add child text color inheritance
-                            if (colorMatch) {
+                            if (readableColor) {
+                                forceReadableSectionText(section, readableColor);
+                                cssRules += '._section[data-section-id="section-' + index + '"] h1, ._section[data-section-id="section-' + index + '"] h2, ._section[data-section-id="section-' + index + '"] h3, ._section[data-section-id="section-' + index + '"] h4, ._section[data-section-id="section-' + index + '"] h5, ._section[data-section-id="section-' + index + '"] h6, ._section[data-section-id="section-' + index + '"] p, ._section[data-section-id="section-' + index + '"] li, ._section[data-section-id="section-' + index + '"] a:not([class*="_button"]):not([class*="_image-link"]), ._section[data-section-id="section-' + index + '"] ._heading, ._section[data-section-id="section-' + index + '"] ._heading *, ._section[data-section-id="section-' + index + '"] ._text, ._section[data-section-id="section-' + index + '"] ._text *, ._section[data-section-id="section-' + index + '"] ._blockquote, ._section[data-section-id="section-' + index + '"] ._blockquote * { color: inherit !important; text-shadow: none !important; }\\n';
+                            } else if (colorMatch) {
                                 cssRules += '._section[data-section-id="section-' + index + '"] * { color: inherit !important; }\\n';
                             }
                         }
@@ -948,6 +1724,10 @@ struct HtmlContentView: UIViewRepresentable {
                             el.style.setProperty('color', colorMatch[1].trim(), 'important');
                         }
                     });
+
+                    document.querySelectorAll('._section[data-readable-text-color]').forEach(function(section) {
+                        forceReadableSectionText(section, section.getAttribute('data-readable-text-color'));
+                    });
                     
                     // Fix blockquote elements inside colored sections
                     const blockquotes = document.querySelectorAll('._section ._blockquote');
@@ -956,8 +1736,9 @@ struct HtmlContentView: UIViewRepresentable {
                         if (section) {
                             const sectionStyle = section.getAttribute('style') || '';
                             const colorMatch = sectionStyle.match(/(?:^|;)\\s*color:\\s*([^;]+)/i);
-                            if (colorMatch) {
-                                const color = colorMatch[1].trim();
+                            const readableColor = section.getAttribute('data-readable-text-color');
+                            if (readableColor || colorMatch) {
+                                const color = readableColor || colorMatch[1].trim();
                                 bq.style.setProperty('color', color, 'important');
                                 // Also fix all children
                                 bq.querySelectorAll('*').forEach(function(child) {
@@ -1018,19 +1799,31 @@ struct HtmlContentView: UIViewRepresentable {
 
             """) { _, _ in }
             
-            // Calculate content height after page loads
-            webView.evaluateJavaScript("document.body.scrollHeight") { [weak self] result, error in
-                if let height = result as? CGFloat, height > 0 {
-                    DispatchQueue.main.async {
-                        self?.contentHeightBinding?.wrappedValue = height
-                    }
+        }
+
+        private func setContentHeight(_ height: CGFloat) {
+            guard height > 0 else { return }
+
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                if let currentHeight = contentHeightBinding?.wrappedValue,
+                   abs(currentHeight - height) < 8 {
+                    return
                 }
+                contentHeightBinding?.wrappedValue = height
             }
         }
         
         func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
             guard let rawUrl = navigationAction.request.url else {
                 decisionHandler(.allow)
+                return
+            }
+
+            if let bridgedUrl = bridgedExternalFormUrl(from: rawUrl) {
+                logger.notice("Opening form bridge target in external browser: \(bridgedUrl.absoluteString)")
+                openInExternalBrowser(bridgedUrl)
+                decisionHandler(.cancel)
                 return
             }
 
@@ -1047,7 +1840,14 @@ struct HtmlContentView: UIViewRepresentable {
                 return
             }
             
-            // Only intercept user-clicked links (.linkActivated)
+            // Form pages - open in external browser
+            if isFormPage(url) {
+                openInExternalBrowser(url)
+                decisionHandler(.cancel)
+                return
+            }
+
+            // Only intercept other user-clicked links (.linkActivated)
             if navigationType != .linkActivated {
                 decisionHandler(.allow)
                 return
@@ -1069,13 +1869,6 @@ struct HtmlContentView: UIViewRepresentable {
                         return
                     }
                 }
-            }
-            
-            // Form pages - open in external browser
-            if isFormPage(url) {
-                openInExternalBrowser(url)
-                decisionHandler(.cancel)
-                return
             }
             
             if let host = url.host, !SiteConfig.shared.isFirstPartyHost(host), !urlString.hasPrefix("/") {

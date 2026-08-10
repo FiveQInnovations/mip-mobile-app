@@ -13,17 +13,20 @@ private let categoryPreviewCount = 3
 
 struct TabPageView: View {
     let uuid: String
+    @Environment(\.openURL) private var openURL
     @State private var pageStack: [String] = []
     @State private var pageData: PageData?
     @State private var isLoading = true
     @State private var isRefreshing = false
     @State private var error: String?
     @State private var htmlContentHeight: CGFloat = 200
+    @State private var htmlContentPageUuid: String?
     @State private var loadTask: Task<Void, Never>?
     @State private var mediaSectionsTask: Task<Void, Never>?
     @State private var mediaSections: [MediaCategorySection] = []
     @State private var isLoadingMediaSections = false
     @State private var expandedCategorySlugs: Set<String> = []
+    @State private var lastExternalNavigationKey: String?
     /// Dedupes identical `content_view` / `screen_view` when the same page refreshes in place.
     @State private var lastAnalyticsContentKey: String?
     
@@ -208,7 +211,10 @@ struct TabPageView: View {
         loadTask?.cancel()
         mediaSectionsTask?.cancel()
         error = nil
-        htmlContentHeight = 200  // Reset to default before loading
+        if htmlContentPageUuid != uuid {
+            htmlContentHeight = 200
+            htmlContentPageUuid = uuid
+        }
         isRefreshing = false
         mediaSections = []
         isLoadingMediaSections = false
@@ -227,6 +233,7 @@ struct TabPageView: View {
                     self.isLoading = false
                     refreshMediaSections(for: cached)
                     trackPageAnalytics(pageUuid: uuid, data: cached)
+                    openExternalNavigationIfNeeded(pageUuid: uuid, data: cached)
                 } else {
                     self.pageData = nil
                     self.isLoading = true
@@ -252,6 +259,7 @@ struct TabPageView: View {
                     self.isRefreshing = false
                     refreshMediaSections(for: data)
                     trackPageAnalytics(pageUuid: uuid, data: data)
+                    openExternalNavigationIfNeeded(pageUuid: uuid, data: data)
                     logger.notice("Page loaded: \(data.title), type: \(data.effectivePageType)")
                     logger.notice("Audio check - isAudioItem: \(data.isAudioItem), audioUrl: \(data.audioUrl ?? "nil")")
                     logger.notice("Video check - isVideoItem: \(data.isVideoItem), videoUrl: \(data.videoUrl ?? "nil")")
@@ -278,6 +286,29 @@ struct TabPageView: View {
                 }
             }
         }
+    }
+
+    private func openExternalNavigationIfNeeded(pageUuid: String, data: PageData) {
+        guard data.navigation?.behavior == "external",
+              let destination = data.navigation?.url,
+              let url = URL(string: destination) else {
+            return
+        }
+
+        let navigationKey = "\(pageUuid)|\(url.absoluteString)"
+        guard lastExternalNavigationKey != navigationKey else {
+            return
+        }
+        lastExternalNavigationKey = navigationKey
+
+        MipAnalytics.logExternalLink(
+            url: url,
+            pageUuid: pageUuid,
+            pageTitle: data.title,
+            linkLabel: data.title,
+            linkSource: "page_navigation"
+        )
+        openURL(url)
     }
     
     private func refreshMediaSections(for pageData: PageData?) {

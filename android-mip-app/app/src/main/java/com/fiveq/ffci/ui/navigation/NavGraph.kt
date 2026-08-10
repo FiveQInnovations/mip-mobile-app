@@ -92,9 +92,13 @@ fun NavGraph(
             SearchScreen(
                 onResultClick = { result ->
                     val resultPath = runCatching { Uri.parse(result.url).path.orEmpty() }.getOrDefault("")
-                    if (resultPath.startsWith("/forms/")) {
+                    val externalUrl = result.navigation
+                        ?.takeIf { it.behavior == "external" }
+                        ?.url
+                        ?: result.url.takeIf { resultPath.startsWith("/forms/") }
+                    if (externalUrl != null) {
                         // Form pages are web-first experiences; open externally from search.
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(result.url))
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(externalUrl))
                         context.startActivity(intent)
                     } else {
                         navController.navigate(Screen.Page.createRoute(result.uuid))

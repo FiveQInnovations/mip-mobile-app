@@ -28,7 +28,8 @@ import kotlinx.coroutines.launch
  */
 private fun isFormPage(url: String): Boolean {
     val formPaths = listOf("/prayer-request", "/chaplain-request", "/forms/")
-    return formPaths.any { url.contains(it) }
+    val fragment = runCatching { Uri.parse(url).fragment?.lowercase() }.getOrNull()
+    return formPaths.any { url.contains(it) } || fragment?.endsWith("-response") == true
 }
 
 /**
@@ -50,6 +51,34 @@ private fun toAbsoluteUrl(config: SiteConfig, url: String): String {
         "${config.apiBaseUrl}$url"
     } else {
         url
+    }
+}
+
+/**
+ * WebView does not route target="_blank" links through the existing
+ * shouldOverrideUrlLoading callback. Keep browser-bound links in the current
+ * WebView so that callback can intentionally hand them off to the user's
+ * browser. This includes forms hosted by third-party providers whose paths do
+ * not follow the site's form URL conventions.
+ */
+private fun normalizeBrowserLinkTargets(html: String): String {
+    val anchorPattern = Regex("""<a\b[^>]*>""", RegexOption.IGNORE_CASE)
+    val hrefPattern = Regex("""\bhref\s*=\s*(["'])(.*?)\1""", RegexOption.IGNORE_CASE)
+    val blankTargetPattern = Regex(
+        """\s+target\s*=\s*(["'])_blank\1""",
+        RegexOption.IGNORE_CASE
+    )
+
+    return anchorPattern.replace(html) { anchorMatch ->
+        val anchor = anchorMatch.value
+        val href = hrefPattern.find(anchor)?.groupValues?.get(2) ?: return@replace anchor
+
+        val hasExternalHost = runCatching { Uri.parse(href).host != null }.getOrDefault(false)
+        if (isFormPage(href) || hasExternalHost) {
+            blankTargetPattern.replace(anchor, "")
+        } else {
+            anchor
+        }
     }
 }
 
@@ -76,7 +105,7 @@ fun HtmlContent(
     // Fix images with empty src but valid srcset - extract first URL from srcset
     // Iterate through all img tags to handle each one individually
     val imgPattern = Regex("<img[^>]+>")
-    val fixedHtml = imgPattern.replace(html) { matchResult ->
+    val imageFixedHtml = imgPattern.replace(html) { matchResult ->
         var imgTag = matchResult.value
         if (imgTag.contains("src=\"\"") && imgTag.contains("srcset=\"")) {
             val urlMatch = Regex("srcset=\"(https?://[^\\s\"]+)").find(imgTag)
@@ -87,6 +116,7 @@ fun HtmlContent(
         }
         imgTag
     }
+    val fixedHtml = normalizeBrowserLinkTargets(imageFixedHtml)
 
     // Get primary color from config for CSS
     val config = AppConfig.get()
@@ -116,8 +146,9 @@ fun HtmlContent(
                     font-size: 17px;
                     line-height: 28px;
                     color: #334155;
-                    padding: 0 16px;
+                    padding: 0 16px 96px;
                     margin: 0;
+                    box-sizing: border-box;
                 }
                 h1 {
                     font-size: 34px;
@@ -391,7 +422,10 @@ fun HtmlContent(
                 }
                 ._section {
                     position: relative;
-                    padding: 24px 0;
+                    padding: 24px 16px;
+                    margin-left: -16px;
+                    margin-right: -16px;
+                    box-sizing: border-box;
                 }
                 /* First section doesn't need top padding */
                 ._section:first-child {
@@ -403,7 +437,7 @@ fun HtmlContent(
                 }
                 /* Background image block (used by hero sections) */
                 /* Match iOS behavior: it's a visible block in layout, not a behind-the-section layer */
-                ._background { position: relative; width: 100%; min-height: 200px; margin-bottom: 16px; border-radius: 8px; overflow: hidden; }
+                ._background { position: relative; width: 100%; min-height: 200px; margin-bottom: 16px; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; }
                 ._background picture { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
                 ._background picture img { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 0; margin: 0; }
                 ._background::before {
@@ -446,20 +480,17 @@ fun HtmlContent(
                 ._section ._background + ._heading {
                     margin-top: 0;
                     margin-bottom: 10px;
-                    padding: 14px 14px 12px;
-                    background: rgba(15, 23, 42, 0.72);
-                    border-radius: 8px;
                     position: relative;
                     z-index: 3;
                 }
                 ._hero-heading {
-                    margin-top: 0;
-                    margin-bottom: 10px;
-                    padding: 14px 14px 12px;
-                    background: rgba(15, 23, 42, 0.72);
-                    border-radius: 8px;
+                    margin: 0;
+                    padding: 0;
+                    background: transparent !important;
                     position: relative;
                     z-index: 3;
+                    text-align: center;
+                    width: 100%;
                 }
                 ._hero-heading h1,
                 ._hero-heading h2,
@@ -474,6 +505,13 @@ fun HtmlContent(
                 }
                 ._hero-background {
                     margin-top: 0;
+                    margin-bottom: 0;
+                }
+                ._hero-section,
+                ._section._hero-section,
+                ._section._hero-section[data-section-id] {
+                    background-color: transparent !important;
+                    background: transparent !important;
                 }
                 ul, ol {
                     padding-left: 24px;
@@ -510,11 +548,11 @@ fun HtmlContent(
                 ._button-group hr {
                     display: none !important;
                 }
-                /* Hide any decorative divs or spans with red borders/backgrounds near buttons */
-                div[style*="border"],
-                div[style*="background"],
-                span[style*="border"],
-                span[style*="background"] {
+                /* Hide decorative button artifacts without stripping real content block backgrounds */
+                ._button-group div[style*="border"],
+                ._button-group div[style*="background"],
+                ._button-group span[style*="border"],
+                ._button-group span[style*="background"] {
                     border: none !important;
                     background: none !important;
                 }
@@ -734,6 +772,80 @@ fun HtmlContent(
                         view?.evaluateJavascript("""
                             (function() {
                                 let cssRules = '';
+
+                                function colorToRgb(value) {
+                                    if (!value) return null;
+                                    const color = value.trim().toLowerCase();
+
+                                    const hex = color.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+                                    if (hex) {
+                                        let raw = hex[1];
+                                        if (raw.length === 3) {
+                                            raw = raw.split('').map(function(ch) { return ch + ch; }).join('');
+                                        }
+                                        return {
+                                            r: parseInt(raw.substring(0, 2), 16),
+                                            g: parseInt(raw.substring(2, 4), 16),
+                                            b: parseInt(raw.substring(4, 6), 16),
+                                            a: 1
+                                        };
+                                    }
+
+                                    const rgb = color.match(/^rgba?\(([^)]+)\)$/);
+                                    if (rgb) {
+                                        const parts = rgb[1].split(',').map(function(part) { return part.trim(); });
+                                        return {
+                                            r: parseFloat(parts[0]),
+                                            g: parseFloat(parts[1]),
+                                            b: parseFloat(parts[2]),
+                                            a: parts[3] === undefined ? 1 : parseFloat(parts[3])
+                                        };
+                                    }
+
+                                    return null;
+                                }
+
+                                function relativeLuminance(rgb) {
+                                    function channel(value) {
+                                        const normalized = value / 255;
+                                        return normalized <= 0.03928
+                                            ? normalized / 12.92
+                                            : Math.pow((normalized + 0.055) / 1.055, 2.4);
+                                    }
+
+                                    return 0.2126 * channel(rgb.r) + 0.7152 * channel(rgb.g) + 0.0722 * channel(rgb.b);
+                                }
+
+                                function readableTextColor(backgroundColor) {
+                                    const rgb = colorToRgb(backgroundColor);
+                                    if (!rgb || rgb.a < 0.6) return null;
+                                    return relativeLuminance(rgb) > 0.55 ? '#0f172a' : '#ffffff';
+                                }
+
+                                function sectionBackgroundColor(section) {
+                                    const styleAttr = section.getAttribute('style') || '';
+                                    const bgMatch = styleAttr.match(/background-color:\s*([^;]+)/i);
+                                    if (bgMatch) return bgMatch[1].trim();
+
+                                    const bgElement = section.querySelector('._background[style*="--bgColor"]');
+                                    if (!bgElement) return null;
+
+                                    const bgStyle = bgElement.getAttribute('style') || '';
+                                    const bgColorVar = bgStyle.match(/--bgColor:\s*([^;]+)/i);
+                                    return bgColorVar ? bgColorVar[1].trim() : null;
+                                }
+
+                                function applyReadableSectionContrast(section) {
+                                    const textColor = readableTextColor(sectionBackgroundColor(section));
+                                    if (textColor !== '#0f172a') return;
+
+                                    section.style.setProperty('color', textColor, 'important');
+                                    section.querySelectorAll('h1,h2,h3,h4,h5,h6,p,li,summary,blockquote,span,strong,em,i,._heading,._text,._blockquote').forEach(function(el) {
+                                        if (el.closest('a[class*="_button"]') || el.closest('._background')) return;
+                                        el.style.setProperty('color', textColor, 'important');
+                                        el.style.setProperty('text-shadow', 'none', 'important');
+                                    });
+                                }
                                 
                                 // Fix sections with inline styles
                                 const sections = document.querySelectorAll('._section');
@@ -786,28 +898,34 @@ fun HtmlContent(
                                     });
                                 }
 
-                                const heroBackgroundFirst = document.querySelectorAll('._section ._background + ._heading');
-                                heroBackgroundFirst.forEach(function(heading) {
-                                    const bg = heading.previousElementSibling;
-                                    // If CMS rendered background before heading, move heading above image in-app
-                                    // so we keep full image visibility while maintaining strong title contrast.
-                                    if (bg && bg.classList.contains('_background') && bg.parentNode) {
-                                        bg.parentNode.insertBefore(heading, bg);
+                                function normalizeHeroPair(bg, heading) {
+                                    if (!bg || !heading) return;
+                                    if (!bg.classList.contains('_background') || !heading.classList.contains('_heading')) return;
+
+                                    const section = bg.closest('._section');
+                                    if (section) {
+                                        section.classList.add('_hero-section');
+                                        section.style.setProperty('background-color', 'transparent', 'important');
+                                        section.style.setProperty('background', 'transparent', 'important');
                                     }
+
+                                    bg.classList.add('_hero-background');
                                     heading.classList.add('_hero-heading');
                                     forceHeroHeadingContrast(heading);
-                                    if (bg && bg.classList.contains('_background')) {
-                                        bg.classList.add('_hero-background');
-                                    }
-                                });
 
-                                const heroHeadingFirst = document.querySelectorAll('._section ._heading + ._background');
-                                heroHeadingFirst.forEach(function(bg) {
-                                    bg.classList.add('_hero-background');
-                                    const heading = bg.previousElementSibling;
-                                    if (heading && heading.classList.contains('_heading')) {
-                                        heading.classList.add('_hero-heading');
-                                        forceHeroHeadingContrast(heading);
+                                    if (heading.parentNode !== bg) {
+                                        bg.appendChild(heading);
+                                    }
+                                }
+
+                                document.querySelectorAll('._section ._background').forEach(function(bg) {
+                                    const nextHeading = bg.nextElementSibling;
+                                    const previousHeading = bg.previousElementSibling;
+
+                                    if (nextHeading && nextHeading.classList.contains('_heading')) {
+                                        normalizeHeroPair(bg, nextHeading);
+                                    } else if (previousHeading && previousHeading.classList.contains('_heading')) {
+                                        normalizeHeroPair(bg, previousHeading);
                                     }
                                 });
                                 
@@ -828,6 +946,10 @@ fun HtmlContent(
                                     if (colorMatch) {
                                         el.style.setProperty('color', colorMatch[1].trim(), 'important');
                                     }
+                                });
+
+                                sections.forEach(function(section) {
+                                    applyReadableSectionContrast(section);
                                 });
                                 
                                 // Fix blockquote elements inside colored sections
@@ -938,7 +1060,8 @@ fun HtmlContent(
                         // Form pages - open in external browser (matches RN behavior)
                         if (isFormPage(url)) {
                             try {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(formPageTargetUrl(url)))
+                                val fullUrl = toAbsoluteUrl(config, url)
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(formPageTargetUrl(fullUrl)))
                                 view?.context?.startActivity(intent)
                             } catch (e: Exception) {
                                 Log.e("HtmlContent", "Failed to open form page: $url", e)

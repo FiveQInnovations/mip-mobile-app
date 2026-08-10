@@ -24,7 +24,15 @@ struct SiteConfig {
             fatalError("SiteConfig.plist is missing or malformed")
         }
 
-        guard let baseURLString = dict["SiteBaseURL"] as? String,
+        var baseURLString = dict["SiteBaseURL"] as? String
+#if DEBUG
+        if let debugBaseURL = ProcessInfo.processInfo.environment["FFCI_API_BASE_URL_OVERRIDE"],
+           !debugBaseURL.isEmpty {
+            baseURLString = debugBaseURL
+        }
+#endif
+
+        guard let baseURLString,
               let baseURL = URL(string: baseURLString) else {
             fatalError("SiteConfig.plist: SiteBaseURL is missing or invalid")
         }
