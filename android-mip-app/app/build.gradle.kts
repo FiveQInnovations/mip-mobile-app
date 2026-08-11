@@ -27,14 +27,14 @@ val hasReleaseSigning = listOf(
 
 android {
     namespace = "com.fiveq.ffci"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.subsplashconsulting.s_F52C3B"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 2026073102
-        versionName = "2.0.1"
+        targetSdk = 36
+        versionCode = 2026081101
+        versionName = "2.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -82,6 +82,10 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    lint {
+        // The transferred Play listing already uses YYYYMMDDNN version codes.
+        disable += "HighAppVersionCode"
     }
 }
 
