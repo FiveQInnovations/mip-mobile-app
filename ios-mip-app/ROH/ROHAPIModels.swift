@@ -2,18 +2,37 @@ import Foundation
 
 enum ROHContentLanguage: String, CaseIterable, Identifiable {
     static let preferenceKey = "ROHContentLanguage"
+    static let onboardingCompletedKey = "ROHOnboardingCompleted"
 
     case english = "en"
     case spanish = "es"
 
     var id: String { rawValue }
 
-    var displayName: String {
+    var displayNameKey: String {
         switch self {
         case .english: "English"
         case .spanish: "Spanish"
         }
     }
+
+    var nativeDisplayName: String {
+        switch self {
+        case .english: "English"
+        case .spanish: "Español"
+        }
+    }
+
+    var abbreviation: String { rawValue.uppercased() }
+
+    var experienceDescriptionKey: String {
+        switch self {
+        case .english: "Full native experience"
+        case .spanish: "Current content in Spanish"
+        }
+    }
+
+    var locale: Locale { Locale(identifier: rawValue) }
 
     var baseURL: URL {
         switch self {
@@ -22,9 +41,44 @@ enum ROHContentLanguage: String, CaseIterable, Identifiable {
         }
     }
 
+    var homeURL: URL { baseURL }
+
+    var donateURL: URL {
+        baseURL.appendingPathComponent(spanishPath("donar/donaciones", english: "donate"))
+    }
+
+    var privacyURL: URL {
+        baseURL.appendingPathComponent(spanishPath("declaracion-de-privacidad", english: "privacy-policy"))
+    }
+
+    var termsURL: URL {
+        baseURL.appendingPathComponent(spanishPath("condiciones-del-servicio", english: "terms-of-use"))
+    }
+
+    var copyrightURL: URL {
+        URL(string: "https://www.reviveourhearts.com/permissions/")!
+    }
+
+    private func spanishPath(_ spanish: String, english: String) -> String {
+        self == .spanish ? spanish : english
+    }
+
     static var preferred: ROHContentLanguage {
-        guard let value = UserDefaults.standard.string(forKey: preferenceKey) else { return .english }
-        return ROHContentLanguage(rawValue: value) ?? .english
+        if let value = UserDefaults.standard.string(forKey: preferenceKey),
+           let language = ROHContentLanguage(rawValue: value) {
+            return language
+        }
+        return detectedDeviceLanguage
+    }
+
+    static var detectedDeviceLanguage: ROHContentLanguage {
+        for identifier in Locale.preferredLanguages {
+            let languageCode = Locale(identifier: identifier).language.languageCode?.identifier
+            if let languageCode, let language = ROHContentLanguage(rawValue: languageCode) {
+                return language
+            }
+        }
+        return .english
     }
 }
 

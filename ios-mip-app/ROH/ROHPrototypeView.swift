@@ -7,6 +7,119 @@ let rohInk = Color(red: 0.03, green: 0.20, blue: 0.22)
 let rohTeal = Color(red: 0.06, green: 0.54, blue: 0.61)
 let rohCream = Color(red: 0.98, green: 0.97, blue: 0.94)
 
+struct ROHWelcomeView: View {
+    @EnvironmentObject private var store: ROHContentStore
+    @State private var selectedLanguage: ROHContentLanguage?
+    let onComplete: () -> Void
+
+    private var languages: [ROHContentLanguage] {
+        let detected = ROHContentLanguage.detectedDeviceLanguage
+        return [detected] + ROHContentLanguage.allCases.filter { $0 != detected }
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                welcomeHeader
+                VStack(alignment: .leading, spacing: 20) {
+                    Text("WELCOME · BIENVENIDA")
+                        .font(.caption.bold())
+                        .tracking(2)
+                        .foregroundStyle(rohTeal)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Choose your experience")
+                            .font(.system(size: 34, weight: .bold, design: .serif))
+                            .foregroundStyle(rohInk)
+                        Text("You can change this anytime.")
+                            .foregroundStyle(.secondary)
+                    }
+
+                    VStack(spacing: 10) {
+                        ForEach(languages) { language in
+                            Button {
+                                guard selectedLanguage == nil else { return }
+                                selectedLanguage = language
+                                Task {
+                                    await store.selectInitialLanguage(language)
+                                    await ROHImagePipeline.shared.prefetch(aboveFoldImageURLs)
+                                    onComplete()
+                                }
+                            } label: {
+                                HStack(spacing: 14) {
+                                    Text(language.abbreviation)
+                                        .font(.caption.bold())
+                                        .tracking(1)
+                                        .foregroundStyle(.white)
+                                        .frame(width: 44, height: 44)
+                                        .background(rohInk, in: Circle())
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(language.nativeDisplayName)
+                                            .font(.system(size: 20, weight: .semibold, design: .serif))
+                                            .foregroundStyle(rohInk)
+                                        Text(LocalizedStringKey(language.experienceDescriptionKey))
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    Spacer()
+                                    if selectedLanguage == language {
+                                        ProgressView().tint(rohTeal)
+                                    } else {
+                                        Image(systemName: "chevron.right")
+                                            .font(.headline)
+                                            .foregroundStyle(rohTeal)
+                                    }
+                                }
+                                .padding(12)
+                                .background(.white, in: RoundedRectangle(cornerRadius: 15))
+                                .overlay(RoundedRectangle(cornerRadius: 15).stroke(rohTeal.opacity(0.25)))
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(selectedLanguage != nil)
+                            .accessibilityIdentifier("roh-welcome-language-\(language.rawValue)")
+                        }
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.vertical, 28)
+            }
+        }
+        .background(rohCream)
+        .ignoresSafeArea(edges: .top)
+        .environment(\.locale, ROHContentLanguage.detectedDeviceLanguage.locale)
+    }
+
+    private var welcomeHeader: some View {
+        ZStack {
+            rohTeal
+            Circle()
+                .fill(.white.opacity(0.05))
+                .frame(width: 310, height: 310)
+                .offset(x: 150, y: -65)
+            VStack(spacing: 18) {
+                ROHWordmark()
+                    .font(.title)
+                    .foregroundStyle(.white)
+                    .environment(\.colorScheme, .dark)
+                Text("The women's Bible-teaching ministry of Nancy DeMoss Wolgemuth")
+                    .font(.caption)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.white.opacity(0.9))
+                    .frame(maxWidth: 260)
+            }
+            .padding(.top, 54)
+        }
+        .frame(height: 220)
+        .overlay(alignment: .bottom) {
+            Rectangle().fill(rohInk.opacity(0.18)).frame(height: 10)
+        }
+    }
+
+    private var aboveFoldImageURLs: [URL] {
+        store.features.prefix(2).compactMap(\.squareImage)
+            + store.episodes.prefix(1).compactMap(\.wideImageURL)
+    }
+}
+
 struct ROHRootView: View {
     @EnvironmentObject private var player: ROHAudioPlayerModel
     @State private var isPlayerPresented = false
@@ -85,7 +198,15 @@ private struct ROHHomeView: View {
                         Button {
                             player.play(episode)
                         } label: {
-                            Label(player.isCurrent(episode) && player.isPlaying ? "PAUSE EPISODE" : "PLAY EPISODE", systemImage: player.isCurrent(episode) && player.isPlaying ? "pause.fill" : "play.fill")
+                            Label {
+                                if player.isCurrent(episode) && player.isPlaying {
+                                    Text("PAUSE EPISODE")
+                                } else {
+                                    Text("PLAY EPISODE")
+                                }
+                            } icon: {
+                                Image(systemName: player.isCurrent(episode) && player.isPlaying ? "pause.fill" : "play.fill")
+                            }
                         }
                         .buttonStyle(ROHCompactPlayButtonStyle())
                     }
@@ -193,6 +314,7 @@ private struct ROHShowsView: View {
 
 private struct ROHShowDetailView: View {
     @EnvironmentObject private var store: ROHContentStore
+    @Environment(\.locale) private var locale
     let show: ROHShow
 
     var body: some View {
@@ -228,6 +350,7 @@ private struct ROHShowDetailView: View {
             }
         }
         .background(rohCream).navigationTitle(show.title).navigationBarTitleDisplayMode(.inline)
+        .rohLocalizedBackButton()
         .task { await store.loadEpisodes(for: show) }
         .navigationDestination(for: ROHEpisode.self) { ROHEpisodeDetailView(episode: $0) }
     }
@@ -235,6 +358,7 @@ private struct ROHShowDetailView: View {
 
 private struct ROHEpisodeDetailView: View {
     @EnvironmentObject private var store: ROHContentStore
+    @Environment(\.locale) private var locale
     let episode: ROHEpisode
 
     var body: some View {
@@ -244,7 +368,7 @@ private struct ROHEpisodeDetailView: View {
                     ROHRemoteImage(url: episode.wideImageURL).frame(height: 240).clipShape(RoundedRectangle(cornerRadius: 16))
                     Text(store.showTitle(for: episode).uppercased()).font(.caption.bold()).tracking(1.3).foregroundStyle(rohTeal)
                     Text(episode.title).font(.system(size: 34, weight: .bold, design: .serif)).foregroundStyle(rohInk)
-                    Text(rohDate(episode.airDate, style: .long)).foregroundStyle(.secondary)
+                    Text(rohDate(episode.airDate, style: .long, locale: locale)).foregroundStyle(.secondary)
                     if episode.mediaURL != nil {
                         ROHAudioPlayerView(episode: episode)
                     } else {
@@ -257,6 +381,7 @@ private struct ROHEpisodeDetailView: View {
             }
         }
         .background(rohCream).navigationTitle("Episode").navigationBarTitleDisplayMode(.inline)
+        .rohLocalizedBackButton()
     }
 }
 
@@ -291,9 +416,10 @@ private struct ROHArticlesView: View {
             }.padding(20)
         }
         .background(rohCream)
-        .navigationTitle(isTabRoot ? "" : "Articles")
+        .navigationTitle(isTabRoot ? LocalizedStringKey("") : LocalizedStringKey("Articles"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(isTabRoot ? .hidden : .visible, for: .navigationBar)
+        .rohLocalizedBackButton(hidden: isTabRoot)
         .refreshable { await store.retry(.articles); await store.retry(.blogs) }
         .navigationDestination(for: ROHBlog.self) { ROHBlogDetailView(blog: $0) }
         .navigationDestination(for: ROHArticle.self) { ROHArticleDetailView(article: $0) }
@@ -322,6 +448,7 @@ private struct ROHBlogDetailView: View {
             }.padding(20)
         }
         .background(rohCream).navigationTitle(blog.title)
+        .rohLocalizedBackButton()
         .task { await store.loadArticles(for: blog) }
         .navigationDestination(for: ROHArticle.self) { ROHArticleDetailView(article: $0) }
     }
@@ -329,6 +456,7 @@ private struct ROHBlogDetailView: View {
 
 private struct ROHArticleDetailView: View {
     @EnvironmentObject private var store: ROHContentStore
+    @Environment(\.locale) private var locale
     let article: ROHArticle
     @State private var contentHeight: CGFloat = 300
 
@@ -338,7 +466,7 @@ private struct ROHArticleDetailView: View {
                 VStack(alignment: .leading, spacing: 14) {
                     ROHRemoteImage(url: article.image).frame(maxWidth: .infinity).frame(height: 220).clipShape(RoundedRectangle(cornerRadius: 14))
                     Text(article.title).font(.system(size: 34, weight: .bold, design: .serif)).foregroundStyle(rohInk)
-                    Text([article.authors.joined(separator: ", "), rohDate(article.date, style: .long)].filter { !$0.isEmpty }.joined(separator: " · ")).font(.subheadline).foregroundStyle(.secondary)
+                    Text([article.authors.joined(separator: ", "), rohDate(article.date, style: .long, locale: locale)].filter { !$0.isEmpty }.joined(separator: " · ")).font(.subheadline).foregroundStyle(.secondary)
                     ROHHTMLContentView(html: article.content, baseURL: store.language.baseURL, contentHeight: $contentHeight).frame(height: contentHeight)
                 }
                 .frame(width: max(0, geometry.size.width - 40), alignment: .leading)
@@ -346,6 +474,7 @@ private struct ROHArticleDetailView: View {
             }
         }
         .background(rohCream).navigationTitle("Article").navigationBarTitleDisplayMode(.inline)
+        .rohLocalizedBackButton()
     }
 }
 
@@ -369,6 +498,7 @@ private struct ROHStoreView: View {
             }
         }
         .background(rohCream).navigationTitle("Store")
+        .rohLocalizedBackButton()
         .refreshable { await store.retry(.products) }
         .navigationDestination(for: ROHProduct.self) { ROHProductDetailView(product: $0) }
     }
@@ -401,6 +531,7 @@ private struct ROHProductDetailView: View {
             }
         }
         .background(rohCream).navigationTitle("Resource").navigationBarTitleDisplayMode(.inline)
+        .rohLocalizedBackButton()
     }
 }
 
@@ -436,12 +567,13 @@ private struct ROHSearchView: View {
                 ROHSearchGroup(title: "Resources", items: products) { Text($0.title).font(.headline).foregroundStyle(rohInk).frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 8) }
             }.padding(.horizontal, 20).padding(.bottom, 24)
         }
-        .background(rohCream).toolbar(.hidden, for: .navigationBar).rohDestinations()
+        .background(rohCream).toolbar(.visible, for: .navigationBar).rohDestinations()
+        .rohLocalizedBackButton()
     }
 }
 
 private struct ROHSearchGroup<Item: Identifiable & Hashable, Row: View>: View {
-    let title: String
+    let title: LocalizedStringKey
     let items: [Item]
     let row: (Item) -> Row
 
@@ -465,14 +597,14 @@ private struct ROHMoreView: View {
                 ROHWordmark().frame(maxWidth: .infinity).padding(.top, 8)
                 Text("Helping women thrive in Christ.").font(.system(size: 34, weight: .bold, design: .serif)).foregroundStyle(rohInk)
                 NavigationLink(destination: ROHSearchView()) { ROHLinkCard(title: "Search", subtitle: "Find podcasts and articles", icon: "magnifyingglass") }
-                NavigationLink(destination: ROHLanguageView()) { ROHLinkCard(title: "Language", subtitle: store.language.displayName, icon: "globe") }
+                NavigationLink(destination: ROHLanguageView()) { ROHLinkCard(title: "Language", subtitle: LocalizedStringKey(store.language.displayNameKey), icon: "globe") }
                 NavigationLink(destination: ROHPlaceholderView(title: "Downloads", message: "Downloaded episodes will appear here.")) { ROHLinkCard(title: "Downloads", subtitle: "Listen offline", icon: "arrow.down.circle") }
                 NavigationLink(destination: ROHPlaceholderView(title: "Notes", message: "Your saved notes will appear here.")) { ROHLinkCard(title: "Notes", subtitle: "Keep what you are learning", icon: "note.text") }
-                Button { openURL(URL(string: "https://www.reviveourhearts.com/")!) } label: { ROHLinkCard(title: "Visit Revive Our Hearts", subtitle: "Events, studies, and the resource library", icon: "safari") }
-                Button { openURL(URL(string: "https://www.reviveourhearts.com/donate/")!) } label: { ROHLinkCard(title: "Ways to give", subtitle: "Support the ministry", icon: "heart") }
-                Link("Privacy", destination: URL(string: "https://www.reviveourhearts.com/privacy-policy/")!)
-                Link("Terms", destination: URL(string: "https://www.reviveourhearts.com/terms-of-use/")!)
-                Link("Copyright", destination: URL(string: "https://www.reviveourhearts.com/permissions/")!)
+                Button { openURL(store.language.homeURL) } label: { ROHLinkCard(title: "Visit Revive Our Hearts", subtitle: "Events, studies, and the resource library", icon: "safari") }
+                Button { openURL(store.language.donateURL) } label: { ROHLinkCard(title: "Ways to give", subtitle: "Support the ministry", icon: "heart") }
+                Link("Privacy", destination: store.language.privacyURL)
+                Link("Terms", destination: store.language.termsURL)
+                Link("Copyright", destination: store.language.copyrightURL)
             }.padding(.horizontal, 20).padding(.bottom, 24)
         }
         .background(rohCream).toolbar(.hidden, for: .navigationBar)
@@ -511,7 +643,7 @@ private struct ROHLanguageView: View {
                                 .font(.title3)
                                 .foregroundStyle(rohTeal)
                                 .frame(width: 28)
-                            Text(language.displayName)
+                            Text(LocalizedStringKey(language.displayNameKey))
                                 .font(.headline)
                             Spacer()
                             if isChangingLanguage && language == store.language {
@@ -539,12 +671,15 @@ private struct ROHLanguageView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isChangingLanguage)
         .toolbar(.visible, for: .navigationBar)
+        .rohLocalizedBackButton(hidden: isChangingLanguage)
         .overlay {
             if isChangingLanguage {
                 Color.black.opacity(0.12)
                     .ignoresSafeArea()
                     .overlay {
-                        ProgressView("Loading \(store.language.displayName) content...")
+                        ProgressView {
+                            Text("Loading \(Text(LocalizedStringKey(store.language.displayNameKey))) content...")
+                        }
                             .padding(20)
                             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
                     }
@@ -567,26 +702,27 @@ private struct ROHLanguageView: View {
 }
 
 private struct ROHPlaceholderView: View {
-    let title: String
-    let message: String
+    let title: LocalizedStringKey
+    let message: LocalizedStringKey
 
     var body: some View {
         ContentUnavailableView(title, systemImage: "heart.text.square", description: Text(message))
             .background(rohCream)
             .navigationTitle(title)
+            .rohLocalizedBackButton()
     }
 }
 
 private struct ROHSectionState: View {
     @EnvironmentObject private var store: ROHContentStore
     let group: ROHContentStore.Group
-    let emptyText: String
+    let emptyText: LocalizedStringKey
 
     var body: some View {
         Group {
             if store.loadingGroups.contains(group) { ProgressView() }
             else if let error = store.errors[group] {
-                VStack(spacing: 8) { Text(error).font(.footnote); Button("Retry") { Task { await store.retry(group) } }.accessibilityIdentifier("roh-retry-button") }
+                VStack(spacing: 8) { Text(LocalizedStringKey(error)).font(.footnote); Button("Retry") { Task { await store.retry(group) } }.accessibilityIdentifier("roh-retry-button") }
             } else { Text(emptyText).font(.footnote).foregroundStyle(.secondary) }
         }.frame(maxWidth: .infinity).padding(.horizontal, 20)
     }
@@ -611,7 +747,7 @@ private struct ROHInlineRetry: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            Text(message).font(.footnote).foregroundStyle(.secondary)
+            Text(LocalizedStringKey(message)).font(.footnote).foregroundStyle(.secondary)
             Button("Retry") { Task { await action() } }.accessibilityIdentifier("roh-retry-button")
         }
         .frame(maxWidth: .infinity).padding()
@@ -624,9 +760,10 @@ private struct ROHFeatureCard: View {
 }
 
 private struct ROHEpisodeHero: View {
+    @Environment(\.locale) private var locale
     let episode: ROHEpisode
     let showTitle: String
-    var body: some View { VStack(alignment: .leading, spacing: 0) { ROHRemoteImage(url: episode.wideImageURL).frame(maxWidth: .infinity).frame(height: 190); VStack(alignment: .leading, spacing: 8) { Text("TODAY'S EPISODE").font(.caption2.bold()).tracking(1.4).foregroundStyle(rohTeal); Text(episode.title).font(.system(size: 27, weight: .bold, design: .serif)).foregroundStyle(rohInk); Text(showTitle.uppercased()).font(.caption.bold()).foregroundStyle(rohTeal); Text(rohDate(episode.airDate, style: .medium)).font(.caption).foregroundStyle(.secondary) }.frame(maxWidth: .infinity, alignment: .leading).padding(16).background(.white) }.clipShape(RoundedRectangle(cornerRadius: 14)) }
+    var body: some View { VStack(alignment: .leading, spacing: 0) { ROHRemoteImage(url: episode.wideImageURL).frame(maxWidth: .infinity).frame(height: 190); VStack(alignment: .leading, spacing: 8) { Text("TODAY'S EPISODE").font(.caption2.bold()).tracking(1.4).foregroundStyle(rohTeal); Text(episode.title).font(.system(size: 27, weight: .bold, design: .serif)).foregroundStyle(rohInk); Text(showTitle.uppercased()).font(.caption.bold()).foregroundStyle(rohTeal); Text(rohDate(episode.airDate, style: .medium, locale: locale)).font(.caption).foregroundStyle(.secondary) }.frame(maxWidth: .infinity, alignment: .leading).padding(16).background(.white) }.clipShape(RoundedRectangle(cornerRadius: 14)) }
 }
 
 private struct ROHShowCard: View {
@@ -636,9 +773,10 @@ private struct ROHShowCard: View {
 }
 
 private struct ROHEpisodeRow: View {
+    @Environment(\.locale) private var locale
     let episode: ROHEpisode
     let showTitle: String
-    var body: some View { HStack(spacing: 12) { ROHRemoteImage(url: episode.squareImageURL).frame(width: 72, height: 72).clipShape(RoundedRectangle(cornerRadius: 9)); VStack(alignment: .leading, spacing: 3) { Text(episode.title).font(.subheadline.bold()).foregroundStyle(rohInk).lineLimit(2); Text(showTitle).font(.subheadline).foregroundStyle(rohTeal); Text(rohDate(episode.airDate, style: .medium)).font(.caption).foregroundStyle(.secondary) }; Spacer() }.contentShape(Rectangle()).accessibilityIdentifier("roh-episode-row") }
+    var body: some View { HStack(spacing: 12) { ROHRemoteImage(url: episode.squareImageURL).frame(width: 72, height: 72).clipShape(RoundedRectangle(cornerRadius: 9)); VStack(alignment: .leading, spacing: 3) { Text(episode.title).font(.subheadline.bold()).foregroundStyle(rohInk).lineLimit(2); Text(showTitle).font(.subheadline).foregroundStyle(rohTeal); Text(rohDate(episode.airDate, style: .medium, locale: locale)).font(.caption).foregroundStyle(.secondary) }; Spacer() }.contentShape(Rectangle()).accessibilityIdentifier("roh-episode-row") }
 }
 
 private struct ROHEpisodeLinkRow: View {
@@ -658,14 +796,15 @@ private struct ROHEpisodeLinkRow: View {
                     .frame(width: 40, height: 40)
                     .overlay(Circle().stroke(rohTeal.opacity(0.3)))
             }
-            .accessibilityLabel(player.isCurrent(episode) && player.isPlaying ? "Pause episode" : "Play episode")
+            .accessibilityLabel(player.isCurrent(episode) && player.isPlaying ? Text("Pause episode") : Text("Play episode"))
         }
     }
 }
 
 private struct ROHArticleRow: View {
+    @Environment(\.locale) private var locale
     let article: ROHArticle
-    var body: some View { HStack(spacing: 12) { ROHRemoteImage(url: article.image).frame(width: 82, height: 72).clipShape(RoundedRectangle(cornerRadius: 9)); VStack(alignment: .leading, spacing: 4) { Text(article.title).font(.headline).foregroundStyle(rohInk).lineLimit(2); Text(article.authors.joined(separator: ", ")).font(.caption).foregroundStyle(.secondary); Text(rohDate(article.date, style: .medium)).font(.caption2).foregroundStyle(.secondary) }; Spacer() }.accessibilityIdentifier("roh-article-row") }
+    var body: some View { HStack(spacing: 12) { ROHRemoteImage(url: article.image).frame(width: 82, height: 72).clipShape(RoundedRectangle(cornerRadius: 9)); VStack(alignment: .leading, spacing: 4) { Text(article.title).font(.headline).foregroundStyle(rohInk).lineLimit(2); Text(article.authors.joined(separator: ", ")).font(.caption).foregroundStyle(.secondary); Text(rohDate(article.date, style: .medium, locale: locale)).font(.caption2).foregroundStyle(.secondary) }; Spacer() }.accessibilityIdentifier("roh-article-row") }
 }
 
 private struct ROHProductCard: View {
@@ -674,23 +813,23 @@ private struct ROHProductCard: View {
 }
 
 private struct ROHHeader: View {
-    var title: String?; var tagline: String?
-    init(title: String? = nil, tagline: String? = nil) { self.title = title; self.tagline = tagline }
+    var title: LocalizedStringKey?; var tagline: LocalizedStringKey?
+    init(title: LocalizedStringKey? = nil, tagline: LocalizedStringKey? = nil) { self.title = title; self.tagline = tagline }
     var body: some View { HStack { ROHWordmark(); Spacer(); Text(title ?? tagline ?? "").font(title == nil ? .caption2.bold() : .title3.bold()).tracking(title == nil ? 1.8 : 0).foregroundStyle(title == nil ? rohTeal : rohInk) }.padding(.horizontal, 20).frame(height: 62).background(rohCream).overlay(alignment: .bottom) { Divider() } }
 }
 
 private struct ROHWordmark: View {
-    var body: some View { HStack(spacing: 5) { Image(systemName: "heart"); Text("Revive Our Hearts").font(.custom("Snell Roundhand", size: 20).weight(.semibold)).lineLimit(1) }.foregroundStyle(rohInk).accessibilityElement(children: .combine).accessibilityLabel("Revive Our Hearts") }
+    var body: some View { HStack(spacing: 5) { Image(systemName: "heart"); Text("Revive Our Hearts").font(.custom("Snell Roundhand", size: 20).weight(.semibold)).lineLimit(1).minimumScaleFactor(0.7).allowsTightening(true) }.foregroundStyle(rohInk).accessibilityElement(children: .combine).accessibilityLabel("Revive Our Hearts") }
 }
 
 private struct ROHSectionTitle: View {
-    let title: String
-    init(_ title: String) { self.title = title }
+    let title: LocalizedStringKey
+    init(_ title: LocalizedStringKey) { self.title = title }
     var body: some View { Text(title).font(.system(size: 25, weight: .bold, design: .serif)).foregroundStyle(rohInk).padding(.horizontal, 20) }
 }
 
 private struct ROHLinkCard: View {
-    let title: String; let subtitle: String; let icon: String
+    let title: LocalizedStringKey; let subtitle: LocalizedStringKey; let icon: String
     var body: some View { HStack(spacing: 14) { Image(systemName: icon).font(.title3).foregroundStyle(rohTeal).frame(width: 28); VStack(alignment: .leading) { Text(title).font(.headline); Text(subtitle).font(.subheadline).foregroundStyle(.secondary) }; Spacer(); Image(systemName: "chevron.right").foregroundStyle(.secondary) }.foregroundStyle(rohInk).padding(16).background(.white, in: RoundedRectangle(cornerRadius: 12)) }
 }
 
@@ -792,6 +931,29 @@ private extension View {
             .navigationDestination(for: ROHShow.self) { ROHShowDetailView(show: $0) }
             .navigationDestination(for: ROHArticle.self) { ROHArticleDetailView(article: $0) }
             .navigationDestination(for: ROHProduct.self) { ROHProductDetailView(product: $0) }
+    }
+
+    func rohLocalizedBackButton(hidden: Bool = false) -> some View {
+        modifier(ROHLocalizedBackButton(hidden: hidden))
+    }
+}
+
+private struct ROHLocalizedBackButton: ViewModifier {
+    @Environment(\.dismiss) private var dismiss
+    let hidden: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                if !hidden {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button { dismiss() } label: {
+                            Label("Back", systemImage: "chevron.left")
+                        }
+                    }
+                }
+            }
     }
 }
 
@@ -929,7 +1091,7 @@ private struct ROHAudioPlayerView: View {
     var body: some View {
         VStack(spacing: 12) {
             if player.isCurrent(episode), let error = player.error {
-                Text(error).font(.footnote).foregroundStyle(.red)
+                Text(LocalizedStringKey(error)).font(.footnote).foregroundStyle(.red)
             }
             HStack(spacing: 24) {
                 Button { player.seek(by: -15) } label: { Image(systemName: "gobackward.15") }
@@ -938,7 +1100,7 @@ private struct ROHAudioPlayerView: View {
                     Image(systemName: player.isCurrent(episode) && player.isPlaying ? "pause.fill" : "play.fill")
                         .frame(width: 52, height: 52).foregroundStyle(.white).background(rohTeal, in: Circle())
                 }
-                .accessibilityLabel(player.isCurrent(episode) && player.isPlaying ? "Pause episode" : "Play episode")
+                .accessibilityLabel(player.isCurrent(episode) && player.isPlaying ? Text("Pause episode") : Text("Play episode"))
                 Button { player.seek(by: 15) } label: { Image(systemName: "goforward.15") }
                     .disabled(!player.isCurrent(episode))
             }
@@ -987,7 +1149,7 @@ private struct ROHMiniPlayer: View {
                     Button(action: player.toggle) {
                         Image(systemName: player.isPlaying ? "pause.fill" : "play.fill").frame(width: 40, height: 40)
                     }
-                    .accessibilityLabel(player.isPlaying ? "Pause episode" : "Play episode")
+                    .accessibilityLabel(player.isPlaying ? Text("Pause episode") : Text("Play episode"))
                     Button(action: player.close) {
                         Image(systemName: "xmark").frame(width: 32, height: 40)
                     }
@@ -1005,11 +1167,12 @@ private struct ROHMiniPlayer: View {
 
 private func rohTime(_ seconds: Double) -> String { let value = max(0, Int(seconds)); return String(format: "%d:%02d", value / 60, value % 60) }
 
-private func rohDate(_ date: Date, style: DateFormatter.Style) -> String {
+private func rohDate(_ date: Date, style: DateFormatter.Style, locale: Locale) -> String {
     let formatter = DateFormatter()
     formatter.dateStyle = style
     formatter.timeStyle = .none
     formatter.timeZone = TimeZone(identifier: "America/New_York")
+    formatter.locale = locale
     return formatter.string(from: date)
 }
 

@@ -56,6 +56,15 @@ final class ROHContentStore: ObservableObject {
         await loadInitialContent()
     }
 
+    func selectInitialLanguage(_ language: ROHContentLanguage) async {
+        UserDefaults.standard.set(language.rawValue, forKey: ROHContentLanguage.preferenceKey)
+        if language == self.language {
+            await loadInitialContent()
+        } else {
+            await setLanguage(language)
+        }
+    }
+
     func loadInitialContent() async {
         guard !didStartInitialLoad else { return }
         didStartInitialLoad = true
@@ -171,7 +180,8 @@ final class ROHContentStore: ObservableObject {
     }
 
     func showTitle(for episode: ROHEpisode) -> String {
-        shows.first(where: { $0.id == episode.podcastID })?.title ?? "Revive Our Hearts"
+        shows.first(where: { $0.id == episode.podcastID })?.title
+            ?? (language == .spanish ? "Aviva Nuestros Corazones" : "Revive Our Hearts")
     }
 
     func retryPagination(_ group: Group) async {

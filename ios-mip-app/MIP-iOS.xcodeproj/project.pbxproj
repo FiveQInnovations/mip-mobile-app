@@ -12,6 +12,8 @@
 		A80A00012D00000100000010 /* ROHAPIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000013 /* ROHAPIModels.swift */; };
 		A80A00012D00000100000011 /* ROHAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000014 /* ROHAPIClient.swift */; };
 		A80A00012D00000100000012 /* ROHContentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000015 /* ROHContentStore.swift */; };
+		A80A00012D00000100000016 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000017 /* Localizable.strings */; };
+		A80A00012D00000100000020 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000021 /* InfoPlist.strings */; };
 		101ED9219AF1391DD48076AB /* SiteConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 11F56EDA5C681DEFFB898D84 /* SiteConfig.plist */; };
 		10BCBDFD955489821B691CAE /* SiteConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = E6A3FF941F2E2C006E52951B /* SiteConfig.plist */; };
 		A91100000000000000000002 /* AppProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91100000000000000000001 /* AppProfile.swift */; };
@@ -105,6 +107,10 @@
 		A80A00012D00000100000013 /* ROHAPIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHAPIModels.swift; sourceTree = "<group>"; };
 		A80A00012D00000100000014 /* ROHAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHAPIClient.swift; sourceTree = "<group>"; };
 		A80A00012D00000100000015 /* ROHContentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHContentStore.swift; sourceTree = "<group>"; };
+		A80A00012D00000100000018 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A80A00012D00000100000019 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A80A00012D00000100000022 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A80A00012D00000100000023 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		04DCFF956A7460315C50345D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		11F56EDA5C681DEFFB898D84 /* SiteConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = SiteConfig.plist; sourceTree = "<group>"; };
 		A91100000000000000000001 /* AppProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppProfile.swift; sourceTree = "<group>"; };
@@ -202,6 +208,8 @@
 				A80A00012D00000100000014 /* ROHAPIClient.swift */,
 				A80A00012D00000100000015 /* ROHContentStore.swift */,
 				A80A00012D00000100000005 /* ROHPrototypeView.swift */,
+				A80A00012D00000100000017 /* Localizable.strings */,
+				A80A00012D00000100000021 /* InfoPlist.strings */,
 			);
 			path = ROH;
 			sourceTree = "<group>";
@@ -483,6 +491,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				es,
 				Base,
 			);
 			mainGroup = A71111002B0000010000FFCI;
@@ -507,6 +516,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A80A00012D00000100000016 /* Localizable.strings in Resources */,
+				A80A00012D00000100000020 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -645,6 +656,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		A80A00012D00000100000017 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A80A00012D00000100000018 /* en */,
+				A80A00012D00000100000019 /* es */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		A80A00012D00000100000021 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A80A00012D00000100000022 /* en */,
+				A80A00012D00000100000023 /* es */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin PBXTargetDependency section */
 		A712000A2C00000100000001 /* PBXTargetDependency */ = {
