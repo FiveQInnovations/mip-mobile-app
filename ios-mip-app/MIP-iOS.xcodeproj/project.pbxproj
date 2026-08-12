@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		A80A00012D00000100000006 /* ROHApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000004 /* ROHApp.swift */; };
 		A80A00012D00000100000007 /* ROHPrototypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000005 /* ROHPrototypeView.swift */; };
+		A80A00012D00000100000010 /* ROHAPIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000013 /* ROHAPIModels.swift */; };
+		A80A00012D00000100000011 /* ROHAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000014 /* ROHAPIClient.swift */; };
+		A80A00012D00000100000012 /* ROHContentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000015 /* ROHContentStore.swift */; };
 		101ED9219AF1391DD48076AB /* SiteConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 11F56EDA5C681DEFFB898D84 /* SiteConfig.plist */; };
 		10BCBDFD955489821B691CAE /* SiteConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = E6A3FF941F2E2C006E52951B /* SiteConfig.plist */; };
 		A91100000000000000000002 /* AppProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91100000000000000000001 /* AppProfile.swift */; };
@@ -99,6 +102,9 @@
 		A80A00012D00000100000002 /* ROH.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ROH.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A80A00012D00000100000004 /* ROHApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHApp.swift; sourceTree = "<group>"; };
 		A80A00012D00000100000005 /* ROHPrototypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHPrototypeView.swift; sourceTree = "<group>"; };
+		A80A00012D00000100000013 /* ROHAPIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHAPIModels.swift; sourceTree = "<group>"; };
+		A80A00012D00000100000014 /* ROHAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHAPIClient.swift; sourceTree = "<group>"; };
+		A80A00012D00000100000015 /* ROHContentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHContentStore.swift; sourceTree = "<group>"; };
 		04DCFF956A7460315C50345D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		11F56EDA5C681DEFFB898D84 /* SiteConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = SiteConfig.plist; sourceTree = "<group>"; };
 		A91100000000000000000001 /* AppProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppProfile.swift; sourceTree = "<group>"; };
@@ -192,6 +198,9 @@
 			isa = PBXGroup;
 			children = (
 				A80A00012D00000100000004 /* ROHApp.swift */,
+				A80A00012D00000100000013 /* ROHAPIModels.swift */,
+				A80A00012D00000100000014 /* ROHAPIClient.swift */,
+				A80A00012D00000100000015 /* ROHContentStore.swift */,
 				A80A00012D00000100000005 /* ROHPrototypeView.swift */,
 			);
 			path = ROH;
@@ -543,6 +552,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				A80A00012D00000100000006 /* ROHApp.swift in Sources */,
+				A80A00012D00000100000010 /* ROHAPIModels.swift in Sources */,
+				A80A00012D00000100000011 /* ROHAPIClient.swift in Sources */,
+				A80A00012D00000100000012 /* ROHContentStore.swift in Sources */,
 				A80A00012D00000100000007 /* ROHPrototypeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
