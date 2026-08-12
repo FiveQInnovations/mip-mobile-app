@@ -7,23 +7,43 @@ let rohTeal = Color(red: 0.06, green: 0.54, blue: 0.61)
 let rohCream = Color(red: 0.98, green: 0.97, blue: 0.94)
 
 struct ROHRootView: View {
+    @EnvironmentObject private var player: ROHAudioPlayerModel
+    @State private var isPlayerPresented = false
+
     var body: some View {
         TabView {
             NavigationStack { ROHHomeView() }
+                .rohMiniPlayerInset { isPlayerPresented = true }
                 .tabItem { Label("Home", systemImage: "house") }
             NavigationStack { ROHShowsView() }
-                .tabItem { Label("Shows", systemImage: "waveform") }
-            NavigationStack { ROHSearchView() }
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
+                .rohMiniPlayerInset { isPlayerPresented = true }
+                .tabItem { Label("Podcasts", systemImage: "waveform") }
+            NavigationStack { ROHArticlesView(isTabRoot: true) }
+                .rohMiniPlayerInset { isPlayerPresented = true }
+                .tabItem { Label("Blogs", systemImage: "text.page") }
             NavigationStack { ROHMoreView() }
+                .rohMiniPlayerInset { isPlayerPresented = true }
                 .tabItem { Label("More", systemImage: "ellipsis") }
         }
         .tint(rohTeal)
+        .sheet(isPresented: $isPlayerPresented) {
+            if let episode = player.currentEpisode {
+                NavigationStack {
+                    ROHEpisodeDetailView(episode: episode)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Close") { isPlayerPresented = false }
+                            }
+                        }
+                }
+            }
+        }
     }
 }
 
 private struct ROHHomeView: View {
     @EnvironmentObject private var store: ROHContentStore
+    @EnvironmentObject private var player: ROHAudioPlayerModel
     @Environment(\.openURL) private var openURL
 
     var body: some View {
@@ -61,6 +81,12 @@ private struct ROHHomeView: View {
                             ROHEpisodeHero(episode: episode, showTitle: store.showTitle(for: episode))
                         }
                         .buttonStyle(.plain)
+                        Button {
+                            player.play(episode)
+                        } label: {
+                            Label(player.isCurrent(episode) && player.isPlaying ? "PAUSE EPISODE" : "PLAY EPISODE", systemImage: player.isCurrent(episode) && player.isPlaying ? "pause.fill" : "play.fill")
+                        }
+                        .buttonStyle(ROHCompactPlayButtonStyle())
                     }
                     .padding(20)
                     .background(rohInk)
@@ -86,10 +112,7 @@ private struct ROHHomeView: View {
                 if store.episodes.count > 1 {
                     ROHSectionTitle("Latest episodes")
                     ForEach(store.episodes.dropFirst().prefix(5)) { episode in
-                        NavigationLink(value: episode) {
-                            ROHEpisodeRow(episode: episode, showTitle: store.showTitle(for: episode))
-                        }
-                        .buttonStyle(.plain)
+                        ROHEpisodeLinkRow(episode: episode, showTitle: store.showTitle(for: episode))
                         .padding(.horizontal, 20)
                     }
                 }
@@ -145,7 +168,7 @@ private struct ROHShowsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                ROHHeader(title: "Shows")
+                ROHHeader(title: "Podcasts")
                 Text("Listen across the full podcast family without leaving the app.")
                     .font(.system(size: 26, weight: .medium, design: .serif))
                     .foregroundStyle(.secondary).padding(.horizontal, 20)
@@ -190,8 +213,7 @@ private struct ROHShowDetailView: View {
                         Text("No episodes are available for this show.").foregroundStyle(.secondary)
                     } else {
                         ForEach(episodes) { episode in
-                            NavigationLink(value: episode) { ROHEpisodeRow(episode: episode, showTitle: show.title) }
-                                .buttonStyle(.plain)
+                            ROHEpisodeLinkRow(episode: episode, showTitle: show.title)
                                 .task { await store.loadMoreEpisodes(for: show, currentItem: episode) }
                             Divider()
                         }
@@ -222,8 +244,8 @@ private struct ROHEpisodeDetailView: View {
                     Text(store.showTitle(for: episode).uppercased()).font(.caption.bold()).tracking(1.3).foregroundStyle(rohTeal)
                     Text(episode.title).font(.system(size: 34, weight: .bold, design: .serif)).foregroundStyle(rohInk)
                     Text(rohDate(episode.airDate, style: .long)).foregroundStyle(.secondary)
-                    if let mediaURL = episode.mediaURL {
-                        ROHAudioPlayerView(url: mediaURL)
+                    if episode.mediaURL != nil {
+                        ROHAudioPlayerView(episode: episode)
                     } else {
                         Label("Audio is unavailable for this episode.", systemImage: "speaker.slash").foregroundStyle(.secondary)
                     }
@@ -239,11 +261,16 @@ private struct ROHEpisodeDetailView: View {
 
 private struct ROHArticlesView: View {
     @EnvironmentObject private var store: ROHContentStore
+    var isTabRoot = false
 
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 16) {
-                Text("Blogs").font(.system(size: 36, weight: .bold, design: .serif)).foregroundStyle(rohInk)
+                if isTabRoot {
+                    ROHHeader(title: "Blogs").padding(.horizontal, -20).padding(.top, -20)
+                } else {
+                    Text("Blogs").font(.system(size: 36, weight: .bold, design: .serif)).foregroundStyle(rohInk)
+                }
                 Text("Biblical truth for everyday life.").font(.title3).foregroundStyle(.secondary)
                 ForEach(store.blogs) { blog in
                     NavigationLink(value: blog) {
@@ -262,7 +289,10 @@ private struct ROHArticlesView: View {
                 ROHPaginationState(group: .articles)
             }.padding(20)
         }
-        .background(rohCream).navigationTitle("Articles").navigationBarTitleDisplayMode(.inline)
+        .background(rohCream)
+        .navigationTitle(isTabRoot ? "" : "Articles")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(isTabRoot ? .hidden : .visible, for: .navigationBar)
         .refreshable { await store.retry(.articles); await store.retry(.blogs) }
         .navigationDestination(for: ROHBlog.self) { ROHBlogDetailView(blog: $0) }
         .navigationDestination(for: ROHArticle.self) { ROHArticleDetailView(article: $0) }
@@ -392,7 +422,13 @@ private struct ROHSearchView: View {
                     .accessibilityIdentifier("roh-search-input")
                 Text("Search covers content currently loaded in the app.").font(.caption).foregroundStyle(.secondary)
                 ROHSearchGroup(title: "Shows", items: shows) { ROHShowCard(show: $0) }
-                ROHSearchGroup(title: "Episodes", items: episodes) { ROHEpisodeRow(episode: $0, showTitle: store.showTitle(for: $0)) }
+                if !episodes.isEmpty {
+                    Text("Episodes").font(.title3.bold()).foregroundStyle(rohInk).padding(.top, 8)
+                    ForEach(episodes) { episode in
+                        ROHEpisodeLinkRow(episode: episode, showTitle: store.showTitle(for: episode))
+                        Divider()
+                    }
+                }
                 ROHSearchGroup(title: "Articles", items: articles) { ROHArticleRow(article: $0) }
                 ROHSearchGroup(title: "Resources", items: products) { Text($0.title).font(.headline).foregroundStyle(rohInk).frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 8) }
             }.padding(.horizontal, 20).padding(.bottom, 24)
@@ -424,14 +460,29 @@ private struct ROHMoreView: View {
                     .padding(.horizontal, -20)
                 ROHWordmark().frame(maxWidth: .infinity).padding(.top, 8)
                 Text("Helping women thrive in Christ.").font(.system(size: 34, weight: .bold, design: .serif)).foregroundStyle(rohInk)
-                NavigationLink(destination: ROHArticlesView()) { ROHLinkCard(title: "Articles", subtitle: "Biblical truth for everyday life", icon: "text.page") }
-                NavigationLink(destination: ROHStoreView()) { ROHLinkCard(title: "Store", subtitle: "Books, studies, and resources", icon: "bag") }
+                NavigationLink(destination: ROHSearchView()) { ROHLinkCard(title: "Search", subtitle: "Find podcasts and articles", icon: "magnifyingglass") }
+                NavigationLink(destination: ROHPlaceholderView(title: "Languages", message: "Choose the language you want to explore.")) { ROHLinkCard(title: "Languages", subtitle: "Explore Revive Our Hearts in your language", icon: "globe") }
+                NavigationLink(destination: ROHPlaceholderView(title: "Downloads", message: "Downloaded episodes will appear here.")) { ROHLinkCard(title: "Downloads", subtitle: "Listen offline", icon: "arrow.down.circle") }
+                NavigationLink(destination: ROHPlaceholderView(title: "Notes", message: "Your saved notes will appear here.")) { ROHLinkCard(title: "Notes", subtitle: "Keep what you are learning", icon: "note.text") }
                 Button { openURL(URL(string: "https://www.reviveourhearts.com/")!) } label: { ROHLinkCard(title: "Visit Revive Our Hearts", subtitle: "Events, studies, and the resource library", icon: "safari") }
                 Button { openURL(URL(string: "https://www.reviveourhearts.com/donate/")!) } label: { ROHLinkCard(title: "Ways to give", subtitle: "Support the ministry", icon: "heart") }
-                Text("Downloads, notes, and additional languages are planned for a future release.").font(.footnote).foregroundStyle(.secondary)
+                Link("Privacy", destination: URL(string: "https://www.reviveourhearts.com/privacy-policy/")!)
+                Link("Terms", destination: URL(string: "https://www.reviveourhearts.com/terms-of-use/")!)
+                Link("Copyright", destination: URL(string: "https://www.reviveourhearts.com/permissions/")!)
             }.padding(.horizontal, 20).padding(.bottom, 24)
         }
         .background(rohCream).toolbar(.hidden, for: .navigationBar)
+    }
+}
+
+private struct ROHPlaceholderView: View {
+    let title: String
+    let message: String
+
+    var body: some View {
+        ContentUnavailableView(title, systemImage: "heart.text.square", description: Text(message))
+            .background(rohCream)
+            .navigationTitle(title)
     }
 }
 
@@ -484,7 +535,7 @@ private struct ROHFeatureCard: View {
 private struct ROHEpisodeHero: View {
     let episode: ROHEpisode
     let showTitle: String
-    var body: some View { VStack(alignment: .leading, spacing: 0) { ROHRemoteImage(url: episode.wideImageURL).frame(maxWidth: .infinity).frame(height: 190); VStack(alignment: .leading, spacing: 8) { Text("TODAY'S EPISODE").font(.caption2.bold()).tracking(1.4).foregroundStyle(rohTeal); Text(episode.title).font(.system(size: 27, weight: .bold, design: .serif)).foregroundStyle(rohInk); Text(showTitle.uppercased()).font(.caption.bold()).foregroundStyle(rohTeal); Label("PLAY EPISODE", systemImage: "play.fill").font(.caption.bold()).foregroundStyle(.white).padding(.horizontal, 14).padding(.vertical, 11).background(rohTeal, in: RoundedRectangle(cornerRadius: 6)); Text(rohDate(episode.airDate, style: .medium)).font(.caption).foregroundStyle(.secondary) }.frame(maxWidth: .infinity, alignment: .leading).padding(16).background(.white) }.clipShape(RoundedRectangle(cornerRadius: 14)) }
+    var body: some View { VStack(alignment: .leading, spacing: 0) { ROHRemoteImage(url: episode.wideImageURL).frame(maxWidth: .infinity).frame(height: 190); VStack(alignment: .leading, spacing: 8) { Text("TODAY'S EPISODE").font(.caption2.bold()).tracking(1.4).foregroundStyle(rohTeal); Text(episode.title).font(.system(size: 27, weight: .bold, design: .serif)).foregroundStyle(rohInk); Text(showTitle.uppercased()).font(.caption.bold()).foregroundStyle(rohTeal); Text(rohDate(episode.airDate, style: .medium)).font(.caption).foregroundStyle(.secondary) }.frame(maxWidth: .infinity, alignment: .leading).padding(16).background(.white) }.clipShape(RoundedRectangle(cornerRadius: 14)) }
 }
 
 private struct ROHShowCard: View {
@@ -496,7 +547,29 @@ private struct ROHShowCard: View {
 private struct ROHEpisodeRow: View {
     let episode: ROHEpisode
     let showTitle: String
-    var body: some View { HStack(spacing: 12) { ROHRemoteImage(url: episode.squareImageURL).frame(width: 72, height: 72).clipShape(RoundedRectangle(cornerRadius: 9)); VStack(alignment: .leading, spacing: 3) { Text(episode.title).font(.subheadline.bold()).foregroundStyle(rohInk).lineLimit(2); Text(showTitle).font(.subheadline).foregroundStyle(rohTeal); Text(rohDate(episode.airDate, style: .medium)).font(.caption).foregroundStyle(.secondary) }; Spacer(); Image(systemName: "play.fill").foregroundStyle(rohTeal).frame(width: 40, height: 40).overlay(Circle().stroke(rohTeal.opacity(0.3))) }.contentShape(Rectangle()).accessibilityIdentifier("roh-episode-row") }
+    var body: some View { HStack(spacing: 12) { ROHRemoteImage(url: episode.squareImageURL).frame(width: 72, height: 72).clipShape(RoundedRectangle(cornerRadius: 9)); VStack(alignment: .leading, spacing: 3) { Text(episode.title).font(.subheadline.bold()).foregroundStyle(rohInk).lineLimit(2); Text(showTitle).font(.subheadline).foregroundStyle(rohTeal); Text(rohDate(episode.airDate, style: .medium)).font(.caption).foregroundStyle(.secondary) }; Spacer() }.contentShape(Rectangle()).accessibilityIdentifier("roh-episode-row") }
+}
+
+private struct ROHEpisodeLinkRow: View {
+    @EnvironmentObject private var player: ROHAudioPlayerModel
+    let episode: ROHEpisode
+    let showTitle: String
+
+    var body: some View {
+        HStack(spacing: 8) {
+            NavigationLink(value: episode) {
+                ROHEpisodeRow(episode: episode, showTitle: showTitle)
+            }
+            .buttonStyle(.plain)
+            Button { player.play(episode) } label: {
+                Image(systemName: player.isCurrent(episode) && player.isPlaying ? "pause.fill" : "play.fill")
+                    .foregroundStyle(rohTeal)
+                    .frame(width: 40, height: 40)
+                    .overlay(Circle().stroke(rohTeal.opacity(0.3)))
+            }
+            .accessibilityLabel(player.isCurrent(episode) && player.isPlaying ? "Pause episode" : "Play episode")
+        }
+    }
 }
 
 private struct ROHArticleRow: View {
@@ -567,12 +640,40 @@ private struct ROHPrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View { configuration.label.font(.headline).frame(maxWidth: .infinity).padding().foregroundStyle(.white).background(rohTeal.opacity(configuration.isPressed ? 0.75 : 1), in: RoundedRectangle(cornerRadius: 10)) }
 }
 
+private struct ROHCompactPlayButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.caption.bold())
+            .foregroundStyle(.white)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 11)
+            .background(rohTeal.opacity(configuration.isPressed ? 0.75 : 1), in: RoundedRectangle(cornerRadius: 6))
+    }
+}
+
 private extension View {
+    func rohMiniPlayerInset(openPlayer: @escaping () -> Void) -> some View {
+        modifier(ROHMiniPlayerInset(openPlayer: openPlayer))
+    }
+
     func rohDestinations() -> some View {
         navigationDestination(for: ROHEpisode.self) { ROHEpisodeDetailView(episode: $0) }
             .navigationDestination(for: ROHShow.self) { ROHShowDetailView(show: $0) }
             .navigationDestination(for: ROHArticle.self) { ROHArticleDetailView(article: $0) }
             .navigationDestination(for: ROHProduct.self) { ROHProductDetailView(product: $0) }
+    }
+}
+
+private struct ROHMiniPlayerInset: ViewModifier {
+    @EnvironmentObject private var player: ROHAudioPlayerModel
+    let openPlayer: () -> Void
+
+    func body(content: Content) -> some View {
+        content.safeAreaInset(edge: .bottom, spacing: 0) {
+            if player.currentEpisode != nil {
+                ROHMiniPlayer(openPlayer: openPlayer)
+            }
+        }
     }
 }
 
@@ -587,27 +688,40 @@ private func rohPlainText(from html: String) -> String {
 }
 
 @MainActor
-private final class ROHAudioPlayerModel: ObservableObject {
+final class ROHAudioPlayerModel: ObservableObject {
+    @Published private(set) var currentEpisode: ROHEpisode?
     @Published var isPlaying = false
     @Published var isLoading = false
     @Published var elapsed: Double = 0
     @Published var duration: Double = 0
     @Published var error: String?
-    private let url: URL
     private var player: AVPlayer?
     private var timeObserver: Any?
     private var statusObservation: NSKeyValueObservation?
     private var playbackObservation: NSKeyValueObservation?
     private var endObserver: NSObjectProtocol?
 
-    init(url: URL) {
-        self.url = url
+    func play(_ episode: ROHEpisode) {
+        guard let url = episode.mediaURL else {
+            error = "Audio is unavailable for this episode."
+            return
+        }
+        if isCurrent(episode), player != nil {
+            toggle()
+            return
+        }
+        load(episode: episode, url: url)
+        player?.play()
     }
 
-    func prepare() async {
-        guard player == nil else { return }
-        await Task.yield()
+    func isCurrent(_ episode: ROHEpisode) -> Bool { currentEpisode?.id == episode.id }
 
+    private func load(episode: ROHEpisode, url: URL) {
+        removeObservers()
+        currentEpisode = episode
+        elapsed = 0
+        duration = 0
+        error = nil
         let player = AVPlayer(url: url)
         self.player = player
         isLoading = true
@@ -640,7 +754,37 @@ private final class ROHAudioPlayerModel: ObservableObject {
         if isPlaying { player.pause() } else { player.play() }
     }
 
-    func stop() { player?.pause(); isPlaying = false }
+    func seek(by seconds: Double) { seek(to: elapsed + seconds) }
+
+    func seek(to seconds: Double) {
+        guard let player else { return }
+        let upperBound = duration > 0 ? duration : seconds
+        let target = min(max(0, seconds), upperBound)
+        player.seek(to: CMTime(seconds: target, preferredTimescale: 600))
+        elapsed = target
+    }
+
+    func close() {
+        player?.pause()
+        removeObservers()
+        player = nil
+        currentEpisode = nil
+        isPlaying = false
+        isLoading = false
+        elapsed = 0
+        duration = 0
+        error = nil
+    }
+
+    private func removeObservers() {
+        if let timeObserver { player?.removeTimeObserver(timeObserver) }
+        if let endObserver { NotificationCenter.default.removeObserver(endObserver) }
+        timeObserver = nil
+        endObserver = nil
+        statusObservation = nil
+        playbackObservation = nil
+    }
+
     deinit {
         if let timeObserver { player?.removeTimeObserver(timeObserver) }
         if let endObserver { NotificationCenter.default.removeObserver(endObserver) }
@@ -648,9 +792,84 @@ private final class ROHAudioPlayerModel: ObservableObject {
 }
 
 private struct ROHAudioPlayerView: View {
-    @StateObject private var model: ROHAudioPlayerModel
-    init(url: URL) { _model = StateObject(wrappedValue: ROHAudioPlayerModel(url: url)) }
-    var body: some View { VStack(spacing: 10) { if let error = model.error { Text(error).font(.footnote).foregroundStyle(.red) } else { HStack { Button(action: model.toggle) { Image(systemName: model.isPlaying ? "pause.fill" : "play.fill").frame(width: 48, height: 48).foregroundStyle(.white).background(rohTeal, in: Circle()) }.accessibilityLabel(model.isPlaying ? "Pause episode" : "Play episode"); if model.isLoading { ProgressView() }; VStack { ProgressView(value: model.elapsed, total: max(model.duration, 1)).tint(rohTeal); HStack { Text(rohTime(model.elapsed)); Spacer(); Text(model.duration > 0 ? rohTime(model.duration) : "--:--") }.font(.caption.monospacedDigit()).foregroundStyle(.secondary) } } } }.padding(16).background(.white, in: RoundedRectangle(cornerRadius: 14)).task { await model.prepare() }.onDisappear { model.stop() } }
+    @EnvironmentObject private var player: ROHAudioPlayerModel
+    let episode: ROHEpisode
+
+    var body: some View {
+        VStack(spacing: 12) {
+            if player.isCurrent(episode), let error = player.error {
+                Text(error).font(.footnote).foregroundStyle(.red)
+            }
+            HStack(spacing: 24) {
+                Button { player.seek(by: -15) } label: { Image(systemName: "gobackward.15") }
+                    .disabled(!player.isCurrent(episode))
+                Button { player.play(episode) } label: {
+                    Image(systemName: player.isCurrent(episode) && player.isPlaying ? "pause.fill" : "play.fill")
+                        .frame(width: 52, height: 52).foregroundStyle(.white).background(rohTeal, in: Circle())
+                }
+                .accessibilityLabel(player.isCurrent(episode) && player.isPlaying ? "Pause episode" : "Play episode")
+                Button { player.seek(by: 15) } label: { Image(systemName: "goforward.15") }
+                    .disabled(!player.isCurrent(episode))
+            }
+            .font(.title3).foregroundStyle(rohTeal)
+            if player.isCurrent(episode) {
+                Slider(value: Binding(get: { player.elapsed }, set: { player.seek(to: $0) }), in: 0...max(player.duration, 1))
+                    .tint(rohTeal)
+                HStack {
+                    Text(rohTime(player.elapsed))
+                    Spacer()
+                    Text(player.duration > 0 ? "-\(rohTime(max(0, player.duration - player.elapsed)))" : "--:--")
+                }
+                .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
+            } else {
+                Text("Tap play to start this episode.").font(.footnote).foregroundStyle(.secondary)
+            }
+        }
+        .padding(16)
+        .background(.white, in: RoundedRectangle(cornerRadius: 14))
+        .accessibilityIdentifier("roh-audio-player")
+    }
+}
+
+private struct ROHMiniPlayer: View {
+    @EnvironmentObject private var store: ROHContentStore
+    @EnvironmentObject private var player: ROHAudioPlayerModel
+    let openPlayer: () -> Void
+
+    var body: some View {
+        if let episode = player.currentEpisode {
+            VStack(spacing: 0) {
+                ProgressView(value: player.elapsed, total: max(player.duration, 1)).tint(rohTeal)
+                HStack(spacing: 10) {
+                    Button(action: openPlayer) {
+                        HStack(spacing: 10) {
+                            ROHRemoteImage(url: episode.squareImageURL).frame(width: 48, height: 48).clipShape(RoundedRectangle(cornerRadius: 6))
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(episode.title).font(.subheadline.bold()).lineLimit(1)
+                                Text(store.showTitle(for: episode)).font(.caption).foregroundStyle(rohTeal).lineLimit(1)
+                            }
+                            Spacer()
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    Button(action: player.toggle) {
+                        Image(systemName: player.isPlaying ? "pause.fill" : "play.fill").frame(width: 40, height: 40)
+                    }
+                    .accessibilityLabel(player.isPlaying ? "Pause episode" : "Play episode")
+                    Button(action: player.close) {
+                        Image(systemName: "xmark").frame(width: 32, height: 40)
+                    }
+                    .accessibilityLabel("Close player")
+                }
+                .padding(.horizontal, 12).padding(.vertical, 8)
+            }
+            .foregroundStyle(rohInk)
+            .background(.regularMaterial)
+            .overlay(alignment: .top) { Divider() }
+            .accessibilityIdentifier("roh-mini-player")
+        }
+    }
 }
 
 private func rohTime(_ seconds: Double) -> String { let value = max(0, Int(seconds)); return String(format: "%d:%02d", value / 60, value % 60) }
