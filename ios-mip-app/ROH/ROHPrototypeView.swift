@@ -1,5 +1,6 @@
 import AVFoundation
 import SwiftUI
+import UIKit
 import WebKit
 
 let rohInk = Color(red: 0.03, green: 0.20, blue: 0.22)
@@ -327,6 +328,7 @@ private struct ROHBlogDetailView: View {
 }
 
 private struct ROHArticleDetailView: View {
+    @EnvironmentObject private var store: ROHContentStore
     let article: ROHArticle
     @State private var contentHeight: CGFloat = 300
 
@@ -337,7 +339,7 @@ private struct ROHArticleDetailView: View {
                     ROHRemoteImage(url: article.image).frame(maxWidth: .infinity).frame(height: 220).clipShape(RoundedRectangle(cornerRadius: 14))
                     Text(article.title).font(.system(size: 34, weight: .bold, design: .serif)).foregroundStyle(rohInk)
                     Text([article.authors.joined(separator: ", "), rohDate(article.date, style: .long)].filter { !$0.isEmpty }.joined(separator: " · ")).font(.subheadline).foregroundStyle(.secondary)
-                    ROHHTMLContentView(html: article.content, contentHeight: $contentHeight).frame(height: contentHeight)
+                    ROHHTMLContentView(html: article.content, baseURL: store.language.baseURL, contentHeight: $contentHeight).frame(height: contentHeight)
                 }
                 .frame(width: max(0, geometry.size.width - 40), alignment: .leading)
                 .padding(20)
@@ -374,6 +376,7 @@ private struct ROHStoreView: View {
 
 private struct ROHProductDetailView: View {
     @Environment(\.openURL) private var openURL
+    @EnvironmentObject private var store: ROHContentStore
     let product: ROHProduct
     @State private var contentHeight: CGFloat = 200
 
@@ -389,8 +392,8 @@ private struct ROHProductDetailView: View {
                     if !product.topics.isEmpty {
                         Text(product.topics.joined(separator: " · ")).font(.caption.bold()).foregroundStyle(rohTeal)
                     }
-                    ROHHTMLContentView(html: product.description, contentHeight: $contentHeight).frame(height: contentHeight)
-                    Button("View in store") { if let url = product.storeURL { openURL(url) } }
+                    ROHHTMLContentView(html: product.description, baseURL: store.language.baseURL, contentHeight: $contentHeight).frame(height: contentHeight)
+                    Button("View in store") { openURL(product.storeURL(for: store.language)) }
                         .buttonStyle(ROHPrimaryButtonStyle())
                 }
                 .frame(width: max(0, geometry.size.width - 40), alignment: .leading)
@@ -451,6 +454,7 @@ private struct ROHSearchGroup<Item: Identifiable & Hashable, Row: View>: View {
 }
 
 private struct ROHMoreView: View {
+    @EnvironmentObject private var store: ROHContentStore
     @Environment(\.openURL) private var openURL
 
     var body: some View {
@@ -461,7 +465,7 @@ private struct ROHMoreView: View {
                 ROHWordmark().frame(maxWidth: .infinity).padding(.top, 8)
                 Text("Helping women thrive in Christ.").font(.system(size: 34, weight: .bold, design: .serif)).foregroundStyle(rohInk)
                 NavigationLink(destination: ROHSearchView()) { ROHLinkCard(title: "Search", subtitle: "Find podcasts and articles", icon: "magnifyingglass") }
-                NavigationLink(destination: ROHPlaceholderView(title: "Languages", message: "Choose the language you want to explore.")) { ROHLinkCard(title: "Languages", subtitle: "Explore Revive Our Hearts in your language", icon: "globe") }
+                NavigationLink(destination: ROHLanguageView()) { ROHLinkCard(title: "Language", subtitle: store.language.displayName, icon: "globe") }
                 NavigationLink(destination: ROHPlaceholderView(title: "Downloads", message: "Downloaded episodes will appear here.")) { ROHLinkCard(title: "Downloads", subtitle: "Listen offline", icon: "arrow.down.circle") }
                 NavigationLink(destination: ROHPlaceholderView(title: "Notes", message: "Your saved notes will appear here.")) { ROHLinkCard(title: "Notes", subtitle: "Keep what you are learning", icon: "note.text") }
                 Button { openURL(URL(string: "https://www.reviveourhearts.com/")!) } label: { ROHLinkCard(title: "Visit Revive Our Hearts", subtitle: "Events, studies, and the resource library", icon: "safari") }
@@ -472,6 +476,93 @@ private struct ROHMoreView: View {
             }.padding(.horizontal, 20).padding(.bottom, 24)
         }
         .background(rohCream).toolbar(.hidden, for: .navigationBar)
+    }
+}
+
+private struct ROHLanguageView: View {
+    @EnvironmentObject private var store: ROHContentStore
+    @State private var isChangingLanguage = false
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Choose your content language")
+                    .font(.system(size: 32, weight: .bold, design: .serif))
+                    .foregroundStyle(rohInk)
+                Text("Podcasts, articles, and resources will reload in the language you select.")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+
+                ForEach(ROHContentLanguage.allCases) { language in
+                    Button {
+                        guard language != store.language else { return }
+                        isChangingLanguage = true
+                        Task {
+                            await store.setLanguage(language)
+                            await ROHImagePipeline.shared.prefetch(aboveFoldHomeImageURLs)
+                            isChangingLanguage = false
+                            Task {
+                                await ROHImagePipeline.shared.prefetch(homeImageURLs)
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 14) {
+                            Image(systemName: "globe")
+                                .font(.title3)
+                                .foregroundStyle(rohTeal)
+                                .frame(width: 28)
+                            Text(language.displayName)
+                                .font(.headline)
+                            Spacer()
+                            if isChangingLanguage && language == store.language {
+                                ProgressView()
+                                    .tint(rohTeal)
+                            } else if language == store.language {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.title3)
+                                    .foregroundStyle(rohTeal)
+                            }
+                        }
+                        .foregroundStyle(rohInk)
+                        .padding(16)
+                        .background(.white, in: RoundedRectangle(cornerRadius: 12))
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isChangingLanguage)
+                    .accessibilityIdentifier("roh-language-\(language.rawValue)")
+                }
+            }
+            .padding(20)
+        }
+        .background(rohCream)
+        .navigationTitle("Language")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(isChangingLanguage)
+        .toolbar(.visible, for: .navigationBar)
+        .overlay {
+            if isChangingLanguage {
+                Color.black.opacity(0.12)
+                    .ignoresSafeArea()
+                    .overlay {
+                        ProgressView("Loading \(store.language.displayName) content...")
+                            .padding(20)
+                            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
+                    }
+            }
+        }
+    }
+
+    private var homeImageURLs: [URL] {
+        store.features.prefix(4).compactMap(\.squareImage)
+            + store.episodes.prefix(1).compactMap(\.wideImageURL)
+            + store.shows.prefix(6).compactMap(\.squareImageURL)
+            + store.articles.prefix(3).compactMap(\.image)
+            + store.products.prefix(4).compactMap(\.cardImageURL)
+    }
+
+    private var aboveFoldHomeImageURLs: [URL] {
+        store.features.prefix(2).compactMap(\.squareImage)
+            + store.episodes.prefix(1).compactMap(\.wideImageURL)
     }
 }
 
@@ -605,18 +696,18 @@ private struct ROHLinkCard: View {
 
 private struct ROHRemoteImage: View {
     let url: URL?
+    @State private var image: UIImage?
+
     var body: some View {
         GeometryReader { geometry in
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .success(let image):
-                    image
+            Group {
+                if let image {
+                    Image(uiImage: image)
                         .resizable()
                         .scaledToFill()
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                case .failure:
+                } else if url == nil {
                     placeholder
-                default:
+                } else {
                     ZStack {
                         rohInk.opacity(0.08)
                         ProgressView().tint(rohTeal)
@@ -626,12 +717,52 @@ private struct ROHRemoteImage: View {
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
         .clipped()
+        .task(id: url) {
+            image = await ROHImagePipeline.shared.image(for: url)
+        }
     }
 
     private var placeholder: some View {
         ZStack {
             rohInk.opacity(0.12)
             Image(systemName: "photo").foregroundStyle(rohTeal)
+        }
+    }
+}
+
+private actor ROHImagePipeline {
+    static let shared = ROHImagePipeline()
+
+    private let cache = NSCache<NSURL, UIImage>()
+    private var requests: [URL: Task<UIImage?, Never>] = [:]
+
+    func image(for url: URL?) async -> UIImage? {
+        guard let url else { return nil }
+        if let image = cache.object(forKey: url as NSURL) { return image }
+        if let request = requests[url] { return await request.value }
+
+        let request = Task<UIImage?, Never> {
+            guard let (data, response) = try? await URLSession.shared.data(from: url),
+                  let response = response as? HTTPURLResponse,
+                  (200...299).contains(response.statusCode) else { return nil }
+            return UIImage(data: data)
+        }
+        requests[url] = request
+        let image = await request.value
+        requests[url] = nil
+        if let image {
+            cache.setObject(image, forKey: url as NSURL)
+        }
+        return image
+    }
+
+    func prefetch(_ urls: [URL]) async {
+        await withTaskGroup(of: Void.self) { group in
+            for url in Set(urls) {
+                group.addTask {
+                    _ = await self.image(for: url)
+                }
+            }
         }
     }
 }
@@ -884,6 +1015,7 @@ private func rohDate(_ date: Date, style: DateFormatter.Style) -> String {
 
 private struct ROHHTMLContentView: UIViewRepresentable {
     let html: String
+    let baseURL: URL
     @Binding var contentHeight: CGFloat
     @Environment(\.openURL) private var openURL
 
@@ -897,7 +1029,7 @@ private struct ROHHTMLContentView: UIViewRepresentable {
         <style>body{font:17px -apple-system;color:#1b3436;background:transparent;line-height:1.55;margin:0}img{max-width:100%;height:auto}a{color:#0f899b}h1,h2,h3{font-family:Georgia,serif}</style>
         \(html)
         """
-        view.loadHTMLString(document, baseURL: URL(string: "https://www.reviveourhearts.com"))
+        view.loadHTMLString(document, baseURL: baseURL)
     }
 
     final class Coordinator: NSObject, WKNavigationDelegate {

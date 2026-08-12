@@ -40,7 +40,12 @@ struct ROHAPIClient: ROHAPIClientProtocol {
     private let session: URLSession
     private let baseURL: URL
 
-    init(session: URLSession = .shared, baseURL: URL = URL(string: "https://www.reviveourhearts.com")!) {
+    init(session: URLSession = .shared, language: ROHContentLanguage = .english) {
+        self.session = session
+        self.baseURL = language.baseURL
+    }
+
+    init(session: URLSession = .shared, baseURL: URL) {
         self.session = session
         self.baseURL = baseURL
     }

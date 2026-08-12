@@ -2,6 +2,7 @@ import Foundation
 
 @MainActor
 final class ROHContentStore: ObservableObject {
+    @Published private(set) var language: ROHContentLanguage
     @Published private(set) var shows: [ROHShow] = []
     @Published private(set) var episodes: [ROHEpisode] = []
     @Published private(set) var blogs: [ROHBlog] = []
@@ -20,7 +21,8 @@ final class ROHContentStore: ObservableObject {
     @Published private(set) var blogArticleLoading: Set<Int> = []
     @Published private(set) var blogArticleErrors: [Int: String] = [:]
 
-    private let client: ROHAPIClientProtocol
+    private var client: ROHAPIClientProtocol
+    private let makeClient: (ROHContentLanguage) -> ROHAPIClientProtocol
     private var nextEpisodePage: URL?
     private var nextArticlePage: URL?
     private var nextProductPage: URL?
@@ -29,13 +31,29 @@ final class ROHContentStore: ObservableObject {
     private var loadedShowEpisodeIDs: Set<Int> = []
     private var loadedBlogArticleIDs: Set<Int> = []
     private var didStartInitialLoad = false
+    private var contentGeneration = 0
 
     enum Group: String, Hashable {
         case shows, episodes, blogs, articles, features, products
     }
 
-    init(client: ROHAPIClientProtocol = ROHAPIClient()) {
-        self.client = client
+    init(
+        language: ROHContentLanguage = .english,
+        clientFactory: @escaping (ROHContentLanguage) -> ROHAPIClientProtocol = { ROHAPIClient(language: $0) }
+    ) {
+        self.language = language
+        makeClient = clientFactory
+        client = clientFactory(language)
+    }
+
+    func setLanguage(_ language: ROHContentLanguage) async {
+        guard language != self.language else { return }
+        contentGeneration += 1
+        self.language = language
+        UserDefaults.standard.set(language.rawValue, forKey: ROHContentLanguage.preferenceKey)
+        client = makeClient(language)
+        resetContent()
+        await loadInitialContent()
     }
 
     func loadInitialContent() async {
@@ -91,14 +109,22 @@ final class ROHContentStore: ObservableObject {
         loadedShowEpisodeIDs.insert(show.id)
         showEpisodeLoading.insert(show.id)
         showEpisodeErrors[show.id] = nil
-        defer { showEpisodeLoading.remove(show.id) }
+        let generation = contentGeneration
+        let client = client
+        defer {
+            if generation == contentGeneration {
+                showEpisodeLoading.remove(show.id)
+            }
+        }
         do {
             let page = try await client.fetchEpisodes(showID: show.id, page: refresh ? nil : nextShowEpisodePages[show.id])
+            guard generation == contentGeneration else { return }
             showEpisodes[show.id] = refresh
                 ? page.items
                 : deduplicating((showEpisodes[show.id] ?? []) + page.items)
             nextShowEpisodePages[show.id] = page.nextPage
         } catch {
+            guard generation == contentGeneration else { return }
             loadedShowEpisodeIDs.remove(show.id)
             showEpisodeErrors[show.id] = error.localizedDescription
         }
@@ -116,14 +142,22 @@ final class ROHContentStore: ObservableObject {
         loadedBlogArticleIDs.insert(blog.id)
         blogArticleLoading.insert(blog.id)
         blogArticleErrors[blog.id] = nil
-        defer { blogArticleLoading.remove(blog.id) }
+        let generation = contentGeneration
+        let client = client
+        defer {
+            if generation == contentGeneration {
+                blogArticleLoading.remove(blog.id)
+            }
+        }
         do {
             let page = try await client.fetchArticles(blogID: blog.id, page: refresh ? nil : nextBlogArticlePages[blog.id])
+            guard generation == contentGeneration else { return }
             blogArticles[blog.id] = refresh
                 ? page.items
                 : deduplicating((blogArticles[blog.id] ?? []) + page.items)
             nextBlogArticlePages[blog.id] = page.nextPage
         } catch {
+            guard generation == contentGeneration else { return }
             loadedBlogArticleIDs.remove(blog.id)
             blogArticleErrors[blog.id] = error.localizedDescription
         }
@@ -150,42 +184,70 @@ final class ROHContentStore: ObservableObject {
     }
 
     private func loadShows() async {
-        await load(.shows) { shows = try await client.fetchShows() }
+        let generation = contentGeneration
+        let client = client
+        await load(.shows, generation: generation) {
+            let result = try await client.fetchShows()
+            guard generation == contentGeneration else { return }
+            shows = result
+        }
     }
 
     private func loadBlogs() async {
-        await load(.blogs) { blogs = try await client.fetchBlogs() }
+        let generation = contentGeneration
+        let client = client
+        await load(.blogs, generation: generation) {
+            let result = try await client.fetchBlogs()
+            guard generation == contentGeneration else { return }
+            blogs = result
+        }
     }
 
     private func loadFeatures() async {
-        await load(.features) { features = try await client.fetchFeatures() }
+        let generation = contentGeneration
+        let client = client
+        await load(.features, generation: generation) {
+            let result = try await client.fetchFeatures()
+            guard generation == contentGeneration else { return }
+            features = result
+        }
     }
 
     private func loadEpisodes(refresh: Bool) async {
-        await load(.episodes, isPagination: !refresh) {
+        let generation = contentGeneration
+        let client = client
+        await load(.episodes, isPagination: !refresh, generation: generation) {
             let page = try await client.fetchEpisodes(page: refresh ? nil : nextEpisodePage)
+            guard generation == contentGeneration else { return }
             episodes = refresh ? page.items : deduplicating(episodes + page.items)
             nextEpisodePage = page.nextPage
         }
     }
 
     private func loadArticles(refresh: Bool) async {
-        await load(.articles, isPagination: !refresh) {
+        let generation = contentGeneration
+        let client = client
+        await load(.articles, isPagination: !refresh, generation: generation) {
             let page = try await client.fetchArticles(blogID: nil, page: refresh ? nil : nextArticlePage)
+            guard generation == contentGeneration else { return }
             articles = refresh ? page.items : deduplicating(articles + page.items)
             nextArticlePage = page.nextPage
         }
     }
 
     private func loadProducts(refresh: Bool) async {
-        await load(.products, isPagination: !refresh) {
+        let generation = contentGeneration
+        let client = client
+        await load(.products, isPagination: !refresh, generation: generation) {
             let page = try await client.fetchProducts(page: refresh ? nil : nextProductPage)
+            guard generation == contentGeneration else { return }
             products = refresh ? page.items : deduplicating(products + page.items)
             nextProductPage = page.nextPage
         }
     }
 
-    private func load(_ group: Group, isPagination: Bool = false, operation: () async throws -> Void) async {
+    private func load(_ group: Group, isPagination: Bool = false, generation: Int, operation: () async throws -> Void) async {
+        guard generation == contentGeneration else { return }
         guard !loadingGroups.contains(group), !loadingMoreGroups.contains(group) else { return }
         if isPagination {
             loadingMoreGroups.insert(group)
@@ -195,19 +257,49 @@ final class ROHContentStore: ObservableObject {
             errors[group] = nil
         }
         defer {
-            if isPagination { loadingMoreGroups.remove(group) } else { loadingGroups.remove(group) }
+            if generation == contentGeneration {
+                if isPagination { loadingMoreGroups.remove(group) } else { loadingGroups.remove(group) }
+            }
         }
         do {
             try await operation()
         } catch is CancellationError {
             return
         } catch {
+            guard generation == contentGeneration else { return }
             if isPagination {
                 paginationErrors[group] = error.localizedDescription
             } else {
                 errors[group] = error.localizedDescription
             }
         }
+    }
+
+    private func resetContent() {
+        shows = []
+        episodes = []
+        blogs = []
+        articles = []
+        features = []
+        products = []
+        showEpisodes = [:]
+        blogArticles = [:]
+        loadingGroups = []
+        errors = [:]
+        paginationErrors = [:]
+        loadingMoreGroups = []
+        showEpisodeLoading = []
+        showEpisodeErrors = [:]
+        blogArticleLoading = []
+        blogArticleErrors = [:]
+        nextEpisodePage = nil
+        nextArticlePage = nil
+        nextProductPage = nil
+        nextShowEpisodePages = [:]
+        nextBlogArticlePages = [:]
+        loadedShowEpisodeIDs = []
+        loadedBlogArticleIDs = []
+        didStartInitialLoad = false
     }
 
     private func deduplicating<Item: Identifiable>(_ items: [Item]) -> [Item] where Item.ID: Hashable {

@@ -1,5 +1,33 @@
 import Foundation
 
+enum ROHContentLanguage: String, CaseIterable, Identifiable {
+    static let preferenceKey = "ROHContentLanguage"
+
+    case english = "en"
+    case spanish = "es"
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .english: "English"
+        case .spanish: "Spanish"
+        }
+    }
+
+    var baseURL: URL {
+        switch self {
+        case .english: URL(string: "https://www.reviveourhearts.com")!
+        case .spanish: URL(string: "https://www.avivanuestroscorazones.com")!
+        }
+    }
+
+    static var preferred: ROHContentLanguage {
+        guard let value = UserDefaults.standard.string(forKey: preferenceKey) else { return .english }
+        return ROHContentLanguage(rawValue: value) ?? .english
+    }
+}
+
 struct ROHPaginatedResponse<Item: Decodable>: Decodable {
     let count: Int
     let next: URL?
@@ -153,8 +181,9 @@ struct ROHProduct: Codable, Identifiable, Hashable {
         webpThumbnail ?? thumbnail ?? image
     }
 
-    var storeURL: URL? {
-        URL(string: "https://www.reviveourhearts.com/store/product/\(slug)/")
+    func storeURL(for language: ROHContentLanguage) -> URL {
+        let path = language == .spanish ? "tienda/producto" : "store/product"
+        return language.baseURL.appendingPathComponent("\(path)/\(slug)/")
     }
 }
 
