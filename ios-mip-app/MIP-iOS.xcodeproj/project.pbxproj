@@ -7,22 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A80A00012D00000100000006 /* ROHApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000004 /* ROHApp.swift */; };
-		A80A00012D00000100000007 /* ROHPrototypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000005 /* ROHPrototypeView.swift */; };
-		A80A00012D00000100000010 /* ROHAPIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000013 /* ROHAPIModels.swift */; };
-		A80A00012D00000100000011 /* ROHAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000014 /* ROHAPIClient.swift */; };
-		A80A00012D00000100000012 /* ROHContentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000015 /* ROHContentStore.swift */; };
-		A80A00012D00000100000016 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000017 /* Localizable.strings */; };
-		A80A00012D00000100000020 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000021 /* InfoPlist.strings */; };
 		101ED9219AF1391DD48076AB /* SiteConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 11F56EDA5C681DEFFB898D84 /* SiteConfig.plist */; };
 		10BCBDFD955489821B691CAE /* SiteConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = E6A3FF941F2E2C006E52951B /* SiteConfig.plist */; };
-		A91100000000000000000002 /* AppProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91100000000000000000001 /* AppProfile.swift */; };
-		A91100000000000000000003 /* AppProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91100000000000000000001 /* AppProfile.swift */; };
-		C4A100000000000000000002 /* C4IProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A100000000000000000001 /* C4IProfile.swift */; };
-		C4A200000000000000000002 /* C4IHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A200000000000000000001 /* C4IHomeView.swift */; };
-		C4A300000000000000000002 /* C4IHomeContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A300000000000000000001 /* C4IHomeContent.swift */; };
-		C4A400000000000000000002 /* C4IHomeCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A400000000000000000001 /* C4IHomeCards.swift */; };
-		C4A500000000000000000002 /* C4IMoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A500000000000000000001 /* C4IMoreView.swift */; };
 		1863866797842B24243899E5 /* SearchCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F60718293A4B5C6D7E /* SearchCache.swift */; };
 		1B1090C340E5417C0B92A5DC /* MipApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 549E27E02AE14FA3BDD30465 /* MipApiClient.swift */; };
 		1C63E5C62816485AA552F210 /* TabPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD67E6F8F8C4C988F741931 /* TabPageView.swift */; };
@@ -57,7 +43,16 @@
 		A71111182B0000020000FFCI /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A71111172B0000020000FFCI /* Preview Assets.xcassets */; };
 		A71111312B0000030000FFCI /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A71111322B0000030000FFCI /* GoogleService-Info.plist */; };
 		A71200012C00000100000001 /* FFCIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71200022C00000100000001 /* FFCIUITests.swift */; };
+		A80A00012D00000100000006 /* ROHApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000004 /* ROHApp.swift */; };
+		A80A00012D00000100000007 /* ROHPrototypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000005 /* ROHPrototypeView.swift */; };
+		A80A00012D00000100000010 /* ROHAPIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000013 /* ROHAPIModels.swift */; };
+		A80A00012D00000100000011 /* ROHAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000014 /* ROHAPIClient.swift */; };
+		A80A00012D00000100000012 /* ROHContentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000015 /* ROHContentStore.swift */; };
+		A80A00012D00000100000016 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000017 /* Localizable.strings */; };
+		A80A00012D00000100000020 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A80A00012D00000100000021 /* InfoPlist.strings */; };
 		A8B9C0D1E2F3A4B5C6D7E8F9 /* AudioPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* AudioPlayerView.swift */; };
+		A91100000000000000000002 /* AppProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91100000000000000000001 /* AppProfile.swift */; };
+		A91100000000000000000003 /* AppProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91100000000000000000001 /* AppProfile.swift */; };
 		A9B8C7D6E5F401234567890B /* VimeoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B8C7D6E5F401234567890A /* VimeoPlayerView.swift */; };
 		A9B8C7D6E5F401234567890C /* VimeoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B8C7D6E5F401234567890A /* VimeoPlayerView.swift */; };
 		AE8809E43AA7BF55D211F2A9 /* ScrollPreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B3C4D5E6F7A8B9C0D1E2F3A4B5 /* ScrollPreferenceKeys.swift */; };
@@ -69,6 +64,11 @@
 		BA41824731BF0C7426285230 /* C4IUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9392530BE938C9C47492E13 /* C4IUITests.swift */; };
 		BBE9EA69A9F61D5A3FB09C9B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 918AC1BBD9E2741759302F40 /* Foundation.framework */; };
 		C084C0CAC462C7AF983A86D3 /* ApiModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0B7BA3F7D347D2993A9ECD /* ApiModels.swift */; };
+		C4A100000000000000000002 /* C4IProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A100000000000000000001 /* C4IProfile.swift */; };
+		C4A200000000000000000002 /* C4IHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A200000000000000000001 /* C4IHomeView.swift */; };
+		C4A300000000000000000002 /* C4IHomeContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A300000000000000000001 /* C4IHomeContent.swift */; };
+		C4A400000000000000000002 /* C4IHomeCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A400000000000000000001 /* C4IHomeCards.swift */; };
+		C4A500000000000000000002 /* C4IMoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A500000000000000000001 /* C4IMoreView.swift */; };
 		C4I0000012F6ED56800728869 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C4I0000002F6ED56800728869 /* FirebaseAnalytics */; };
 		C618D9321CB4297833818258 /* ResourcesScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7B8C9D0E1F2A3B4C5D6E7 /* ResourcesScrollView.swift */; };
 		C8D9E0F1A2B3C4D5E6F7A8B9C0D1E2 /* HomeLogoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E0F1A2B3C4D5E6F7A8B9C0D1E2F3 /* HomeLogoView.swift */; };
@@ -101,24 +101,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		A80A00012D00000100000002 /* ROH.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ROH.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A80A00012D00000100000004 /* ROHApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHApp.swift; sourceTree = "<group>"; };
-		A80A00012D00000100000005 /* ROHPrototypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHPrototypeView.swift; sourceTree = "<group>"; };
-		A80A00012D00000100000013 /* ROHAPIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHAPIModels.swift; sourceTree = "<group>"; };
-		A80A00012D00000100000014 /* ROHAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHAPIClient.swift; sourceTree = "<group>"; };
-		A80A00012D00000100000015 /* ROHContentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHContentStore.swift; sourceTree = "<group>"; };
-		A80A00012D00000100000018 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A80A00012D00000100000019 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A80A00012D00000100000022 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		A80A00012D00000100000023 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		04DCFF956A7460315C50345D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		11F56EDA5C681DEFFB898D84 /* SiteConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = SiteConfig.plist; sourceTree = "<group>"; };
-		A91100000000000000000001 /* AppProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppProfile.swift; sourceTree = "<group>"; };
-		C4A100000000000000000001 /* C4IProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IProfile.swift; sourceTree = "<group>"; };
-		C4A200000000000000000001 /* C4IHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IHomeView.swift; sourceTree = "<group>"; };
-		C4A300000000000000000001 /* C4IHomeContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IHomeContent.swift; sourceTree = "<group>"; };
-		C4A400000000000000000001 /* C4IHomeCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IHomeCards.swift; sourceTree = "<group>"; };
-		C4A500000000000000000001 /* C4IMoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IMoreView.swift; sourceTree = "<group>"; };
 		2551E3657AE192F7C883B276 /* FeaturedCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedCard.swift; sourceTree = "<group>"; };
 		3AE9115171EE4243A6AE0A2B /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		3D51A13CFD7348FAB546FCB6 /* HtmlContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlContentView.swift; sourceTree = "<group>"; };
@@ -144,11 +128,27 @@
 		A71111322B0000030000FFCI /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A71200022C00000100000001 /* FFCIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCIUITests.swift; sourceTree = "<group>"; };
 		A71200032C00000100000001 /* FFCIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FFCIUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A80A00012D00000100000002 /* ROH.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ROH.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A80A00012D00000100000004 /* ROHApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHApp.swift; sourceTree = "<group>"; };
+		A80A00012D00000100000005 /* ROHPrototypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHPrototypeView.swift; sourceTree = "<group>"; };
+		A80A00012D00000100000013 /* ROHAPIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHAPIModels.swift; sourceTree = "<group>"; };
+		A80A00012D00000100000014 /* ROHAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHAPIClient.swift; sourceTree = "<group>"; };
+		A80A00012D00000100000015 /* ROHContentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROHContentStore.swift; sourceTree = "<group>"; };
+		A80A00012D00000100000018 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A80A00012D00000100000019 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A80A00012D00000100000022 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A80A00012D00000100000023 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A91100000000000000000001 /* AppProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppProfile.swift; sourceTree = "<group>"; };
 		A9B8C7D6E5F401234567890A /* VimeoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VimeoPlayerView.swift; sourceTree = "<group>"; };
 		AFA82B5B2AD8BE776317DFAD /* SiteConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SiteConfig.swift; sourceTree = "<group>"; };
 		B02900012909000100000001 /* MipAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MipAnalytics.swift; sourceTree = "<group>"; };
 		BA5592C6F1E333F7C2D926A9 /* HomeHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeaderView.swift; sourceTree = "<group>"; };
 		C3D4E5F60718293A4B5C6D7E /* SearchCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCache.swift; sourceTree = "<group>"; };
+		C4A100000000000000000001 /* C4IProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IProfile.swift; sourceTree = "<group>"; };
+		C4A200000000000000000001 /* C4IHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IHomeView.swift; sourceTree = "<group>"; };
+		C4A300000000000000000001 /* C4IHomeContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IHomeContent.swift; sourceTree = "<group>"; };
+		C4A400000000000000000001 /* C4IHomeCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IHomeCards.swift; sourceTree = "<group>"; };
+		C4A500000000000000000001 /* C4IMoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IMoreView.swift; sourceTree = "<group>"; };
 		C9392530BE938C9C47492E13 /* C4IUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C4IUITests.swift; sourceTree = "<group>"; };
 		CE15394DB45A4153AF9A4BD4 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		D4E5F60718293A4B5C6D7E8F /* PageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageCache.swift; sourceTree = "<group>"; };
@@ -158,13 +158,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A80A00012D00000100000009 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		205462F36C158E38DD3136E8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -197,23 +190,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A80A00012D00000100000009 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A80A00012D00000100000003 /* ROH */ = {
-			isa = PBXGroup;
-			children = (
-				A80A00012D00000100000004 /* ROHApp.swift */,
-				A80A00012D00000100000013 /* ROHAPIModels.swift */,
-				A80A00012D00000100000014 /* ROHAPIClient.swift */,
-				A80A00012D00000100000015 /* ROHContentStore.swift */,
-				A80A00012D00000100000005 /* ROHPrototypeView.swift */,
-				A80A00012D00000100000017 /* Localizable.strings */,
-				A80A00012D00000100000021 /* InfoPlist.strings */,
-			);
-			path = ROH;
-			sourceTree = "<group>";
-		};
 		0404D46EC1925CC1AE2E5384 /* C4I */ = {
 			isa = PBXGroup;
 			children = (
@@ -307,6 +293,20 @@
 			path = FFCIUITests;
 			sourceTree = "<group>";
 		};
+		A80A00012D00000100000003 /* ROH */ = {
+			isa = PBXGroup;
+			children = (
+				A80A00012D00000100000004 /* ROHApp.swift */,
+				A80A00012D00000100000013 /* ROHAPIModels.swift */,
+				A80A00012D00000100000014 /* ROHAPIClient.swift */,
+				A80A00012D00000100000015 /* ROHContentStore.swift */,
+				A80A00012D00000100000005 /* ROHPrototypeView.swift */,
+				A80A00012D00000100000017 /* Localizable.strings */,
+				A80A00012D00000100000021 /* InfoPlist.strings */,
+			);
+			path = ROH;
+			sourceTree = "<group>";
+		};
 		SHARED0000000000000000001 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -373,23 +373,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A80A00012D00000100000001 /* ROH */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A80A00012D0000010000000D /* Build configuration list for PBXNativeTarget "ROH" */;
-			buildPhases = (
-				A80A00012D00000100000008 /* Sources */,
-				A80A00012D00000100000009 /* Frameworks */,
-				A80A00012D0000010000000A /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = ROH;
-			productName = ROH;
-			productReference = A80A00012D00000100000002 /* ROH.app */;
-			productType = "com.apple.product-type.application";
-		};
 		75470296396E269E2F240CC1 /* C4IUITests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 731A154AB64F06F7633AE6AA /* Build configuration list for PBXNativeTarget "C4IUITests" */;
@@ -443,6 +426,23 @@
 			productReference = A71200032C00000100000001 /* FFCIUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		A80A00012D00000100000001 /* ROH */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A80A00012D0000010000000D /* Build configuration list for PBXNativeTarget "ROH" */;
+			buildPhases = (
+				A80A00012D00000100000008 /* Sources */,
+				A80A00012D00000100000009 /* Frameworks */,
+				A80A00012D0000010000000A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ROH;
+			productName = ROH;
+			productReference = A80A00012D00000100000002 /* ROH.app */;
+			productType = "com.apple.product-type.application";
+		};
 		E394380DC2F30370D51112F7 /* C4I */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C85F04580AF4216FF65B0168 /* Build configuration list for PBXNativeTarget "C4I" */;
@@ -473,9 +473,6 @@
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
-					A80A00012D00000100000001 = {
-						CreatedOnToolsVersion = 15.0;
-					};
 					A71111082B0000010000FFCI = {
 						CreatedOnToolsVersion = 15.0;
 					};
@@ -483,9 +480,12 @@
 						CreatedOnToolsVersion = 15.0;
 						TestTargetID = A71111082B0000010000FFCI;
 					};
+					A80A00012D00000100000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
 				};
 			};
-			buildConfigurationList = A71111042B0000010000FFCI /* Build configuration list for PBXProject "FFCI" */;
+			buildConfigurationList = A71111042B0000010000FFCI /* Build configuration list for PBXProject "MIP-iOS" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -512,15 +512,6 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A80A00012D0000010000000A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A80A00012D00000100000016 /* Localizable.strings in Resources */,
-				A80A00012D00000100000020 /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3D41E442AA9632F85191A5C1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -555,21 +546,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
-		A80A00012D00000100000008 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
+		A80A00012D0000010000000A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A80A00012D00000100000006 /* ROHApp.swift in Sources */,
-				A80A00012D00000100000010 /* ROHAPIModels.swift in Sources */,
-				A80A00012D00000100000011 /* ROHAPIClient.swift in Sources */,
-				A80A00012D00000100000012 /* ROHContentStore.swift in Sources */,
-				A80A00012D00000100000007 /* ROHPrototypeView.swift in Sources */,
+				A80A00012D00000100000016 /* Localizable.strings in Resources */,
+				A80A00012D00000100000020 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
 		76D2998CB837CE42AEFDB390 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -618,6 +606,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A80A00012D00000100000008 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A80A00012D00000100000006 /* ROHApp.swift in Sources */,
+				A80A00012D00000100000010 /* ROHAPIModels.swift in Sources */,
+				A80A00012D00000100000011 /* ROHAPIClient.swift in Sources */,
+				A80A00012D00000100000012 /* ROHContentStore.swift in Sources */,
+				A80A00012D00000100000007 /* ROHPrototypeView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E1DDE6CEB2A474F0E3D84108 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -657,6 +657,20 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		A712000A2C00000100000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A71111082B0000010000FFCI /* FFCI */;
+			targetProxy = A71200092C00000100000001 /* PBXContainerItemProxy */;
+		};
+		B8330225976D879772272FE2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = C4I;
+			target = E394380DC2F30370D51112F7 /* C4I */;
+			targetProxy = 59250E9E95C870BF35A20DF2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		A80A00012D00000100000017 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
@@ -678,82 +692,7 @@
 		};
 /* End PBXVariantGroup section */
 
-/* Begin PBXTargetDependency section */
-		A712000A2C00000100000001 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A71111082B0000010000FFCI /* FFCI */;
-			targetProxy = A71200092C00000100000001 /* PBXContainerItemProxy */;
-		};
-		B8330225976D879772272FE2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = C4I;
-			target = E394380DC2F30370D51112F7 /* C4I */;
-			targetProxy = 59250E9E95C870BF35A20DF2 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		A80A00012D0000010000000B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = FMQL3T3P7W;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Revive Our Hearts";
-				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.fiveq.roh.prototype;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		A80A00012D0000010000000C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = FMQL3T3P7W;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Revive Our Hearts";
-				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.fiveq.roh.prototype;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 		2683B0DF841F2FD725CEDD4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -809,7 +748,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fiveq.c4i;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -1038,6 +977,67 @@
 			};
 			name = Release;
 		};
+		A80A00012D0000010000000B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FMQL3T3P7W;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Revive Our Hearts";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fiveq.roh.prototype;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A80A00012D0000010000000C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FMQL3T3P7W;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Revive Our Hearts";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fiveq.roh.prototype;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		F1E553BCE9EC12F9D8C2D7D2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1060,7 +1060,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fiveq.c4i;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -1074,15 +1074,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A80A00012D0000010000000D /* Build configuration list for PBXNativeTarget "ROH" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A80A00012D0000010000000B /* Debug */,
-				A80A00012D0000010000000C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		731A154AB64F06F7633AE6AA /* Build configuration list for PBXNativeTarget "C4IUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1092,7 +1083,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A71111042B0000010000FFCI /* Build configuration list for PBXProject "FFCI" */ = {
+		A71111042B0000010000FFCI /* Build configuration list for PBXProject "MIP-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A7111120B0000020000FFCI /* Debug */,
@@ -1115,6 +1106,15 @@
 			buildConfigurations = (
 				A712000B2C00000100000001 /* Debug */,
 				A712000C2C00000100000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A80A00012D0000010000000D /* Build configuration list for PBXNativeTarget "ROH" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A80A00012D0000010000000B /* Debug */,
+				A80A00012D0000010000000C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

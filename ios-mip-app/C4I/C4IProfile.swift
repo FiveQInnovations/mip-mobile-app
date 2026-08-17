@@ -13,8 +13,8 @@ enum C4IAppProfile {
     static let learnUuid = "pik8ysClOFGyllBY"
     static let watchUuid = "Sw5g5dDFh35ZEEIc"
     static let getInvolvedUuid = "XoMTNzgSpFybWSiy"
-    static let giveUrl = "https://c4i.fiveq.dev/get-involved/donate"
-    static let storeUrl = "https://c4i.fiveq.dev/store"
+    static let giveUrl = "https://c4iglobal.com/get-involved/donate"
+    static let storeUrl = "https://c4iglobal.com/store"
 
     static let profile = AppProfile(
         headerLogo: .text("Christians for Israel", accessibilityLabel: "Christians for Israel Logo"),

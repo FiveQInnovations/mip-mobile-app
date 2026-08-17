@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>SiteBaseURL</key>
-	<string>https://c4i.fiveq.dev</string>
+	<string>https://c4iglobal.com</string>
 	<key>ApiKey</key>
 	<string>5aa8eb9fe5fb265c5f3acdc5f317fd4917a7c028c40937ca7870ad2f8df6f839</string>
 	<key>BasicAuthUsername</key>
@@ -14,7 +14,6 @@
 	<string>c4i-auth</string>
 	<key>FirstPartyHosts</key>
 	<array>
-		<string>c4i.fiveq.dev</string>
 		<string>c4iglobal.com</string>
 	</array>
 </dict>
